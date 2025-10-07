@@ -91,29 +91,35 @@ export default function Home({ events }) {
         {events && events.length > 0 && (
           <section aria-label="All events">
             <div className="section-header-with-action">
-              <h2 className="section-header" style={{marginBottom: 0}}>All Events</h2>
-              {(selectedGame || selectedLocation) && (
-                <div className="filter-indicator">
-                  <span className="filter-text">
-                    {selectedGame && selectedLocation 
-                      ? `Showing ${selectedGame} events in ${selectedLocation}`
-                      : selectedGame 
-                        ? `Showing ${selectedGame} events`
-                        : `Showing events in ${selectedLocation}`
-                    }
-                  </span>
-                  <button 
-                    className="clear-filters-btn"
-                    onClick={() => {
-                      setSelectedGame('')
-                      setSelectedLocation('')
-                    }}
-                    title="Clear all filters"
-                  >
-                    ✕
-                  </button>
-                </div>
-              )}
+              <div className="filtered-title-container">
+                <h2 className="section-header" style={{marginBottom: 0}}>
+                  {selectedGame && selectedLocation 
+                    ? `${selectedGame} Events in ${selectedLocation}`
+                    : selectedGame 
+                      ? `${selectedGame} Events`
+                      : selectedLocation
+                        ? `Events in ${selectedLocation}`
+                        : 'All Events'
+                  }
+                </h2>
+                {(selectedGame || selectedLocation) && (
+                  <div className="active-filters-indicator">
+                    <span className="filter-count">
+                      {[selectedGame, selectedLocation].filter(Boolean).length} filter{([selectedGame, selectedLocation].filter(Boolean).length > 1) ? 's' : ''} active
+                    </span>
+                    <button 
+                      className="clear-filters-btn"
+                      onClick={() => {
+                        setSelectedGame('')
+                        setSelectedLocation('')
+                      }}
+                      title="Clear all filters"
+                    >
+                      Clear All
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="events-grid">
               {(filtered || []).map((event) => (

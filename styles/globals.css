@@ -380,41 +380,63 @@ tbody td {
   color: #1d4ed8;
 }
 
-/* Filter indicator styles */
-.filter-indicator {
+/* Filtered title container */
+.filtered-title-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Active filters indicator - minimalist */
+.active-filters-indicator {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: #f1f5f9;
+  background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 0.5rem 0.75rem;
+  animation: slideIn 0.3s ease-out;
 }
 
-.filter-text {
-  font-size: 0.875rem;
+.filter-count {
+  font-size: 0.8rem;
   color: #64748b;
-  font-weight: 500;
+  font-weight: 400;
 }
 
+/* Minimalist clear filters button */
 .clear-filters-btn {
-  background: #e2e8f0;
-  border: none;
-  border-radius: 50%;
-  width: 1.5rem;
-  height: 1.5rem;
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   font-size: 0.75rem;
+  font-weight: 400;
   color: #64748b;
   transition: all 0.2s ease;
 }
 
 .clear-filters-btn:hover {
-  background: #cbd5e1;
+  background: #f1f5f9;
+  border-color: #94a3b8;
   color: #475569;
+}
+
+/* Animation for filter indicator */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Minimalist icon styles */
