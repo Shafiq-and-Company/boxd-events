@@ -36,8 +36,9 @@ export default function Home({ events }) {
         ? title.includes(q) || description.includes(q) || loc.includes(q)
         : true
 
+      const city = (evt.city || '').toLowerCase()
       const matchesLocation = location.trim()
-        ? loc.includes(location.trim().toLowerCase())
+        ? city.includes(location.trim().toLowerCase())
         : true
 
       const startsAtMs = evt.starts_at ? new Date(evt.starts_at).getTime() : undefined
@@ -58,13 +59,13 @@ export default function Home({ events }) {
 
   const locationGroups = useMemo(() => {
     if (!events || events.length === 0) return []
-    const countsByLoc = new Map()
+    const countsByCity = new Map()
     for (const evt of events) {
-      const key = (evt.location || '').trim()
+      const key = (evt.city || '').trim()
       if (!key) continue
-      countsByLoc.set(key, (countsByLoc.get(key) || 0) + 1)
+      countsByCity.set(key, (countsByCity.get(key) || 0) + 1)
     }
-    return Array.from(countsByLoc.entries())
+    return Array.from(countsByCity.entries())
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count)
   }, [events])
