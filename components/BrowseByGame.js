@@ -11,6 +11,9 @@ export default function BrowseByGame({ groups, onPick }) {
             className="category-card"
             onClick={() => onPick(name)}
           >
+            <div className="category-icon">
+              <div className="minimal-shape minimal-shape-blue"></div>
+            </div>
             <div className="category-name">{name}</div>
             <div className="category-count">{count} Events</div>
           </button>

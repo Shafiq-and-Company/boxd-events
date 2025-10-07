@@ -134,7 +134,7 @@ export default function Home({ events }) {
                   className="modern-card clickable-card"
                   onClick={() => handleEventClick(event.id)}
                 >
-                  <div className="card-image" style={{background: 'linear-gradient(135deg, #8b5cf6, #ec4899)'}}>
+                  <div className="card-image">
                     <div className="minimal-icon minimal-icon-purple"></div>
                   </div>
                   <div className="card-content">
@@ -151,7 +151,7 @@ export default function Home({ events }) {
                     <div className="card-location">{event.location || ''}</div>
                     <div className="game-badge-container">
                       {event.game_title ? (
-                        <div className="game-badge" style={{background: '#f3e8ff', color: '#7c3aed'}}>
+                        <div className="game-badge">
                           {event.game_title}
                         </div>
                       ) : (

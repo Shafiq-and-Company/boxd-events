@@ -104,12 +104,12 @@ export default function EventPage() {
               {event.game_title && (
                 <span className="event-badge game-badge">{event.game_title}</span>
               )}
-            <span className="event-badge location-badge">
-              {event.city && event.location 
-                ? `${event.location}, ${event.city}`
-                : event.location || event.city || 'Location TBD'
-              }
-            </span>
+              <span className="event-badge location-badge">
+                {event.city && event.location 
+                  ? `${event.location}, ${event.city}`
+                  : event.location || event.city || 'Location TBD'
+                }
+              </span>
             </div>
             
             <h1 className="event-title">{event.title}</h1>

@@ -11,6 +11,9 @@ export default function BrowseByLocation({ groups, onPick }) {
             className="location-card"
             onClick={() => onPick(name)}
           >
+            <div className="location-icon">
+              <div className="minimal-shape minimal-shape-green"></div>
+            </div>
             <div className="category-name">{name}</div>
             <div className="category-count">{count} Events</div>
           </button>
