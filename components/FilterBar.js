@@ -24,16 +24,16 @@ export default function FilterBar({
           value={location}
           onChange={(e) => onLocationChange(e.target.value)}
         />
-        <div>
-          <div className="muted" style={{ fontSize: '0.8rem' }}>Start</div>
+        <div className="date-input-group">
+          <label className="muted text-xs">Start</label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => onStartDateChange(e.target.value)}
           />
         </div>
-        <div>
-          <div className="muted" style={{ fontSize: '0.8rem' }}>End</div>
+        <div className="date-input-group">
+          <label className="muted text-xs">End</label>
           <input
             type="date"
             value={endDate}
