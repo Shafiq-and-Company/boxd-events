@@ -1,23 +1,55 @@
 import Head from 'next/head'
-import Header from '@components/Header'
-import Footer from '@components/Footer'
+import { supabase } from '../lib/supabaseClient'
 
-export default function Home() {
+export default function Home({ events }) {
   return (
     <div className="container">
       <Head>
-        <title>Next.js Starter!</title>
+        <title>Events</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
-        <Header title="Welcome to my app!" />
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
+        <h1>Events</h1>
+        {(!events || events.length === 0) && (
+          <p>No events found.</p>
+        )}
+        {events && events.length > 0 && (
+          <ul>
+            {events.map((event) => (
+              <li key={event.id}>
+                <strong>{event.title}</strong>
+                {event.starts_at && (
+                  <span> — {new Date(event.starts_at).toLocaleString()}</span>
+                )}
+                {event.location && (
+                  <span> @ {event.location}</span>
+                )}
+                {event.description && (
+                  <p>{event.description}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </main>
-
-      <Footer />
     </div>
   )
+}
+
+export async function getServerSideProps() {
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .order('starts_at', { ascending: true })
+
+  if (error) {
+    return { props: { events: [] } }
+  }
+
+  return {
+    props: {
+      events: data ?? []
+    }
+  }
 }

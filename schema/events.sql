@@ -1,0 +1,11 @@
+-- EVENTS (no creator column; users cannot create events)
+create table events (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  description text,
+  location text,
+  starts_at timestamptz not null,
+  ends_at timestamptz,
+  created_at timestamptz default now(),
+  check (ends_at is null or ends_at >= starts_at)
+);
