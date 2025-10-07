@@ -4,6 +4,8 @@ create table events (
   title text not null,
   description text,
   location text,
+  city text,
+  game_title text,
   starts_at timestamptz not null,
   ends_at timestamptz,
   created_at timestamptz default now(),

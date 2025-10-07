@@ -1,13 +1,19 @@
 import Head from 'next/head'
 import { useMemo, useState } from 'react'
+import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
 import BrowseByGame from '../components/BrowseByGame'
 import BrowseByLocation from '../components/BrowseByLocation'
 import UpcomingEvents from '../components/UpcomingEvents'
 
 export default function Home({ events }) {
+  const router = useRouter()
   const [selectedGame, setSelectedGame] = useState('')
   const [selectedLocation, setSelectedLocation] = useState('')
+
+  const handleEventClick = (eventId) => {
+    window.open(`/event/${eventId}`, '_blank')
+  }
 
   const gameGroups = useMemo(() => {
     if (!events || events.length === 0) return []
@@ -123,7 +129,11 @@ export default function Home({ events }) {
             </div>
             <div className="events-grid">
               {(filtered || []).map((event) => (
-                <article key={event.id} className="modern-card">
+                <article 
+                  key={event.id} 
+                  className="modern-card clickable-card"
+                  onClick={() => handleEventClick(event.id)}
+                >
                   <div className="card-image" style={{background: 'linear-gradient(135deg, #8b5cf6, #ec4899)'}}>
                     <div className="minimal-icon minimal-icon-purple"></div>
                   </div>

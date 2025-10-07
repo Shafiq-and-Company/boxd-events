@@ -1,12 +1,24 @@
+import { useRouter } from 'next/router'
+
 export default function UpcomingEvents({ events }) {
+  const router = useRouter()
+
   if (!events?.length) return null
+
+  const handleEventClick = (eventId) => {
+    window.open(`/event/${eventId}`, '_blank')
+  }
 
   return (
     <section aria-label="Popular events">
       <h2 className="section-header">Upcoming Events</h2>
       <div className="events-grid">
         {events.map((event) => (
-          <article key={event.id} className="modern-card">
+          <article 
+            key={event.id} 
+            className="modern-card clickable-card"
+            onClick={() => handleEventClick(event.id)}
+          >
             <div className="card-image">
               <div className="minimal-icon"></div>
             </div>
