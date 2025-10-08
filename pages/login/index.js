@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
-import { useAuth } from '../lib/AuthContext'
+import { useAuth } from '../../lib/AuthContext'
+import NavBar from '../../components/NavBar'
 import styles from './Login.module.css'
 
 export default function Login() {
@@ -44,8 +45,10 @@ export default function Login() {
   }
 
   return (
-    <div className={styles.loginContainer}>
-      <div className={styles.loginCard}>
+    <>
+      <NavBar hideMiddleNav={true} />
+      <div className={styles.loginContainer}>
+        <div className={styles.loginCard}>
         <h1 className={styles.title}>BOXD</h1>
         <h2 className={styles.subtitle}>
           {isSignUp ? 'Create Account' : 'Sign In'}
@@ -122,6 +125,7 @@ export default function Login() {
           </button>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }

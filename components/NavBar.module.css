@@ -7,7 +7,7 @@
   position: relative;
   
   /* Spacing - 8px grid system */
-  padding: 16px 32px;
+  padding: 8px 32px;
   margin: 0;
   
   /* Color */
@@ -19,11 +19,11 @@
   
   /* Responsive */
   @media (max-width: 768px) {
-    padding: 16px 24px;
+    padding: 8px 24px;
   }
   
   @media (max-width: 320px) {
-    padding: 16px;
+    padding: 8px;
   }
 }
 
@@ -57,7 +57,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: #404040;
+  color: #A0A0A0;
   text-decoration: none;
   
   /* Layout */
@@ -93,10 +93,16 @@
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.5px;
-  color: #000000;
+  color: #A0A0A0;
   
   /* Layout */
   display: block;
+  cursor: pointer;
+  transition: color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.logo:hover {
+  color: #000000;
 }
 
 .profile {
@@ -163,7 +169,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: #404040;
+  color: #A0A0A0;
   
   /* Layout */
   background: none;
@@ -207,7 +213,7 @@
 .userEmail {
   font-size: 14px;
   font-weight: 400;
-  color: #404040;
+  color: #A0A0A0;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   max-width: 200px;
   overflow: hidden;
@@ -238,7 +244,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: #808080;
+  color: #A0A0A0;
   
   /* Layout */
   background: none;
@@ -312,7 +318,7 @@
 .profileEmail {
   font-size: 14px;
   font-weight: 400;
-  color: #404040;
+  color: #A0A0A0;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   display: block;
   overflow: hidden;
@@ -334,7 +340,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: #808080;
+  color: #A0A0A0;
   
   /* Layout */
   background: none;

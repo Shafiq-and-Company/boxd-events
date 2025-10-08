@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from '../lib/AuthContext'
 import styles from './NavBar.module.css'
 
-export default function NavBar({ activeTab, onTabChange }) {
+export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }) {
   const router = useRouter()
   const { user, signOut } = useAuth()
   const [isProfileOpen, setIsProfileOpen] = useState(false)
@@ -24,27 +24,34 @@ export default function NavBar({ activeTab, onTabChange }) {
 
   return (
     <nav className={styles.navbar}>
-      <div className={styles.logo}>BOXD</div>
-      <div className={styles.navLinks}>
-        <button 
-          onClick={() => onTabChange('upcoming')} 
-          className={`${styles.navLink} ${activeTab === 'upcoming' ? styles.active : ''}`}
-        >
-          Upcoming
-        </button>
-        <button 
-          onClick={() => onTabChange('discover')} 
-          className={`${styles.navLink} ${activeTab === 'discover' ? styles.active : ''}`}
-        >
-          Discover
-        </button>
-        <button 
-          onClick={() => onTabChange('about')} 
-          className={`${styles.navLink} ${activeTab === 'about' ? styles.active : ''}`}
-        >
-          About
-        </button>
+      <div 
+        className={styles.logo}
+        onClick={() => onTabChange && onTabChange('discover')}
+      >
+        BOXD
       </div>
+      {!hideMiddleNav && (
+        <div className={styles.navLinks}>
+          <button 
+            onClick={() => onTabChange && onTabChange('upcoming')} 
+            className={`${styles.navLink} ${activeTab === 'upcoming' ? styles.active : ''}`}
+          >
+            Upcoming
+          </button>
+          <button 
+            onClick={() => onTabChange && onTabChange('discover')} 
+            className={`${styles.navLink} ${activeTab === 'discover' ? styles.active : ''}`}
+          >
+            Discover
+          </button>
+          <button 
+            onClick={() => onTabChange && onTabChange('about')} 
+            className={`${styles.navLink} ${activeTab === 'about' ? styles.active : ''}`}
+          >
+            About
+          </button>
+        </div>
+      )}
       <div className={styles.profile} ref={profileRef}>
         {user ? (
           <>
