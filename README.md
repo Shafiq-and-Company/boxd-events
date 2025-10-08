@@ -1,5 +1,19 @@
-## Next + Netlify Starter
+# BOXD Events
 
+## Brand Kit
+
+BOXD brand speaks with confident clarity and communal ambition. It favors clean, minimalist fonts and a palette grounded in neutral tones with bold accent colors—think charcoal or slate gray paired with vibrant teal or electric blue. The imagery is dynamic and aspirational: sharp event photos, silhouettes of crowds, architectural lines, and digital overlays to evoke motion, connection, and innovation. The voice is direct, inclusive, and purpose-driven: "Explore," "Connect," "Curated," "Frontier" — framing users as active participants in global conversations. Core values implicit in the visuals and structure are curiosity, access, and community—BOXD positions itself as the bridge between creators, thinkers, and doers.
+
+### Design Principles
+- **Layout**: Modular layouts and generous whitespace to reduce noise and let content shine
+- **Typography**: Primary typeface with strong legibility (sans serif, medium weight) and complementary lighter version for captions
+- **Colors**: One bold hue (teal/cyan) plus a secondary highlight (lime/chartreuse) for accents and interactive states
+- **Iconography**: Linear and geometric (outlines, "connected nodes," minimal fills)
+- **Messaging**: Emphasize discovery, belonging, and making impact—not just attending or watching
+
+This brand kit orients any collateral (web, print, social) to look and feel consistent, modern, and collective.
+
+## Next + Netlify Starter
 
 Think of this like a LEGO kit for websites.
 - **Next.js** is the box of LEGO bricks (the web app framework).
