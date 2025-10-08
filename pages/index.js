@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import UpcomingEvents from '../components/UpcomingEvents'
+import DiscoverEvents from '../components/DiscoverEvents'
 import NavBar from '../components/NavBar'
 
 export default function Home() {
@@ -27,7 +28,7 @@ export default function Home() {
       case 'upcoming':
         return <UpcomingEvents />
       case 'discover':
-        return <div>Discover content coming soon...</div>
+        return <DiscoverEvents />
       case 'about':
         return <div>About content coming soon...</div>
       default:

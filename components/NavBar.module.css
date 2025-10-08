@@ -4,6 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
   
   /* Spacing - 8px grid system */
   padding: 16px 32px;
@@ -31,6 +32,9 @@
   display: flex;
   gap: 32px;
   align-items: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   
   /* Responsive */
   @media (max-width: 768px) {
@@ -93,6 +97,7 @@
   /* Layout */
   display: flex;
   align-items: center;
+  gap: 16px;
 }
 
 .profilePlaceholder {
@@ -118,6 +123,87 @@
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .profilePlaceholder {
+    transition: none;
+  }
+}
+
+.loginButton {
+  /* Typography */
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #404040;
+  
+  /* Layout */
+  background: none;
+  border: 1px solid #e8e8e8;
+  border-radius: 0;
+  padding: 8px 16px;
+  cursor: pointer;
+  
+  /* Hover state */
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.loginButton:hover {
+  color: #000000;
+  border-color: #a0a0a0;
+}
+
+.loginButton:focus {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .loginButton {
+    transition: none;
+  }
+}
+
+.userEmail {
+  font-size: 14px;
+  font-weight: 400;
+  color: #404040;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logoutButton {
+  /* Typography */
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #404040;
+  
+  /* Layout */
+  background: none;
+  border: 1px solid #e8e8e8;
+  border-radius: 0;
+  padding: 8px 16px;
+  cursor: pointer;
+  
+  /* Hover state */
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.logoutButton:hover {
+  color: #000000;
+  border-color: #a0a0a0;
+}
+
+.logoutButton:focus {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .logoutButton {
     transition: none;
   }
 }

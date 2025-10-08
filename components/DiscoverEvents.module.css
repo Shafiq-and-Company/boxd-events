@@ -1,0 +1,351 @@
+/* DiscoverEvents Component - Hyper Minimal CSS */
+/* Johnny Ive Minimalism - Component-Specific Styles */
+
+.discoverEvents {
+  max-width: 100%;
+  padding: 32px 16px;
+  margin: 0 auto;
+}
+
+.discoverEvents h2 {
+  text-align: left;
+  margin-bottom: 32px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #000000;
+  letter-spacing: -0.5px;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 32px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.searchContainer {
+  display: flex;
+  width: 100%;
+  max-width: 400px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 0;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+  transition: border-color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #000000;
+}
+
+.searchInput::placeholder {
+  color: #a0a0a0;
+}
+
+.gameFilters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gameButton {
+  padding: 8px 16px;
+  border: 1px solid #e8e8e8;
+  background-color: #ffffff;
+  color: #404040;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-radius: 0;
+  white-space: nowrap;
+}
+
+.gameButton:hover {
+  border-color: #a0a0a0;
+  color: #000000;
+}
+
+.gameButton.active {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.eventsList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.eventCard {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 0;
+  padding: 32px;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  position: relative;
+  cursor: pointer;
+}
+
+.eventCard:hover {
+  transform: scale(1.01);
+  border-color: #a0a0a0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.eventHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex: 0 0 auto;
+  min-height: 60px;
+}
+
+.eventTitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #000000;
+  line-height: 1.2;
+  letter-spacing: 0px;
+  min-height: 40px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.gameTitle {
+  display: inline-block;
+  background: #f8f8f8;
+  color: #404040;
+  padding: 6px 12px;
+  border-radius: 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  border: 1px solid #d0d0d0;
+  flex-shrink: 0;
+  white-space: nowrap;
+  align-self: flex-start;
+  order: -1;
+}
+
+.eventDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.eventDetails > * {
+  flex-shrink: 0;
+}
+
+.eventDate {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #404040;
+  font-weight: 400;
+  font-size: 0.875rem;
+  min-height: 20px;
+  order: 1;
+}
+
+.eventLocation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #707070;
+  font-size: 0.875rem;
+  font-weight: 400;
+  min-height: 40px;
+  order: 2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.eventDescription {
+  color: #404040;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-top: 8px;
+  font-weight: 400;
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  order: 3;
+}
+
+/* State Classes */
+.loading, .error, .noEvents {
+  text-align: left;
+  padding: 32px;
+  color: #707070;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.error {
+  color: #000000;
+  background: #f8f8f8;
+  border: 1px solid #d0d0d0;
+  border-radius: 0;
+  padding: 24px;
+}
+
+.noEvents {
+  color: #a0a0a0;
+  font-style: normal;
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+  .filters {
+    gap: 16px;
+  }
+  
+  .searchContainer {
+    max-width: 100%;
+  }
+  
+  .gameFilters {
+    gap: 6px;
+  }
+  
+  .gameButton {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
+  .eventsList {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .eventCard {
+    min-height: 200px;
+    padding: 24px;
+  }
+  
+  .eventHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .eventTitle {
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
+  
+  .gameTitle {
+    align-self: flex-end;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .filters {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .eventsList {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  
+  .eventCard {
+    min-height: 260px;
+    padding: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .discoverEvents {
+    max-width: 1200px;
+    padding: 48px 32px;
+  }
+  
+  .discoverEvents h2 {
+    font-size: 2rem;
+    margin-bottom: 48px;
+  }
+  
+  .filters {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 48px;
+  }
+  
+  .eventsList {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  
+  .eventCard {
+    min-height: 320px;
+    padding: 40px;
+  }
+  
+  .eventTitle { font-size: 1.5rem; }
+  
+  .eventDate, .eventLocation { font-size: 1rem; }
+  .eventDescription { font-size: 1rem; }
+}
+
+/* Accessibility */
+.eventCard:focus-within {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+.searchInput:focus {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+.gameButton:focus {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .eventCard { transition: none; }
+  .eventCard:hover { transform: none; }
+  .searchInput { transition: none; }
+  .gameButton { transition: none; }
+}
+
+/* High Contrast */
+@media (prefers-contrast: high) {
+  .eventCard { border-color: #000000; }
+  .eventCard:hover { border-color: #000000; }
+  .searchInput { border-color: #000000; }
+  .gameButton { border-color: #000000; }
+}

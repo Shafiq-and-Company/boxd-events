@@ -1,7 +1,11 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
+import { useAuth } from '../lib/AuthContext'
 import styles from './NavBar.module.css'
 
 export default function NavBar({ activeTab, onTabChange }) {
+  const router = useRouter()
+  const { user, signOut } = useAuth()
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>BOXD</div>
@@ -26,6 +30,24 @@ export default function NavBar({ activeTab, onTabChange }) {
         </button>
       </div>
       <div className={styles.profile}>
+        {user ? (
+          <>
+            <span className={styles.userEmail}>{user.email}</span>
+            <button 
+              onClick={signOut}
+              className={styles.logoutButton}
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <button 
+            onClick={() => router.push('/login')}
+            className={styles.loginButton}
+          >
+            Login
+          </button>
+        )}
         <div className={styles.profilePlaceholder}></div>
       </div>
     </nav>
