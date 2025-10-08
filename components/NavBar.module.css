@@ -1,0 +1,123 @@
+/* NavBar Component - Johnny Ive Minimalism */
+.navbar {
+  /* Layout */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  /* Spacing - 8px grid system */
+  padding: 16px 32px;
+  margin: 0;
+  
+  /* Color */
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E8E8E8;
+  
+  /* Typography */
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    padding: 16px 24px;
+  }
+  
+  @media (max-width: 320px) {
+    padding: 16px;
+  }
+}
+
+.navLinks {
+  /* Layout */
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    gap: 24px;
+  }
+  
+  @media (max-width: 320px) {
+    gap: 16px;
+  }
+}
+
+.navLink {
+  /* Typography */
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #404040;
+  text-decoration: none;
+  
+  /* Layout */
+  display: block;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  
+  /* Hover state */
+  transition: color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.navLink:hover {
+  color: #000000;
+}
+
+.navLink.active {
+  color: #000000;
+  font-weight: 500;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .navLink {
+    transition: none;
+  }
+}
+
+.logo {
+  /* Typography */
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  color: #000000;
+  
+  /* Layout */
+  display: block;
+}
+
+.profile {
+  /* Layout */
+  display: flex;
+  align-items: center;
+}
+
+.profilePlaceholder {
+  /* Dimensions */
+  width: 32px;
+  height: 32px;
+  
+  /* Styling */
+  background-color: #D0D0D0;
+  border-radius: 50%;
+  
+  /* Layout */
+  display: block;
+  
+  /* Hover state */
+  transition: background-color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.profilePlaceholder:hover {
+  background-color: #A0A0A0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .profilePlaceholder {
+    transition: none;
+  }
+}

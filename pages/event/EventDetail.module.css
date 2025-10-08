@@ -1,0 +1,215 @@
+/* BOXD Event Detail - Hyper Minimal CSS */
+/* Johnny Ive Minimalism - Event Page Styles */
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  min-height: calc(100vh - 80px);
+}
+
+.eventDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* Event Header */
+.eventHeader {
+  text-align: center;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.eventTitle {
+  font-size: 2.5rem;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  color: #000000;
+  margin-bottom: 16px;
+}
+
+.gameTitle {
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: #707070;
+  letter-spacing: 0px;
+}
+
+/* Event Content */
+.eventContent {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.eventInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.infoSection h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #000000;
+  letter-spacing: 0px;
+  margin: 0;
+}
+
+.dateTime {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.date {
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: #000000;
+  letter-spacing: 0px;
+}
+
+.time {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #707070;
+  letter-spacing: 0px;
+}
+
+.endTime {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #A0A0A0;
+  letter-spacing: 0px;
+}
+
+.location {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #000000;
+  letter-spacing: 0px;
+}
+
+.description {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #000000;
+  line-height: 1.5;
+  letter-spacing: 0px;
+}
+
+/* Event Actions */
+.eventActions {
+  display: flex;
+  justify-content: center;
+  padding-top: 32px;
+  border-top: 1px solid #E8E8E8;
+}
+
+.rsvpButton {
+  background: #000000;
+  color: #FFFFFF;
+  border: none;
+  padding: 16px 48px;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0px;
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  min-width: 160px;
+}
+
+.rsvpButton:hover {
+  background: #404040;
+  transform: scale(1.02);
+}
+
+.rsvpButton:active {
+  transform: scale(0.98);
+}
+
+/* Loading and Error States */
+.loading, .error {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #707070;
+  padding: 48px 0;
+}
+
+.error {
+  color: #000000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 32px 16px;
+  }
+  
+  .eventTitle {
+    font-size: 2rem;
+  }
+  
+  .eventDetail {
+    gap: 32px;
+  }
+  
+  .eventContent {
+    gap: 32px;
+  }
+  
+  .eventInfo {
+    gap: 24px;
+  }
+  
+  .rsvpButton {
+    width: 100%;
+    padding: 20px 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 24px 16px;
+  }
+  
+  .eventTitle {
+    font-size: 1.75rem;
+  }
+  
+  .eventDetail {
+    gap: 24px;
+  }
+  
+  .eventContent {
+    gap: 24px;
+  }
+  
+  .eventInfo {
+    gap: 20px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .rsvpButton {
+    transition: none;
+  }
+  
+  .rsvpButton:hover {
+    transform: none;
+  }
+  
+  .rsvpButton:active {
+    transform: none;
+  }
+}
