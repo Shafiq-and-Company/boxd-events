@@ -40,6 +40,45 @@ BOXD brand speaks with confident clarity and communal ambition. It favors clean,
 
 This mobile-first brand kit ensures consistent, accessible, and engaging experiences across all devices while maintaining BOXD's modern, collective identity.
 
+## MVP - Lightweight Events App
+
+BOXD Events is a streamlined platform for discovering and registering for events with integrated payment processing. The MVP focuses on core functionality: authentication, event discovery, payment, and confirmation.
+
+### Core Features
+
+#### **User Experience**
+- **Authentication**: Sign up and log in through Supabase Auth
+- **Event Discovery**: Browse public events with filtering and search
+- **Payment Integration**: Secure RSVP payments via Stripe
+- **Registration Confirmation**: Real-time payment confirmation and status updates
+- **User Dashboard**: View registered events and payment history
+
+#### **Admin Capabilities**
+- **Event Management**: Create, edit, and manage events
+- **User Management**: Monitor registrations and user activity
+- **Payment Tracking**: View transaction history and analytics
+
+#### **Technical Architecture**
+- **Backend**: Supabase for authentication, database, and real-time updates
+- **Hosting**: Netlify for deployment and serverless functions
+- **Payments**: Stripe for secure transaction processing
+- **Frontend**: Next.js with mobile-first responsive design
+
+### User Flow
+1. **Sign Up/Login** → Supabase Auth authentication
+2. **Browse Events** → Filter and search public events
+3. **Select Event** → View event details and pricing
+4. **Payment** → Secure Stripe checkout process
+5. **Confirmation** → Real-time registration confirmation
+6. **Dashboard** → Manage registered events
+
+### Key Principles
+- **Reliability**: Robust error handling and payment processing
+- **Simplicity**: Streamlined user flow with minimal friction
+- **Security**: Secure authentication and payment processing
+- **Performance**: Fast loading and responsive design
+- **Accessibility**: Mobile-first design with WCAG compliance
+
 ## Next + Netlify Starter
 
 Think of this like a LEGO kit for websites.
