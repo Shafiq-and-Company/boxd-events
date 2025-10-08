@@ -113,13 +113,17 @@ export default function EventDetail() {
                 <h3>Date & Time</h3>
                 <div className={styles.dateTime}>
                   <div className={styles.date}>{formatDate(event.starts_at)}</div>
-                  <div className={styles.time}>{formatTime(event.starts_at)}</div>
-                </div>
-                {event.ends_at && (
-                  <div className={styles.endTime}>
-                    Ends at {formatTime(event.ends_at)}
+                  <div className={styles.timeContainer}>
+                    <div className={styles.timeLabel}>Starts:</div>
+                    <div className={styles.time}>{formatTime(event.starts_at)}</div>
                   </div>
-                )}
+                  {event.ends_at && (
+                    <div className={styles.timeContainer}>
+                      <div className={styles.timeLabel}>Ends:</div>
+                      <div className={styles.time}>{formatTime(event.ends_at)}</div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {event.location && (
@@ -128,6 +132,16 @@ export default function EventDetail() {
                   <div className={styles.location}>
                     {event.location}
                     {event.city && `, ${event.city}`}
+                    {event.state && `, ${event.state}`}
+                  </div>
+                </div>
+              )}
+
+              {event.cost && (
+                <div className={styles.infoSection}>
+                  <h3>Price</h3>
+                  <div className={styles.price}>
+                    {event.cost} USD
                   </div>
                 </div>
               )}

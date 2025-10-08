@@ -67,27 +67,35 @@
 .dateTime {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .date {
   font-size: 1.125rem;
-  font-weight: 400;
+  font-weight: 500;
   color: #000000;
   letter-spacing: 0px;
+  margin-bottom: 8px;
+}
+
+.timeContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timeLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #707070;
+  letter-spacing: 0px;
+  min-width: 50px;
 }
 
 .time {
   font-size: 1rem;
   font-weight: 400;
-  color: #707070;
-  letter-spacing: 0px;
-}
-
-.endTime {
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: #A0A0A0;
+  color: #000000;
   letter-spacing: 0px;
 }
 
@@ -95,6 +103,20 @@
   font-size: 1rem;
   font-weight: 400;
   color: #000000;
+  letter-spacing: 0px;
+}
+
+.price {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #000000;
+  letter-spacing: 0px;
+}
+
+.state {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #707070;
   letter-spacing: 0px;
 }
 
