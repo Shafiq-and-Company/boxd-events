@@ -1,36 +1,53 @@
-/* NavBar Component - Johnny Ive Minimalism */
+/* NavBar Component - Luma-inspired minimalism */
 .navbar {
   /* Layout */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   
-  /* Spacing - 8px grid system */
-  padding: 8px 32px;
+  /* Spacing - reduced height */
+  padding: 12px 24px;
   margin: 0;
+  height: 60px;
   
-  /* Color */
-  background-color: #FFFFFF;
-  border-bottom: 1px solid #E8E8E8;
+  /* Background with gradient */
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.3);
   
   /* Typography */
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   
+  /* Transitions */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
   /* Responsive */
   @media (max-width: 768px) {
-    padding: 8px 24px;
+    padding: 10px 20px;
+    height: 56px;
   }
   
-  @media (max-width: 320px) {
-    padding: 8px;
+  @media (max-width: 480px) {
+    padding: 8px 16px;
+    height: 52px;
   }
+}
+
+.navbar.scrolled {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.8) 100%);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.2);
 }
 
 .navLinks {
   /* Layout */
   display: flex;
-  gap: 32px;
+  gap: 24px;
   align-items: center;
   position: absolute;
   left: 50%;
@@ -38,16 +55,16 @@
   
   /* Responsive */
   @media (max-width: 768px) {
-    gap: 24px;
+    gap: 20px;
   }
   
   @media (max-width: 480px) {
-    gap: 20px;
+    gap: 16px;
     font-size: 13px;
   }
   
   @media (max-width: 320px) {
-    gap: 16px;
+    gap: 12px;
     font-size: 12px;
   }
 }
@@ -56,8 +73,8 @@
   /* Typography */
   font-size: 14px;
   font-weight: 400;
-  line-height: 1.5;
-  color: #A0A0A0;
+  line-height: 1.4;
+  color: #6B7280;
   text-decoration: none;
   
   /* Layout */
@@ -65,19 +82,22 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 8px 12px;
+  border-radius: 6px;
   
   /* Hover state */
-  transition: color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navLink:hover {
-  color: #000000;
+  color: #111827;
+  background-color: rgba(243, 244, 246, 0.5);
 }
 
 .navLink.active {
-  color: #000000;
+  color: #111827;
   font-weight: 500;
+  background-color: rgba(243, 244, 246, 0.8);
 }
 
 /* Reduced motion support */
@@ -89,36 +109,39 @@
 
 .logo {
   /* Typography */
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.5px;
-  color: #A0A0A0;
+  letter-spacing: -0.3px;
+  color: #111827;
   
   /* Layout */
   display: block;
   cursor: pointer;
-  transition: color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 8px 12px;
+  border-radius: 6px;
 }
 
 .logo:hover {
-  color: #000000;
+  color: #374151;
+  background-color: rgba(243, 244, 246, 0.5);
 }
 
 .profile {
   /* Layout */
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   position: relative;
   
   /* Responsive */
   @media (max-width: 480px) {
-    gap: 12px;
+    gap: 8px;
   }
   
   @media (max-width: 320px) {
-    gap: 8px;
+    gap: 6px;
   }
 }
 
@@ -168,18 +191,18 @@
   /* Typography */
   font-size: 14px;
   font-weight: 400;
-  line-height: 1.5;
-  color: #A0A0A0;
+  line-height: 1.4;
+  color: #6B7280;
   
   /* Layout */
-  background: none;
-  border: 1px solid #e8e8e8;
-  border-radius: 0;
+  background: rgba(243, 244, 246, 0.5);
+  border: 1px solid rgba(229, 231, 235, 0.3);
+  border-radius: 6px;
   padding: 8px 16px;
   cursor: pointer;
   
   /* Hover state */
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
   
   /* Responsive */
   @media (max-width: 480px) {
@@ -194,8 +217,9 @@
 }
 
 .loginButton:hover {
-  color: #000000;
-  border-color: #a0a0a0;
+  color: #111827;
+  background: rgba(243, 244, 246, 0.8);
+  border-color: rgba(209, 213, 219, 0.5);
 }
 
 .loginButton:focus {
@@ -210,10 +234,49 @@
   }
 }
 
+.createEventButton {
+  /* Typography */
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #6B7280;
+  
+  /* Layout */
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  
+  /* Hover state */
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+  
+  @media (max-width: 320px) {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+}
+
+.createEventButton:hover {
+  color: #111827;
+  background-color: rgba(243, 244, 246, 0.5);
+}
+
 .userEmail {
   font-size: 14px;
   font-weight: 400;
-  color: #A0A0A0;
+  color: #6B7280;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   max-width: 200px;
   overflow: hidden;
@@ -239,64 +302,21 @@
   }
 }
 
-.logoutButton {
-  /* Typography */
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #A0A0A0;
-  
-  /* Layout */
-  background: none;
-  border: none;
-  border-radius: 0;
-  padding: 4px 8px;
-  cursor: pointer;
-  
-  /* Hover state */
-  transition: color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  
-  /* Responsive */
-  @media (max-width: 480px) {
-    font-size: 13px;
-    padding: 3px 6px;
-    display: none;
-  }
-  
-  @media (max-width: 320px) {
-    font-size: 12px;
-    padding: 2px 4px;
-    display: none;
-  }
-}
-
-.logoutButton:hover {
-  color: #000000;
-}
-
-.logoutButton:focus {
-  outline: 2px solid #000000;
-  outline-offset: 2px;
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .logoutButton {
-    transition: none;
-  }
-}
 
 .profileDropdown {
   /* Layout */
   position: absolute;
   top: 100%;
   right: 0;
-  background: #FFFFFF;
-  border: 1px solid #E8E8E8;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(229, 231, 235, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   min-width: 200px;
+  margin-top: 8px;
   
   /* Responsive */
   @media (max-width: 480px) {
@@ -312,13 +332,13 @@
 
 .profileDropdownItem {
   padding: 12px 16px;
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: 1px solid rgba(243, 244, 246, 0.5);
 }
 
 .profileEmail {
   font-size: 14px;
   font-weight: 400;
-  color: #A0A0A0;
+  color: #6B7280;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   display: block;
   overflow: hidden;
@@ -339,20 +359,20 @@
   /* Typography */
   font-size: 14px;
   font-weight: 400;
-  line-height: 1.5;
-  color: #A0A0A0;
+  line-height: 1.4;
+  color: #6B7280;
   
   /* Layout */
   background: none;
   border: none;
-  border-radius: 0;
+  border-radius: 6px;
   padding: 12px 16px;
   cursor: pointer;
   width: 100%;
   text-align: left;
   
   /* Hover state */
-  transition: color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
   
   /* Responsive */
   @media (max-width: 480px) {
@@ -367,6 +387,6 @@
 }
 
 .profileLogoutButton:hover {
-  color: #000000;
-  background-color: #F8F8F8;
+  color: #111827;
+  background-color: rgba(243, 244, 246, 0.8);
 }

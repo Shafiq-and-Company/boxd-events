@@ -7,6 +7,7 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
   const router = useRouter()
   const { user, signOut } = useAuth()
   const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const profileRef = useRef(null)
 
   useEffect(() => {
@@ -16,14 +17,22 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
       }
     }
 
+    function handleScroll() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      setIsScrolled(scrollTop > 10)
+    }
+
     document.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('scroll', handleScroll)
+    
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('scroll', handleScroll)
     }
   }, [])
 
   return (
-    <nav className={styles.navbar}>
+    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
       <div 
         className={styles.logo}
         onClick={() => onTabChange && onTabChange('discover')}
@@ -56,23 +65,19 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
           >
             My Events
           </button>
-          <button 
-            onClick={() => onTabChange && onTabChange('about')} 
-            className={`${styles.navLink} ${activeTab === 'about' ? styles.active : ''}`}
-          >
-            About
-          </button>
         </div>
       )}
       <div className={styles.profile} ref={profileRef}>
         {user ? (
           <>
-            <span className={styles.userEmail}>{user.email}</span>
             <button 
-              onClick={signOut}
-              className={styles.logoutButton}
+              onClick={() => {
+                // TODO: Add create event functionality
+                console.log('Create Event clicked')
+              }}
+              className={styles.createEventButton}
             >
-              Logout
+              Create Event
             </button>
             <div 
               className={styles.profilePlaceholder}

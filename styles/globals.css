@@ -8,6 +8,7 @@ html { font-size: 16px; line-height: 1.5; }
 body { 
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica', 'Arial', sans-serif;
   background: #ffffff; color: #000000; min-height: 100vh; 
+  padding-top: 60px; /* Account for fixed navbar */
 }
 
 /* Typography Scale */

@@ -2,7 +2,7 @@
 
 ## Brand Kit - Johnny Ive Minimalism
 
-BOXD embodies the design principles of luma.com, or lu.ma
+BOXD embodies the design principles of luma.com, or lu.ma. We're limiting our colors to black, white, and everything in between
 
 ### Minimalist Design Principles
 
