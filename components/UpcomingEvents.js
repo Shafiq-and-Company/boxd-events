@@ -70,6 +70,7 @@ export default function UpcomingEvents() {
   return (
     <div className={styles.upcomingEvents}>
       <h2>Upcoming Events</h2>
+      <p className={styles.tagline}>Find out what's happening near you</p>
       {events.length === 0 ? (
         <div className={styles.noEvents}>No upcoming events found.</div>
       ) : (
@@ -80,30 +81,38 @@ export default function UpcomingEvents() {
               className={styles.eventCard}
               onClick={() => handleEventClick(event.id)}
             >
-              <div className={styles.eventHeader}>
-                <h3 className={styles.eventTitle}>{event.title}</h3>
-                {event.game_title && (
-                  <span className={styles.gameTitle}>{event.game_title}</span>
-                )}
+              <div className={styles.eventImage}>
+                <div className={styles.imagePlaceholder}>
+                  {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
+                </div>
               </div>
               
-              <div className={styles.eventDetails}>
-                <div className={styles.eventDate}>
-                  📅 {formatDate(event.starts_at)}
+              <div className={styles.eventContent}>
+                <div className={styles.eventHeader}>
+                  <h3 className={styles.eventTitle}>{event.title}</h3>
+                  {event.game_title && (
+                    <span className={styles.gameTitle}>{event.game_title}</span>
+                  )}
                 </div>
                 
-                {event.location && (
-                  <div className={styles.eventLocation}>
-                    📍 {event.location}
-                    {event.city && `, ${event.city}`}
+                <div className={styles.eventDetails}>
+                  <div className={styles.eventDate}>
+                    {formatDate(event.starts_at)}
                   </div>
-                )}
-                
-                {event.description && (
-                  <div className={styles.eventDescription}>
-                    {event.description}
-                  </div>
-                )}
+                  
+                  {event.location && (
+                    <div className={styles.eventLocation}>
+                      {event.location}
+                      {event.city && `, ${event.city}`}
+                    </div>
+                  )}
+                  
+                  {event.description && (
+                    <div className={styles.eventDescription}>
+                      {event.description}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ))}

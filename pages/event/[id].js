@@ -214,63 +214,75 @@ export default function EventDetail() {
         <div className={styles.eventDetail}>
           <div className={styles.eventHero}>
             <div className={styles.eventImage}>
-              <div className={styles.eventImagePlaceholder}>
-                <span className={styles.eventImageIcon}>🎮</span>
+              <div className={styles.eventHeader}>
+                {event.game_title && (
+                  <div className={styles.gameTitle}>{event.game_title}</div>
+                )}
+                <h1 className={styles.eventTitle}>{event.title}</h1>
               </div>
-            </div>
-            
-            <div className={styles.eventHeader}>
-              {event.game_title && (
-                <div className={styles.gameTitle}>{event.game_title}</div>
-              )}
-              <h1 className={styles.eventTitle}>{event.title}</h1>
             </div>
           </div>
 
           <div className={styles.eventContent}>
-            <div className={styles.eventInfo}>
-              <div className={styles.infoSection}>
-                <h3>Date & Time</h3>
-                <div className={styles.dateTime}>
-                  <div className={styles.date}>{formatDate(event.starts_at)}</div>
-                  <div className={styles.timeContainer}>
-                    <div className={styles.timeLabel}>Starts:</div>
-                    <div className={styles.time}>{formatTime(event.starts_at)}</div>
-                  </div>
-                  {event.ends_at && (
+            <div className={styles.eventCards}>
+              <div className={styles.eventCard}>
+                <div className={styles.cardHeader}>
+                  <h3>Date & Time</h3>
+                </div>
+                <div className={styles.cardContent}>
+                  <div className={styles.dateTime}>
+                    <div className={styles.date}>{formatDate(event.starts_at)}</div>
                     <div className={styles.timeContainer}>
-                      <div className={styles.timeLabel}>Ends:</div>
-                      <div className={styles.time}>{formatTime(event.ends_at)}</div>
+                      <div className={styles.timeLabel}>Starts:</div>
+                      <div className={styles.time}>{formatTime(event.starts_at)}</div>
                     </div>
-                  )}
+                    {event.ends_at && (
+                      <div className={styles.timeContainer}>
+                        <div className={styles.timeLabel}>Ends:</div>
+                        <div className={styles.time}>{formatTime(event.ends_at)}</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {event.location && (
-                <div className={styles.infoSection}>
-                  <h3>Location</h3>
-                  <div className={styles.location}>
-                    {event.location}
-                    {event.city && `, ${event.city}`}
-                    {event.state && `, ${event.state}`}
+                <div className={styles.eventCard}>
+                  <div className={styles.cardHeader}>
+                    <h3>Location</h3>
+                  </div>
+                  <div className={styles.cardContent}>
+                    <div className={styles.location}>
+                      {event.location}
+                      {event.city && `, ${event.city}`}
+                      {event.state && `, ${event.state}`}
+                    </div>
                   </div>
                 </div>
               )}
 
               {event.cost && (
-                <div className={styles.infoSection}>
-                  <h3>Price</h3>
-                  <div className={styles.price}>
-                    {event.cost} USD
+                <div className={styles.eventCard}>
+                  <div className={styles.cardHeader}>
+                    <h3>Price</h3>
+                  </div>
+                  <div className={styles.cardContent}>
+                    <div className={styles.price}>
+                      {event.cost} USD
+                    </div>
                   </div>
                 </div>
               )}
 
               {event.description && (
-                <div className={styles.infoSection}>
-                  <h3>About This Event</h3>
-                  <div className={styles.description}>
-                    {event.description}
+                <div className={styles.eventCard}>
+                  <div className={styles.cardHeader}>
+                    <h3>About This Event</h3>
+                  </div>
+                  <div className={styles.cardContent}>
+                    <div className={styles.description}>
+                      {event.description}
+                    </div>
                   </div>
                 </div>
               )}

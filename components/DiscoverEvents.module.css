@@ -9,11 +9,21 @@
 
 .discoverEvents h2 {
   text-align: left;
-  margin-bottom: 32px;
+  margin-bottom: 8px;
   font-size: 1.5rem;
   font-weight: 500;
   color: #000000;
   letter-spacing: -0.5px;
+}
+
+.tagline {
+  text-align: left;
+  margin-bottom: 32px;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #707070;
+  line-height: 1.5;
+  letter-spacing: 0px;
 }
 
 .filters {
@@ -26,67 +36,71 @@
   margin-right: auto;
 }
 
-.searchContainer {
-  display: flex;
-  width: 100%;
-  max-width: 400px;
-}
-
-.searchInput {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #e8e8e8;
-  border-radius: 0;
-  font-size: 14px;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background-color: #ffffff;
-  color: #000000;
-  transition: border-color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.searchInput:focus {
-  outline: none;
-  border-color: #000000;
-}
-
-.searchInput::placeholder {
-  color: #a0a0a0;
-}
-
 .gameFilters {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
 }
 
-.gameButton {
-  padding: 8px 16px;
+.gameFilterCard {
+  background: #ffffff;
   border: 1px solid #e8e8e8;
-  background-color: #ffffff;
-  color: #404040;
-  font-size: 14px;
-  font-weight: 400;
-  cursor: pointer;
+  border-radius: 8px;
+  padding: 0;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border-radius: 0;
-  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
 }
 
-.gameButton:hover {
+.gameFilterCard:hover {
+  transform: translateY(-2px);
   border-color: #a0a0a0;
-  color: #000000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-.gameButton.active {
-  background-color: #000000;
-  color: #ffffff;
+.gameFilterCard.active {
   border-color: #000000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Filter Background with Centered Text */
+.filterBackground {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  background: #f8f8f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(120, 120, 120, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(120, 120, 120, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 120, 120, 0.05) 0%, transparent 50%);
+}
+
+.filterTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000000;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  letter-spacing: -0.25px;
 }
 
 .eventsList {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -94,63 +108,105 @@
 .eventCard {
   background: #ffffff;
   border: 1px solid #e8e8e8;
-  border-radius: 0;
-  padding: 32px;
+  border-radius: 8px;
+  padding: 0;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
   flex-direction: column;
-  min-height: 280px;
+  min-height: 260px;
   position: relative;
   cursor: pointer;
+  overflow: hidden;
 }
 
 .eventCard:hover {
-  transform: scale(1.01);
+  transform: translateY(-2px);
   border-color: #a0a0a0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Image Section */
+.eventImage {
+  width: 100%;
+  height: 100px;
+  background: #f8f8f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.imagePlaceholder {
+  width: 40px;
+  height: 40px;
+  background: #d0d0d0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #707070;
+  letter-spacing: 0px;
+}
+
+/* Content Section */
+.eventContent {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .eventHeader {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 4px;
+  margin-bottom: 10px;
   flex: 0 0 auto;
-  min-height: 60px;
 }
 
 .eventTitle {
-  font-size: 1.25rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: #000000;
   line-height: 1.2;
-  letter-spacing: 0px;
-  min-height: 40px;
+  letter-spacing: -0.25px;
+  height: 2.2rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin-bottom: 4px;
 }
 
 .gameTitle {
   display: inline-block;
   background: #f8f8f8;
   color: #404040;
-  padding: 6px 12px;
-  border-radius: 0;
-  font-size: 0.75rem;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
   font-weight: 400;
   border: 1px solid #d0d0d0;
   flex-shrink: 0;
-  white-space: nowrap;
   align-self: flex-start;
   order: -1;
+  min-height: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 1.1;
 }
 
 .eventDetails {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 4px;
   flex: 1;
   justify-content: flex-start;
 }
@@ -160,43 +216,44 @@
 }
 
 .eventDate {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   color: #404040;
   font-weight: 400;
-  font-size: 0.875rem;
-  min-height: 20px;
-  order: 1;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  margin-bottom: 1px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .eventLocation {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   color: #707070;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 400;
-  min-height: 40px;
-  order: 2;
+  line-height: 1.2;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin-bottom: 2px;
+  white-space: nowrap;
 }
 
 .eventDescription {
   color: #404040;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  margin-top: 8px;
+  font-size: 0.75rem;
+  line-height: 1.3;
   font-weight: 400;
   flex: 1;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
-  order: 3;
 }
 
 /* State Classes */
@@ -227,17 +284,22 @@
     gap: 16px;
   }
   
-  .searchContainer {
-    max-width: 100%;
-  }
-  
   .gameFilters {
-    gap: 6px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
   
-  .gameButton {
-    padding: 6px 12px;
-    font-size: 13px;
+  .gameFilterCard {
+    min-height: 100px;
+  }
+  
+  .filterBackground {
+    min-height: 100px;
+  }
+  
+  .filterTitle {
+    font-size: 0.85rem;
+    max-width: 85%;
   }
   
   .eventsList {
@@ -246,8 +308,21 @@
   }
   
   .eventCard {
-    min-height: 200px;
-    padding: 24px;
+    min-height: 240px;
+  }
+  
+  .eventImage {
+    height: 100px;
+  }
+  
+  .eventContent {
+    padding: 14px;
+  }
+  
+  .gameTitle {
+    min-height: 14px;
+    font-size: 0.6rem;
+    padding: 2px 5px;
   }
   
   .eventHeader {
@@ -267,20 +342,43 @@
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
-  .filters {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+  .gameFilters {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  
+  .gameFilterCard {
+    min-height: 110px;
+  }
+  
+  .filterBackground {
+    min-height: 110px;
+  }
+  
+  .filterTitle {
+    font-size: 0.9rem;
   }
   
   .eventsList {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
   
   .eventCard {
-    min-height: 260px;
-    padding: 32px;
+    min-height: 250px;
+  }
+  
+  .eventImage {
+    height: 90px;
+  }
+  
+  .eventContent {
+    padding: 14px;
+  }
+  
+  .gameTitle {
+    min-height: 16px;
+    font-size: 0.65rem;
   }
 }
 
@@ -292,30 +390,60 @@
   
   .discoverEvents h2 {
     font-size: 2rem;
+    margin-bottom: 12px;
+  }
+  
+  .tagline {
+    font-size: 1.125rem;
     margin-bottom: 48px;
   }
   
-  .filters {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 48px;
+  .gameFilters {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  
+  .gameFilterCard {
+    min-height: 120px;
+  }
+  
+  .filterBackground {
+    min-height: 120px;
+  }
+  
+  .filterTitle {
+    font-size: 1rem;
   }
   
   .eventsList {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
   }
   
   .eventCard {
-    min-height: 320px;
-    padding: 40px;
+    min-height: 260px;
   }
   
-  .eventTitle { font-size: 1.5rem; }
+  .eventImage {
+    height: 100px;
+  }
   
-  .eventDate, .eventLocation { font-size: 1rem; }
-  .eventDescription { font-size: 1rem; }
+  .eventContent {
+    padding: 16px;
+  }
+  
+  .gameTitle {
+    min-height: 16px;
+    font-size: 0.65rem;
+  }
+  
+  .eventTitle { 
+    font-size: 0.9rem; 
+    height: 2.2rem;
+  }
+  
+  .eventDate, .eventLocation { font-size: 0.75rem; }
+  .eventDescription { font-size: 0.75rem; }
 }
 
 /* Accessibility */

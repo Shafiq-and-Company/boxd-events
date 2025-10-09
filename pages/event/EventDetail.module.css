@@ -2,66 +2,131 @@
 /* Johnny Ive Minimalism - Event Page Styles */
 
 .container {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 48px 24px;
+  padding: 32px 16px;
   min-height: calc(100vh - 80px);
 }
 
 .eventDetail {
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 32px;
 }
 
-/* Event Header */
+/* Event Hero Section */
+.eventHero {
+  margin-bottom: 32px;
+}
+
+.eventImage {
+  width: 100%;
+  height: 200px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e8e8e8;
+  overflow: hidden;
+  position: relative;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(120, 120, 120, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(120, 120, 120, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 120, 120, 0.05) 0%, transparent 50%);
+}
+
+.eventImage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+  z-index: 1;
+}
+
+/* Removed icon placeholder - no longer needed */
+
+/* Event Header Overlay */
 .eventHeader {
-  text-align: center;
-  padding-bottom: 32px;
-  border-bottom: 1px solid #E8E8E8;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 32px;
+  z-index: 3;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
 }
 
 .eventTitle {
-  font-size: 2.5rem;
-  font-weight: 400;
+  font-size: 2rem;
+  font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.5px;
-  color: #000000;
-  margin-bottom: 16px;
+  color: #ffffff;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .gameTitle {
-  font-size: 1.125rem;
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.9);
+  color: #404040;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.875rem;
   font-weight: 400;
-  color: #707070;
-  letter-spacing: 0px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 0;
+  backdrop-filter: blur(10px);
 }
 
 /* Event Content */
 .eventContent {
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 24px;
 }
 
-.eventInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-.infoSection {
-  display: flex;
-  flex-direction: column;
+.eventCards {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 16px;
 }
 
-.infoSection h3 {
-  font-size: 1.25rem;
+.eventCard {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.eventCard:hover {
+  border-color: #a0a0a0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.cardHeader {
+  background: #f8f8f8;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.cardHeader h3 {
+  font-size: 0.875rem;
   font-weight: 500;
-  color: #000000;
-  letter-spacing: 0px;
+  color: #404040;
+  letter-spacing: -0.25px;
   margin: 0;
+  text-transform: uppercase;
+}
+
+.cardContent {
+  padding: 20px;
 }
 
 .dateTime {
@@ -71,10 +136,10 @@
 }
 
 .date {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 500;
   color: #000000;
-  letter-spacing: 0px;
+  letter-spacing: -0.25px;
   margin-bottom: 8px;
 }
 
@@ -82,80 +147,132 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-bottom: 4px;
 }
 
 .timeLabel {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: #707070;
   letter-spacing: 0px;
-  min-width: 50px;
+  min-width: 60px;
+  text-transform: uppercase;
 }
 
 .time {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 400;
   color: #000000;
   letter-spacing: 0px;
 }
 
 .location {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 400;
   color: #000000;
   letter-spacing: 0px;
+  line-height: 1.4;
 }
 
 .price {
   font-size: 1.125rem;
-  font-weight: 500;
+  font-weight: 600;
   color: #000000;
-  letter-spacing: 0px;
+  letter-spacing: -0.25px;
 }
 
 .state {
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-weight: 400;
   color: #707070;
   letter-spacing: 0px;
 }
 
 .description {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 400;
   color: #000000;
-  line-height: 1.5;
+  line-height: 1.6;
   letter-spacing: 0px;
 }
 
 /* Event Actions */
 .eventActions {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 24px;
   display: flex;
   justify-content: center;
-  padding-top: 32px;
-  border-top: 1px solid #E8E8E8;
+  margin-top: 24px;
 }
 
 .rsvpButton {
   background: #000000;
   color: #FFFFFF;
   border: none;
-  padding: 16px 48px;
-  font-size: 1rem;
+  padding: 16px 32px;
+  font-size: 0.875rem;
   font-weight: 500;
   letter-spacing: 0px;
   cursor: pointer;
+  border-radius: 6px;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  min-width: 160px;
+  min-width: 140px;
 }
 
 .rsvpButton:hover {
   background: #404040;
-  transform: scale(1.02);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .rsvpButton:active {
-  transform: scale(0.98);
+  transform: translateY(0);
+}
+
+.rsvpButton:disabled {
+  background: #a0a0a0;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.rsvpButton:disabled:hover {
+  background: #a0a0a0;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Success and Error Messages */
+.successMessage {
+  background: #f0f8f0;
+  border: 1px solid #d0e8d0;
+  border-radius: 6px;
+  padding: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #2d5a2d;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.errorMessage {
+  background: #f8f0f0;
+  border: 1px solid #e8d0d0;
+  border-radius: 6px;
+  padding: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #5a2d2d;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.paymentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
 }
 
 /* Loading and Error States */
@@ -169,55 +286,172 @@
 
 .error {
   color: #000000;
+  background: #f8f8f8;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  padding: 24px;
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .container {
-    padding: 32px 16px;
+    padding: 16px;
+  }
+  
+  .eventHero {
+    margin-bottom: 20px;
+  }
+  
+  .eventImage {
+    height: 140px;
+  }
+  
+  .eventHeader {
+    padding: 16px;
   }
   
   .eventTitle {
-    font-size: 2rem;
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+  
+  .gameTitle {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    margin-bottom: 8px;
   }
   
   .eventDetail {
-    gap: 32px;
+    gap: 20px;
   }
   
   .eventContent {
-    gap: 32px;
+    gap: 16px;
   }
   
-  .eventInfo {
-    gap: 24px;
+  .eventCards {
+    gap: 12px;
+  }
+  
+  .cardHeader {
+    padding: 12px 16px;
+  }
+  
+  .cardHeader h3 {
+    font-size: 0.75rem;
+  }
+  
+  .cardContent {
+    padding: 16px;
+  }
+  
+  .date {
+    font-size: 0.875rem;
+  }
+  
+  .timeLabel {
+    font-size: 0.7rem;
+    min-width: 50px;
+  }
+  
+  .time {
+    font-size: 0.8rem;
+  }
+  
+  .location {
+    font-size: 0.8rem;
+  }
+  
+  .price {
+    font-size: 1rem;
+  }
+  
+  .description {
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+  
+  .eventActions {
+    padding: 16px;
+    margin-top: 16px;
   }
   
   .rsvpButton {
     width: 100%;
-    padding: 20px 48px;
+    padding: 16px 20px;
+    font-size: 0.875rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 768px) and (max-width: 1023px) {
   .container {
-    padding: 24px 16px;
+    padding: 32px 24px;
+  }
+  
+  .eventImage {
+    height: 180px;
+  }
+  
+  .eventHeader {
+    padding: 24px;
   }
   
   .eventTitle {
     font-size: 1.75rem;
   }
   
+  .eventCards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .eventActions {
+    padding: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 40px 32px;
+  }
+  
+  .eventHero {
+    margin-bottom: 32px;
+  }
+  
+  .eventImage {
+    height: 200px;
+  }
+  
+  .eventHeader {
+    padding: 32px;
+  }
+  
+  .eventTitle {
+    font-size: 2rem;
+  }
+  
+  .gameTitle {
+    font-size: 0.875rem;
+    padding: 6px 12px;
+  }
+  
   .eventDetail {
-    gap: 24px;
+    gap: 32px;
   }
   
   .eventContent {
     gap: 24px;
   }
   
-  .eventInfo {
-    gap: 20px;
+  .eventCards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  
+  .eventActions {
+    padding: 28px;
+    margin-top: 24px;
   }
 }
 

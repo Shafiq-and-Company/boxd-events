@@ -7,7 +7,6 @@ export default function DiscoverEvents() {
   const [gameTitles, setGameTitles] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [searchTerm, setSearchTerm] = useState('')
   const [selectedGame, setSelectedGame] = useState('all')
 
   useEffect(() => {
@@ -59,22 +58,14 @@ export default function DiscoverEvents() {
     window.open(`/event/${eventId}`, '_blank')
   }
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value)
-  }
-
   const handleGameChange = (gameTitle) => {
     setSelectedGame(gameTitle)
   }
 
   const filteredEvents = events.filter(event => {
-    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.game_title?.toLowerCase().includes(searchTerm.toLowerCase())
-    
     const matchesGame = selectedGame === 'all' || event.game_title === selectedGame
     
-    return matchesSearch && matchesGame
+    return matchesGame
   })
 
   if (loading) {
@@ -98,41 +89,36 @@ export default function DiscoverEvents() {
   return (
     <div className={styles.discoverEvents}>
       <h2>Discover Events</h2>
+      <p className={styles.tagline}>Explore gaming events and tournaments</p>
       
       <div className={styles.filters}>
-        <div className={styles.searchContainer}>
-          <input
-            type="text"
-            placeholder="Search events..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className={styles.searchInput}
-          />
-        </div>
-        
         <div className={styles.gameFilters}>
-          <button
+          <div 
             onClick={() => handleGameChange('all')}
-            className={`${styles.gameButton} ${selectedGame === 'all' ? styles.active : ''}`}
+            className={`${styles.gameFilterCard} ${selectedGame === 'all' ? styles.active : ''}`}
           >
-            All Games
-          </button>
+            <div className={styles.filterBackground}>
+              <span className={styles.filterTitle}>All Games</span>
+            </div>
+          </div>
           {gameTitles.map(gameTitle => (
-            <button
+            <div
               key={gameTitle}
               onClick={() => handleGameChange(gameTitle)}
-              className={`${styles.gameButton} ${selectedGame === gameTitle ? styles.active : ''}`}
+              className={`${styles.gameFilterCard} ${selectedGame === gameTitle ? styles.active : ''}`}
             >
-              {gameTitle}
-            </button>
+              <div className={styles.filterBackground}>
+                <span className={styles.filterTitle}>{gameTitle}</span>
+              </div>
+            </div>
           ))}
         </div>
       </div>
 
       {filteredEvents.length === 0 ? (
         <div className={styles.noEvents}>
-          {searchTerm || selectedGame !== 'all' 
-            ? 'No events match your search criteria.' 
+          {selectedGame !== 'all' 
+            ? 'No events match your filter criteria.' 
             : 'No events found.'}
         </div>
       ) : (
@@ -143,30 +129,38 @@ export default function DiscoverEvents() {
               className={styles.eventCard}
               onClick={() => handleEventClick(event.id)}
             >
-              <div className={styles.eventHeader}>
-                <h3 className={styles.eventTitle}>{event.title}</h3>
-                {event.game_title && (
-                  <span className={styles.gameTitle}>{event.game_title}</span>
-                )}
+              <div className={styles.eventImage}>
+                <div className={styles.imagePlaceholder}>
+                  {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
+                </div>
               </div>
               
-              <div className={styles.eventDetails}>
-                <div className={styles.eventDate}>
-                  📅 {formatDate(event.starts_at)}
+              <div className={styles.eventContent}>
+                <div className={styles.eventHeader}>
+                  <h3 className={styles.eventTitle}>{event.title}</h3>
+                  {event.game_title && (
+                    <span className={styles.gameTitle}>{event.game_title}</span>
+                  )}
                 </div>
                 
-                {event.location && (
-                  <div className={styles.eventLocation}>
-                    📍 {event.location}
-                    {event.city && `, ${event.city}`}
+                <div className={styles.eventDetails}>
+                  <div className={styles.eventDate}>
+                    {formatDate(event.starts_at)}
                   </div>
-                )}
-                
-                {event.description && (
-                  <div className={styles.eventDescription}>
-                    {event.description}
-                  </div>
-                )}
+                  
+                  {event.location && (
+                    <div className={styles.eventLocation}>
+                      {event.location}
+                      {event.city && `, ${event.city}`}
+                    </div>
+                  )}
+                  
+                  {event.description && (
+                    <div className={styles.eventDescription}>
+                      {event.description}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ))}
