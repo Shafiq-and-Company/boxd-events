@@ -1,15 +1,19 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import styles from './PaymentConfirmation.module.css'
 
 export default function PaymentConfirmation({ message, onClose }) {
   const router = useRouter()
+  const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
     // Auto-redirect to discover page after 3 seconds if no message
     if (!message) {
       const timer = setTimeout(() => {
-        router.push('/?tab=discover')
+        setIsVisible(false)
+        setTimeout(() => {
+          router.push('/?tab=discover')
+        }, 300)
       }, 3000)
       
       return () => clearTimeout(timer)
@@ -17,15 +21,18 @@ export default function PaymentConfirmation({ message, onClose }) {
   }, [message, router])
 
   const handleContinue = () => {
-    if (onClose) {
-      onClose()
-    }
-    router.push('/?tab=discover')
+    setIsVisible(false)
+    setTimeout(() => {
+      if (onClose) {
+        onClose()
+      }
+      router.push('/?tab=discover')
+    }, 300)
   }
 
   if (!message) {
     return (
-      <div className={styles.confirmationContainer}>
+      <div className={`${styles.confirmationContainer} ${!isVisible ? styles.fadeOut : ''}`}>
         <div className={styles.confirmationCard}>
           <div className={styles.successIcon}>✅</div>
           <h2 className={styles.title}>Payment Successful!</h2>
@@ -47,7 +54,7 @@ export default function PaymentConfirmation({ message, onClose }) {
   }
 
   return (
-    <div className={styles.confirmationContainer}>
+    <div className={`${styles.confirmationContainer} ${!isVisible ? styles.fadeOut : ''}`}>
       <div className={styles.confirmationCard}>
         <div className={styles.successIcon}>✅</div>
         <h2 className={styles.title}>Success!</h2>

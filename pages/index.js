@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import UpcomingEvents from '../components/UpcomingEvents'
 import DiscoverEvents from '../components/DiscoverEvents'
+import MyEvents from '../components/MyEvents'
 import NavBar from '../components/NavBar'
 import PaymentConfirmation from '../components/PaymentConfirmation'
 
@@ -50,6 +51,8 @@ export default function Home() {
         return <UpcomingEvents />
       case 'discover':
         return <DiscoverEvents />
+      case 'myEvents':
+        return <MyEvents />
       case 'about':
         return <div>About content coming soon...</div>
       default:
@@ -68,10 +71,12 @@ export default function Home() {
       flex: 1
     }}>
       <NavBar activeTab={activeTab} onTabChange={handleTabChange} />
-      <PaymentConfirmation 
-        message={successMessage} 
-        onClose={handleCloseMessage}
-      />
+      {successMessage && (
+        <PaymentConfirmation 
+          message={successMessage} 
+          onClose={handleCloseMessage}
+        />
+      )}
       {renderContent()}
     </div>
   )

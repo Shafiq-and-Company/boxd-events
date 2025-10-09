@@ -45,6 +45,18 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
             Discover
           </button>
           <button 
+            onClick={() => {
+              if (user) {
+                onTabChange && onTabChange('myEvents')
+              } else {
+                router.push('/login')
+              }
+            }} 
+            className={`${styles.navLink} ${activeTab === 'myEvents' ? styles.active : ''}`}
+          >
+            My Events
+          </button>
+          <button 
             onClick={() => onTabChange && onTabChange('about')} 
             className={`${styles.navLink} ${activeTab === 'about' ? styles.active : ''}`}
           >

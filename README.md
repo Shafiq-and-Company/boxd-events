@@ -2,7 +2,7 @@
 
 ## Brand Kit - Johnny Ive Minimalism
 
-BOXD embodies the philosophy of radical simplicity through the lens of Johnny Ive's design principles. Every element serves a purpose—nothing is decorative, everything is functional. The brand speaks through absence, where the space between elements tells the story. Pure black, white, and carefully calibrated grays create a canvas of infinite possibility. The voice is silent confidence: "Essential," "Precise," "Timeless," "Pure" — framing users as discerning participants in meaningful experiences. Core values are restraint, precision, and intentionality—BOXD positions itself as the intersection of form and function.
+BOXD embodies the design principles of luma.com, or lu.ma
 
 ### Minimalist Design Principles
 
