@@ -45,7 +45,7 @@ export default function Login() {
   }
 
   return (
-    <>
+    <div style={{ flex: 1 }}>
       <NavBar hideMiddleNav={true} />
       <div className={styles.loginContainer}>
         <div className={styles.loginCard}>
@@ -126,6 +126,6 @@ export default function Login() {
         </div>
       </div>
       </div>
-    </>
+    </div>
   )
 }
