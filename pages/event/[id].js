@@ -31,6 +31,21 @@ export default function EventDetail() {
     }
   }, [id])
 
+  // Handle success redirect from Stripe
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const rsvpSuccess = urlParams.get('rsvp')
+    const sessionId = urlParams.get('session_id')
+    
+    if (rsvpSuccess === 'success' && sessionId) {
+      setPaymentSuccess(true)
+      // Redirect to My Events page after showing success message
+      setTimeout(() => {
+        router.push('/?tab=my-events&rsvp=success')
+      }, 3000)
+    }
+  }, [router])
+
   const fetchEvent = async () => {
     try {
       setLoading(true)

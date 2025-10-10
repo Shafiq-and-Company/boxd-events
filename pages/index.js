@@ -26,7 +26,7 @@ export default function Home() {
         router.replace('/', undefined, { shallow: true })
       }, 5000)
     } else if (router.query.rsvp === 'success') {
-      setSuccessMessage('✅ Successfully RSVPed to the event!')
+      setSuccessMessage('✅ Successfully registered for the event! Check your My Events tab.')
       // Clear the message after 5 seconds
       setTimeout(() => {
         setSuccessMessage(null)

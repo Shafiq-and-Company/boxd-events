@@ -32,6 +32,9 @@ export default function MyEvents() {
         .select(`
           event_id,
           status,
+          payment_status,
+          stripe_session_id,
+          created_at,
           events (
             id,
             title,
@@ -40,7 +43,8 @@ export default function MyEvents() {
             city,
             game_title,
             starts_at,
-            ends_at
+            ends_at,
+            cost
           )
         `)
         .eq('user_id', user.id)
@@ -52,7 +56,10 @@ export default function MyEvents() {
 
       const userEvents = rsvps?.map(rsvp => ({
         ...rsvp.events,
-        rsvpStatus: rsvp.status
+        rsvpStatus: rsvp.status,
+        paymentStatus: rsvp.payment_status,
+        stripeSessionId: rsvp.stripe_session_id,
+        rsvpCreatedAt: rsvp.created_at
       })) || []
 
       setEvents(userEvents)
@@ -183,6 +190,18 @@ export default function MyEvents() {
                     {event.description}
                   </div>
                 )}
+                
+                <div className={styles.paymentStatus}>
+                  {event.paymentStatus === 'paid' ? (
+                    <span className={styles.paidStatus}>✅ Paid</span>
+                  ) : event.paymentStatus === 'pending' ? (
+                    <span className={styles.pendingStatus}>⏳ Payment Pending</span>
+                  ) : event.cost && event.cost > 0 ? (
+                    <span className={styles.paymentRequired}>💰 Payment Required</span>
+                  ) : (
+                    <span className={styles.freeStatus}>🆓 Free Event</span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
