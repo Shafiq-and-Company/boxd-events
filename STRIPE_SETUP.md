@@ -38,7 +38,7 @@ ALTER TABLE rsvps ADD COLUMN updated_at timestamptz DEFAULT now();
 1. **Create Webhook Endpoint in Stripe Dashboard:**
    - Go to Stripe Dashboard > Webhooks
    - Click "Add endpoint"
-   - Endpoint URL: `https://boxd-events.netlify.app/api/stripe-webhook`
+   - Endpoint URL: `https://your-domain.netlify.app/api/stripe-webhook`
    - Events to send: `checkout.session.completed`, `payment_intent.payment_failed`
 
 2. **Get Webhook Secret:**
@@ -88,15 +88,23 @@ stripe listen --forward-to localhost:3000/api/stripe-webhook
 ## Troubleshooting
 
 ### Common Issues:
+- **404 Error on webhook**: Check that the webhook URL is correct and the site is deployed
 - **Webhook not receiving events**: Check endpoint URL and webhook secret
 - **RSVP not created**: Verify webhook is processing `checkout.session.completed`
 - **Payment status not updating**: Check database schema and webhook handler
 
 ### Debug Steps:
-1. Check Stripe Dashboard for webhook delivery logs
-2. Verify environment variables are set correctly
-3. Test with Stripe CLI for local development
-4. Check browser console for client-side errors
+1. **Test API endpoint**: Visit `https://your-domain.netlify.app/api/test-webhook` to verify API routes work
+2. **Check Stripe Dashboard**: Look for webhook delivery logs and any error messages
+3. **Verify environment variables**: Ensure all Stripe keys are set in Netlify environment
+4. **Test with Stripe CLI**: Use `stripe listen --forward-to localhost:3000/api/stripe-webhook` for local development
+5. **Check browser console**: Look for client-side errors during payment flow
+6. **Check Netlify logs**: Look at function logs in Netlify dashboard for server-side errors
+
+### Netlify-Specific Issues:
+- **API routes not working**: Ensure `@netlify/plugin-nextjs` is installed and configured
+- **Environment variables**: Set them in Netlify dashboard under Site settings > Environment variables
+- **Function timeout**: Webhook processing should complete within Netlify's timeout limits
 
 ## Security Notes
 
