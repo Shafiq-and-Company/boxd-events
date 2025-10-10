@@ -228,13 +228,18 @@ export default function EventDetail() {
       <div className={styles.container}>
         <div className={styles.eventDetail}>
           <div className={styles.eventHero}>
-            <div className={styles.eventImage}>
-              <div className={styles.eventHeader}>
-                {event.game_title && (
-                  <div className={styles.gameTitle}>{event.game_title}</div>
-                )}
-                <h1 className={styles.eventTitle}>{event.title}</h1>
-              </div>
+            <div className={styles.eventImage}></div>
+            <div className={styles.eventHeader}>
+              {event.game_title && (
+                <div className={styles.gameTitle}>{event.game_title}</div>
+              )}
+              <h1 className={styles.eventTitle}>{event.title}</h1>
+              {event.host && (
+                <div className={styles.hostedBy}>
+                  <span className={styles.hostedByLabel}>Hosted by</span>
+                  <span className={styles.hostName}>{event.host}</span>
+                </div>
+              )}
             </div>
           </div>
 
