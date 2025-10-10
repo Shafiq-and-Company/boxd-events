@@ -1,17 +1,28 @@
 .footer {
   background: #FFFFFF;
-  border-top: 1px solid #E8E8E8;
   margin-top: auto;
-  padding: 32px 0 24px;
+  padding: 24px 0 20px;
   color: #707070;
   font-size: 14px;
   line-height: 1.5;
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 1px;
+  background: #F0F0F0;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 20px;
 }
 
 .content {
@@ -33,31 +44,39 @@
   letter-spacing: -0.5px;
 }
 
-.links {
+.socialLinks {
   display: flex;
-  gap: 32px;
+  gap: 16px;
   align-items: center;
 }
 
-.link {
+.socialLink {
   color: #707070;
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 400;
   transition: color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
 }
 
-.link:hover {
+.socialLink:hover {
   color: #000000;
-  text-decoration: none;
+  background: #ffffff;
+  border-color: #a0a0a0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .bottom {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 24px;
-  border-top: 1px solid #E8E8E8;
+  padding-top: 20px;
 }
 
 .copyright {
@@ -69,7 +88,7 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .footer {
-    padding: 24px 0 16px;
+    padding: 20px 0 16px;
   }
   
   .container {
@@ -82,10 +101,15 @@
     text-align: center;
   }
   
-  .links {
-    gap: 24px;
+  .socialLinks {
+    gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
+  }
+  
+  .socialLink {
+    width: 28px;
+    height: 28px;
   }
   
   .bottom {
@@ -106,8 +130,14 @@
     gap: 16px;
   }
   
-  .links {
-    gap: 16px;
-    flex-direction: column;
+  .socialLinks {
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .socialLink {
+    width: 24px;
+    height: 24px;
   }
 }

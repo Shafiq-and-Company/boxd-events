@@ -67,13 +67,17 @@ export default function MyEvents() {
   const formatDate = (dateString) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
+      weekday: 'short',
+      month: 'short',
       day: 'numeric',
+      year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
     })
+  }
+
+  const handleEventClick = (eventId) => {
+    router.push(`/event/${eventId}`)
   }
 
   const handleSignIn = () => {
@@ -82,21 +86,18 @@ export default function MyEvents() {
 
   if (authLoading || loading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loading}>
-          <div className={styles.spinner}></div>
-          <p>Loading your events...</p>
-        </div>
+      <div className={styles.myEvents}>
+        <h2>My Events</h2>
+        <div className={styles.loading}>Loading your events...</div>
       </div>
     )
   }
 
   if (!user) {
     return (
-      <div className={styles.container}>
+      <div className={styles.myEvents}>
+        <h2>My Events</h2>
         <div className={styles.notLoggedIn}>
-          <div className={styles.signInIcon}>🔐</div>
-          <h2>Sign in to view your events</h2>
           <p>You need to be signed in to see your registered events.</p>
           <button 
             onClick={handleSignIn}
@@ -111,90 +112,79 @@ export default function MyEvents() {
 
   if (error) {
     return (
-      <div className={styles.container}>
-        <div className={styles.error}>
-          <div className={styles.errorIcon}>⚠️</div>
-          <h2>Error loading events</h2>
-          <p>{error}</p>
-          <button 
-            onClick={fetchUserEvents}
-            className={styles.retryButton}
-          >
-            Try Again
-          </button>
-        </div>
+      <div className={styles.myEvents}>
+        <h2>My Events</h2>
+        <div className={styles.error}>Error loading events: {error}</div>
       </div>
     )
   }
 
   if (events.length === 0) {
     return (
-      <div className={styles.container}>
-        <div className={styles.noEvents}>
-          <div className={styles.noEventsIcon}>📅</div>
-          <h2>No events yet</h2>
-          <p>You haven't registered for any events yet.</p>
-          <button 
-            onClick={() => router.push('/')}
-            className={styles.discoverButton}
-          >
-            Discover Events
-          </button>
+      <div className={styles.myEvents}>
+        <h2>My Events</h2>
+        <p className={styles.tagline}>Events you're registered for</p>
+        <div className={styles.emptyState}>
+          <div className={styles.emptyStateContent}>
+            <p className={styles.emptyStateText}>You haven't registered for any events yet.</p>
+            <p className={styles.emptyStateSubtext}>Discover exciting gaming events and tournaments happening near you.</p>
+            <button 
+              onClick={() => router.push('/')}
+              className={styles.discoverButton}
+            >
+              Discover Events
+            </button>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h1>My Events</h1>
-        <p>Events you're registered for</p>
-      </div>
+    <div className={styles.myEvents}>
+      <h2>My Events</h2>
+      <p className={styles.tagline}>Events you're registered for</p>
       
       <div className={styles.eventsList}>
         {events.map((event) => (
-          <div key={event.id} className={styles.eventCard}>
-            <div className={styles.eventHeader}>
-              <h3 className={styles.eventTitle}>{event.title}</h3>
-              <span className={styles.eventStatus}>
-                {event.rsvpStatus === 'going' ? '✅ Going' : event.rsvpStatus}
-              </span>
+          <div 
+            key={event.id} 
+            className={styles.eventCard}
+            onClick={() => handleEventClick(event.id)}
+          >
+            <div className={styles.eventImage}>
+              <div className={styles.imagePlaceholder}>
+                {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
+              </div>
             </div>
             
-            {event.game_title && (
-              <p className={styles.gameTitle}>🎮 {event.game_title}</p>
-            )}
-            
-            <p className={styles.eventDescription}>{event.description}</p>
-            
-            <div className={styles.eventDetails}>
-              <div className={styles.eventDetail}>
-                <span className={styles.detailLabel}>📅 Date:</span>
-                <span>{formatDate(event.starts_at)}</span>
+            <div className={styles.eventContent}>
+              <div className={styles.eventHeader}>
+                <h3 className={styles.eventTitle}>{event.title}</h3>
+                {event.game_title && (
+                  <span className={styles.gameTitle}>{event.game_title}</span>
+                )}
               </div>
               
-              {event.location && (
-                <div className={styles.eventDetail}>
-                  <span className={styles.detailLabel}>📍 Location:</span>
-                  <span>{event.location}</span>
+              <div className={styles.eventDetails}>
+                <div className={styles.eventDate}>
+                  {formatDate(event.starts_at)}
                 </div>
-              )}
-              
-              {event.city && (
-                <div className={styles.eventDetail}>
-                  <span className={styles.detailLabel}>🏙️ City:</span>
-                  <span>{event.city}</span>
-                </div>
-              )}
+                
+                {event.location && (
+                  <div className={styles.eventLocation}>
+                    {event.location}
+                    {event.city && `, ${event.city}`}
+                  </div>
+                )}
+                
+                {event.description && (
+                  <div className={styles.eventDescription}>
+                    {event.description}
+                  </div>
+                )}
+              </div>
             </div>
-            
-            <button 
-              onClick={() => router.push(`/event/${event.id}`)}
-              className={styles.viewEventButton}
-            >
-              View Event Details
-            </button>
           </div>
         ))}
       </div>

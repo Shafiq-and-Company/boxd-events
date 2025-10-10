@@ -2,8 +2,8 @@
 /* Johnny Ive Minimalism - Component-Specific Styles */
 
 .discoverEvents {
-  max-width: 100%;
-  padding: 32px 16px;
+  max-width: 800px;
+  padding: 24px 12px;
   margin: 0 auto;
 }
 
@@ -29,9 +29,9 @@
 .filters {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  margin-bottom: 32px;
-  max-width: 1200px;
+  gap: 20px;
+  margin-bottom: 24px;
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -99,9 +99,9 @@
 
 .eventsList {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
-  max-width: 1200px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -113,7 +113,7 @@
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
   flex-direction: column;
-  min-height: 260px;
+  min-height: 220px;
   position: relative;
   cursor: pointer;
   overflow: hidden;
@@ -152,7 +152,7 @@
 
 /* Content Section */
 .eventContent {
-  padding: 14px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -384,66 +384,66 @@
 
 @media (min-width: 1024px) {
   .discoverEvents {
-    max-width: 1200px;
-    padding: 48px 32px;
+    max-width: 800px;
+    padding: 32px 24px;
   }
   
   .discoverEvents h2 {
-    font-size: 2rem;
-    margin-bottom: 12px;
+    font-size: 1.75rem;
+    margin-bottom: 10px;
   }
   
   .tagline {
-    font-size: 1.125rem;
-    margin-bottom: 48px;
+    font-size: 1rem;
+    margin-bottom: 32px;
   }
   
   .gameFilters {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
   }
   
   .gameFilterCard {
-    min-height: 120px;
+    min-height: 100px;
   }
   
   .filterBackground {
-    min-height: 120px;
+    min-height: 100px;
   }
   
   .filterTitle {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
   
   .eventsList {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
   }
   
   .eventCard {
-    min-height: 260px;
+    min-height: 220px;
   }
   
   .eventImage {
-    height: 100px;
+    height: 80px;
   }
   
   .eventContent {
-    padding: 16px;
+    padding: 14px;
   }
   
   .gameTitle {
-    min-height: 16px;
-    font-size: 0.65rem;
+    min-height: 14px;
+    font-size: 0.6rem;
   }
   
   .eventTitle { 
-    font-size: 0.9rem; 
-    height: 2.2rem;
+    font-size: 0.85rem; 
+    height: 2rem;
   }
   
-  .eventDate, .eventLocation { font-size: 0.75rem; }
-  .eventDescription { font-size: 0.75rem; }
+  .eventDate, .eventLocation { font-size: 0.7rem; }
+  .eventDescription { font-size: 0.7rem; }
 }
 
 /* Accessibility */
