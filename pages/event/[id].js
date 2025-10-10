@@ -318,13 +318,13 @@ export default function EventDetail() {
                 </button>
               ) : paymentSuccess ? (
                 <div className={styles.successMessage}>
-                  ✅ Successfully registered for this event!
+                  Successfully registered for this event!
                 </div>
               ) : (
                 <div className={styles.paymentSection}>
                   {paymentError && (
                     <div className={styles.errorMessage}>
-                      ❌ {paymentError}
+                      {paymentError}
                     </div>
                   )}
                   <button 

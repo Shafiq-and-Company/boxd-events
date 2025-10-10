@@ -18,7 +18,7 @@ export default function Home() {
     
     // Handle success messages from payment/RSVP
     if (router.query.payment === 'success') {
-      setSuccessMessage('✅ Payment successful! You have been registered for the event.')
+      setSuccessMessage('Payment successful! You have been registered for the event.')
       // Clear the message after 5 seconds
       setTimeout(() => {
         setSuccessMessage(null)
@@ -26,7 +26,7 @@ export default function Home() {
         router.replace('/', undefined, { shallow: true })
       }, 5000)
     } else if (router.query.rsvp === 'success') {
-      setSuccessMessage('✅ Successfully registered for the event! Check your My Events tab.')
+      setSuccessMessage('Successfully registered for the event! Check your My Events tab.')
       // Clear the message after 5 seconds
       setTimeout(() => {
         setSuccessMessage(null)

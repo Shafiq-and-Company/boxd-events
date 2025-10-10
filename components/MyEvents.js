@@ -193,13 +193,13 @@ export default function MyEvents() {
                 
                 <div className={styles.paymentStatus}>
                   {event.paymentStatus === 'paid' ? (
-                    <span className={styles.paidStatus}>✅ Paid</span>
+                    <span className={styles.paidStatus}>Paid</span>
                   ) : event.paymentStatus === 'pending' ? (
-                    <span className={styles.pendingStatus}>⏳ Payment Pending</span>
+                    <span className={styles.pendingStatus}>Payment Pending</span>
                   ) : event.cost && event.cost > 0 ? (
-                    <span className={styles.paymentRequired}>💰 Payment Required</span>
+                    <span className={styles.paymentRequired}>Payment Required</span>
                   ) : (
-                    <span className={styles.freeStatus}>🆓 Free Event</span>
+                    <span className={styles.freeStatus}>Free Event</span>
                   )}
                 </div>
               </div>
