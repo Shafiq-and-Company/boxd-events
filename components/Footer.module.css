@@ -38,10 +38,33 @@
 }
 
 .logo {
-  font-size: 20px;
-  font-weight: 500;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  opacity: 0.7;
+  transition: opacity 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.logo:hover {
+  opacity: 1;
+}
+
+.navigation {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.navLink {
+  color: #707070;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.navLink:hover {
   color: #000000;
-  letter-spacing: -0.5px;
 }
 
 .socialLinks {
@@ -97,14 +120,24 @@
   
   .content {
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
     text-align: center;
+  }
+  
+  .navigation {
+    gap: 24px;
+    justify-content: center;
   }
   
   .socialLinks {
     gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
+  }
+  
+  .logo {
+    width: 40px;
+    height: 40px;
   }
   
   .socialLink {
@@ -130,10 +163,21 @@
     gap: 16px;
   }
   
+  .navigation {
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
   .socialLinks {
     gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
+  }
+  
+  .logo {
+    width: 36px;
+    height: 36px;
   }
   
   .socialLink {

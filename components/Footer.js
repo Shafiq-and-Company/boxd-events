@@ -1,4 +1,5 @@
 import styles from './Footer.module.css'
+import Image from 'next/image'
 
 export default function Footer() {
   return (
@@ -6,8 +7,20 @@ export default function Footer() {
       <div className={styles.container}>
         <div className={styles.content}>
           <div className={styles.brand}>
-            <span className={styles.logo}>BOXD</span>
+            <Image 
+              src="/logo.png" 
+              alt="BOXD Logo" 
+              width={48} 
+              height={48}
+              className={styles.logo}
+            />
           </div>
+          
+          <nav className={styles.navigation}>
+            <a href="#" className={styles.navLink}>Discover</a>
+            <a href="#" className={styles.navLink}>Pricing</a>
+            <a href="#" className={styles.navLink}>Help</a>
+          </nav>
           
           <div className={styles.socialLinks}>
             <a href="#" className={styles.socialLink} aria-label="Instagram">
