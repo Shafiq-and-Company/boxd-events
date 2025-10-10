@@ -47,24 +47,57 @@ async function handleSuccessfulPayment(session) {
       return
     }
 
-    // Create RSVP record in Supabase
-    const { error } = await supabase
+    // Check if RSVP already exists to avoid duplicates
+    const { data: existingRsvp, error: checkError } = await supabase
       .from('rsvps')
-      .insert({
-        user_id: userId,
-        event_id: eventId,
-        status: 'going',
-        payment_status: 'paid',
-        stripe_session_id: session.id,
-        created_at: new Date().toISOString()
-      })
+      .select('*')
+      .eq('user_id', userId)
+      .eq('event_id', eventId)
+      .single()
 
-    if (error) {
-      console.error('Error creating RSVP:', error)
-      throw error
+    if (checkError && checkError.code !== 'PGRST116') {
+      console.error('Error checking existing RSVP:', checkError)
+      throw checkError
     }
 
-    console.log('RSVP created successfully for user:', userId, 'event:', eventId)
+    if (existingRsvp) {
+      // Update existing RSVP with payment info
+      const { error: updateError } = await supabase
+        .from('rsvps')
+        .update({
+          payment_status: 'paid',
+          stripe_session_id: session.id,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userId)
+        .eq('event_id', eventId)
+
+      if (updateError) {
+        console.error('Error updating RSVP:', updateError)
+        throw updateError
+      }
+
+      console.log('RSVP updated successfully for user:', userId, 'event:', eventId)
+    } else {
+      // Create new RSVP record in Supabase
+      const { error } = await supabase
+        .from('rsvps')
+        .insert({
+          user_id: userId,
+          event_id: eventId,
+          status: 'going',
+          payment_status: 'paid',
+          stripe_session_id: session.id,
+          created_at: new Date().toISOString()
+        })
+
+      if (error) {
+        console.error('Error creating RSVP:', error)
+        throw error
+      }
+
+      console.log('RSVP created successfully for user:', userId, 'event:', eventId)
+    }
   } catch (error) {
     console.error('Error handling successful payment:', error)
     throw error

@@ -7,12 +7,12 @@ export default function PaymentConfirmation({ message, onClose }) {
   const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
-    // Auto-redirect to discover page after 5 seconds if no message
+    // Auto-redirect to My Events page after 5 seconds if no message
     if (!message) {
       const timer = setTimeout(() => {
         setIsVisible(false)
         setTimeout(() => {
-          router.push('/?tab=discover')
+          router.push('/?tab=myEvents')
         }, 300)
       }, 5000)
       
@@ -26,7 +26,7 @@ export default function PaymentConfirmation({ message, onClose }) {
       if (onClose) {
         onClose()
       } else {
-        router.push('/?tab=discover')
+        router.push('/?tab=myEvents')
       }
     }, 300)
   }
@@ -71,14 +71,14 @@ export default function PaymentConfirmation({ message, onClose }) {
         <p className={styles.message}>{getStatusMessage()}</p>
         {!message && (
           <div className={styles.loadingText}>
-            Redirecting to discover page...
+            Redirecting to My Events...
           </div>
         )}
         <button 
           className={styles.continueButton}
           onClick={handleContinue}
         >
-          Continue to Discover Events
+          Continue to My Events
         </button>
       </div>
     </div>

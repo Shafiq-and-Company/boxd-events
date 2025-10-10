@@ -127,7 +127,7 @@ export default function EventDetail() {
       
       // Show success message briefly, then redirect
       setTimeout(() => {
-        router.push('/?rsvp=success&event=' + event.id)
+        router.push('/?tab=myEvents&rsvp=success&event=' + event.id)
       }, 2000)
       
     } catch (err) {
