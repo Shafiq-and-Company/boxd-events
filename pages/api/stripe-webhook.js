@@ -7,6 +7,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
 
+export const config = {
+  api: {
+    bodyParser: false, // Disable automatic body parsing
+  },
+}
+
 export default async function handler(req, res) {
   console.log('Webhook received:', req.method, req.url)
   
@@ -19,15 +25,21 @@ export default async function handler(req, res) {
   let event
 
   try {
-    // For Netlify, we need to handle the raw body properly
-    let body = req.body
+    // Get the raw body from the request
+    let body = ''
     
-    // If body is already parsed, we need to stringify it back for Stripe
-    if (typeof body === 'object') {
-      body = JSON.stringify(body)
-    }
+    // Read the raw body from the request stream
+    req.on('data', (chunk) => {
+      body += chunk.toString()
+    })
+    
+    // Wait for the body to be fully read
+    await new Promise((resolve) => {
+      req.on('end', resolve)
+    })
     
     console.log('Processing webhook with signature:', sig ? 'present' : 'missing')
+    console.log('Body length:', body.length)
     event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
     console.log('Webhook event type:', event.type)
   } catch (err) {
