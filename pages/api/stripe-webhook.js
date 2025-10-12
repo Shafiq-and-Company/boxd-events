@@ -7,12 +7,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
 
-export const config = {
-  api: {
-    bodyParser: false, // Disable automatic body parsing
-  },
-}
-
 export default async function handler(req, res) {
   console.log('Webhook received:', req.method, req.url)
   
@@ -25,25 +19,28 @@ export default async function handler(req, res) {
   let event
 
   try {
-    // Get the raw body from the request
-    let body = ''
+    // For Netlify, we need to handle the raw body properly
+    let body = req.body
     
-    // Read the raw body from the request stream
-    req.on('data', (chunk) => {
-      body += chunk.toString()
-    })
-    
-    // Wait for the body to be fully read
-    await new Promise((resolve) => {
-      req.on('end', resolve)
-    })
+    // If body is already parsed, we need to stringify it back for Stripe
+    if (typeof body === 'object') {
+      body = JSON.stringify(body)
+    }
     
     console.log('Processing webhook with signature:', sig ? 'present' : 'missing')
-    console.log('Body length:', body.length)
+    console.log('Webhook body type:', typeof body)
+    console.log('Webhook body length:', body ? body.length : 0)
+    
+    if (!endpointSecret) {
+      console.error('Missing STRIPE_WEBHOOK_SECRET environment variable')
+      return res.status(500).json({ error: 'Webhook secret not configured' })
+    }
+    
     event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
     console.log('Webhook event type:', event.type)
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message)
+    console.error('Webhook error details:', err)
     return res.status(400).json({ error: `Webhook Error: ${err.message}` })
   }
 
@@ -65,12 +62,17 @@ export default async function handler(req, res) {
 
 async function handleSuccessfulPayment(session) {
   try {
+    console.log('Processing successful payment for session:', session.id)
+    console.log('Session metadata:', session.metadata)
+    
     const { eventId, userId } = session.metadata
 
     if (!eventId || !userId) {
       console.error('Missing metadata in checkout session:', session.metadata)
       return
     }
+    
+    console.log('Creating/updating RSVP for user:', userId, 'event:', eventId)
 
     // Check if RSVP already exists to avoid duplicates
     const { data: existingRsvp, error: checkError } = await supabase
@@ -86,6 +88,7 @@ async function handleSuccessfulPayment(session) {
     }
 
     if (existingRsvp) {
+      console.log('Updating existing RSVP for user:', userId, 'event:', eventId)
       // Update existing RSVP with payment info
       const { error: updateError } = await supabase
         .from('rsvps')
@@ -104,6 +107,7 @@ async function handleSuccessfulPayment(session) {
 
       console.log('RSVP updated successfully for user:', userId, 'event:', eventId)
     } else {
+      console.log('Creating new RSVP for user:', userId, 'event:', eventId)
       // Create new RSVP record in Supabase
       const { error } = await supabase
         .from('rsvps')
@@ -118,6 +122,7 @@ async function handleSuccessfulPayment(session) {
 
       if (error) {
         console.error('Error creating RSVP:', error)
+        console.error('RSVP creation error details:', error)
         throw error
       }
 
