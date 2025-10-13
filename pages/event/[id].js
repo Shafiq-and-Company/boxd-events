@@ -41,7 +41,7 @@ export default function EventDetail() {
       setPaymentSuccess(true)
       // Redirect to My Events page after showing success message
       setTimeout(() => {
-        router.push('/?tab=my-events&rsvp=success')
+        router.push('/?tab=myEvents&rsvp=success')
       }, 3000)
     }
   }, [router])
@@ -114,7 +114,8 @@ export default function EventDetail() {
         .insert({
           user_id: user.id,
           event_id: event.id,
-          status: 'going'
+          status: 'going',
+          payment_status: 'paid'
         })
 
       if (error) {
