@@ -209,9 +209,12 @@
 .loading, .error, .noEvents {
   text-align: left;
   padding: 32px;
-  color: #707070;
   font-size: 1rem;
   font-weight: 400;
+}
+
+.loading, .noEvents {
+  color: #707070;
 }
 
 .error {
@@ -224,7 +227,6 @@
 
 .noEvents {
   color: #a0a0a0;
-  font-style: normal;
 }
 
 /* Responsive Design */
@@ -251,6 +253,7 @@
     font-size: 0.7rem;
     padding: 4px 8px;
     text-align: left;
+    align-self: flex-start;
   }
   
   .eventHeader {
@@ -262,11 +265,6 @@
   .eventTitle {
     margin-right: 0;
     margin-bottom: 8px;
-  }
-  
-  .gameTitle {
-    align-self: flex-start;
-    text-align: left;
   }
 }
 
@@ -337,8 +335,7 @@
     height: 3rem;
   }
   
-  .eventDate, .eventLocation { font-size: 0.8rem; }
-  .eventDescription { font-size: 0.8rem; }
+  .eventDate, .eventLocation, .eventDescription { font-size: 0.8rem; }
 }
 
 /* Accessibility */
