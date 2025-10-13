@@ -28,7 +28,7 @@
 
 .eventsList {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   max-width: 800px;
   margin: 0 auto;
@@ -42,7 +42,7 @@
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
   flex-direction: column;
-  min-height: 240px;
+  min-height: 220px;
   position: relative;
   cursor: pointer;
   overflow: hidden;
@@ -57,7 +57,7 @@
 /* Image Section */
 .eventImage {
   width: 100%;
-  height: 120px;
+  height: 100px;
   background: #f8f8f8;
   display: flex;
   align-items: center;
@@ -66,14 +66,14 @@
 }
 
 .imagePlaceholder {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   background: #d0d0d0;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 500;
   color: #707070;
   letter-spacing: 0px;
@@ -81,7 +81,7 @@
 
 /* Content Section */
 .eventContent {
-  padding: 16px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -90,52 +90,52 @@
 .eventHeader {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 4px;
+  margin-bottom: 10px;
   flex: 0 0 auto;
 }
 
 .eventTitle {
-  font-size: 1.25rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: #000000;
-  line-height: 1.4;
+  line-height: 1.2;
   letter-spacing: -0.25px;
-  height: 3.5rem;
+  height: 2.2rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .gameTitle {
   display: inline-block;
   background: #f8f8f8;
   color: #404040;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
   font-weight: 400;
   border: 1px solid #d0d0d0;
   flex-shrink: 0;
   align-self: flex-start;
   order: -1;
-  min-height: 20px;
+  min-height: 16px;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
   white-space: nowrap;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .eventDetails {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   flex: 1;
   justify-content: flex-start;
 }
@@ -147,9 +147,9 @@
 .eventDate {
   color: #404040;
   font-weight: 400;
-  font-size: 0.875rem;
-  line-height: 1.4;
-  margin-bottom: 4px;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  margin-bottom: 1px;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   line-clamp: 1;
@@ -160,22 +160,22 @@
 
 .eventLocation {
   color: #707070;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 400;
-  line-height: 1.4;
+  line-height: 1.2;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
   white-space: nowrap;
 }
 
 .eventDescription {
   color: #404040;
-  font-size: 0.875rem;
-  line-height: 1.5;
+  font-size: 0.75rem;
+  line-height: 1.3;
   font-weight: 400;
   flex: 1;
   overflow: hidden;
@@ -285,52 +285,6 @@
   transform: translateY(-1px);
 }
 
-/* Payment Status Styles */
-.paymentStatus {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.paidStatus {
-  color: #2d5a2d;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background: #f0f8f0;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid #d0e8d0;
-}
-
-.pendingStatus {
-  color: #5a4a00;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background: #fff8e0;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid #e8d0a0;
-}
-
-.paymentRequired {
-  color: #5a2d2d;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background: #f8f0f0;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid #e8d0d0;
-}
-
-.freeStatus {
-  color: #2d5a5a;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background: #f0f8f8;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid #d0e8e8;
-}
 
 /* Responsive Design */
 @media (max-width: 767px) {
@@ -340,21 +294,21 @@
   }
   
   .eventCard {
-    min-height: 280px;
+    min-height: 240px;
   }
   
   .eventImage {
-    height: 120px;
+    height: 100px;
   }
   
   .eventContent {
-    padding: 20px;
+    padding: 14px;
   }
   
   .gameTitle {
-    min-height: 18px;
-    font-size: 0.7rem;
-    padding: 4px 8px;
+    min-height: 14px;
+    font-size: 0.6rem;
+    padding: 2px 5px;
   }
   
   .eventHeader {
@@ -380,20 +334,20 @@
   }
   
   .eventCard {
-    min-height: 260px;
+    min-height: 250px;
   }
   
   .eventImage {
-    height: 100px;
+    height: 90px;
   }
   
   .eventContent {
-    padding: 18px;
+    padding: 14px;
   }
   
   .gameTitle {
-    min-height: 20px;
-    font-size: 0.75rem;
+    min-height: 16px;
+    font-size: 0.65rem;
   }
 }
 
@@ -414,34 +368,34 @@
   }
   
   .eventsList {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
   }
   
   .eventCard {
-    min-height: 260px;
+    min-height: 220px;
   }
   
   .eventImage {
-    height: 100px;
+    height: 80px;
   }
   
   .eventContent {
-    padding: 18px;
+    padding: 14px;
   }
   
   .gameTitle {
-    min-height: 18px;
-    font-size: 0.7rem;
+    min-height: 14px;
+    font-size: 0.6rem;
   }
   
   .eventTitle { 
-    font-size: 1.125rem; 
-    height: 3rem;
+    font-size: 0.85rem; 
+    height: 2rem;
   }
   
-  .eventDate, .eventLocation { font-size: 0.8rem; }
-  .eventDescription { font-size: 0.8rem; }
+  .eventDate, .eventLocation { font-size: 0.7rem; }
+  .eventDescription { font-size: 0.7rem; }
 }
 
 /* Accessibility */

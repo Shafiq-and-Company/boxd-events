@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { useAuth } from '../lib/AuthContext'
 import styles from './DiscoverEvents.module.css'
 
 export default function DiscoverEvents() {
@@ -8,10 +9,18 @@ export default function DiscoverEvents() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [selectedGame, setSelectedGame] = useState('all')
+  const [userRsvps, setUserRsvps] = useState(new Set())
+  const { user } = useAuth()
 
   useEffect(() => {
     fetchAllEvents()
   }, [])
+
+  useEffect(() => {
+    if (user) {
+      fetchUserRsvps()
+    }
+  }, [user])
 
   const fetchAllEvents = async () => {
     try {
@@ -39,6 +48,28 @@ export default function DiscoverEvents() {
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchUserRsvps = async () => {
+    if (!user) return
+    
+    try {
+      const { data, error } = await supabase
+        .from('rsvps')
+        .select('event_id')
+        .eq('user_id', user.id)
+        .eq('status', 'going')
+
+      if (error) {
+        console.error('Error fetching user RSVPs:', error)
+        return
+      }
+
+      const rsvpEventIds = new Set(data?.map(rsvp => rsvp.event_id) || [])
+      setUserRsvps(rsvpEventIds)
+    } catch (err) {
+      console.error('Error fetching user RSVPs:', err)
     }
   }
 
@@ -123,25 +154,32 @@ export default function DiscoverEvents() {
         </div>
       ) : (
         <div className={styles.eventsList}>
-          {filteredEvents.map((event) => (
-            <div 
-              key={event.id} 
-              className={styles.eventCard}
-              onClick={() => handleEventClick(event.id)}
-            >
-              <div className={styles.eventImage}>
-                <div className={styles.imagePlaceholder}>
-                  {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
-                </div>
-              </div>
-              
-              <div className={styles.eventContent}>
-                <div className={styles.eventHeader}>
-                  <h3 className={styles.eventTitle}>{event.title}</h3>
-                  {event.game_title && (
-                    <span className={styles.gameTitle}>{event.game_title}</span>
+          {filteredEvents.map((event) => {
+            const isRegistered = userRsvps.has(event.id)
+            return (
+              <div 
+                key={event.id} 
+                className={styles.eventCard}
+                onClick={() => handleEventClick(event.id)}
+              >
+                <div className={styles.eventImage}>
+                  <div className={styles.imagePlaceholder}>
+                    {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
+                  </div>
+                  {isRegistered && (
+                    <div className={styles.registeredBadge}>
+                      ✓ Going
+                    </div>
                   )}
                 </div>
+                
+                <div className={styles.eventContent}>
+                  <div className={styles.eventHeader}>
+                    <h3 className={styles.eventTitle}>{event.title}</h3>
+                    {event.game_title && (
+                      <span className={styles.gameTitle}>{event.game_title}</span>
+                    )}
+                  </div>
                 
                 <div className={styles.eventDetails}>
                   <div className={styles.eventDate}>
@@ -163,7 +201,8 @@ export default function DiscoverEvents() {
                 </div>
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

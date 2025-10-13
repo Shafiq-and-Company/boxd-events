@@ -17,6 +17,8 @@ export default function EventDetail() {
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [paymentError, setPaymentError] = useState(null)
   const [redirectHandled, setRedirectHandled] = useState(false)
+  const [isAlreadyRegistered, setIsAlreadyRegistered] = useState(false)
+  const [checkingRegistration, setCheckingRegistration] = useState(false)
 
   const handleTabChange = (tab) => {
     if (tab === 'upcoming') {
@@ -32,6 +34,13 @@ export default function EventDetail() {
       fetchEvent()
     }
   }, [id])
+
+  useEffect(() => {
+    if (user && event && !authLoading) {
+      console.log('useEffect triggered for registration check:', { user: !!user, event: !!event, authLoading })
+      checkRegistrationStatus()
+    }
+  }, [user, event, authLoading])
 
   // Handle success redirect from Stripe
   useEffect(() => {
@@ -75,6 +84,45 @@ export default function EventDetail() {
     }
   }
 
+  const checkRegistrationStatus = async () => {
+    if (!user || !event) return
+    
+    try {
+      setCheckingRegistration(true)
+      console.log('Checking registration status for user:', user.id, 'event:', event.id)
+      
+      // Try to get the session first to ensure we have proper auth context
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !session?.user) {
+        console.error('No valid session found')
+        return
+      }
+      
+      const { data, error } = await supabase
+        .from('rsvps')
+        .select('id, status')
+        .eq('user_id', session.user.id)
+        .eq('event_id', event.id)
+        .eq('status', 'going')
+        .maybeSingle()
+
+      console.log('Registration check result:', { data, error })
+
+      if (error) {
+        console.error('Error checking registration status:', error)
+        return
+      }
+
+      const isRegistered = !!data
+      console.log('Setting isAlreadyRegistered to:', isRegistered)
+      setIsAlreadyRegistered(isRegistered)
+    } catch (err) {
+      console.error('Error checking registration status:', err)
+    } finally {
+      setCheckingRegistration(false)
+    }
+  }
+
   const formatDate = (dateString) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
@@ -99,6 +147,12 @@ export default function EventDetail() {
     // Check if user is logged in
     if (!user) {
       router.push('/login')
+      return
+    }
+
+    // Check if already registered
+    if (isAlreadyRegistered) {
+      setPaymentError('You are already registered for this event.')
       return
     }
 
@@ -139,8 +193,9 @@ export default function EventDetail() {
         return
       }
 
-      // RSVP succeeded - redirect to home page
+      // RSVP succeeded - update registration status and redirect to home page
       setPaymentSuccess(true)
+      setIsAlreadyRegistered(true)
       
       // Show success message briefly, then redirect
       setTimeout(() => {
@@ -214,6 +269,7 @@ export default function EventDetail() {
 
       console.log('RSVP created successfully from payment')
       setPaymentSuccess(true)
+      setIsAlreadyRegistered(true)
       
       // Show success message briefly, then redirect
       setTimeout(() => {
@@ -401,6 +457,16 @@ export default function EventDetail() {
             </div>
 
             <div className={styles.eventActions}>
+              {console.log('Render state:', { user: !!user, isAlreadyRegistered, paymentSuccess, isProcessingPayment, checkingRegistration })}
+              {/* Debug button for testing */}
+              {user && (
+                <button 
+                  onClick={() => checkRegistrationStatus()}
+                  style={{ marginBottom: '10px', fontSize: '12px', padding: '4px 8px' }}
+                >
+                  Debug: Check Registration
+                </button>
+              )}
               {!user ? (
                 <button 
                   className={styles.rsvpButton}
@@ -408,6 +474,14 @@ export default function EventDetail() {
                 >
                   Login to RSVP
                 </button>
+              ) : checkingRegistration ? (
+                <div className={styles.loading}>
+                  Checking registration status...
+                </div>
+              ) : isAlreadyRegistered ? (
+                <div className={styles.successMessage}>
+                  ✓ You are registered for this event!
+                </div>
               ) : paymentSuccess ? (
                 <div className={styles.successMessage}>
                   Successfully registered for this event!
@@ -422,9 +496,9 @@ export default function EventDetail() {
                   <button 
                     className={styles.rsvpButton}
                     onClick={handleRSVP}
-                    disabled={isProcessingPayment}
+                    disabled={isProcessingPayment || checkingRegistration}
                   >
-                    {isProcessingPayment ? 'Processing...' : 'RSVP Now'}
+                    {isProcessingPayment ? 'Processing...' : checkingRegistration ? 'Checking...' : 'RSVP Now'}
                   </button>
                 </div>
               )}
