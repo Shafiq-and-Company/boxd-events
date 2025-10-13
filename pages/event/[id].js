@@ -40,19 +40,14 @@ export default function EventDetail() {
     const rsvp = urlParams.get('rsvp')
     const sessionId = urlParams.get('session_id')
     
-    console.log('Payment redirect check:', { rsvp, sessionId })
+    console.log('Payment redirect check:', { rsvp, sessionId, user, authLoading, event })
     
-    if (rsvp === 'success' && sessionId && !redirectHandled) {
-      console.log('Payment success detected, setting success state')
+    if (rsvp === 'success' && sessionId && !redirectHandled && !authLoading && user && event) {
+      console.log('Payment success detected, creating RSVP')
       setRedirectHandled(true)
-      setPaymentSuccess(true)
-      // Redirect to My Events page after showing success message
-      setTimeout(() => {
-        console.log('Redirecting to My Events page')
-        router.push('/?tab=myEvents&rsvp=success')
-      }, 3000)
+      createRSVPFromPayment()
     }
-  }, [router, redirectHandled])
+  }, [router, redirectHandled, user, authLoading, event])
 
   const fetchEvent = async () => {
     try {
@@ -122,16 +117,24 @@ export default function EventDetail() {
       setIsProcessingPayment(true)
       setPaymentError(null)
       
+      // Get fresh session for RLS compliance
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !session?.user) {
+        setPaymentError('Authentication error. Please try again.')
+        return
+      }
+      
       const { error } = await supabase
         .from('rsvps')
         .insert({
-          user_id: user.id,
+          user_id: session.user.id, // Use session user ID for RLS compliance
           event_id: event.id,
           status: 'going',
           payment_status: 'paid'
         })
 
       if (error) {
+        console.error('Error creating RSVP:', error)
         setPaymentError('Error creating RSVP. Please try again.')
         return
       }
@@ -146,6 +149,80 @@ export default function EventDetail() {
       
     } catch (err) {
       console.error('Error creating RSVP:', err)
+      setPaymentError('Error creating RSVP. Please try again.')
+    } finally {
+      setIsProcessingPayment(false)
+    }
+  }
+
+  const createRSVPFromPayment = async () => {
+    try {
+      console.log('Creating RSVP from payment success')
+      console.log('User context:', { user, authLoading })
+      
+      // Wait for user to be loaded
+      if (authLoading) {
+        console.log('Waiting for user authentication...')
+        return
+      }
+      
+      if (!user) {
+        console.error('User not authenticated - redirecting to login')
+        router.push('/login')
+        return
+      }
+      
+      if (!event) {
+        console.error('Event not loaded yet')
+        return
+      }
+      
+      setIsProcessingPayment(true)
+      setPaymentError(null)
+      
+      // Refresh the user session to ensure RLS policies work correctly
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError) {
+        console.error('Error getting session:', sessionError)
+        setPaymentError('Authentication error. Please try again.')
+        return
+      }
+      
+      if (!session?.user) {
+        console.error('No valid session found')
+        router.push('/login')
+        return
+      }
+      
+      console.log('Creating RSVP with user ID:', session.user.id)
+      
+      const { error } = await supabase
+        .from('rsvps')
+        .insert({
+          user_id: session.user.id, // Use session user ID for RLS compliance
+          event_id: event.id,
+          status: 'going',
+          payment_status: 'paid'
+        })
+
+      if (error) {
+        console.error('Error creating RSVP from payment:', error)
+        console.error('RLS error details:', error)
+        setPaymentError('Error creating RSVP. Please try again.')
+        return
+      }
+
+      console.log('RSVP created successfully from payment')
+      setPaymentSuccess(true)
+      
+      // Show success message briefly, then redirect
+      setTimeout(() => {
+        console.log('Redirecting to My Events page')
+        router.push('/?tab=myEvents&rsvp=success')
+      }, 3000)
+      
+    } catch (err) {
+      console.error('Error creating RSVP from payment:', err)
       setPaymentError('Error creating RSVP. Please try again.')
     } finally {
       setIsProcessingPayment(false)

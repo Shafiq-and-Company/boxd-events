@@ -65,7 +65,9 @@ async function handleWebhookEvent(event, res) {
       case 'checkout.session.completed':
         console.log('Handling checkout.session.completed')
         const session = event.data.object
-        await handleSuccessfulPayment(session)
+        console.log('Payment completed for session:', session.id)
+        console.log('User will be redirected to create RSVP client-side')
+        // Don't create RSVP here - let client-side handle it with proper user context
         break
       case 'payment_intent.succeeded':
         console.log('Payment intent succeeded:', event.data.object.id)
@@ -98,95 +100,3 @@ async function handleWebhookEvent(event, res) {
   }
 }
 
-async function handleSuccessfulPayment(session) {
-  try {
-    console.log('Processing successful payment for session:', session.id)
-    console.log('Session metadata:', session.metadata)
-    
-    const { eventId, userId } = session.metadata
-
-    if (!eventId || !userId) {
-      console.error('Missing metadata in checkout session:', session.metadata)
-      console.error('Session object:', session)
-      return
-    }
-    
-    console.log('Creating/updating RSVP for user:', userId, 'event:', eventId)
-    
-    // Additional security validation for webhook operations
-    if (!userId || !eventId || !session.id) {
-      console.error('Invalid webhook data - missing required fields')
-      return
-    }
-    
-    // Validate that this is a legitimate Stripe session
-    if (!session.id.startsWith('cs_')) {
-      console.error('Invalid Stripe session ID format')
-      return
-    }
-
-    // Check if RSVP already exists to avoid duplicates
-    const { data: existingRsvp, error: checkError } = await supabase
-      .from('rsvps')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('event_id', eventId)
-      .single()
-
-    if (checkError && checkError.code !== 'PGRST116') {
-      console.error('Error checking existing RSVP:', checkError)
-      throw checkError
-    }
-
-    if (existingRsvp) {
-      console.log('Updating existing RSVP for user:', userId, 'event:', eventId)
-      // Update existing RSVP with payment info
-      const { error: updateError } = await supabase
-        .from('rsvps')
-        .update({
-          payment_status: 'paid',
-          stripe_session_id: session.id,
-          updated_at: new Date().toISOString()
-        })
-        .eq('user_id', userId)
-        .eq('event_id', eventId)
-
-      if (updateError) {
-        console.error('Error updating RSVP:', updateError)
-        throw updateError
-      }
-
-      console.log('RSVP updated successfully for user:', userId, 'event:', eventId)
-    } else {
-      console.log('Creating new RSVP for user:', userId, 'event:', eventId)
-      // Create new RSVP record in Supabase
-      const { error } = await supabase
-        .from('rsvps')
-        .insert({
-          user_id: userId,
-          event_id: eventId,
-          status: 'going',
-          payment_status: 'paid',
-          stripe_session_id: session.id,
-          created_at: new Date().toISOString()
-        })
-
-      if (error) {
-        console.error('Error creating RSVP:', error)
-        console.error('RSVP creation error details:', error)
-        throw error
-      }
-
-      console.log('RSVP created successfully for user:', userId, 'event:', eventId)
-    }
-  } catch (error) {
-    console.error('Error handling successful payment:', error)
-    console.error('Payment session details:', {
-      sessionId: session.id,
-      metadata: session.metadata,
-      error: error.message
-    })
-    // Don't throw - let the webhook respond with success to Stripe
-    // The error is logged for debugging
-  }
-}
