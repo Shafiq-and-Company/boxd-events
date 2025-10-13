@@ -1,0 +1,829 @@
+/* CreateEvent Component - Ultra Minimal CSS */
+/* Black, White, Gray Only */
+
+.createEvent {
+  max-width: 700px;
+  padding: 24px 0;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.createEvent h2 {
+  text-align: left;
+  margin-bottom: 8px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #000000;
+  letter-spacing: -0.5px;
+}
+
+.tagline {
+  text-align: left;
+  margin-bottom: 32px;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #707070;
+  line-height: 1.5;
+  letter-spacing: 0px;
+}
+
+.formContainer {
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Banner Section */
+.bannerSection {
+  margin-bottom: 8px;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 200px;
+  border: 2px dashed #cccccc;
+  border-radius: 8px;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.bannerImage:hover {
+  border-color: #999999;
+  background: #f5f5f5;
+}
+
+.bannerPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadText {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #666666;
+  text-align: center;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionDivider {
+  height: 1px;
+  background: #e8e8e8;
+  margin: 16px 0;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.formRowThree {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+}
+
+/* Section Headers */
+.sectionHeader {
+  margin-bottom: 12px;
+}
+
+.sectionLabel {
+  font-size: 0.625rem;
+  font-weight: 400;
+  color: #999999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+.input, .textarea {
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  border-bottom: 1px solid #cccccc;
+  border-radius: 0;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #000000;
+  background: transparent;
+  transition: border-color 200ms ease;
+  box-sizing: border-box;
+}
+
+.titleInput {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 2px solid #cccccc;
+  border-radius: 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #000000;
+  background: transparent;
+  transition: border-color 200ms ease;
+  box-sizing: border-box;
+}
+
+.titleInput:focus {
+  outline: none;
+  border-bottom: 3px solid #999999;
+}
+
+.input:focus, .textarea:focus {
+  outline: none;
+  border-bottom: 2px solid #999999;
+}
+
+.titleInput::placeholder {
+  color: #999999;
+  font-weight: 400;
+}
+
+.input::placeholder, .textarea::placeholder {
+  color: #999999;
+  font-weight: 400;
+}
+
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.select {
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  border-bottom: 1px solid #cccccc;
+  border-radius: 0;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #000000;
+  background: transparent;
+  transition: border-color 200ms ease;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+  border-bottom: 2px solid #999999;
+}
+
+/* Section Styling */
+.dateTimeSection, .gameSection, .descriptionSection, .locationSection {
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
+}
+
+/* Game Options */
+.gameOptions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.gameOption {
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 200ms ease;
+  flex: 1;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.gameOption:hover {
+  border-color: #999999;
+}
+
+.gameOptionSelected {
+  background: #000000;
+  border-color: #000000;
+}
+
+.gameOptionSelected:hover {
+  background: #333333;
+  border-color: #333333;
+}
+
+.gameImage {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #666666;
+  border-radius: 4px;
+}
+
+.gameOptionSelected .imagePlaceholder {
+  background: #333333;
+  color: #ffffff;
+}
+
+.gameLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #666666;
+  text-align: center;
+}
+
+.gameOptionSelected .gameLabel {
+  color: #ffffff;
+}
+
+.eventOptionsSection {
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
+}
+
+/* Cost Slider */
+.costSliderContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 80px;
+}
+
+.costSliderHeader {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.costLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #000000;
+  text-transform: none;
+  letter-spacing: 0px;
+}
+
+.costSliderWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.costValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #000000;
+}
+
+.costValueDisplay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.costSlider {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: #e8e8e8;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.costSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #000000;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.costSlider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #000000;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.costSlider:focus {
+  outline: none;
+}
+
+.costSlider:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.costSlider:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.costSliderLabels {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #666666;
+  margin-top: 4px;
+  text-align: center;
+}
+
+/* Capacity Section */
+.capacityContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 80px;
+}
+
+.capacityHeader {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.capacityRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.capacityCheckboxWrapper {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.capacityCheckbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.capacityCheckbox:checked {
+  background: #000000;
+  border-color: #000000;
+}
+
+.capacityCheckbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.capacityLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #000000;
+  text-transform: none;
+  letter-spacing: 0px;
+  cursor: pointer;
+}
+
+.capacityInputs {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+}
+
+.capacityNumberInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #000000;
+  background: #ffffff;
+  transition: all 200ms ease;
+  box-sizing: border-box;
+}
+
+.capacityNumberInput:disabled {
+  background: #f5f5f5;
+  color: #999999;
+  cursor: not-allowed;
+  border-color: #e8e8e8;
+}
+
+.capacityNumberInput:focus:not(:disabled) {
+  outline: none;
+  border-color: #999999;
+}
+
+.capacityNumberInput::placeholder {
+  color: #999999;
+  font-weight: 400;
+}
+
+.submitButton {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+  margin-top: 16px;
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #333333;
+}
+
+.submitButton:disabled {
+  background: #999999;
+  cursor: not-allowed;
+}
+
+.submitButton:active:not(:disabled) {
+  background: #000000;
+}
+
+/* Message Styles */
+.successMessage, .errorMessage, .authRequired {
+  padding: 12px 0;
+  border-radius: 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  margin-bottom: 24px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.successMessage {
+  background: transparent;
+  color: #000000;
+  border: none;
+  border-bottom: 1px solid #000000;
+}
+
+.errorMessage {
+  background: transparent;
+  color: #666666;
+  border: none;
+  border-bottom: 1px solid #666666;
+}
+
+.authRequired {
+  background: transparent;
+  color: #999999;
+  border: none;
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* Responsive Design */
+@media (max-width: 767px) {
+  .createEvent {
+    padding: 16px 0;
+  }
+  
+  .formContainer {
+    padding: 20px 16px;
+    margin: 0 12px;
+  }
+  
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .formRowThree {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .dateTimeSection, .gameSection, .descriptionSection, .locationSection, .eventOptionsSection {
+    padding: 12px;
+  }
+  
+  .bannerImage {
+    height: 150px;
+  }
+  
+  .uploadText {
+    font-size: 0.75rem;
+  }
+  
+  .gameOptions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .gameOption {
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 12px;
+  }
+  
+  .gameImage {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+  
+  .gameLabel {
+    text-align: left;
+  }
+  
+  .capacityRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .capacityInputs {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .capacityNumberInput {
+    width: 100%;
+  }
+  
+  .submitButton {
+    width: 100%;
+    padding: 14px 24px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .formContainer {
+    padding: 20px;
+  }
+  
+  .formRowThree {
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+/* Accessibility */
+.input:focus, .textarea:focus, .select:focus, .submitButton:focus {
+  outline: 1px solid #000000;
+  outline-offset: 1px;
+}
+
+/* Recurring Section */
+.recurringContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 80px;
+}
+
+.recurringHeader {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.recurringRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.recurringCheckboxWrapper {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.recurringCheckbox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.recurringCheckbox:checked {
+  background: #000000;
+  border-color: #000000;
+}
+
+.recurringCheckbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.recurringLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #000000;
+  text-transform: none;
+  letter-spacing: 0px;
+  cursor: pointer;
+}
+
+.recurringOptions {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+}
+
+.recurringFrequency {
+  flex: 1;
+}
+
+.recurringSelect {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #000000;
+  background: #ffffff;
+  transition: all 200ms ease;
+  box-sizing: border-box;
+}
+
+.recurringSelect:disabled {
+  background: #f5f5f5;
+  color: #999999;
+  cursor: not-allowed;
+  border-color: #e8e8e8;
+}
+
+.recurringSelect:focus:not(:disabled) {
+  outline: none;
+  border-color: #999999;
+}
+
+.recurringEndDate {
+  flex: 1;
+}
+
+.recurringDateInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #000000;
+  background: #ffffff;
+  transition: all 200ms ease;
+  box-sizing: border-box;
+}
+
+.recurringDateInput:disabled {
+  background: #f5f5f5;
+  color: #999999;
+  cursor: not-allowed;
+  border-color: #e8e8e8;
+}
+
+.recurringDateInput:focus:not(:disabled) {
+  outline: none;
+  border-color: #999999;
+}
+
+.recurringDays {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.recurringDaysLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #666666;
+}
+
+.recurringDaysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.recurringDayButton {
+  padding: 6px 2px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #666666;
+  font-size: 0.75rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 200ms ease;
+  text-align: center;
+}
+
+.recurringDayButton:hover {
+  border-color: #999999;
+  background: #f5f5f5;
+}
+
+.recurringDaySelected {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.recurringDaySelected:hover {
+  background: #333333;
+  border-color: #333333;
+}
+
+.recurringDayDisabled {
+  background: #f5f5f5;
+  color: #999999;
+  cursor: not-allowed;
+  border-color: #e8e8e8;
+}
+
+.recurringDayDisabled:hover {
+  background: #f5f5f5;
+  color: #999999;
+  border-color: #e8e8e8;
+}
+
+@media (max-width: 767px) {
+  .recurringRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .recurringOptions {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .recurringDaysGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+  }
+  
+  .recurringDayButton {
+    padding: 4px 1px;
+    font-size: 0.7rem;
+  }
+}

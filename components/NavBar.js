@@ -92,8 +92,7 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
           <>
             <button 
               onClick={() => {
-                // TODO: Add create event functionality
-                console.log('Create Event clicked')
+                onTabChange && onTabChange('createEvent')
               }}
               className={styles.createEventButton}
             >

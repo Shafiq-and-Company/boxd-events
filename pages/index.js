@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import UpcomingEvents from '../components/UpcomingEvents'
 import DiscoverEvents from '../components/DiscoverEvents'
 import MyEvents from '../components/MyEvents'
+import CreateEvent from '../components/CreateEvent'
 import NavBar from '../components/NavBar'
 import PaymentConfirmation from '../components/PaymentConfirmation'
 
@@ -53,6 +54,8 @@ export default function Home() {
         return <DiscoverEvents />
       case 'myEvents':
         return <MyEvents />
+      case 'createEvent':
+        return <CreateEvent />
       case 'about':
         return <div>About content coming soon...</div>
       default:
