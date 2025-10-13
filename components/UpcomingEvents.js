@@ -17,6 +17,8 @@ export default function UpcomingEvents() {
   useEffect(() => {
     if (user) {
       fetchUserRsvps()
+    } else {
+      setUserRsvps(new Set())
     }
   }, [user])
 
@@ -43,17 +45,21 @@ export default function UpcomingEvents() {
   }
 
   const fetchUserRsvps = async () => {
-    if (!user) return
+    if (!user) {
+      setUserRsvps(new Set())
+      return
+    }
     
     try {
       const { data, error } = await supabase
         .from('rsvps')
-        .select('event_id')
+        .select('event_id, status')
         .eq('user_id', user.id)
         .eq('status', 'going')
 
       if (error) {
         console.error('Error fetching user RSVPs:', error)
+        setUserRsvps(new Set())
         return
       }
 
@@ -61,6 +67,7 @@ export default function UpcomingEvents() {
       setUserRsvps(rsvpEventIds)
     } catch (err) {
       console.error('Error fetching user RSVPs:', err)
+      setUserRsvps(new Set())
     }
   }
 
@@ -77,7 +84,14 @@ export default function UpcomingEvents() {
   }
 
   const handleEventClick = (eventId) => {
-    window.open(`/event/${eventId}`, '_blank')
+    window.location.href = `/event/${eventId}`
+  }
+
+  // Function to refresh RSVPs (can be called from parent components)
+  const refreshRsvps = () => {
+    if (user) {
+      fetchUserRsvps()
+    }
   }
 
   if (loading) {

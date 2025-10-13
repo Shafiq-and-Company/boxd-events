@@ -19,6 +19,8 @@ export default function EventDetail() {
   const [redirectHandled, setRedirectHandled] = useState(false)
   const [isAlreadyRegistered, setIsAlreadyRegistered] = useState(false)
   const [checkingRegistration, setCheckingRegistration] = useState(false)
+  const [registrationDetails, setRegistrationDetails] = useState(null)
+  const [stripeSessionId, setStripeSessionId] = useState(null)
 
   const handleTabChange = (tab) => {
     if (tab === 'upcoming') {
@@ -39,8 +41,17 @@ export default function EventDetail() {
     if (user && event && !authLoading) {
       console.log('useEffect triggered for registration check:', { user: !!user, event: !!event, authLoading })
       checkRegistrationStatus()
+    } else if (!user) {
+      setIsAlreadyRegistered(false)
     }
   }, [user, event, authLoading])
+
+  // Function to refresh RSVP status (can be called from parent components)
+  const refreshRsvpStatus = () => {
+    if (user && event) {
+      checkRegistrationStatus()
+    }
+  }
 
   // Handle success redirect from Stripe
   useEffect(() => {
@@ -52,9 +63,10 @@ export default function EventDetail() {
     console.log('Payment redirect check:', { rsvp, sessionId, user, authLoading, event })
     
     if (rsvp === 'success' && sessionId && !redirectHandled && !authLoading && user && event) {
-      console.log('Payment success detected, creating RSVP')
+      console.log('Payment success detected, creating RSVP with session ID:', sessionId)
+      setStripeSessionId(sessionId)
       setRedirectHandled(true)
-      createRSVPFromPayment()
+      createRSVPFromPayment(sessionId)
     }
   }, [router, redirectHandled, user, authLoading, event])
 
@@ -85,23 +97,19 @@ export default function EventDetail() {
   }
 
   const checkRegistrationStatus = async () => {
-    if (!user || !event) return
+    if (!user || !event) {
+      setIsAlreadyRegistered(false)
+      return
+    }
     
     try {
       setCheckingRegistration(true)
       console.log('Checking registration status for user:', user.id, 'event:', event.id)
       
-      // Try to get the session first to ensure we have proper auth context
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session?.user) {
-        console.error('No valid session found')
-        return
-      }
-      
       const { data, error } = await supabase
         .from('rsvps')
-        .select('id, status')
-        .eq('user_id', session.user.id)
+        .select('user_id, event_id, status, payment_status, stripe_session_id, created_at, updated_at')
+        .eq('user_id', user.id)
         .eq('event_id', event.id)
         .eq('status', 'going')
         .maybeSingle()
@@ -110,14 +118,19 @@ export default function EventDetail() {
 
       if (error) {
         console.error('Error checking registration status:', error)
+        setIsAlreadyRegistered(false)
+        setRegistrationDetails(null)
         return
       }
 
       const isRegistered = !!data
       console.log('Setting isAlreadyRegistered to:', isRegistered)
       setIsAlreadyRegistered(isRegistered)
+      setRegistrationDetails(data)
     } catch (err) {
       console.error('Error checking registration status:', err)
+      setIsAlreadyRegistered(false)
+      setRegistrationDetails(null)
     } finally {
       setCheckingRegistration(false)
     }
@@ -167,21 +180,19 @@ export default function EventDetail() {
   }
 
   const createRSVP = async () => {
+    if (!user || !event) {
+      setPaymentError('Authentication error. Please try again.')
+      return
+    }
+
     try {
       setIsProcessingPayment(true)
       setPaymentError(null)
       
-      // Get fresh session for RLS compliance
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session?.user) {
-        setPaymentError('Authentication error. Please try again.')
-        return
-      }
-      
       const { error } = await supabase
         .from('rsvps')
         .insert({
-          user_id: session.user.id, // Use session user ID for RLS compliance
+          user_id: user.id,
           event_id: event.id,
           status: 'going',
           payment_status: 'paid'
@@ -210,59 +221,34 @@ export default function EventDetail() {
     }
   }
 
-  const createRSVPFromPayment = async () => {
+  const createRSVPFromPayment = async (sessionId) => {
+    if (!user || !event) {
+      console.error('User or event not available for RSVP creation')
+      setPaymentError('Authentication error. Please try again.')
+      return
+    }
+
     try {
-      console.log('Creating RSVP from payment success')
+      console.log('Creating RSVP from payment success with session ID:', sessionId)
       console.log('User context:', { user, authLoading })
-      
-      // Wait for user to be loaded
-      if (authLoading) {
-        console.log('Waiting for user authentication...')
-        return
-      }
-      
-      if (!user) {
-        console.error('User not authenticated - redirecting to login')
-        router.push('/login')
-        return
-      }
-      
-      if (!event) {
-        console.error('Event not loaded yet')
-        return
-      }
       
       setIsProcessingPayment(true)
       setPaymentError(null)
       
-      // Refresh the user session to ensure RLS policies work correctly
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError) {
-        console.error('Error getting session:', sessionError)
-        setPaymentError('Authentication error. Please try again.')
-        return
-      }
-      
-      if (!session?.user) {
-        console.error('No valid session found')
-        router.push('/login')
-        return
-      }
-      
-      console.log('Creating RSVP with user ID:', session.user.id)
+      console.log('Creating RSVP with user ID:', user.id)
       
       const { error } = await supabase
         .from('rsvps')
         .insert({
-          user_id: session.user.id, // Use session user ID for RLS compliance
+          user_id: user.id,
           event_id: event.id,
           status: 'going',
-          payment_status: 'paid'
+          payment_status: 'paid',
+          stripe_session_id: sessionId
         })
 
       if (error) {
         console.error('Error creating RSVP from payment:', error)
-        console.error('RLS error details:', error)
         setPaymentError('Error creating RSVP. Please try again.')
         return
       }
@@ -270,6 +256,11 @@ export default function EventDetail() {
       console.log('RSVP created successfully from payment')
       setPaymentSuccess(true)
       setIsAlreadyRegistered(true)
+      
+      // Refresh RSVP status to ensure UI is updated
+      setTimeout(() => {
+        checkRegistrationStatus()
+      }, 1000)
       
       // Show success message briefly, then redirect
       setTimeout(() => {
@@ -457,16 +448,6 @@ export default function EventDetail() {
             </div>
 
             <div className={styles.eventActions}>
-              {console.log('Render state:', { user: !!user, isAlreadyRegistered, paymentSuccess, isProcessingPayment, checkingRegistration })}
-              {/* Debug button for testing */}
-              {user && (
-                <button 
-                  onClick={() => checkRegistrationStatus()}
-                  style={{ marginBottom: '10px', fontSize: '12px', padding: '4px 8px' }}
-                >
-                  Debug: Check Registration
-                </button>
-              )}
               {!user ? (
                 <button 
                   className={styles.rsvpButton}
@@ -480,7 +461,7 @@ export default function EventDetail() {
                 </div>
               ) : isAlreadyRegistered ? (
                 <div className={styles.successMessage}>
-                  ✓ You are registered for this event!
+                  You're already registered
                 </div>
               ) : paymentSuccess ? (
                 <div className={styles.successMessage}>
@@ -502,6 +483,37 @@ export default function EventDetail() {
                   </button>
                 </div>
               )}
+            </div>
+
+            {/* Debug information card */}
+            <div className={styles.eventCard} style={{ marginTop: '20px' }}>
+              <div className={styles.cardHeader}>
+                <h3>Debug Information</h3>
+              </div>
+              <div className={styles.cardContent}>
+                <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                  {registrationDetails ? (
+                    <>
+                      <div><strong>user_id:</strong> {registrationDetails.user_id}</div>
+                      <div><strong>event_id:</strong> {registrationDetails.event_id}</div>
+                      <div><strong>status:</strong> {registrationDetails.status}</div>
+                      <div><strong>payment_status:</strong> {registrationDetails.payment_status}</div>
+                      <div><strong>stripe_session_id:</strong> {registrationDetails.stripe_session_id || 'null'}</div>
+                      <div><strong>created_at:</strong> {registrationDetails.created_at || 'null'}</div>
+                      <div><strong>updated_at:</strong> {registrationDetails.updated_at || 'null'}</div>
+                    </>
+                  ) : (
+                    <div>
+                      No registration found
+                      {stripeSessionId && (
+                        <div style={{ marginTop: '5px', color: '#666' }}>
+                          Current session ID: {stripeSessionId}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -19,6 +19,8 @@ export default function DiscoverEvents() {
   useEffect(() => {
     if (user) {
       fetchUserRsvps()
+    } else {
+      setUserRsvps(new Set())
     }
   }, [user])
 
@@ -52,17 +54,21 @@ export default function DiscoverEvents() {
   }
 
   const fetchUserRsvps = async () => {
-    if (!user) return
+    if (!user) {
+      setUserRsvps(new Set())
+      return
+    }
     
     try {
       const { data, error } = await supabase
         .from('rsvps')
-        .select('event_id')
+        .select('event_id, status')
         .eq('user_id', user.id)
         .eq('status', 'going')
 
       if (error) {
         console.error('Error fetching user RSVPs:', error)
+        setUserRsvps(new Set())
         return
       }
 
@@ -70,6 +76,7 @@ export default function DiscoverEvents() {
       setUserRsvps(rsvpEventIds)
     } catch (err) {
       console.error('Error fetching user RSVPs:', err)
+      setUserRsvps(new Set())
     }
   }
 
@@ -86,11 +93,18 @@ export default function DiscoverEvents() {
   }
 
   const handleEventClick = (eventId) => {
-    window.open(`/event/${eventId}`, '_blank')
+    window.location.href = `/event/${eventId}`
   }
 
   const handleGameChange = (gameTitle) => {
     setSelectedGame(gameTitle)
+  }
+
+  // Function to refresh RSVPs (can be called from parent components)
+  const refreshRsvps = () => {
+    if (user) {
+      fetchUserRsvps()
+    }
   }
 
   const filteredEvents = events.filter(event => {
