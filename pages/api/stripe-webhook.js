@@ -7,6 +7,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
 
+// Disable body parsing for webhooks
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+}
+
 export default async function handler(req, res) {
   console.log('Webhook received:', req.method, req.url)
   console.log('Request headers:', req.headers)
@@ -17,40 +24,57 @@ export default async function handler(req, res) {
   }
 
   const sig = req.headers['stripe-signature']
-  let event
-
-  try {
-    // For Netlify, we need to handle the raw body properly
-    let body = req.body
-    
-    // If body is already parsed, we need to stringify it back for Stripe
-    if (typeof body === 'object') {
-      body = JSON.stringify(body)
-    }
-    
-    console.log('Processing webhook with signature:', sig ? 'present' : 'missing')
-    console.log('Webhook body type:', typeof body)
-    console.log('Webhook body length:', body ? body.length : 0)
-    
-    if (!endpointSecret) {
-      console.error('Missing STRIPE_WEBHOOK_SECRET environment variable')
-      return res.status(500).json({ error: 'Webhook secret not configured' })
-    }
-    
-    event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
-    console.log('Webhook event type:', event.type)
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err.message)
-    console.error('Webhook error details:', err)
-    return res.status(400).json({ error: `Webhook Error: ${err.message}` })
+  
+  if (!endpointSecret) {
+    console.error('Missing STRIPE_WEBHOOK_SECRET environment variable')
+    return res.status(500).json({ error: 'Webhook secret not configured' })
   }
 
-  // Handle the event
+  // Get raw body from request
+  let body = ''
+  req.on('data', (chunk) => {
+    body += chunk.toString()
+  })
+  
+  req.on('end', async () => {
+    try {
+      console.log('Processing webhook with signature:', sig ? 'present' : 'missing')
+      console.log('Webhook body length:', body.length)
+      console.log('Webhook body preview:', body.substring(0, 100) + '...')
+      
+      const event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
+      console.log('Webhook event type:', event.type)
+      
+      // Handle the event
+      await handleWebhookEvent(event, res)
+    } catch (err) {
+      console.error('Webhook processing failed:', err.message)
+      console.error('Webhook error details:', err)
+      console.error('Signature:', sig)
+      console.error('Body preview:', body.substring(0, 200))
+      return res.status(400).json({ error: `Webhook Error: ${err.message}` })
+    }
+  })
+}
+
+async function handleWebhookEvent(event, res) {
   try {
+    console.log(`Processing webhook event: ${event.type}`)
+    
     switch (event.type) {
       case 'checkout.session.completed':
+        console.log('Handling checkout.session.completed')
         const session = event.data.object
         await handleSuccessfulPayment(session)
+        break
+      case 'payment_intent.succeeded':
+        console.log('Payment intent succeeded:', event.data.object.id)
+        break
+      case 'charge.succeeded':
+        console.log('Charge succeeded:', event.data.object.id)
+        break
+      case 'payment_intent.created':
+        console.log('Payment intent created:', event.data.object.id)
         break
       case 'payment_intent.payment_failed':
         console.log('Payment failed:', event.data.object)
@@ -58,15 +82,20 @@ export default async function handler(req, res) {
       default:
         console.log(`Unhandled event type ${event.type}`)
     }
+    
+    res.status(200).json({ received: true })
   } catch (error) {
     console.error('Error processing webhook event:', error)
+    console.error('Event details:', {
+      type: event.type,
+      id: event.id,
+      error: error.message
+    })
     return res.status(500).json({ 
       error: 'Internal server error processing webhook',
       details: error.message 
     })
   }
-
-  res.status(200).json({ received: true })
 }
 
 async function handleSuccessfulPayment(session) {
