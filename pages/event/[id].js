@@ -16,6 +16,7 @@ export default function EventDetail() {
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [paymentError, setPaymentError] = useState(null)
+  const [redirectHandled, setRedirectHandled] = useState(false)
 
   const handleTabChange = (tab) => {
     if (tab === 'upcoming') {
@@ -26,6 +27,7 @@ export default function EventDetail() {
   }
 
   useEffect(() => {
+    console.log('ID useEffect triggered:', { id, loading })
     if (id) {
       fetchEvent()
     }
@@ -33,24 +35,16 @@ export default function EventDetail() {
 
   // Handle success redirect from Stripe
   useEffect(() => {
-    // Check both router.query and window.location.search as fallback
-    const { rsvp, session_id } = router.query
+    // Simple check for success parameters
     const urlParams = new URLSearchParams(window.location.search)
-    const rsvpFromUrl = urlParams.get('rsvp')
-    const sessionIdFromUrl = urlParams.get('session_id')
+    const rsvp = urlParams.get('rsvp')
+    const sessionId = urlParams.get('session_id')
     
-    const isSuccess = (rsvp === 'success' && session_id) || (rsvpFromUrl === 'success' && sessionIdFromUrl)
+    console.log('Payment redirect check:', { rsvp, sessionId })
     
-    console.log('Payment redirect check:', { 
-      routerQuery: router.query, 
-      rsvp, 
-      session_id,
-      urlParams: { rsvpFromUrl, sessionIdFromUrl },
-      isSuccess
-    })
-    
-    if (isSuccess) {
+    if (rsvp === 'success' && sessionId && !redirectHandled) {
       console.log('Payment success detected, setting success state')
+      setRedirectHandled(true)
       setPaymentSuccess(true)
       // Redirect to My Events page after showing success message
       setTimeout(() => {
@@ -58,10 +52,11 @@ export default function EventDetail() {
         router.push('/?tab=myEvents&rsvp=success')
       }, 3000)
     }
-  }, [router.query, router])
+  }, [router, redirectHandled])
 
   const fetchEvent = async () => {
     try {
+      console.log('Fetching event with ID:', id)
       setLoading(true)
       const { data, error } = await supabase
         .from('events')
@@ -69,14 +64,18 @@ export default function EventDetail() {
         .eq('id', id)
         .single()
 
+      console.log('Event fetch result:', { data, error })
+
       if (error) {
         throw error
       }
 
       setEvent(data)
     } catch (err) {
+      console.error('Error fetching event:', err)
       setError(err.message)
     } finally {
+      console.log('Setting loading to false')
       setLoading(false)
     }
   }
@@ -214,6 +213,7 @@ export default function EventDetail() {
   }
 
   if (loading) {
+    console.log('Event detail loading state:', { loading, event, error, id })
     return (
       <div style={{ flex: 1 }}>
         <NavBar activeTab="" onTabChange={handleTabChange} />
