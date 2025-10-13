@@ -70,7 +70,11 @@ export default function Home() {
 
   return (
     <div style={{
-      background: 'linear-gradient(90deg, #f8fafc 0%, #ffffff 20%)',
+      background: `
+        linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px)
+      `,
+      backgroundSize: '8px 8px',
       flex: 1
     }}>
       <NavBar activeTab={activeTab} onTabChange={handleTabChange} />
