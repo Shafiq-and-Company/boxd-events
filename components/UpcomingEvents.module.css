@@ -83,15 +83,20 @@
 .registeredBadge {
   position: absolute;
   top: 8px;
-  right: 8px;
-  background: #000000;
-  color: #ffffff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.7rem;
+  left: 8px;
+  background: #d4edda;
+  color: #155724;
+  padding: 8px;
+  border-radius: 50%;
+  font-size: 0.8rem;
   font-weight: 500;
   z-index: 1;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(212, 237, 218, 0.2);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Content Section */
@@ -138,13 +143,13 @@
   align-self: flex-start;
   order: -1;
   min-height: 20px;
-  display: -webkit-box;
   -webkit-line-clamp: 1;
   line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
   white-space: nowrap;
   line-height: 1.2;
+  text-align: left;
 }
 
 .eventDetails {
@@ -245,6 +250,7 @@
     min-height: 18px;
     font-size: 0.7rem;
     padding: 4px 8px;
+    text-align: left;
   }
   
   .eventHeader {
@@ -259,7 +265,8 @@
   }
   
   .gameTitle {
-    align-self: flex-end;
+    align-self: flex-start;
+    text-align: left;
   }
 }
 

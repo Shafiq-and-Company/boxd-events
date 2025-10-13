@@ -134,7 +134,7 @@ export default function UpcomingEvents() {
                   </div>
                   {isRegistered && (
                     <div className={styles.registeredBadge}>
-                      ✓ Going
+                      ✓
                     </div>
                   )}
                 </div>

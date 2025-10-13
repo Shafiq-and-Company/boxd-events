@@ -182,7 +182,7 @@ export default function DiscoverEvents() {
                   </div>
                   {isRegistered && (
                     <div className={styles.registeredBadge}>
-                      ✓ Going
+                      ✓
                     </div>
                   )}
                 </div>

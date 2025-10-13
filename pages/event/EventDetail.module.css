@@ -247,6 +247,10 @@
     padding: 12px;
   }
   
+  .eventActions {
+    justify-content: flex-start;
+  }
+  
   .rsvpButton {
     width: 100%;
     padding: 12px 16px;

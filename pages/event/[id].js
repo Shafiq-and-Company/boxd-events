@@ -460,8 +460,17 @@ export default function EventDetail() {
                   Checking registration status...
                 </div>
               ) : isAlreadyRegistered ? (
-                <div className={styles.successMessage}>
-                  You're already registered
+                <div style={{ 
+                  background: '#d4edda', 
+                  color: '#155724',
+                  padding: '8px 16px', 
+                  borderRadius: '20px', 
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                  display: 'inline-block'
+                }}>
+                  ✓ Going
                 </div>
               ) : paymentSuccess ? (
                 <div className={styles.successMessage}>
@@ -485,35 +494,80 @@ export default function EventDetail() {
               )}
             </div>
 
-            {/* Debug information card */}
-            <div className={styles.eventCard} style={{ marginTop: '20px' }}>
-              <div className={styles.cardHeader}>
-                <h3>Debug Information</h3>
+            {/* Debug information pills */}
+            <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ 
+                background: '#f0f0f0', 
+                padding: '4px 8px', 
+                borderRadius: '12px', 
+                fontSize: '12px',
+                fontFamily: 'monospace'
+              }}>
+                user: {user?.id?.slice(0, 8) || 'none'}
               </div>
-              <div className={styles.cardContent}>
-                <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
-                  {registrationDetails ? (
-                    <>
-                      <div><strong>user_id:</strong> {registrationDetails.user_id}</div>
-                      <div><strong>event_id:</strong> {registrationDetails.event_id}</div>
-                      <div><strong>status:</strong> {registrationDetails.status}</div>
-                      <div><strong>payment_status:</strong> {registrationDetails.payment_status}</div>
-                      <div><strong>stripe_session_id:</strong> {registrationDetails.stripe_session_id || 'null'}</div>
-                      <div><strong>created_at:</strong> {registrationDetails.created_at || 'null'}</div>
-                      <div><strong>updated_at:</strong> {registrationDetails.updated_at || 'null'}</div>
-                    </>
-                  ) : (
-                    <div>
-                      No registration found
-                      {stripeSessionId && (
-                        <div style={{ marginTop: '5px', color: '#666' }}>
-                          Current session ID: {stripeSessionId}
-                        </div>
-                      )}
+              <div style={{ 
+                background: '#f0f0f0', 
+                padding: '4px 8px', 
+                borderRadius: '12px', 
+                fontSize: '12px',
+                fontFamily: 'monospace'
+              }}>
+                event: {event?.id?.slice(0, 8) || 'none'}
+              </div>
+              {registrationDetails ? (
+                <>
+                  <div style={{ 
+                    background: registrationDetails.status === 'going' ? '#d4edda' : '#f8d7da', 
+                    padding: '4px 8px', 
+                    borderRadius: '12px', 
+                    fontSize: '12px',
+                    fontFamily: 'monospace'
+                  }}>
+                    {registrationDetails.status}
+                  </div>
+                  <div style={{ 
+                    background: registrationDetails.payment_status === 'paid' ? '#d4edda' : '#fff3cd', 
+                    padding: '4px 8px', 
+                    borderRadius: '12px', 
+                    fontSize: '12px',
+                    fontFamily: 'monospace'
+                  }}>
+                    {registrationDetails.payment_status}
+                  </div>
+                  {registrationDetails.stripe_session_id && (
+                    <div style={{ 
+                      background: '#e2e3e5', 
+                      padding: '4px 8px', 
+                      borderRadius: '12px', 
+                      fontSize: '12px',
+                      fontFamily: 'monospace'
+                    }}>
+                      stripe: {registrationDetails.stripe_session_id.slice(0, 8)}
                     </div>
                   )}
+                </>
+              ) : (
+                <div style={{ 
+                  background: '#f8d7da', 
+                  padding: '4px 8px', 
+                  borderRadius: '12px', 
+                  fontSize: '12px',
+                  fontFamily: 'monospace'
+                }}>
+                  no rsvp
                 </div>
-              </div>
+              )}
+              {stripeSessionId && !registrationDetails && (
+                <div style={{ 
+                  background: '#fff3cd', 
+                  padding: '4px 8px', 
+                  borderRadius: '12px', 
+                  fontSize: '12px',
+                  fontFamily: 'monospace'
+                }}>
+                  session: {stripeSessionId.slice(0, 8)}
+                </div>
+              )}
             </div>
           </div>
         </div>
