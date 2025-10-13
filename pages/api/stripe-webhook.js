@@ -9,6 +9,7 @@ const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
 
 export default async function handler(req, res) {
   console.log('Webhook received:', req.method, req.url)
+  console.log('Request headers:', req.headers)
   
   if (req.method !== 'POST') {
     console.log('Method not allowed:', req.method)
@@ -45,16 +46,24 @@ export default async function handler(req, res) {
   }
 
   // Handle the event
-  switch (event.type) {
-    case 'checkout.session.completed':
-      const session = event.data.object
-      await handleSuccessfulPayment(session)
-      break
-    case 'payment_intent.payment_failed':
-      console.log('Payment failed:', event.data.object)
-      break
-    default:
-      console.log(`Unhandled event type ${event.type}`)
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed':
+        const session = event.data.object
+        await handleSuccessfulPayment(session)
+        break
+      case 'payment_intent.payment_failed':
+        console.log('Payment failed:', event.data.object)
+        break
+      default:
+        console.log(`Unhandled event type ${event.type}`)
+    }
+  } catch (error) {
+    console.error('Error processing webhook event:', error)
+    return res.status(500).json({ 
+      error: 'Internal server error processing webhook',
+      details: error.message 
+    })
   }
 
   res.status(200).json({ received: true })
@@ -69,6 +78,7 @@ async function handleSuccessfulPayment(session) {
 
     if (!eventId || !userId) {
       console.error('Missing metadata in checkout session:', session.metadata)
+      console.error('Session object:', session)
       return
     }
     
@@ -130,6 +140,12 @@ async function handleSuccessfulPayment(session) {
     }
   } catch (error) {
     console.error('Error handling successful payment:', error)
-    throw error
+    console.error('Payment session details:', {
+      sessionId: session.id,
+      metadata: session.metadata,
+      error: error.message
+    })
+    // Don't throw - let the webhook respond with success to Stripe
+    // The error is logged for debugging
   }
 }
