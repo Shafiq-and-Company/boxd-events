@@ -29,6 +29,11 @@ export default async function handler(req, res) {
     }
 
     // Create Stripe checkout session
+    const successUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/event/${eventId}?rsvp=success&session_id={CHECKOUT_SESSION_ID}`
+    const cancelUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/event/${eventId}`
+    
+    console.log('Creating checkout session with URLs:', { successUrl, cancelUrl })
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -45,8 +50,8 @@ export default async function handler(req, res) {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/event/${eventId}?rsvp=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/event/${eventId}`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: {
         eventId: eventId,
         userId: userId,

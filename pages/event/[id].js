@@ -33,18 +33,32 @@ export default function EventDetail() {
 
   // Handle success redirect from Stripe
   useEffect(() => {
+    // Check both router.query and window.location.search as fallback
+    const { rsvp, session_id } = router.query
     const urlParams = new URLSearchParams(window.location.search)
-    const rsvpSuccess = urlParams.get('rsvp')
-    const sessionId = urlParams.get('session_id')
+    const rsvpFromUrl = urlParams.get('rsvp')
+    const sessionIdFromUrl = urlParams.get('session_id')
     
-    if (rsvpSuccess === 'success' && sessionId) {
+    const isSuccess = (rsvp === 'success' && session_id) || (rsvpFromUrl === 'success' && sessionIdFromUrl)
+    
+    console.log('Payment redirect check:', { 
+      routerQuery: router.query, 
+      rsvp, 
+      session_id,
+      urlParams: { rsvpFromUrl, sessionIdFromUrl },
+      isSuccess
+    })
+    
+    if (isSuccess) {
+      console.log('Payment success detected, setting success state')
       setPaymentSuccess(true)
       // Redirect to My Events page after showing success message
       setTimeout(() => {
+        console.log('Redirecting to My Events page')
         router.push('/?tab=myEvents&rsvp=success')
       }, 3000)
     }
-  }, [router])
+  }, [router.query, router])
 
   const fetchEvent = async () => {
     try {
