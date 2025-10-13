@@ -1,0 +1,6 @@
+column_name,data_type,is_nullable,column_default,character_maximum_length
+id,uuid,NO,gen_random_uuid(),null
+first_name,text,NO,null,null
+last_name,text,NO,null,null
+email,text,NO,null,null
+created_at,timestamp with time zone,YES,now(),null

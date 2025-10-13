@@ -1,0 +1,13 @@
+column_name,data_type,is_nullable,column_default,character_maximum_length
+id,uuid,NO,gen_random_uuid(),null
+title,text,NO,null,null
+description,text,YES,null,null
+location,text,YES,null,null
+starts_at,timestamp with time zone,NO,null,null
+ends_at,timestamp with time zone,YES,null,null
+created_at,timestamp with time zone,YES,now(),null
+game_title,text,NO,'Unknown'::text,null
+city,text,YES,null,null
+cost,text,YES,null,null
+state,text,YES,null,null
+host,text,YES,null,null
