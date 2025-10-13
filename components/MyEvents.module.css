@@ -311,7 +311,7 @@
     min-height: 14px;
     font-size: 0.6rem;
     padding: 2px 5px;
-    align-self: flex-end;
+    align-self: flex-start;
   }
   
   .eventHeader {

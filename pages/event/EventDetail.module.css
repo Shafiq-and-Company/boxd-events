@@ -157,7 +157,7 @@
   border-radius: 4px;
   padding: 16px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   margin-top: 16px;
 }
 
