@@ -112,6 +112,18 @@ async function handleSuccessfulPayment(session) {
     }
     
     console.log('Creating/updating RSVP for user:', userId, 'event:', eventId)
+    
+    // Additional security validation for webhook operations
+    if (!userId || !eventId || !session.id) {
+      console.error('Invalid webhook data - missing required fields')
+      return
+    }
+    
+    // Validate that this is a legitimate Stripe session
+    if (!session.id.startsWith('cs_')) {
+      console.error('Invalid Stripe session ID format')
+      return
+    }
 
     // Check if RSVP already exists to avoid duplicates
     const { data: existingRsvp, error: checkError } = await supabase

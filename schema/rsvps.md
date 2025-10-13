@@ -62,18 +62,35 @@ CREATE POLICY "Users can delete their own RSVPs" ON rsvps
 ```
 **Purpose**: Users can cancel their event registrations
 
-### Policy 5: Service Role Full Access
+### Policy 5: Webhook RSVP Creation
 ```sql
--- Allow service role to manage all RSVPs (for webhooks and admin operations)
-CREATE POLICY "Service role can manage all RSVPs" ON rsvps
-    FOR ALL
-    TO service_role
-    USING (true)
-    WITH CHECK (true);
+-- Allow webhook operations to create RSVPs for paid events
+CREATE POLICY "Allow webhook RSVP creation" ON rsvps
+    FOR INSERT
+    TO authenticated
+    WITH CHECK (
+        payment_status = 'paid' AND
+        stripe_session_id IS NOT NULL AND
+        user_id IS NOT NULL AND
+        event_id IS NOT NULL
+    );
 ```
-**Purpose**: Enables Stripe webhooks and administrative operations
+**Purpose**: Enables Stripe webhooks to create RSVPs for paid events
 
-### Policy 6: Event Hosts Can View RSVPs for Their Events
+### Policy 6: Webhook RSVP Updates
+```sql
+-- Allow webhook operations to update RSVPs
+CREATE POLICY "Allow webhook RSVP updates" ON rsvps
+    FOR UPDATE
+    TO authenticated
+    USING (true)
+    WITH CHECK (
+        payment_status IN ('paid', 'pending', 'failed', 'refunded')
+    );
+```
+**Purpose**: Enables Stripe webhooks to update payment status
+
+### Policy 7: Event Hosts Can View RSVPs for Their Events
 ```sql
 -- Allow event hosts to view RSVPs for their events
 CREATE POLICY "Event hosts can view RSVPs for their events" ON rsvps
@@ -89,7 +106,7 @@ CREATE POLICY "Event hosts can view RSVPs for their events" ON rsvps
 ```
 **Purpose**: Event creators can see who has RSVP'd to their events
 
-### Policy 7: Public Read Access for Event Details (Optional)
+### Policy 8: Public Read Access for Event Details (Optional)
 ```sql
 -- Allow public read access to RSVP counts (without personal data)
 CREATE POLICY "Public can view RSVP counts" ON rsvps
