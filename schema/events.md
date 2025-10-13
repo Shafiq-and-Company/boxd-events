@@ -18,6 +18,7 @@ The `events` table stores information about gaming events and tournaments.
 | `cost` | text | YES | null | Event cost (free or paid) |
 | `state` | text | YES | null | Event state |
 | `host` | text | YES | null | Event host (user ID) |
+| `host_id` | uuid | YES | null | Event host user ID (foreign key to users) |
 
 ## Row Level Security (RLS) Policies
 
@@ -51,8 +52,8 @@ CREATE POLICY "Authenticated users can create events" ON events
 CREATE POLICY "Users can update their own events" ON events
     FOR UPDATE
     TO authenticated
-    USING (auth.uid()::text = host)
-    WITH CHECK (auth.uid()::text = host);
+    USING (auth.uid() = host_id)
+    WITH CHECK (auth.uid() = host_id);
 ```
 **Purpose**: Users can only modify events they created
 
@@ -62,7 +63,7 @@ CREATE POLICY "Users can update their own events" ON events
 CREATE POLICY "Users can delete their own events" ON events
     FOR DELETE
     TO authenticated
-    USING (auth.uid()::text = host);
+    USING (auth.uid() = host_id);
 ```
 **Purpose**: Users can only delete events they created
 

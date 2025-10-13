@@ -8,8 +8,11 @@ export default function MyEvents() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [events, setEvents] = useState([])
+  const [hostedEvents, setHostedEvents] = useState([])
   const [loading, setLoading] = useState(true)
+  const [hostedLoading, setHostedLoading] = useState(true)
   const [error, setError] = useState('')
+  const [hostedError, setHostedError] = useState('')
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -19,6 +22,7 @@ export default function MyEvents() {
 
     if (user) {
       fetchUserEvents()
+      fetchHostedEvents()
     }
   }, [user, authLoading, router])
 
@@ -71,6 +75,41 @@ export default function MyEvents() {
     }
   }
 
+  const fetchHostedEvents = async () => {
+    try {
+      setHostedLoading(true)
+      setHostedError('')
+
+      const { data: events, error: eventsError } = await supabase
+        .from('events')
+        .select(`
+          id,
+          title,
+          description,
+          location,
+          city,
+          game_title,
+          starts_at,
+          ends_at,
+          cost,
+          created_at
+        `)
+        .eq('host_id', user.id)
+        .order('starts_at', { ascending: true })
+
+      if (eventsError) {
+        throw eventsError
+      }
+
+      setHostedEvents(events || [])
+    } catch (err) {
+      console.error('Error fetching hosted events:', err)
+      setHostedError('Failed to load your hosted events')
+    } finally {
+      setHostedLoading(false)
+    }
+  }
+
   const formatDate = (dateString) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
@@ -91,7 +130,7 @@ export default function MyEvents() {
     router.push('/login')
   }
 
-  if (authLoading || loading) {
+  if (authLoading || loading || hostedLoading) {
     return (
       <div className={styles.myEvents}>
         <h2>My Events</h2>
@@ -117,83 +156,112 @@ export default function MyEvents() {
     )
   }
 
-  if (error) {
+  if (error || hostedError) {
     return (
       <div className={styles.myEvents}>
         <h2>My Events</h2>
-        <div className={styles.error}>Error loading events: {error}</div>
-      </div>
-    )
-  }
-
-  if (events.length === 0) {
-    return (
-      <div className={styles.myEvents}>
-        <h2>My Events</h2>
-        <p className={styles.tagline}>Events you're registered for</p>
-        <div className={styles.emptyState}>
-          <div className={styles.emptyStateContent}>
-            <p className={styles.emptyStateText}>You haven't registered for any events yet.</p>
-            <p className={styles.emptyStateSubtext}>Discover exciting gaming events and tournaments happening near you.</p>
-            <button 
-              onClick={() => router.push('/')}
-              className={styles.discoverButton}
-            >
-              Discover Events
-            </button>
-          </div>
+        <div className={styles.error}>
+          {error && `Error loading events: ${error}`}
+          {hostedError && `Error loading hosted events: ${hostedError}`}
         </div>
       </div>
     )
   }
 
+  const renderEventCard = (event) => (
+    <div 
+      key={event.id} 
+      className={styles.eventCard}
+      onClick={() => handleEventClick(event.id)}
+    >
+      <div className={styles.eventImage}>
+        <div className={styles.imagePlaceholder}>
+          {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
+        </div>
+      </div>
+      
+      <div className={styles.eventContent}>
+        <div className={styles.eventHeader}>
+          <h3 className={styles.eventTitle}>{event.title}</h3>
+          {event.game_title && (
+            <span className={styles.gameTitle}>{event.game_title}</span>
+          )}
+        </div>
+        
+        <div className={styles.eventDetails}>
+          <div className={styles.eventDate}>
+            {formatDate(event.starts_at)}
+          </div>
+          
+          {event.location && (
+            <div className={styles.eventLocation}>
+              {event.location}
+              {event.city && `, ${event.city}`}
+            </div>
+          )}
+          
+          {event.description && (
+            <div className={styles.eventDescription}>
+              {event.description}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <div className={styles.myEvents}>
       <h2>My Events</h2>
-      <p className={styles.tagline}>Events you're registered for</p>
+      <p className={styles.pageSubtitle}>Manage your event registrations and hosted events</p>
       
-      <div className={styles.eventsList}>
-        {events.map((event) => (
-          <div 
-            key={event.id} 
-            className={styles.eventCard}
-            onClick={() => handleEventClick(event.id)}
-          >
-            <div className={styles.eventImage}>
-              <div className={styles.imagePlaceholder}>
-                {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
-              </div>
-            </div>
-            
-            <div className={styles.eventContent}>
-              <div className={styles.eventHeader}>
-                <h3 className={styles.eventTitle}>{event.title}</h3>
-                {event.game_title && (
-                  <span className={styles.gameTitle}>{event.game_title}</span>
-                )}
-              </div>
-              
-              <div className={styles.eventDetails}>
-                <div className={styles.eventDate}>
-                  {formatDate(event.starts_at)}
-                </div>
-                
-                {event.location && (
-                  <div className={styles.eventLocation}>
-                    {event.location}
-                    {event.city && `, ${event.city}`}
-                  </div>
-                )}
-                
-                {event.description && (
-                  <div className={styles.eventDescription}>
-                    {event.description}
-                  </div>
-                )}
-              </div>
+      {/* Registered Events Section */}
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>Events I'm Attending</h3>
+        
+        {events.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateContent}>
+              <p className={styles.emptyStateText}>You haven't registered for any events yet.</p>
+              <p className={styles.emptyStateSubtext}>Discover exciting gaming events and tournaments happening near you.</p>
+              <button 
+                onClick={() => router.push('/')}
+                className={styles.discoverButton}
+              >
+                Discover Events
+              </button>
             </div>
           </div>
-        ))}
+        ) : (
+          <div className={styles.eventsList}>
+            {events.map(renderEventCard)}
+          </div>
+        )}
+      </div>
+
+      {/* Hosted Events Section */}
+      <div className={styles.section}>
+        <div className={styles.sectionDivider}></div>
+        <h3 className={styles.sectionTitle}>Events I'm Hosting</h3>
+        
+        {hostedEvents.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateContent}>
+              <p className={styles.emptyStateText}>You haven't hosted any events yet.</p>
+              <p className={styles.emptyStateSubtext}>Create your own gaming events and tournaments.</p>
+              <button 
+                onClick={() => router.push('/create-event')}
+                className={styles.discoverButton}
+              >
+                Create Event
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.eventsList}>
+            {hostedEvents.map(renderEventCard)}
+          </div>
+        )}
       </div>
     </div>
   )
