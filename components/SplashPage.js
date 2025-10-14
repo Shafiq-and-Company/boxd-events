@@ -2,12 +2,14 @@ import { useRouter } from 'next/router'
 import { useAuth } from '../lib/AuthContext'
 import styles from './SplashPage.module.css'
 
-export default function SplashPage() {
+export default function SplashPage({ onProceed }) {
   const router = useRouter()
   const { user } = useAuth()
 
   const handleGetStarted = () => {
-    if (user) {
+    if (onProceed) {
+      onProceed()
+    } else if (user) {
       router.push('/')
     } else {
       router.push('/login')
@@ -21,11 +23,11 @@ export default function SplashPage() {
           <div className={styles.heroText}>
             <div className={styles.brandText}>BOXD</div>
             <h1 className={styles.heroTitle}>
-              ESports
+              Community.
               <br />
-              <span className={styles.heroTitleAccent}>Events</span>
+              <span className={styles.heroTitleAccent}>Competition.</span>
               <br />
-              start here.
+              Camaraderie.
             </h1>
             <p className={styles.heroSubtitle}>
               Host tournaments, locals, and open play events. 

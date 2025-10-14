@@ -48,7 +48,7 @@ export default function Footer() {
         
         <div className={styles.bottom}>
           <div className={styles.copyright}>
-            © 2024 BOXD
+            © 2025 BOXD
           </div>
         </div>
       </div>

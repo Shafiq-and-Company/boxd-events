@@ -134,6 +134,8 @@
     gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
+    margin-left: 0;
+    width: 100%;
   }
   
   .logo {
@@ -174,6 +176,8 @@
     gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
+    margin-left: 0;
+    width: 100%;
   }
   
   .logo {

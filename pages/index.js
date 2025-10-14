@@ -6,11 +6,13 @@ import MyEvents from '../components/MyEvents'
 import CreateEvent from '../components/CreateEvent'
 import NavBar from '../components/NavBar'
 import PaymentConfirmation from '../components/PaymentConfirmation'
+import SplashPage from '../components/SplashPage'
 
 export default function Home() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('upcoming')
   const [successMessage, setSuccessMessage] = useState(null)
+  const [showSplash, setShowSplash] = useState(true)
 
   useEffect(() => {
     if (router.query.tab) {
@@ -66,6 +68,14 @@ export default function Home() {
   const handleCloseMessage = () => {
     setSuccessMessage(null)
     router.replace('/', undefined, { shallow: true })
+  }
+
+  const handleSplashProceed = () => {
+    setShowSplash(false)
+  }
+
+  if (showSplash) {
+    return <SplashPage onProceed={handleSplashProceed} />
   }
 
   return (
