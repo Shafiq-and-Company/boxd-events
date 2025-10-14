@@ -15,6 +15,7 @@ export default function UserSettings() {
     first_name: '',
     last_name: '',
     email: '',
+    phone: '',
     username: '',
     bio: '',
     avatar_url: '',
@@ -24,6 +25,13 @@ export default function UserSettings() {
     twitter: '',
     tiktok: '',
     website: ''
+  })
+  const [gamingAccounts, setGamingAccounts] = useState({
+    ea: { linked: false, username: '' },
+    startgg: { linked: false, username: '' },
+    battlefy: { linked: false, username: '' },
+    smashersgg: { linked: false, username: '' },
+    battlenet: { linked: false, username: '' }
   })
   const [uploading, setUploading] = useState(false)
 
@@ -53,10 +61,11 @@ export default function UserSettings() {
         throw profileError
       }
 
-      // Get username, bio, avatar, and social links from user metadata or generate from email
+      // Get username, bio, avatar, phone, and social links from user metadata or generate from email
       const username = user.user_metadata?.username || user.email?.split('@')[0] || ''
       const bio = user.user_metadata?.bio || ''
       const avatar_url = user.user_metadata?.avatar_url || ''
+      const phone = user.user_metadata?.phone || ''
       const instagram = user.user_metadata?.instagram || ''
       const youtube = user.user_metadata?.youtube || ''
       const linkedin = user.user_metadata?.linkedin || ''
@@ -68,6 +77,7 @@ export default function UserSettings() {
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
         email: profile.email || user.email || '',
+        phone: phone,
         username: username,
         bio: bio,
         avatar_url: avatar_url,
@@ -158,12 +168,13 @@ export default function UserSettings() {
         throw updateError
       }
 
-      // Update username, bio, avatar, and social links in user metadata
+      // Update username, bio, avatar, phone, and social links in user metadata
       const { error: metadataError } = await supabase.auth.updateUser({
         data: {
           username: userProfile.username,
           bio: userProfile.bio,
           avatar_url: userProfile.avatar_url,
+          phone: userProfile.phone,
           instagram: userProfile.instagram,
           youtube: userProfile.youtube,
           linkedin: userProfile.linkedin,
@@ -193,6 +204,17 @@ export default function UserSettings() {
 
   const handleSignIn = () => {
     router.push('/login')
+  }
+
+  const handleGamingLink = (platform) => {
+    // Toggle the linked status for the gaming platform
+    setGamingAccounts(prev => ({
+      ...prev,
+      [platform]: {
+        linked: !prev[platform].linked,
+        username: !prev[platform].linked ? `user@${platform}.com` : ''
+      }
+    }))
   }
 
   if (authLoading || loading) {
@@ -333,7 +355,8 @@ export default function UserSettings() {
           </div>
 
           <div className={styles.socialSection}>
-            <h3 className={styles.sectionTitle}>Social Links</h3>
+            <h3 className={styles.sectionTitle}>Social links</h3>
+            <p className={styles.sectionSubtitle}>Connect your social media accounts to share your events and connect with other users.</p>
             <div className={styles.socialGrid}>
               <div className={styles.formGroup}>
                 <div className={styles.socialInput}>
@@ -475,6 +498,197 @@ export default function UserSettings() {
             </p>
           </div>
 
+          <div className={styles.formGroup}>
+            <label htmlFor="phone" className={styles.label}>
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={userProfile.phone}
+              onChange={handleInputChange}
+              className={styles.input}
+              placeholder="Enter your phone number"
+            />
+          </div>
+
+          <div className={styles.formActions}>
+            <button
+              type="submit"
+              disabled={saving}
+              className={styles.saveButton}
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+
+          <div className={styles.securitySection}>
+            <h3 className={styles.sectionTitle}>Password & Security</h3>
+            <p className={styles.sectionSubtitle}>Secure your account with password and two-factor authentication.</p>
+            
+            <div className={styles.securityItem}>
+              <div className={styles.securityIcon}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+              <div className={styles.securityContent}>
+                <h4 className={styles.securityTitle}>Account Password</h4>
+                <p className={styles.securityDescription}>Please follow the instructions in the email to finish setting your password.</p>
+              </div>
+              <button type="button" className={styles.securityButton}>
+                Check Your Email
+              </button>
+            </div>
+
+            <div className={styles.securityItem}>
+              <div className={styles.securityIcon}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="M9 12l2 2 4-4"/>
+                </svg>
+              </div>
+              <div className={styles.securityContent}>
+                <h4 className={styles.securityTitle}>Two-Factor Authentication</h4>
+                <p className={styles.securityDescription}>Please set a password before enabling two-factor authentication.</p>
+              </div>
+              <button type="button" className={styles.securityButton}>
+                Enable 2FA
+              </button>
+            </div>
+
+            <div className={styles.securityItem}>
+              <div className={styles.securityIcon}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M15 7h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-3"/>
+                  <path d="M10 17H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5"/>
+                  <path d="M8 21l4-7 4 7"/>
+                </svg>
+              </div>
+              <div className={styles.securityContent}>
+                <h4 className={styles.securityTitle}>Passkeys</h4>
+                <p className={styles.securityDescription}>Passkeys are a secure and convenient way to sign in.</p>
+              </div>
+              <button type="button" className={styles.securityButton}>
+                Add Passkey
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.gamingSection}>
+            <h3 className={styles.sectionTitle}>Gaming Accounts</h3>
+            <p className={styles.sectionSubtitle}>Link your gaming accounts to track rankings and connect with the community.</p>
+            
+            <div className={styles.gamingGrid}>
+              <div className={styles.gamingCard}>
+                <div className={styles.gamingIcon}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                <div className={styles.gamingContent}>
+                  <h4 className={styles.gamingTitle}>EA</h4>
+                  <p className={styles.gamingStatus}>
+                    {gamingAccounts.ea.linked ? gamingAccounts.ea.username : 'Not Linked'}
+                  </p>
+                </div>
+                <button 
+                  type="button" 
+                  className={styles.gamingButton}
+                  onClick={() => handleGamingLink('ea')}
+                >
+                  {gamingAccounts.ea.linked ? '✓' : '+'}
+                </button>
+              </div>
+
+              <div className={styles.gamingCard}>
+                <div className={styles.gamingIcon}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                </div>
+                <div className={styles.gamingContent}>
+                  <h4 className={styles.gamingTitle}>Start.gg</h4>
+                  <p className={styles.gamingStatus}>
+                    {gamingAccounts.startgg.linked ? gamingAccounts.startgg.username : 'Not Linked'}
+                  </p>
+                </div>
+                <button 
+                  type="button" 
+                  className={styles.gamingButton}
+                  onClick={() => handleGamingLink('startgg')}
+                >
+                  {gamingAccounts.startgg.linked ? '✓' : '+'}
+                </button>
+              </div>
+
+              <div className={styles.gamingCard}>
+                <div className={styles.gamingIcon}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                  </svg>
+                </div>
+                <div className={styles.gamingContent}>
+                  <h4 className={styles.gamingTitle}>Battlefy</h4>
+                  <p className={styles.gamingStatus}>
+                    {gamingAccounts.battlefy.linked ? gamingAccounts.battlefy.username : 'Not Linked'}
+                  </p>
+                </div>
+                <button 
+                  type="button" 
+                  className={styles.gamingButton}
+                  onClick={() => handleGamingLink('battlefy')}
+                >
+                  {gamingAccounts.battlefy.linked ? '✓' : '+'}
+                </button>
+              </div>
+
+              <div className={styles.gamingCard}>
+                <div className={styles.gamingIcon}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                <div className={styles.gamingContent}>
+                  <h4 className={styles.gamingTitle}>Smashers.gg</h4>
+                  <p className={styles.gamingStatus}>
+                    {gamingAccounts.smashersgg.linked ? gamingAccounts.smashersgg.username : 'Not Linked'}
+                  </p>
+                </div>
+                <button 
+                  type="button" 
+                  className={styles.gamingButton}
+                  onClick={() => handleGamingLink('smashersgg')}
+                >
+                  {gamingAccounts.smashersgg.linked ? '✓' : '+'}
+                </button>
+              </div>
+
+              <div className={styles.gamingCard}>
+                <div className={styles.gamingIcon}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                </div>
+                <div className={styles.gamingContent}>
+                  <h4 className={styles.gamingTitle}>Battle.net</h4>
+                  <p className={styles.gamingStatus}>
+                    {gamingAccounts.battlenet.linked ? gamingAccounts.battlenet.username : 'Not Linked'}
+                  </p>
+                </div>
+                <button 
+                  type="button" 
+                  className={styles.gamingButton}
+                  onClick={() => handleGamingLink('battlenet')}
+                >
+                  {gamingAccounts.battlenet.linked ? '✓' : '+'}
+                </button>
+              </div>
+            </div>
+          </div>
+
           {error && (
             <div className={styles.errorMessage}>
               {error}
@@ -486,16 +700,6 @@ export default function UserSettings() {
               {success}
             </div>
           )}
-
-          <div className={styles.formActions}>
-            <button
-              type="submit"
-              disabled={saving}
-              className={styles.saveButton}
-            >
-              {saving ? 'Saving...' : 'Save Changes'}
-            </button>
-          </div>
         </form>
       </div>
     </div>
