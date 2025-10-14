@@ -109,8 +109,30 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
             {isProfileOpen && (
               <div className={styles.profileDropdown}>
                 <div className={styles.profileDropdownItem}>
-                  <span className={styles.profileEmail}>{user.email}</span>
+                  <div className={styles.profileInfo}>
+                    <div className={styles.profileImage}>
+                      <span className={styles.profileInitial}>
+                        {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
+                      </span>
+                    </div>
+                    <div className={styles.profileDetails}>
+                      <span className={styles.profileEmail}>{user.email}</span>
+                      <span className={styles.profileUsername}>
+                        @{user.email ? user.email.split('@')[0] : 'user'}
+                      </span>
+                    </div>
+                  </div>
                 </div>
+                <button 
+                  onClick={() => {
+                    // TODO: Navigate to settings page or open settings modal
+                    console.log('Settings clicked')
+                    setIsProfileOpen(false)
+                  }}
+                  className={styles.profileSettingsButton}
+                >
+                  Settings
+                </button>
                 <button 
                   onClick={() => {
                     signOut()

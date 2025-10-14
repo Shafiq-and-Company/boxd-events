@@ -1,6 +1,5 @@
-/* NavBar Component - Luma-inspired minimalism */
+/* NavBar Component - Clean & Minimal */
 .navbar {
-  /* Layout */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -9,34 +8,13 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  
-  /* Spacing - reduced height */
   padding: 12px 24px;
-  margin: 0;
   height: 60px;
-  
-  /* Background with gradient */
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 255, 255, 0.1) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: none;
-  
-  /* Typography */
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  
-  /* Transitions */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    padding: 10px 20px;
-    height: 56px;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 8px 16px;
-    height: 52px;
-  }
 }
 
 .navbar.scrolled {
@@ -44,50 +22,29 @@
   border-bottom: 1px solid rgba(229, 231, 235, 0.3);
 }
 
+/* Navigation Links */
 .navLinks {
-  /* Layout */
   display: flex;
   gap: 24px;
   align-items: center;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    gap: 20px;
-  }
-  
-  @media (max-width: 480px) {
-    gap: 16px;
-    font-size: 13px;
-  }
-  
-  @media (max-width: 320px) {
-    gap: 12px;
-    font-size: 12px;
-  }
 }
 
 .navLink {
-  /* Typography */
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: #6B7280;
-  text-decoration: none;
-  
-  /* Layout */
   display: flex;
   align-items: center;
   gap: 6px;
-  background: none;
-  border: none;
-  cursor: pointer;
   padding: 8px 12px;
+  border: none;
+  background: none;
   border-radius: 6px;
-  
-  /* Hover state */
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+  color: #6B7280;
+  text-decoration: none;
   transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -103,67 +60,31 @@
 }
 
 .navIcon {
-  /* Icon styling */
   width: 16px;
   height: 16px;
   opacity: 0.7;
   transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Responsive */
-  @media (max-width: 480px) {
-    width: 14px;
-    height: 14px;
-  }
-  
-  @media (max-width: 320px) {
-    width: 12px;
-    height: 12px;
-  }
 }
 
-.navLink:hover .navIcon {
-  opacity: 1;
-}
-
+.navLink:hover .navIcon,
 .navLink.active .navIcon {
   opacity: 1;
 }
 
 .navText {
-  /* Show text on desktop */
   display: inline;
-  
-  /* Hide text on mobile */
-  @media (max-width: 768px) {
-    display: none;
-  }
 }
 
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .navLink {
-    transition: none;
-  }
-  
-  .navIcon {
-    transition: none;
-  }
-}
-
+/* Logo */
 .logo {
-  /* Typography */
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.3px;
-  color: #111827;
-  
-  /* Layout */
   display: block;
   cursor: pointer;
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
   padding: 8px 12px;
   border-radius: 6px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logo:hover {
@@ -174,17 +95,8 @@
   height: 48px;
   width: auto;
   object-fit: contain;
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
-  
-  /* Responsive */
-  @media (max-width: 480px) {
-    height: 44px;
-  }
-  
-  @media (max-width: 320px) {
-    height: 40px;
-  }
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logo:hover .logoImage {
@@ -192,92 +104,42 @@
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 }
 
+/* Profile Section */
 .profile {
-  /* Layout */
   display: flex;
   align-items: center;
   gap: 12px;
   position: relative;
-  
-  /* Responsive */
-  @media (max-width: 480px) {
-    gap: 8px;
-  }
-  
-  @media (max-width: 320px) {
-    gap: 6px;
-  }
 }
 
 .profilePlaceholder {
-  /* Dimensions */
   width: 32px;
   height: 32px;
-  
-  /* Styling */
   background-color: #D0D0D0;
   border-radius: 50%;
-  
-  /* Layout */
-  display: block;
-  
-  /* Hover state */
+  cursor: pointer;
   transition: background-color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  
-  /* Responsive */
-  @media (max-width: 480px) {
-    width: 28px;
-    height: 28px;
-  }
-  
-  @media (max-width: 320px) {
-    width: 24px;
-    height: 24px;
-  }
 }
 
 .profilePlaceholder:hover {
   background-color: #A0A0A0;
 }
 
-.profilePlaceholder {
+/* Buttons */
+.loginButton,
+.createEventButton {
+  font-size: 14px;
+  font-weight: 400;
+  color: #6B7280;
+  border-radius: 6px;
   cursor: pointer;
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .profilePlaceholder {
-    transition: none;
-  }
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .loginButton {
-  /* Typography */
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: #6B7280;
-  
-  /* Layout */
   background: rgba(243, 244, 246, 0.5);
   border: 1px solid rgba(229, 231, 235, 0.3);
-  border-radius: 6px;
   padding: 8px 16px;
-  cursor: pointer;
-  
-  /* Hover state */
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Responsive */
-  @media (max-width: 480px) {
-    font-size: 13px;
-    padding: 6px 12px;
-  }
-  
-  @media (max-width: 320px) {
-    font-size: 12px;
-    padding: 4px 8px;
-  }
 }
 
 .loginButton:hover {
@@ -286,92 +148,13 @@
   border-color: rgba(209, 213, 219, 0.5);
 }
 
-.loginButton:focus {
-  outline: 2px solid #000000;
-  outline-offset: 2px;
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .loginButton {
-    transition: none;
-  }
-}
-
 .createEventButton {
-  /* Typography */
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.4;
-  color: #6B7280;
-  
-  /* Layout */
-  background: none;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 12px;
-  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  
-  /* Hover state */
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    font-size: 13px;
-    padding: 6px 10px;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 12px;
-    padding: 4px 8px;
-  }
-  
-  @media (max-width: 320px) {
-    font-size: 11px;
-    padding: 3px 6px;
-  }
-}
-
-.createEventText {
-  /* Show text on desktop */
-  display: inline;
-  
-  /* Hide text on mobile */
-  @media (max-width: 768px) {
-    display: none;
-  }
-}
-
-.createEventIcon {
-  /* Hide icon on desktop */
-  display: none;
-  width: 16px;
-  height: 16px;
-  opacity: 0.7;
-  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Show icon on mobile */
-  @media (max-width: 768px) {
-    display: block;
-  }
-  
-  /* Responsive icon size */
-  @media (max-width: 480px) {
-    width: 14px;
-    height: 14px;
-  }
-  
-  @media (max-width: 320px) {
-    width: 12px;
-    height: 12px;
-  }
-}
-
-.createEventButton:hover .createEventIcon {
-  opacity: 1;
+  background: none;
+  border: none;
+  padding: 8px 12px;
 }
 
 .createEventButton:hover {
@@ -379,41 +162,29 @@
   background-color: rgba(243, 244, 246, 0.5);
 }
 
-.userEmail {
-  font-size: 14px;
-  font-weight: 400;
-  color: #6B7280;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    max-width: 150px;
-    font-size: 13px;
-  }
-  
-  @media (max-width: 480px) {
-    max-width: 120px;
-    font-size: 12px;
-    display: none;
-  }
-  
-  @media (max-width: 320px) {
-    max-width: 100px;
-    font-size: 11px;
-    display: none;
-  }
+.createEventText {
+  display: inline;
 }
 
+.createEventIcon {
+  display: none;
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
 
+.createEventButton:hover .createEventIcon {
+  opacity: 1;
+}
+
+/* Profile Dropdown */
 .profileDropdown {
-  /* Layout */
   position: absolute;
   top: 100%;
   right: 0;
+  min-width: 200px;
+  margin-top: 8px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -421,24 +192,43 @@
   border-radius: 8px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  min-width: 200px;
-  margin-top: 8px;
-  
-  /* Responsive */
-  @media (max-width: 480px) {
-    min-width: 180px;
-    right: -10px;
-  }
-  
-  @media (max-width: 320px) {
-    min-width: 160px;
-    right: -20px;
-  }
 }
 
 .profileDropdownItem {
   padding: 12px 16px;
   border-bottom: 1px solid rgba(243, 244, 246, 0.5);
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.profileImage {
+  width: 32px;
+  height: 32px;
+  background-color: #D0D0D0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profileInitial {
+  color: #6B7280;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .profileEmail {
@@ -450,49 +240,229 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  
-  /* Responsive */
-  @media (max-width: 480px) {
-    font-size: 13px;
-  }
-  
-  @media (max-width: 320px) {
-    font-size: 12px;
-  }
 }
 
+.profileUsername {
+  font-size: 12px;
+  font-weight: 500;
+  color: #9CA3AF;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Dropdown Buttons */
+.profileSettingsButton,
 .profileLogoutButton {
-  /* Typography */
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
   font-size: 14px;
   font-weight: 400;
-  line-height: 1.4;
   color: #6B7280;
-  
-  /* Layout */
-  background: none;
-  border: none;
-  border-radius: 6px;
-  padding: 12px 16px;
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-  
-  /* Hover state */
   transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Responsive */
-  @media (max-width: 480px) {
-    font-size: 13px;
-    padding: 10px 16px;
-  }
-  
-  @media (max-width: 320px) {
-    font-size: 12px;
-    padding: 8px 16px;
-  }
 }
 
+.profileSettingsButton:hover,
 .profileLogoutButton:hover {
   color: #111827;
   background-color: rgba(243, 244, 246, 0.8);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 20px;
+    height: 56px;
+  }
+  
+  .navLinks {
+    gap: 20px;
+  }
+  
+  .createEventButton {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+  
+  .createEventText {
+    display: none;
+  }
+  
+  .createEventIcon {
+    display: block;
+  }
+  
+  .navText {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 8px 16px;
+    height: 52px;
+  }
+  
+  .navLinks {
+    gap: 16px;
+    font-size: 13px;
+  }
+  
+  .navIcon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .logoImage {
+    height: 44px;
+  }
+  
+  .profile {
+    gap: 8px;
+  }
+  
+  .profilePlaceholder,
+  .profileImage {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .profileInitial {
+    font-size: 13px;
+  }
+  
+  .profileEmail {
+    font-size: 13px;
+  }
+  
+  .profileUsername {
+    font-size: 11px;
+  }
+  
+  .loginButton,
+  .createEventButton,
+  .profileSettingsButton,
+  .profileLogoutButton {
+    font-size: 13px;
+  }
+  
+  .loginButton {
+    padding: 6px 12px;
+  }
+  
+  .createEventButton {
+    padding: 4px 8px;
+  }
+  
+  .createEventIcon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .profileSettingsButton,
+  .profileLogoutButton {
+    padding: 10px 16px;
+  }
+  
+  .profileDropdown {
+    min-width: 180px;
+    right: -10px;
+  }
+}
+
+@media (max-width: 320px) {
+  .navLinks {
+    gap: 12px;
+    font-size: 12px;
+  }
+  
+  .navIcon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .logoImage {
+    height: 40px;
+  }
+  
+  .profile {
+    gap: 6px;
+  }
+  
+  .profilePlaceholder,
+  .profileImage {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .profileInitial {
+    font-size: 12px;
+  }
+  
+  .profileEmail {
+    font-size: 12px;
+  }
+  
+  .profileUsername {
+    font-size: 10px;
+  }
+  
+  .loginButton,
+  .createEventButton,
+  .profileSettingsButton,
+  .profileLogoutButton {
+    font-size: 12px;
+  }
+  
+  .loginButton {
+    padding: 4px 8px;
+  }
+  
+  .createEventButton {
+    padding: 3px 6px;
+  }
+  
+  .createEventIcon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .profileSettingsButton,
+  .profileLogoutButton {
+    padding: 8px 16px;
+  }
+  
+  .profileDropdown {
+    min-width: 160px;
+    right: -20px;
+  }
+}
+
+/* Accessibility */
+.loginButton:focus {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar,
+  .navLink,
+  .navIcon,
+  .logo,
+  .logoImage,
+  .profilePlaceholder,
+  .loginButton,
+  .createEventButton,
+  .createEventIcon,
+  .profileSettingsButton,
+  .profileLogoutButton {
+    transition: none;
+  }
 }
