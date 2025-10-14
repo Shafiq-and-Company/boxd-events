@@ -1,5 +1,4 @@
-/* UserSettings Component - Hyper Minimal CSS */
-/* Johnny Ive Minimalism - Component-Specific Styles */
+/* UserSettings Component - Optimized CSS */clea
 
 .userSettings {
   max-width: 800px;
@@ -7,24 +6,19 @@
   margin: 0 auto;
 }
 
-
 .userSettings h2 {
-  text-align: left;
   margin-bottom: 8px;
   font-size: 1.5rem;
   font-weight: 500;
-  color: #000000;
+  color: #000;
   letter-spacing: -0.5px;
 }
 
 .pageSubtitle {
-  text-align: left;
   margin-bottom: 32px;
   font-size: 0.9rem;
-  font-weight: 400;
   color: #707070;
   line-height: 1.5;
-  letter-spacing: 0px;
 }
 
 .profileSection {
@@ -41,21 +35,16 @@
   display: inline-block;
 }
 
-.avatarImage {
+.avatarImage, .avatarPlaceholder {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  object-fit: cover;
   border: 2px solid #e8e8e8;
-  display: block;
 }
 
+.avatarImage { object-fit: cover; display: block; }
 .avatarPlaceholder {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
   background: #f8f8f8;
-  border: 2px solid #e8e8e8;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,14 +59,14 @@
   right: 0;
   width: 24px;
   height: 24px;
-  background: #000000;
+  background: #000;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border: 2px solid #ffffff;
+  transition: all 200ms ease;
+  border: 2px solid #fff;
 }
 
 .uploadOverlay:hover {
@@ -92,20 +81,11 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
-  color: #ffffff;
+  color: #fff;
 }
 
-.uploadIcon {
-  width: 12px;
-  height: 12px;
-  color: #ffffff;
-}
-
-.uploadSpinner {
-  color: #ffffff;
-  font-size: 0.75rem;
-  animation: spin 1s linear infinite;
-}
+.uploadIcon { width: 12px; height: 12px; color: #fff; }
+.uploadSpinner { color: #fff; font-size: 0.75rem; animation: spin 1s linear infinite; }
 
 @keyframes spin {
   from { transform: rotate(0deg); }
@@ -117,19 +97,14 @@
 }
 
 .socialSection {
-  margin-top: 32px;
-  margin-bottom: 32px;
+  margin: 32px auto;
   max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .sectionTitle {
   font-size: 0.75rem;
-  font-weight: 400;
   color: #707070;
   margin-bottom: 16px;
-  letter-spacing: 0px;
   text-transform: uppercase;
 }
 
@@ -147,13 +122,13 @@
   align-items: center;
   border: 1px solid #d0d0d0;
   border-radius: 4px;
-  background: #ffffff;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  background: #fff;
+  transition: all 200ms ease;
   width: 100%;
 }
 
 .socialInput:focus-within {
-  border-color: #000000;
+  border-color: #000;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -166,25 +141,18 @@
   border-right: 1px solid #d0d0d0;
   font-size: 0.75rem;
   color: #707070;
-  font-weight: 400;
   white-space: nowrap;
   border-radius: 4px 0 0 4px;
 }
 
-.socialIcon {
-  width: 14px;
-  height: 14px;
-  color: #404040;
-  flex-shrink: 0;
-}
+.socialIcon { width: 14px; height: 14px; color: #404040; flex-shrink: 0; }
 
 .socialInputField {
   flex: 1;
   border: none;
   padding: 12px 16px;
   font-size: 0.875rem;
-  font-weight: 400;
-  color: #000000;
+  color: #000;
   background: transparent;
   outline: none;
   border-radius: 0 4px 4px 0;
@@ -192,11 +160,6 @@
 
 .socialInputField::placeholder {
   color: #a0a0a0;
-  font-weight: 400;
-}
-
-.settingsForm {
-  padding: 0;
 }
 
 .form {
@@ -224,27 +187,23 @@
 
 .label {
   font-size: 0.75rem;
-  font-weight: 400;
   color: #707070;
-  letter-spacing: 0px;
 }
 
-.input {
+.input, .textarea {
   padding: 12px 16px;
   border: 1px solid #d0d0d0;
   border-radius: 4px;
   font-size: 0.875rem;
-  font-weight: 400;
-  color: #000000;
-  background: #ffffff;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  letter-spacing: 0px;
+  color: #000;
+  background: #fff;
+  transition: all 200ms ease;
   width: 100%;
 }
 
-.input:focus {
+.input:focus, .textarea:focus {
   outline: none;
-  border-color: #000000;
+  border-color: #000;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -254,9 +213,14 @@
   cursor: not-allowed;
 }
 
-.input::placeholder {
+.input::placeholder, .textarea::placeholder {
   color: #a0a0a0;
-  font-weight: 400;
+}
+
+.textarea {
+  font-family: inherit;
+  resize: vertical;
+  min-height: 60px;
 }
 
 .usernameInput {
@@ -271,42 +235,11 @@
   left: 12px;
   color: #707070;
   font-size: 0.875rem;
-  font-weight: 400;
   pointer-events: none;
   z-index: 1;
 }
 
-.usernameInput .input {
-  padding-left: 32px;
-  width: 100%;
-}
-
-.textarea {
-  padding: 12px 16px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: #000000;
-  background: #ffffff;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  letter-spacing: 0px;
-  font-family: inherit;
-  resize: vertical;
-  min-height: 60px;
-  width: 100%;
-}
-
-.textarea:focus {
-  outline: none;
-  border-color: #000000;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-}
-
-.textarea::placeholder {
-  color: #a0a0a0;
-  font-weight: 400;
-}
+.usernameInput .input { padding-left: 32px; }
 
 .helpText {
   font-size: 0.75rem;
@@ -321,20 +254,19 @@
   margin-top: 8px;
 }
 
-.saveButton {
-  background: #000000;
-  color: #ffffff;
+.saveButton, .signInButton {
+  background: #000;
+  color: #fff;
   border: none;
   padding: 12px 24px;
   border-radius: 4px;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  letter-spacing: 0px;
+  transition: all 200ms ease;
 }
 
-.saveButton:hover:not(:disabled) {
+.saveButton:hover:not(:disabled), .signInButton:hover {
   background: #404040;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -347,363 +279,77 @@
   box-shadow: none;
 }
 
-.errorMessage {
-  background: #f8f8f8;
-  border: 1px solid #d0d0d0;
-  color: #000000;
+.signInButton { margin-top: 16px; }
+
+.errorMessage, .successMessage {
   padding: 12px 16px;
   border-radius: 4px;
   font-size: 0.875rem;
-  font-weight: 400;
   margin-top: 8px;
 }
 
-.successMessage {
-  background: #f0f8f0;
-  border: 1px solid #d0d0d0;
-  color: #404040;
-  padding: 12px 16px;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 400;
-  margin-top: 8px;
-}
+.errorMessage { background: #f8f8f8; border: 1px solid #d0d0d0; color: #000; }
+.successMessage { background: #f0f8f0; border: 1px solid #d0d0d0; color: #404040; }
 
-/* State Classes */
-.loading, .error, .notLoggedIn {
-  text-align: left;
-  padding: 32px;
-  font-size: 1rem;
-  font-weight: 400;
-}
-
-.loading {
-  color: #707070;
-}
-
-.error {
-  color: #000000;
-  background: #f8f8f8;
-  border: 1px solid #d0d0d0;
-  border-radius: 0;
-  padding: 24px;
-}
-
-.notLoggedIn {
-  color: #707070;
-  font-size: 1rem;
-  font-weight: 400;
-  background: #f8f8f8;
-  border: 1px solid #d0d0d0;
-  border-radius: 0;
-}
-
-.signInButton {
-  background: #000000;
-  color: #ffffff;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  margin-top: 16px;
-}
-
-.signInButton:hover {
-  background: #404040;
-  transform: translateY(-1px);
-}
+.loading, .error, .notLoggedIn { padding: 32px; font-size: 1rem; }
+.loading { color: #707070; }
+.error, .notLoggedIn { background: #f8f8f8; border: 1px solid #d0d0d0; color: #707070; }
+.error { color: #000; padding: 24px; }
 
 /* Responsive Design */
 @media (max-width: 767px) {
-  .userSettings {
-    padding: 16px 8px;
-  }
-  
-  .profileSection {
-    margin-bottom: 24px;
-  }
-  
-  .avatarImage, .avatarPlaceholder {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .avatarPlaceholder {
-    font-size: 1.25rem;
-  }
-  
-  .uploadOverlay {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .uploadIcon {
-    width: 10px;
-    height: 10px;
-  }
-  
-  .socialGrid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  
-  .socialSection {
-    margin-top: 24px;
-    margin-bottom: 24px;
-  }
-  
-  .socialPrefix {
-    padding: 10px 12px;
-    font-size: 0.7rem;
-  }
-  
-  .socialIcon {
-    width: 12px;
-    height: 12px;
-  }
-  
-  .socialInputField {
-    padding: 10px 12px;
-    font-size: 0.8rem;
-  }
-  
-  .settingsForm {
-    padding: 0;
-  }
-  
-  .form {
-    gap: 20px;
-  }
-  
-  .nameFields {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
-  .formGroup {
-    gap: 6px;
-  }
-  
-  .input {
-    padding: 10px 14px;
-    font-size: 0.8rem;
-  }
-  
-  .textarea {
-    padding: 10px 14px;
-    font-size: 0.8rem;
-    min-height: 50px;
-  }
-  
-  .label {
-    font-size: 0.7rem;
-  }
-  
-  .saveButton {
-    padding: 10px 20px;
-    font-size: 0.8rem;
-  }
+  .userSettings { padding: 16px 8px; }
+  .profileSection { margin-bottom: 24px; }
+  .avatarImage, .avatarPlaceholder { width: 60px; height: 60px; }
+  .avatarPlaceholder { font-size: 1.25rem; }
+  .uploadOverlay { width: 20px; height: 20px; }
+  .uploadIcon { width: 10px; height: 10px; }
+  .socialGrid { grid-template-columns: 1fr; gap: 12px; }
+  .socialSection { margin: 24px auto; }
+  .socialPrefix { padding: 10px 12px; font-size: 0.7rem; }
+  .socialIcon { width: 12px; height: 12px; }
+  .socialInputField { padding: 10px 12px; font-size: 0.8rem; }
+  .form { gap: 20px; }
+  .nameFields { grid-template-columns: 1fr; gap: 20px; }
+  .formGroup { gap: 6px; }
+  .input, .textarea { padding: 10px 14px; font-size: 0.8rem; }
+  .textarea { min-height: 50px; }
+  .label { font-size: 0.7rem; }
+  .saveButton { padding: 10px 20px; font-size: 0.8rem; }
 }
-
 @media (min-width: 768px) and (max-width: 1023px) {
-  .userSettings {
-    padding: 20px 16px;
-  }
-  
-  .profileSection {
-    margin-bottom: 28px;
-  }
-  
-  .avatarImage, .avatarPlaceholder {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .avatarPlaceholder {
-    font-size: 1.375rem;
-  }
-  
-  .uploadOverlay {
-    width: 22px;
-    height: 22px;
-  }
-  
-  .uploadIcon {
-    width: 11px;
-    height: 11px;
-  }
-  
-  .socialGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
-  
-  .socialSection {
-    margin-top: 28px;
-    margin-bottom: 28px;
-  }
-  
-  .socialPrefix {
-    padding: 11px 14px;
-    font-size: 0.72rem;
-  }
-  
-  .socialIcon {
-    width: 13px;
-    height: 13px;
-  }
-  
-  .socialInputField {
-    padding: 11px 14px;
-    font-size: 0.85rem;
-  }
-  
-  .settingsForm {
-    padding: 0;
-  }
-  
-  .form {
-    gap: 22px;
-  }
-  
-  .nameFields {
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
+  .userSettings { padding: 20px 16px; }
+  .profileSection { margin-bottom: 28px; }
+  .avatarImage, .avatarPlaceholder { width: 70px; height: 70px; }
+  .avatarPlaceholder { font-size: 1.375rem; }
+  .uploadOverlay { width: 22px; height: 22px; }
+  .uploadIcon { width: 11px; height: 11px; }
+  .socialGrid { gap: 14px; }
+  .socialSection { margin: 28px auto; }
+  .socialPrefix { padding: 11px 14px; font-size: 0.72rem; }
+  .socialIcon { width: 13px; height: 13px; }
+  .socialInputField { padding: 11px 14px; font-size: 0.85rem; }
+  .form { gap: 22px; }
 }
-
 @media (min-width: 1024px) {
-  .userSettings {
-    max-width: 600px;
-    padding: 32px 24px;
-  }
-  
-  .userSettings h2 {
-    font-size: 1.75rem;
-    margin-bottom: 10px;
-  }
-  
-  .pageSubtitle {
-    font-size: 1rem;
-    margin-bottom: 40px;
-  }
-  
-  .profileSection {
-    margin-bottom: 36px;
-  }
-  
-  .avatarImage, .avatarPlaceholder {
-    width: 90px;
-    height: 90px;
-  }
-  
-  .avatarPlaceholder {
-    font-size: 1.75rem;
-  }
-  
-  .uploadOverlay {
-    width: 26px;
-    height: 26px;
-  }
-  
-  .uploadIcon {
-    width: 14px;
-    height: 14px;
-  }
-  
-  .socialGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-  }
-  
-  .socialSection {
-    margin-top: 36px;
-    margin-bottom: 36px;
-  }
-  
-  .socialPrefix {
-    padding: 12px 16px;
-    font-size: 0.75rem;
-  }
-  
-  .socialIcon {
-    width: 14px;
-    height: 14px;
-  }
-  
-  .socialInputField {
-    padding: 12px 16px;
-    font-size: 0.875rem;
-  }
-  
-  .settingsForm {
-    padding: 0;
-  }
-  
-  .form {
-    gap: 28px;
-  }
-  
-  .nameFields {
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  
-  .formGroup {
-    gap: 10px;
-  }
-  
-  .input {
-    padding: 14px 18px;
-    font-size: 0.9rem;
-  }
-  
-  .textarea {
-    padding: 14px 18px;
-    font-size: 0.9rem;
-    min-height: 70px;
-  }
-  
-  .label {
-    font-size: 0.8rem;
-  }
-  
-  .saveButton {
-    padding: 14px 28px;
-    font-size: 0.9rem;
-  }
+  .userSettings { max-width: 600px; padding: 32px 24px; }
+  .userSettings h2 { font-size: 1.75rem; margin-bottom: 10px; }
+  .pageSubtitle { font-size: 1rem; margin-bottom: 40px; }
+  .profileSection { margin-bottom: 36px; }
+  .avatarImage, .avatarPlaceholder { width: 90px; height: 90px; }
+  .avatarPlaceholder { font-size: 1.75rem; }
+  .uploadOverlay { width: 26px; height: 26px; }
+  .uploadIcon { width: 14px; height: 14px; }
+  .socialGrid { gap: 18px; }
+  .socialSection { margin: 36px auto; }
+  .form { gap: 28px; }
+  .nameFields { gap: 20px; }
+  .formGroup { gap: 10px; }
+  .input, .textarea { padding: 14px 18px; font-size: 0.9rem; }
+  .textarea { min-height: 70px; }
+  .label { font-size: 0.8rem; }
+  .saveButton { padding: 14px 28px; font-size: 0.9rem; }
 }
-
-/* Accessibility */
-.input:focus-within {
-  outline: 2px solid #000000;
-  outline-offset: 2px;
-}
-
-.saveButton:focus-within {
-  outline: 2px solid #000000;
-  outline-offset: 2px;
-}
-
-/* Reduced Motion */
-@media (prefers-reduced-motion: reduce) {
-  .input, .saveButton { 
-    transition: none; 
-  }
-  .saveButton:hover { 
-    transform: none; 
-  }
-}
-
-/* High Contrast */
-@media (prefers-contrast: high) {
-  .input { 
-    border-color: #000000; 
-  }
-  .input:focus { 
-    border-color: #000000; 
-  }
-}
+.input:focus-within, .saveButton:focus-within { outline: 2px solid #000; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .input, .saveButton, .saveButton:hover { transition: none; transform: none; } }
+@media (prefers-contrast: high) { .input, .input:focus { border-color: #000; } }
