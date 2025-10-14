@@ -125,8 +125,7 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
                 </div>
                 <button 
                   onClick={() => {
-                    // TODO: Navigate to settings page or open settings modal
-                    console.log('Settings clicked')
+                    onTabChange && onTabChange('settings')
                     setIsProfileOpen(false)
                   }}
                   className={styles.profileSettingsButton}

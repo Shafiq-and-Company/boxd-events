@@ -4,6 +4,7 @@ import UpcomingEvents from '../components/UpcomingEvents'
 import DiscoverEvents from '../components/DiscoverEvents'
 import MyEvents from '../components/MyEvents'
 import CreateEvent from '../components/CreateEvent'
+import UserSettings from '../components/UserSettings'
 import NavBar from '../components/NavBar'
 import PaymentConfirmation from '../components/PaymentConfirmation'
 import SplashPage from '../components/SplashPage'
@@ -58,6 +59,8 @@ export default function Home() {
         return <MyEvents />
       case 'createEvent':
         return <CreateEvent />
+      case 'settings':
+        return <UserSettings />
       case 'about':
         return <div>About content coming soon...</div>
       default:
