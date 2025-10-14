@@ -97,7 +97,7 @@
   display: none;
 }
 
-.socialSection, .securitySection, .gamingSection {
+.socialSection, .securitySection {
   margin: 32px 0;
 }
 
@@ -354,7 +354,7 @@
   border-bottom: none;
 }
 
-.securityIcon, .gamingIcon {
+.securityIcon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -364,6 +364,8 @@
   border-radius: 8px;
   color: #707070;
   flex-shrink: 0;
+  padding: 12px;
+  box-sizing: border-box;
 }
 
 .securityContent {
@@ -371,14 +373,14 @@
   min-width: 0;
 }
 
-.securityTitle, .gamingTitle {
+.securityTitle {
   font-size: 1rem;
   font-weight: 600;
   color: #000;
   margin: 0 0 4px 0;
 }
 
-.securityDescription, .gamingStatus {
+.securityDescription {
   font-size: 0.875rem;
   color: #707070;
   margin: 0;
@@ -386,46 +388,6 @@
 }
 
 
-/* Gaming Section Styles */
-.gamingGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-  width: 100%;
-}
-
-.gamingCard {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px;
-  background: #fff;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  transition: all 200ms ease;
-}
-
-.gamingCard:hover {
-  border-color: #a0a0a0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.gamingIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: #f8f8f8;
-  border-radius: 8px;
-  color: #707070;
-  flex-shrink: 0;
-}
-
-.gamingContent {
-  flex: 1;
-  min-width: 0;
-}
 
 
 
@@ -466,7 +428,7 @@
   margin-top: 8px;
 }
 
-.saveButton, .signInButton, .securityButton, .gamingButton {
+.saveButton, .signInButton, .securityButton {
   background: #000;
   color: #fff;
   border: none;
@@ -474,29 +436,13 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 200ms ease;
-}
-
-.saveButton, .signInButton, .securityButton {
   padding: 12px 24px;
   font-size: 0.875rem;
 }
 
-.gamingButton {
-  width: 32px;
-  height: 32px;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.saveButton:hover:not(:disabled), .signInButton:hover, .securityButton:hover, .gamingButton:hover {
+.saveButton:hover:not(:disabled), .signInButton:hover, .securityButton:hover {
   background: #404040;
   transform: translateY(-1px);
-}
-
-.saveButton:hover:not(:disabled), .signInButton:hover, .securityButton:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -539,14 +485,12 @@
   .uploadOverlay { width: 20px; height: 20px; }
   .uploadIcon { width: 10px; height: 10px; }
   .socialGrid { grid-template-columns: 1fr; gap: 12px; }
-  .socialSection, .securitySection, .gamingSection { margin: 24px 0; }
-  .gamingGrid { grid-template-columns: 1fr; gap: 12px; }
-  .gamingCard, .securityItem { padding: 16px 0; gap: 12px; }
-  .securityIcon, .gamingIcon { width: 36px; height: 36px; }
-  .securityTitle, .gamingTitle { font-size: 0.9rem; }
-  .securityDescription, .gamingStatus { font-size: 0.8rem; }
+  .socialSection, .securitySection { margin: 24px 0; }
+  .securityItem { padding: 16px 0; gap: 12px; }
+  .securityIcon { width: 36px; height: 36px; padding: 10px; }
+  .securityTitle { font-size: 0.9rem; }
+  .securityDescription { font-size: 0.8rem; }
   .securityButton { padding: 8px 16px; font-size: 0.8rem; }
-  .gamingButton { width: 28px; height: 28px; font-size: 0.9rem; }
   .socialPrefix { padding: 10px 12px; font-size: 0.7rem; }
   .socialIcon { width: 12px; height: 12px; }
   .socialInputField { padding: 10px 12px; font-size: 0.8rem; }
@@ -566,8 +510,8 @@
   .uploadOverlay { width: 22px; height: 22px; }
   .uploadIcon { width: 11px; height: 11px; }
   .socialGrid { gap: 14px; }
-  .socialSection, .securitySection, .gamingSection { margin: 28px 0; }
-  .gamingCard, .securityItem { padding: 18px 0; }
+  .socialSection, .securitySection { margin: 28px 0; }
+  .securityItem { padding: 18px 0; }
   .socialPrefix { padding: 11px 14px; font-size: 0.72rem; }
   .socialIcon { width: 13px; height: 13px; }
   .socialInputField { padding: 11px 14px; font-size: 0.85rem; }
@@ -583,8 +527,8 @@
   .uploadOverlay { width: 26px; height: 26px; }
   .uploadIcon { width: 14px; height: 14px; }
   .socialGrid { gap: 18px; }
-  .socialSection, .securitySection, .gamingSection { margin: 36px 0; }
-  .gamingCard, .securityItem { padding: 24px 0; }
+  .socialSection, .securitySection { margin: 36px 0; }
+  .securityItem { padding: 24px 0; }
   .form { gap: 28px; }
   .nameFields { gap: 20px; }
   .formGroup { gap: 10px; }
