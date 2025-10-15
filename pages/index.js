@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import Splash from '../components/Splash'
 import UpcomingEvents from '../components/UpcomingEvents'
 import DiscoverEvents from '../components/DiscoverEvents'
 import MyEvents from '../components/MyEvents'
@@ -10,7 +11,7 @@ import PaymentConfirmation from '../components/PaymentConfirmation'
 
 export default function Home() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState('upcoming')
+  const [activeTab, setActiveTab] = useState('splash')
   const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
@@ -40,8 +41,10 @@ export default function Home() {
 
   const handleTabChange = (tab) => {
     setActiveTab(tab)
-    if (tab === 'upcoming') {
+    if (tab === 'splash') {
       router.push('/', undefined, { shallow: true })
+    } else if (tab === 'upcoming') {
+      router.push('/?tab=upcoming', undefined, { shallow: true })
     } else {
       router.push(`/?tab=${tab}`, undefined, { shallow: true })
     }
@@ -49,6 +52,8 @@ export default function Home() {
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'splash':
+        return <Splash />
       case 'upcoming':
         return <UpcomingEvents />
       case 'discover':
@@ -62,7 +67,7 @@ export default function Home() {
       case 'about':
         return <div>About content coming soon...</div>
       default:
-        return <UpcomingEvents />
+        return <Splash />
     }
   }
 
