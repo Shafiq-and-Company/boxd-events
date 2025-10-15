@@ -13,6 +13,7 @@ export default function MyEvents() {
   const [hostedLoading, setHostedLoading] = useState(true)
   const [error, setError] = useState('')
   const [hostedError, setHostedError] = useState('')
+  const [activeTab, setActiveTab] = useState('attending')
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -215,54 +216,73 @@ export default function MyEvents() {
       <h2>My Events</h2>
       <p className={styles.pageSubtitle}>Manage your event registrations and hosted events</p>
       
-      {/* Registered Events Section */}
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Events I'm Attending</h3>
-        
-        {events.length === 0 ? (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyStateContent}>
-              <p className={styles.emptyStateText}>You haven't registered for any events yet.</p>
-              <p className={styles.emptyStateSubtext}>Discover exciting gaming events and tournaments happening near you.</p>
-              <button 
-                onClick={() => router.push('/')}
-                className={styles.discoverButton}
-              >
-                Discover Events
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className={styles.eventsList}>
-            {events.map(renderEventCard)}
-          </div>
-        )}
+      {/* Tab Switcher */}
+      <div className={styles.tabSwitcher}>
+        <button
+          className={`${styles.tabButton} ${activeTab === 'attending' ? styles.tabButtonActive : ''}`}
+          onClick={() => setActiveTab('attending')}
+        >
+          Attending
+        </button>
+        <button
+          className={`${styles.tabButton} ${activeTab === 'hosting' ? styles.tabButtonActive : ''}`}
+          onClick={() => setActiveTab('hosting')}
+        >
+          Hosting
+        </button>
       </div>
+      
+      {/* Attending Events Section */}
+      {activeTab === 'attending' && (
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Events I'm Attending</h3>
+          
+          {events.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyStateContent}>
+                <p className={styles.emptyStateText}>You haven't registered for any events yet.</p>
+                <p className={styles.emptyStateSubtext}>Discover exciting gaming events and tournaments happening near you.</p>
+                <button 
+                  onClick={() => router.push('/')}
+                  className={styles.discoverButton}
+                >
+                  Discover Events
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.eventsList}>
+              {events.map(renderEventCard)}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Hosted Events Section */}
-      <div className={styles.section}>
-        <div className={styles.sectionDivider}></div>
-        <h3 className={styles.sectionTitle}>Events I'm Hosting</h3>
-        
-        {hostedEvents.length === 0 ? (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyStateContent}>
-              <p className={styles.emptyStateText}>You haven't hosted any events yet.</p>
-              <p className={styles.emptyStateSubtext}>Create your own gaming events and tournaments.</p>
-              <button 
-                onClick={() => router.push('/create-event')}
-                className={styles.discoverButton}
-              >
-                Create Event
-              </button>
+      {activeTab === 'hosting' && (
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>Events I'm Hosting</h3>
+          
+          {hostedEvents.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyStateContent}>
+                <p className={styles.emptyStateText}>You haven't hosted any events yet.</p>
+                <p className={styles.emptyStateSubtext}>Create your own gaming events and tournaments.</p>
+                <button 
+                  onClick={() => router.push('/create-event')}
+                  className={styles.discoverButton}
+                >
+                  Create Event
+                </button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className={styles.eventsList}>
-            {hostedEvents.map(renderEventCard)}
-          </div>
-        )}
-      </div>
+          ) : (
+            <div className={styles.eventsList}>
+              {hostedEvents.map(renderEventCard)}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
