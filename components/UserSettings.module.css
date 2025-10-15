@@ -133,6 +133,10 @@
 
 
 /* Form Elements */
+.settingsForm {
+  width: 100%;
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -157,6 +161,28 @@
 .label {
   font-size: 0.75rem;
   color: #707070;
+}
+
+.required {
+  color: #e74c3c;
+  margin-left: 4px;
+}
+
+.characterCount {
+  font-size: 0.7rem;
+  color: #a0a0a0;
+  margin-left: auto;
+}
+
+.fieldError {
+  font-size: 0.7rem;
+  color: #e74c3c;
+  margin-top: 4px;
+}
+
+.inputError {
+  border-color: #e74c3c !important;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
 }
 
 .input, .textarea {

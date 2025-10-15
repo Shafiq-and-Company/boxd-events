@@ -39,7 +39,7 @@ export default function UserSettings() {
   // Ensure user record exists in users table
   const ensureUserRecord = async () => {
     try {
-      const { data: existingUser, error: checkError } = await supabase
+      const { error: checkError } = await supabase
         .from('users')
         .select('id')
         .eq('id', user.id)
@@ -99,48 +99,37 @@ export default function UserSettings() {
             throw retryError
           }
           
-          // Use retry data with proper fallbacks
-          const metadata = user.user_metadata || {}
-          const emailName = user.email?.split('@')[0] || ''
-          const emailParts = emailName.split('.')
-          const fallbackFirstName = emailParts[0] || ''
-          const fallbackLastName = emailParts[1] || ''
-
-          setUserProfile({
-            first_name: retryProfile.first_name || metadata.first_name || fallbackFirstName,
-            last_name: retryProfile.last_name || metadata.last_name || fallbackLastName,
-            email: retryProfile.email || user.email || '',
-            phone: retryProfile.phone || metadata.phone || '',
-            username: retryProfile.username || metadata.username || user.email?.split('@')[0] || '',
-            biography: retryProfile.biography || metadata.biography || '',
-            avatar_url: metadata.avatar_url || '',
-          })
+          setUserProfile(buildUserProfile(retryProfile))
           return
         }
         throw profileError
       }
 
-      // Get avatar_url from user metadata (not stored in users table)
-      const metadata = user.user_metadata || {}
-      const emailName = user.email?.split('@')[0] || ''
-      const emailParts = emailName.split('.')
-      const fallbackFirstName = emailParts[0] || ''
-      const fallbackLastName = emailParts[1] || ''
-
-      setUserProfile({
-        first_name: profile.first_name || metadata.first_name || fallbackFirstName,
-        last_name: profile.last_name || metadata.last_name || fallbackLastName,
-        email: profile.email || user.email || '',
-        phone: profile.phone || metadata.phone || '',
-        username: profile.username || metadata.username || user.email?.split('@')[0] || '',
-        biography: profile.biography || metadata.biography || '',
-        avatar_url: metadata.avatar_url || '',
-      })
+      setUserProfile(buildUserProfile(profile))
     } catch (err) {
       console.error('Profile fetch error:', err)
       setError('Failed to load your profile information. Please try refreshing the page.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Helper function to build user profile with fallbacks
+  const buildUserProfile = (profile) => {
+    const metadata = user.user_metadata || {}
+    const emailName = user.email?.split('@')[0] || ''
+    const emailParts = emailName.split('.')
+    const fallbackFirstName = emailParts[0] || ''
+    const fallbackLastName = emailParts[1] || ''
+
+    return {
+      first_name: profile.first_name || metadata.first_name || fallbackFirstName,
+      last_name: profile.last_name || metadata.last_name || fallbackLastName,
+      email: profile.email || user.email || '',
+      phone: profile.phone || metadata.phone || '',
+      username: profile.username || metadata.username || user.email?.split('@')[0] || '',
+      biography: profile.biography || metadata.biography || '',
+      avatar_url: metadata.avatar_url || '',
     }
   }
 
@@ -189,36 +178,19 @@ export default function UserSettings() {
     }
   }
 
-  // Validate first name input
-  const validateFirstName = (firstName) => {
-    if (!firstName || firstName.trim().length === 0) {
-      return 'First name is required'
+  // Validate name input (first or last name)
+  const validateName = (name, fieldName) => {
+    if (!name || name.trim().length === 0) {
+      return `${fieldName} is required`
     }
-    if (firstName.trim().length < 2) {
-      return 'First name must be at least 2 characters'
+    if (name.trim().length < 2) {
+      return `${fieldName} must be at least 2 characters`
     }
-    if (firstName.trim().length > 50) {
-      return 'First name must be less than 50 characters'
+    if (name.trim().length > 50) {
+      return `${fieldName} must be less than 50 characters`
     }
-    if (!/^[\p{L}\s\-'\.]+$/u.test(firstName.trim())) {
-      return 'First name can only contain letters, spaces, hyphens, apostrophes, and periods'
-    }
-    return null
-  }
-
-  // Validate last name input
-  const validateLastName = (lastName) => {
-    if (!lastName || lastName.trim().length === 0) {
-      return 'Last name is required'
-    }
-    if (lastName.trim().length < 2) {
-      return 'Last name must be at least 2 characters'
-    }
-    if (lastName.trim().length > 50) {
-      return 'Last name must be less than 50 characters'
-    }
-    if (!/^[\p{L}\s\-'\.]+$/u.test(lastName.trim())) {
-      return 'Last name can only contain letters, spaces, hyphens, apostrophes, and periods'
+    if (!/^[\p{L}\s\-'\.]+$/u.test(name.trim())) {
+      return `${fieldName} can only contain letters, spaces, hyphens, apostrophes, and periods`
     }
     return null
   }
@@ -274,13 +246,13 @@ export default function UserSettings() {
       setSuccess('')
 
       // Validate all fields
-      const firstNameError = validateFirstName(userProfile.first_name)
+      const firstNameError = validateName(userProfile.first_name, 'First name')
       if (firstNameError) {
         setError(firstNameError)
         return
       }
 
-      const lastNameError = validateLastName(userProfile.last_name)
+      const lastNameError = validateName(userProfile.last_name, 'Last name')
       if (lastNameError) {
         setError(lastNameError)
         return
@@ -433,13 +405,13 @@ export default function UserSettings() {
                 name="first_name"
                 value={userProfile.first_name}
                 onChange={handleInputChange}
-                className={`${styles.input} ${userProfile.first_name && validateFirstName(userProfile.first_name) ? styles.inputError : ''}`}
+                className={`${styles.input} ${userProfile.first_name && validateName(userProfile.first_name, 'First name') ? styles.inputError : ''}`}
                 placeholder="Enter your first name"
                 required
               />
-              {userProfile.first_name && validateFirstName(userProfile.first_name) && (
+              {userProfile.first_name && validateName(userProfile.first_name, 'First name') && (
                 <div className={styles.fieldError}>
-                  {validateFirstName(userProfile.first_name)}
+                  {validateName(userProfile.first_name, 'First name')}
                 </div>
               )}
             </div>
@@ -454,13 +426,13 @@ export default function UserSettings() {
                 name="last_name"
                 value={userProfile.last_name}
                 onChange={handleInputChange}
-                className={`${styles.input} ${userProfile.last_name && validateLastName(userProfile.last_name) ? styles.inputError : ''}`}
+                className={`${styles.input} ${userProfile.last_name && validateName(userProfile.last_name, 'Last name') ? styles.inputError : ''}`}
                 placeholder="Enter your last name"
                 required
               />
-              {userProfile.last_name && validateLastName(userProfile.last_name) && (
+              {userProfile.last_name && validateName(userProfile.last_name, 'Last name') && (
                 <div className={styles.fieldError}>
-                  {validateLastName(userProfile.last_name)}
+                  {validateName(userProfile.last_name, 'Last name')}
                 </div>
               )}
             </div>
