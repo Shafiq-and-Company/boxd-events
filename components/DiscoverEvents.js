@@ -177,9 +177,22 @@ export default function DiscoverEvents() {
                 onClick={() => handleEventClick(event.id)}
               >
                 <div className={styles.eventImage}>
-                  <div className={styles.imagePlaceholder}>
-                    {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
-                  </div>
+                  {event.banner_image_url ? (
+                    <img 
+                      src={event.banner_image_url} 
+                      alt={event.title}
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'cover',
+                        borderRadius: '4px'
+                      }}
+                    />
+                  ) : (
+                    <div className={styles.imagePlaceholder}>
+                      {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
+                    </div>
+                  )}
                   {isRegistered && (
                     <div className={styles.registeredBadge}>
                       ✓

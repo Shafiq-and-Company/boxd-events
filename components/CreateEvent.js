@@ -23,6 +23,9 @@ export default function CreateEvent() {
   const [games, setGames] = useState([])
   const [gamesLoading, setGamesLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [bannerFile, setBannerFile] = useState(null)
+  const [bannerPreview, setBannerPreview] = useState(null)
+  const [uploading, setUploading] = useState(false)
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -66,6 +69,62 @@ export default function CreateEvent() {
     setSearchTerm(e.target.value)
   }
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select an image file')
+        return
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('File size must be less than 5MB')
+        return
+      }
+      
+      setBannerFile(file)
+      
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file)
+      setBannerPreview(previewUrl)
+    }
+  }
+
+  const uploadBannerImage = async () => {
+    if (!bannerFile) return null
+    
+    try {
+      setUploading(true)
+      
+      // Generate unique filename
+      const fileExt = bannerFile.name.split('.').pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+      
+      const { data, error } = await supabase.storage
+        .from('event_banner_images')
+        .upload(fileName, bannerFile)
+      
+      if (error) {
+        throw error
+      }
+      
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('event_banner_images')
+        .getPublicUrl(data.path)
+      
+      return urlData.publicUrl
+    } catch (err) {
+      console.error('Error uploading banner image:', err.message)
+      setError('Failed to upload banner image')
+      throw err
+    } finally {
+      setUploading(false)
+    }
+  }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -79,6 +138,12 @@ export default function CreateEvent() {
     setError(null)
 
     try {
+      // Upload banner image if provided
+      let bannerImageUrl = null
+      if (bannerFile) {
+        bannerImageUrl = await uploadBannerImage()
+      }
+
       // Prepare event data with only the fields that should be saved
       const eventData = {
         title: formData.title,
@@ -90,7 +155,8 @@ export default function CreateEvent() {
         city: formData.city,
         state: formData.state,
         zip_code: formData.zip_code,
-        host_id: user.id
+        host_id: user.id,
+        banner_image_url: bannerImageUrl
       }
 
       const { data, error } = await supabase
@@ -114,6 +180,8 @@ export default function CreateEvent() {
         state: '',
         zip_code: ''
       })
+      setBannerFile(null)
+      setBannerPreview(null)
 
       // Clear success message after 3 seconds
       setTimeout(() => {
@@ -158,9 +226,43 @@ export default function CreateEvent() {
         <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.bannerSection}>
           <div className={styles.bannerImage}>
-            <div className={styles.bannerPlaceholder}>
-              <div className={styles.uploadText}>Upload banner image</div>
-            </div>
+            {bannerPreview ? (
+              <img 
+                src={bannerPreview} 
+                alt="Banner preview" 
+                className={styles.bannerPreview}
+              />
+            ) : (
+              <div className={styles.bannerPlaceholder}>
+                <div className={styles.uploadText}>Upload banner image</div>
+              </div>
+            )}
+            <input
+              type="file"
+              id="bannerFile"
+              name="bannerFile"
+              accept="image/*"
+              onChange={handleFileChange}
+              className={styles.fileInput}
+            />
+            <label htmlFor="bannerFile" className={styles.fileInputLabel}>
+              {bannerFile ? 'Change Image' : 'Choose Image'}
+            </label>
+            {bannerFile && (
+              <button
+                type="button"
+                onClick={() => {
+                  setBannerFile(null)
+                  setBannerPreview(null)
+                  // Reset file input
+                  const fileInput = document.getElementById('bannerFile')
+                  if (fileInput) fileInput.value = ''
+                }}
+                className={styles.removeImageButton}
+              >
+                Remove Image
+              </button>
+            )}
           </div>
         </div>
 
@@ -317,10 +419,10 @@ export default function CreateEvent() {
 
         <button 
           type="submit" 
-          disabled={loading}
+          disabled={loading || uploading}
           className={styles.submitButton}
         >
-          {loading ? 'Creating Event...' : 'Create Event'}
+          {uploading ? 'Uploading Image...' : loading ? 'Creating Event...' : 'Create Event'}
         </button>
         </form>
       </div>

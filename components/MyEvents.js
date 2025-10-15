@@ -56,7 +56,8 @@ export default function MyEvents({ onTabChange }) {
             game_title,
             starts_at,
             ends_at,
-            cost
+            cost,
+            banner_image_url
           )
         `)
         .eq('user_id', user.id)
@@ -99,7 +100,8 @@ export default function MyEvents({ onTabChange }) {
           starts_at,
           ends_at,
           cost,
-          created_at
+          created_at,
+          banner_image_url
         `)
         .eq('host_id', user.id)
         .order('starts_at', { ascending: true })
@@ -186,9 +188,22 @@ export default function MyEvents({ onTabChange }) {
       onClick={() => handleEventClick(event.id)}
     >
       <div className={styles.eventImage}>
-        <div className={styles.imagePlaceholder}>
-          {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
-        </div>
+        {event.banner_image_url ? (
+          <img 
+            src={event.banner_image_url} 
+            alt={event.title}
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              objectFit: 'cover',
+              borderRadius: '4px'
+            }}
+          />
+        ) : (
+          <div className={styles.imagePlaceholder}>
+            {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
+          </div>
+        )}
       </div>
       
       <div className={styles.eventContent}>

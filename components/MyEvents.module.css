@@ -332,49 +332,132 @@
 /* Responsive Design */
 @media (max-width: 767px) {
   .eventsList {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
   
   .eventCard {
-    min-height: 240px;
+    min-height: 180px;
   }
   
   .eventImage {
-    height: 100px;
+    height: 60px;
   }
   
   .eventContent {
-    padding: 14px;
+    padding: 8px;
   }
   
   .gameTitle {
     min-height: 14px;
     font-size: 0.6rem;
-    padding: 2px 5px;
+    padding: 2px 4px;
     align-self: flex-start;
   }
   
   .eventHeader {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 4px;
+    margin-bottom: 8px;
   }
   
   .eventTitle {
     margin-right: 0;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+    height: 2rem;
+    line-height: 1.2;
+  }
+  
+  .eventDetails {
+    gap: 6px;
+    flex: 1;
+    justify-content: flex-start;
+  }
+  
+  .eventDate {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    white-space: normal;
+    overflow: visible;
+    display: block;
+  }
+  
+  .eventLocation {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    white-space: normal;
+    overflow: visible;
+    display: block;
+  }
+  
+  .eventDescription {
+    display: none;
   }
   
   .editButton {
-    width: 28px;
-    height: 28px;
-    padding: 6px;
+    width: 24px;
+    height: 24px;
+    padding: 4px;
   }
   
   .editButton svg {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* Extra small mobile screens */
+@media (max-width: 480px) {
+  .eventsList {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  
+  .eventCard {
+    min-height: 160px;
+  }
+  
+  .eventImage {
+    height: 50px;
+  }
+  
+  .eventContent {
+    padding: 6px;
+  }
+  
+  .eventTitle {
+    font-size: 0.8rem;
+    height: 1.8rem;
+  }
+  
+  .eventDate, .eventLocation {
+    font-size: 0.7rem;
+    line-height: 1.3;
+    white-space: normal;
+    overflow: visible;
+    display: block;
+  }
+  
+  .eventDescription {
+    display: none;
+  }
+  
+  .gameTitle {
+    font-size: 0.55rem;
+    padding: 1px 3px;
+  }
+  
+  .editButton {
+    width: 20px;
+    height: 20px;
+    padding: 3px;
+  }
+  
+  .editButton svg {
+    width: 8px;
+    height: 8px;
   }
 }
 
