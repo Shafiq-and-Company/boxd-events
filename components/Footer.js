@@ -17,9 +17,10 @@ export default function Footer() {
           </div>
           
           <nav className={styles.navigation}>
-            <a href="#" className={styles.navLink}>Discover</a>
-            <a href="#" className={styles.navLink}>Pricing</a>
+            <a href="/?tab=discover" className={styles.navLink}>Discover</a>
+            <a href="/?tab=pricing" className={styles.navLink}>Pricing</a>
             <a href="#" className={styles.navLink}>Help</a>
+            <a href="https://forms.gle/Mqf5bcmbmaCb13HV6" target="_blank" rel="noopener noreferrer" className={styles.navLink}>Report Bug</a>
           </nav>
           
           <div className={styles.socialLinks}>

@@ -1,0 +1,338 @@
+/* Pricing Component - BOXD Events */
+/* Hyper Minimal Design - Johnny Ive Aesthetic */
+
+.pricingContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background: transparent;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: #000000;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: #666666;
+  margin-bottom: 40px;
+  line-height: 1.6;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.billingToggle {
+  display: inline-flex;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 0;
+}
+
+.toggleButton {
+  background: transparent;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #666666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggleButton.active {
+  background: transparent;
+  color: #000000;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.pricingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 80px;
+}
+
+.pricingCard {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 32px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.pricingCard:hover {
+  border-color: #d0d0d0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.pricingCard.featured {
+  border-color: #000000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.popularBadge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000000;
+  color: #ffffff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.cardHeader {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.planName {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #000000;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.price {
+  margin-bottom: 24px;
+}
+
+.priceAmount {
+  font-size: 3rem;
+  font-weight: 400;
+  color: #000000;
+  display: block;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.pricePeriod {
+  font-size: 0.875rem;
+  color: #666666;
+  display: block;
+  margin-top: 8px;
+  position: relative;
+}
+
+.savings {
+  background: #f0f0f0;
+  color: #000000;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.ctaButton {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #d0d0d0;
+  color: #000000;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ctaButton:hover {
+  border-color: #000000;
+  background: transparent;
+}
+
+.ctaButton.primaryButton {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.ctaButton.primaryButton:hover {
+  background: #333333;
+  border-color: #333333;
+}
+
+.features {
+  text-align: left;
+}
+
+.featureIntro {
+  font-size: 0.875rem;
+  color: #666666;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.featureList {
+  margin-bottom: 24px;
+}
+
+.feature {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  font-size: 0.875rem;
+  color: #333333;
+  line-height: 1.5;
+}
+
+.checkIcon {
+  color: #000000;
+  margin-right: 12px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.divider {
+  height: 1px;
+  background: #e5e5e5;
+  margin: 24px 0;
+}
+
+.addOns {
+  background: #f8f8f8;
+  border-radius: 12px;
+  padding: 40px;
+  margin-bottom: 40px;
+}
+
+.addOnsTitle {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #000000;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.addOnsSubtitle {
+  font-size: 1rem;
+  color: #666666;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.addOnsNote {
+  font-size: 0.875rem;
+  color: #666666;
+  margin-bottom: 32px;
+  font-style: italic;
+}
+
+.addOnsTable {
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e5e5;
+}
+
+.addOnsHeader {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 16px 20px;
+  background: #f8f8f8;
+  border-bottom: 1px solid #e5e5e5;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #000000;
+}
+
+.addOnsRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.875rem;
+  color: #333333;
+}
+
+.addOnsRow:last-child {
+  border-bottom: none;
+}
+
+.billingNote {
+  font-size: 0.75rem;
+  color: #666666;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.footerNote {
+  text-align: center;
+  padding: 20px;
+  background: transparent;
+  border-radius: 8px;
+  margin-top: 40px;
+}
+
+.footerNote p {
+  font-size: 0.875rem;
+  color: #666666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .pricingContainer {
+    padding: 20px 16px;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .pricingGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .pricingCard {
+    padding: 24px;
+  }
+  
+  .addOns {
+    padding: 24px;
+  }
+  
+  .addOnsHeader,
+  .addOnsRow {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .billingToggle {
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .toggleButton {
+    flex: 1;
+    padding: 10px 16px;
+  }
+  
+  .priceAmount {
+    font-size: 2.5rem;
+  }
+}

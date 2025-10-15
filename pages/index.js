@@ -6,6 +6,7 @@ import DiscoverEvents from '../components/DiscoverEvents'
 import MyEvents from '../components/MyEvents'
 import CreateEvent from '../components/CreateEvent'
 import UserSettings from '../components/UserSettings'
+import Pricing from '../components/Pricing'
 import NavBar from '../components/NavBar'
 import PaymentConfirmation from '../components/PaymentConfirmation'
 
@@ -64,6 +65,8 @@ export default function Home() {
         return <CreateEvent />
       case 'settings':
         return <UserSettings />
+      case 'pricing':
+        return <Pricing />
       case 'about':
         return <div>About content coming soon...</div>
       default:
