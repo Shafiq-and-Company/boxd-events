@@ -111,7 +111,7 @@ export default function UserSettings() {
             throw retryError
           }
           
-          // Use retry data
+          // Use retry data with proper fallbacks
           const metadata = user.user_metadata || {}
           const emailName = user.email?.split('@')[0] || ''
           const emailParts = emailName.split('.')
@@ -119,19 +119,19 @@ export default function UserSettings() {
           const fallbackLastName = emailParts[1] || ''
 
           setUserProfile({
-            first_name: retryProfile.first_name || fallbackFirstName,
-            last_name: retryProfile.last_name || fallbackLastName,
+            first_name: retryProfile.first_name || metadata.first_name || fallbackFirstName,
+            last_name: retryProfile.last_name || metadata.last_name || fallbackLastName,
             email: retryProfile.email || user.email || '',
-            phone: retryProfile.phone || '',
-            username: retryProfile.username || user.email?.split('@')[0] || '',
-            biography: retryProfile.biography || '',
+            phone: retryProfile.phone || metadata.phone || '',
+            username: retryProfile.username || metadata.username || user.email?.split('@')[0] || '',
+            biography: retryProfile.biography || metadata.biography || '',
             avatar_url: metadata.avatar_url || '',
-            instagram: retryProfile.instagram || '',
-            youtube: retryProfile.youtube || '',
-            linkedin: retryProfile.linkedin || '',
-            twitter: retryProfile.twitter || '',
-            tiktok: retryProfile.tiktok || '',
-            website: retryProfile.website || ''
+            instagram: retryProfile.instagram || metadata.instagram || '',
+            youtube: retryProfile.youtube || metadata.youtube || '',
+            linkedin: retryProfile.linkedin || metadata.linkedin || '',
+            twitter: retryProfile.twitter || metadata.twitter || '',
+            tiktok: retryProfile.tiktok || metadata.tiktok || '',
+            website: retryProfile.website || metadata.website || ''
           })
           return
         }
@@ -146,21 +146,22 @@ export default function UserSettings() {
       const fallbackLastName = emailParts[1] || ''
 
       setUserProfile({
-        first_name: profile.first_name || fallbackFirstName,
-        last_name: profile.last_name || fallbackLastName,
+        first_name: profile.first_name || metadata.first_name || fallbackFirstName,
+        last_name: profile.last_name || metadata.last_name || fallbackLastName,
         email: profile.email || user.email || '',
-        phone: profile.phone || '',
-        username: profile.username || user.email?.split('@')[0] || '',
-        biography: profile.biography || '',
+        phone: profile.phone || metadata.phone || '',
+        username: profile.username || metadata.username || user.email?.split('@')[0] || '',
+        biography: profile.biography || metadata.biography || '',
         avatar_url: metadata.avatar_url || '',
-        instagram: profile.instagram || '',
-        youtube: profile.youtube || '',
-        linkedin: profile.linkedin || '',
-        twitter: profile.twitter || '',
-        tiktok: profile.tiktok || '',
-        website: profile.website || ''
+        instagram: profile.instagram || metadata.instagram || '',
+        youtube: profile.youtube || metadata.youtube || '',
+        linkedin: profile.linkedin || metadata.linkedin || '',
+        twitter: profile.twitter || metadata.twitter || '',
+        tiktok: profile.tiktok || metadata.tiktok || '',
+        website: profile.website || metadata.website || ''
       })
     } catch (err) {
+      console.error('Profile fetch error:', err)
       setError('Failed to load your profile information. Please try refreshing the page.')
     } finally {
       setLoading(false)
@@ -171,6 +172,11 @@ export default function UserSettings() {
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setUserProfile(prev => ({ ...prev, [name]: value }))
+    
+    // Clear error when user starts typing in any field
+    if (error) {
+      setError('')
+    }
   }
 
   // Handle avatar upload
@@ -207,6 +213,122 @@ export default function UserSettings() {
     }
   }
 
+  // Validate first name input
+  const validateFirstName = (firstName) => {
+    if (!firstName || firstName.trim().length === 0) {
+      return 'First name is required'
+    }
+    if (firstName.trim().length < 2) {
+      return 'First name must be at least 2 characters'
+    }
+    if (firstName.trim().length > 50) {
+      return 'First name must be less than 50 characters'
+    }
+    if (!/^[\p{L}\s\-'\.]+$/u.test(firstName.trim())) {
+      return 'First name can only contain letters, spaces, hyphens, apostrophes, and periods'
+    }
+    return null
+  }
+
+  // Validate last name input
+  const validateLastName = (lastName) => {
+    if (!lastName || lastName.trim().length === 0) {
+      return 'Last name is required'
+    }
+    if (lastName.trim().length < 2) {
+      return 'Last name must be at least 2 characters'
+    }
+    if (lastName.trim().length > 50) {
+      return 'Last name must be less than 50 characters'
+    }
+    if (!/^[\p{L}\s\-'\.]+$/u.test(lastName.trim())) {
+      return 'Last name can only contain letters, spaces, hyphens, apostrophes, and periods'
+    }
+    return null
+  }
+
+  // Validate username input
+  const validateUsername = (username) => {
+    if (!username || username.trim().length === 0) {
+      return 'Username is required'
+    }
+    if (username.trim().length < 3) {
+      return 'Username must be at least 3 characters'
+    }
+    if (username.trim().length > 30) {
+      return 'Username must be less than 30 characters'
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(username.trim())) {
+      return 'Username can only contain letters, numbers, and underscores'
+    }
+    return null
+  }
+
+  // Validate biography input
+  const validateBiography = (biography) => {
+    if (biography && biography.trim().length > 500) {
+      return 'Bio must be less than 500 characters'
+    }
+    return null
+  }
+
+  // Validate phone input
+  const validatePhone = (phone) => {
+    if (phone && phone.trim().length > 0) {
+      // Remove all non-digit characters for validation
+      const digitsOnly = phone.replace(/\D/g, '')
+      if (digitsOnly.length < 10) {
+        return 'Phone number must have at least 10 digits'
+      }
+      if (digitsOnly.length > 15) {
+        return 'Phone number must have no more than 15 digits'
+      }
+    }
+    return null
+  }
+
+  // Validate social media input
+  const validateSocialMedia = (value, platform) => {
+    if (!value || value.trim().length === 0) {
+      return null // Social media fields are optional
+    }
+    
+    const trimmedValue = value.trim()
+    
+    // Check for basic length limits
+    if (trimmedValue.length > 100) {
+      return `${platform} handle must be less than 100 characters`
+    }
+    
+    // Platform-specific validation
+    switch (platform) {
+      case 'instagram':
+      case 'twitter':
+      case 'tiktok':
+        if (!/^[a-zA-Z0-9._]+$/.test(trimmedValue)) {
+          return `${platform} handle can only contain letters, numbers, dots, and underscores`
+        }
+        break
+      case 'youtube':
+        if (!/^[a-zA-Z0-9._-]+$/.test(trimmedValue)) {
+          return 'YouTube handle can only contain letters, numbers, dots, underscores, and hyphens'
+        }
+        break
+      case 'linkedin':
+        if (!/^[a-zA-Z0-9-]+$/.test(trimmedValue)) {
+          return 'LinkedIn handle can only contain letters, numbers, and hyphens'
+        }
+        break
+      case 'website':
+        if (!/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmedValue)) {
+          return 'Website must be a valid domain (e.g., example.com)'
+        }
+        break
+    }
+    
+    return null
+  }
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -216,75 +338,80 @@ export default function UserSettings() {
       setError('')
       setSuccess('')
 
-      // First, try to update the users table
-      const updateData = {
-        first_name: userProfile.first_name,
-        last_name: userProfile.last_name,
-        username: userProfile.username,
-        biography: userProfile.biography,
-        phone: userProfile.phone,
-        instagram: userProfile.instagram,
-        youtube: userProfile.youtube,
-        linkedin: userProfile.linkedin,
-        twitter: userProfile.twitter,
-        tiktok: userProfile.tiktok,
-        website: userProfile.website
+      // Validate all fields
+      const firstNameError = validateFirstName(userProfile.first_name)
+      if (firstNameError) {
+        setError(firstNameError)
+        return
       }
 
-      // Ensure user record exists before updating
-      await ensureUserRecord()
+      const lastNameError = validateLastName(userProfile.last_name)
+      if (lastNameError) {
+        setError(lastNameError)
+        return
+      }
+
+      const usernameError = validateUsername(userProfile.username)
+      if (usernameError) {
+        setError(usernameError)
+        return
+      }
+
+      const biographyError = validateBiography(userProfile.biography)
+      if (biographyError) {
+        setError(biographyError)
+        return
+      }
+
+      const phoneError = validatePhone(userProfile.phone)
+      if (phoneError) {
+        setError(phoneError)
+        return
+      }
+
+      // Validate social media fields
+      const socialPlatforms = ['instagram', 'youtube', 'linkedin', 'twitter', 'tiktok', 'website']
+      for (const platform of socialPlatforms) {
+        const socialError = validateSocialMedia(userProfile[platform], platform)
+        if (socialError) {
+          setError(socialError)
+          return
+        }
+      }
+
+      // Update user metadata first (this is the source of truth)
+      const { error: metadataError } = await supabase.auth.updateUser({
+        data: {
+          first_name: userProfile.first_name.trim(),
+          last_name: userProfile.last_name.trim(),
+          username: userProfile.username.trim(),
+          biography: userProfile.biography.trim(),
+          phone: userProfile.phone.trim(),
+          instagram: userProfile.instagram.trim(),
+          youtube: userProfile.youtube.trim(),
+          linkedin: userProfile.linkedin.trim(),
+          twitter: userProfile.twitter.trim(),
+          tiktok: userProfile.tiktok.trim(),
+          website: userProfile.website.trim(),
+          avatar_url: userProfile.avatar_url
+        }
+      })
       
-      const { data: updateResult, error: updateError } = await supabase
-        .from('users')
-        .update(updateData)
-        .eq('id', user.id)
-        .select()
-
-      if (updateError) {
-        // If database update fails, try to update user metadata as fallback
-        
-        const { error: metadataError } = await supabase.auth.updateUser({
-          data: {
-            first_name: userProfile.first_name,
-            last_name: userProfile.last_name,
-            username: userProfile.username,
-            biography: userProfile.biography,
-            phone: userProfile.phone,
-            instagram: userProfile.instagram,
-            youtube: userProfile.youtube,
-            linkedin: userProfile.linkedin,
-            twitter: userProfile.twitter,
-            tiktok: userProfile.tiktok,
-            website: userProfile.website,
-            avatar_url: userProfile.avatar_url
-          }
-        })
-        
-        if (metadataError) {
-          throw metadataError
-        }
-      } else {
-        // Update user metadata for avatar_url (not stored in users table)
-        const { error: metadataError } = await supabase.auth.updateUser({
-          data: {
-            avatar_url: userProfile.avatar_url
-          }
-        })
-
-        if (metadataError) {
-          // Don't throw here, as the main profile was saved
-        }
-        
-        // Force refresh the profile data to ensure UI shows updated values
-        setTimeout(async () => {
-          await fetchUserProfile()
-        }, 100)
+      if (metadataError) {
+        console.error('Auth metadata update error:', metadataError)
+        throw new Error(`Failed to update profile: ${metadataError.message}`)
       }
+
+      // The database trigger will automatically sync the users table
+      // Wait a moment for the trigger to complete, then refresh the profile
+      await new Promise(resolve => setTimeout(resolve, 500))
+      await fetchUserProfile()
 
       setSuccess('Profile updated successfully!')
       setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
-      setError('Failed to update your profile. Please try again.')
+      console.error('Profile update error:', err)
+      setError(err.message || 'Failed to update your profile. Please try again.')
     } finally {
       setSaving(false)
     }
@@ -409,34 +536,55 @@ export default function UserSettings() {
           {/* Name Fields */}
           <div className={styles.nameFields}>
             <div className={styles.formGroup}>
-              <label htmlFor="first_name" className={styles.label}>First Name</label>
+              <label htmlFor="first_name" className={styles.label}>
+                First Name
+                <span className={styles.required}>*</span>
+              </label>
               <input
                 type="text"
                 id="first_name"
                 name="first_name"
                 value={userProfile.first_name}
                 onChange={handleInputChange}
-                className={styles.input}
+                className={`${styles.input} ${userProfile.first_name && validateFirstName(userProfile.first_name) ? styles.inputError : ''}`}
                 placeholder="Enter your first name"
+                required
               />
+              {userProfile.first_name && validateFirstName(userProfile.first_name) && (
+                <div className={styles.fieldError}>
+                  {validateFirstName(userProfile.first_name)}
+                </div>
+              )}
             </div>
             <div className={styles.formGroup}>
-              <label htmlFor="last_name" className={styles.label}>Last Name</label>
+              <label htmlFor="last_name" className={styles.label}>
+                Last Name
+                <span className={styles.required}>*</span>
+              </label>
               <input
                 type="text"
                 id="last_name"
                 name="last_name"
                 value={userProfile.last_name}
                 onChange={handleInputChange}
-                className={styles.input}
+                className={`${styles.input} ${userProfile.last_name && validateLastName(userProfile.last_name) ? styles.inputError : ''}`}
                 placeholder="Enter your last name"
+                required
               />
+              {userProfile.last_name && validateLastName(userProfile.last_name) && (
+                <div className={styles.fieldError}>
+                  {validateLastName(userProfile.last_name)}
+                </div>
+              )}
             </div>
           </div>
 
           {/* Username */}
           <div className={styles.formGroup}>
-            <label htmlFor="username" className={styles.label}>Username</label>
+            <label htmlFor="username" className={styles.label}>
+              Username
+              <span className={styles.required}>*</span>
+            </label>
             <div className={styles.usernameInput}>
               <span className={styles.atSymbol}>@</span>
               <input
@@ -445,24 +593,40 @@ export default function UserSettings() {
                 name="username"
                 value={userProfile.username}
                 onChange={handleInputChange}
-                className={styles.input}
+                className={`${styles.input} ${userProfile.username && validateUsername(userProfile.username) ? styles.inputError : ''}`}
                 placeholder="Enter your username"
+                required
               />
             </div>
+            {userProfile.username && validateUsername(userProfile.username) && (
+              <div className={styles.fieldError}>
+                {validateUsername(userProfile.username)}
+              </div>
+            )}
           </div>
 
           {/* Bio */}
           <div className={styles.formGroup}>
-            <label htmlFor="biography" className={styles.label}>Bio</label>
+            <label htmlFor="biography" className={styles.label}>
+              Bio
+              <span className={styles.characterCount}>
+                {userProfile.biography.length}/500
+              </span>
+            </label>
             <textarea
               id="biography"
               name="biography"
               value={userProfile.biography}
               onChange={handleInputChange}
-              className={styles.textarea}
+              className={`${styles.textarea} ${userProfile.biography && validateBiography(userProfile.biography) ? styles.inputError : ''}`}
               placeholder="Tell us about yourself..."
               rows={2}
             />
+            {userProfile.biography && validateBiography(userProfile.biography) && (
+              <div className={styles.fieldError}>
+                {validateBiography(userProfile.biography)}
+              </div>
+            )}
           </div>
 
           {/* Social Links */}
@@ -485,10 +649,15 @@ export default function UserSettings() {
                       name={platform.id}
                       value={userProfile[platform.id]}
                       onChange={handleInputChange}
-                      className={styles.socialInputField}
+                      className={`${styles.socialInputField} ${userProfile[platform.id] && validateSocialMedia(userProfile[platform.id], platform.id) ? styles.inputError : ''}`}
                       placeholder={platform.id === 'website' ? 'yourwebsite.com' : 'username'}
                     />
                   </div>
+                  {userProfile[platform.id] && validateSocialMedia(userProfile[platform.id], platform.id) && (
+                    <div className={styles.fieldError}>
+                      {validateSocialMedia(userProfile[platform.id], platform.id)}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -520,9 +689,14 @@ export default function UserSettings() {
               name="phone"
               value={userProfile.phone}
               onChange={handleInputChange}
-              className={styles.input}
+              className={`${styles.input} ${userProfile.phone && validatePhone(userProfile.phone) ? styles.inputError : ''}`}
               placeholder="Enter your phone number"
             />
+            {userProfile.phone && validatePhone(userProfile.phone) && (
+              <div className={styles.fieldError}>
+                {validatePhone(userProfile.phone)}
+              </div>
+            )}
           </div>
 
           {/* Save Button */}
