@@ -129,6 +129,10 @@ export default function MyEvents() {
     router.push('/login')
   }
 
+  const handleEditEvent = (eventId) => {
+    router.push(`/manage-event/${eventId}`)
+  }
+
   if (authLoading || loading || hostedLoading) {
     return (
       <div className={styles.myEvents}>
@@ -167,7 +171,7 @@ export default function MyEvents() {
     )
   }
 
-  const renderEventCard = (event) => (
+  const renderEventCard = (event, isHosted = false) => (
     <div 
       key={event.id} 
       className={styles.eventCard}
@@ -206,6 +210,25 @@ export default function MyEvents() {
           )}
         </div>
       </div>
+      
+      {isHosted && (
+        <div className={styles.eventActions}>
+          <button 
+            className={styles.editButton}
+            onClick={(e) => {
+              e.stopPropagation()
+              handleEditEvent(event.id)
+            }}
+            title="Edit event"
+            aria-label="Edit event"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   )
 
@@ -250,7 +273,7 @@ export default function MyEvents() {
             </div>
           ) : (
             <div className={styles.eventsList}>
-              {events.map(renderEventCard)}
+              {events.map(event => renderEventCard(event, false))}
             </div>
           )}
         </div>
@@ -276,7 +299,7 @@ export default function MyEvents() {
             </div>
           ) : (
             <div className={styles.eventsList}>
-              {hostedEvents.map(renderEventCard)}
+              {hostedEvents.map(event => renderEventCard(event, true))}
             </div>
           )}
         </div>
