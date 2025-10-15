@@ -57,7 +57,12 @@ export default function EventDetail() {
       setLoading(true)
       const { data, error } = await supabase
         .from('events')
-        .select('*')
+        .select(`
+          *,
+          host_user:host_id (
+            first_name
+          )
+        `)
         .eq('id', id)
         .single()
 
@@ -235,10 +240,10 @@ export default function EventDetail() {
                 <div className={styles.gameTitle}>{event.game_title}</div>
               )}
               <h1 className={styles.eventTitle}>{event.title}</h1>
-              {event.host && (
+              {event.host_user && event.host_user.first_name && (
                 <div className={styles.hostedBy}>
                   <span className={styles.hostedByLabel}>Hosted by</span>
-                  <span className={styles.hostName}>{event.host}</span>
+                  <span className={styles.hostName}>{event.host_user.first_name}</span>
                 </div>
               )}
             </div>

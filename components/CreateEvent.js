@@ -68,7 +68,8 @@ export default function CreateEvent() {
         city: formData.city,
         state: formData.state,
         cost: formData.cost || 0,
-        host: user.id
+        host: user.id,
+        host_id: user.id
       }
 
       const { data, error } = await supabase

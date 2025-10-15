@@ -32,6 +32,8 @@ export default function ManageEvent() {
   const [fetchLoading, setFetchLoading] = useState(true)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   // Fetch event data when component mounts or id changes
   useEffect(() => {
@@ -157,6 +159,47 @@ export default function ManageEvent() {
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDeleteEvent = async () => {
+    if (!user) {
+      setError('You must be logged in to delete an event')
+      return
+    }
+
+    setDeleteLoading(true)
+    setError(null)
+
+    try {
+      // First delete all RSVPs for this event (cascade delete)
+      const { error: rsvpError } = await supabase
+        .from('rsvps')
+        .delete()
+        .eq('event_id', id)
+
+      if (rsvpError) {
+        throw rsvpError
+      }
+
+      // Then delete the event itself
+      const { error: eventError } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', id)
+        .eq('host_id', user.id) // Ensure user owns this event
+
+      if (eventError) {
+        throw eventError
+      }
+
+      // Redirect to MyEvents page with hosting tab active after successful deletion
+      router.push('/my-events?tab=hosting')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setDeleteLoading(false)
+      setShowDeleteConfirm(false)
     }
   }
 
@@ -512,7 +555,49 @@ export default function ManageEvent() {
           {loading ? 'Updating Event...' : 'Update Event'}
         </button>
         </form>
+
+        {/* Delete Event Section */}
+        <div className={styles.deleteSection}>
+          <button
+            type="button"
+            onClick={() => setShowDeleteConfirm(true)}
+            className={styles.deleteButton}
+            disabled={loading || deleteLoading}
+          >
+            Delete Event
+          </button>
+        </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <h3 className={styles.modalTitle}>Delete Event</h3>
+            <p className={styles.modalMessage}>
+              Are you sure you want to delete this event? This action cannot be undone and will remove all RSVPs.
+            </p>
+            <div className={styles.modalActions}>
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(false)}
+                className={styles.cancelButton}
+                disabled={deleteLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteEvent}
+                className={styles.confirmDeleteButton}
+                disabled={deleteLoading}
+              >
+                {deleteLoading ? 'Deleting...' : 'Delete Event'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

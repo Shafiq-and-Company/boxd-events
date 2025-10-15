@@ -60,7 +60,7 @@ export default function Home() {
       case 'discover':
         return <DiscoverEvents />
       case 'myEvents':
-        return <MyEvents />
+        return <MyEvents onTabChange={handleTabChange} />
       case 'createEvent':
         return <CreateEvent />
       case 'settings':

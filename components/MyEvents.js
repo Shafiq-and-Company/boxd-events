@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabaseClient'
 import PageTitle from './PageTitle'
 import styles from './MyEvents.module.css'
 
-export default function MyEvents() {
+export default function MyEvents({ onTabChange }) {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const [events, setEvents] = useState([])
@@ -15,6 +15,13 @@ export default function MyEvents() {
   const [error, setError] = useState('')
   const [hostedError, setHostedError] = useState('')
   const [activeTab, setActiveTab] = useState('attending')
+
+  // Handle tab parameter from URL
+  useEffect(() => {
+    if (router.query.tab === 'hosting') {
+      setActiveTab('hosting')
+    }
+  }, [router.query.tab])
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -256,8 +263,6 @@ export default function MyEvents() {
       {/* Attending Events Section */}
       {activeTab === 'attending' && (
         <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Events I'm Attending</h3>
-          
           {events.length === 0 ? (
             <div className={styles.emptyState}>
               <div className={styles.emptyStateContent}>
@@ -282,15 +287,13 @@ export default function MyEvents() {
       {/* Hosted Events Section */}
       {activeTab === 'hosting' && (
         <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Events I'm Hosting</h3>
-          
           {hostedEvents.length === 0 ? (
             <div className={styles.emptyState}>
               <div className={styles.emptyStateContent}>
                 <p className={styles.emptyStateText}>You haven't hosted any events yet.</p>
                 <p className={styles.emptyStateSubtext}>Create your own gaming events and tournaments.</p>
                 <button 
-                  onClick={() => router.push('/create-event')}
+                  onClick={() => onTabChange ? onTabChange('createEvent') : router.push('/create-event')}
                   className={styles.discoverButton}
                 >
                   Create Event
