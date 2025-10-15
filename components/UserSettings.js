@@ -11,9 +11,6 @@ export default function UserSettings() {
   // State management
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [uploading, setUploading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   
   const [userProfile, setUserProfile] = useState({
     first_name: '',
@@ -21,8 +18,7 @@ export default function UserSettings() {
     email: '',
     phone: '',
     username: '',
-    biography: '',
-    avatar_url: ''
+    biography: ''
   })
 
   // Auth redirect
@@ -53,7 +49,7 @@ export default function UserSettings() {
             first_name: user.user_metadata?.first_name || '',
             last_name: user.user_metadata?.last_name || '',
             email: user.email || '',
-            username: user.user_metadata?.username || user.email?.split('@')[0] || '',
+            username: user.email?.split('@')[0] || '',
             biography: user.user_metadata?.biography || '',
             phone: user.user_metadata?.phone || '',
           })
@@ -73,7 +69,6 @@ export default function UserSettings() {
   const fetchUserProfile = async () => {
     try {
       setLoading(true)
-      setError('')
 
       // Ensure user record exists first
       await ensureUserRecord()
@@ -108,7 +103,6 @@ export default function UserSettings() {
       setUserProfile(buildUserProfile(profile))
     } catch (err) {
       console.error('Profile fetch error:', err)
-      setError('Failed to load your profile information. Please try refreshing the page.')
     } finally {
       setLoading(false)
     }
@@ -127,9 +121,8 @@ export default function UserSettings() {
       last_name: profile.last_name || metadata.last_name || fallbackLastName,
       email: profile.email || user.email || '',
       phone: profile.phone || metadata.phone || '',
-      username: profile.username || metadata.username || user.email?.split('@')[0] || '',
+      username: profile.username || user.email?.split('@')[0] || '',
       biography: profile.biography || metadata.biography || '',
-      avatar_url: metadata.avatar_url || '',
     }
   }
 
@@ -137,103 +130,9 @@ export default function UserSettings() {
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setUserProfile(prev => ({ ...prev, [name]: value }))
-    
-    // Clear error when user starts typing in any field
-    if (error) {
-      setError('')
-    }
   }
 
-  // Handle avatar upload
-  const handleAvatarUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
 
-    try {
-      setUploading(true)
-      setError('')
-
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`
-      const filePath = `avatars/${fileName}`
-
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file)
-
-      if (uploadError) throw uploadError
-
-      const { data } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath)
-
-      setUserProfile(prev => ({ ...prev, avatar_url: data.publicUrl }))
-      setSuccess('Profile picture updated successfully!')
-      setTimeout(() => setSuccess(''), 3000)
-    } catch (err) {
-      console.error('Error uploading avatar:', err)
-      setError('Failed to upload profile picture. Please try again.')
-    } finally {
-      setUploading(false)
-    }
-  }
-
-  // Validate name input (first or last name)
-  const validateName = (name, fieldName) => {
-    if (!name || name.trim().length === 0) {
-      return `${fieldName} is required`
-    }
-    if (name.trim().length < 2) {
-      return `${fieldName} must be at least 2 characters`
-    }
-    if (name.trim().length > 50) {
-      return `${fieldName} must be less than 50 characters`
-    }
-    if (!/^[\p{L}\s\-'\.]+$/u.test(name.trim())) {
-      return `${fieldName} can only contain letters, spaces, hyphens, apostrophes, and periods`
-    }
-    return null
-  }
-
-  // Validate username input
-  const validateUsername = (username) => {
-    if (!username || username.trim().length === 0) {
-      return 'Username is required'
-    }
-    if (username.trim().length < 3) {
-      return 'Username must be at least 3 characters'
-    }
-    if (username.trim().length > 30) {
-      return 'Username must be less than 30 characters'
-    }
-    if (!/^[a-zA-Z0-9_]+$/.test(username.trim())) {
-      return 'Username can only contain letters, numbers, and underscores'
-    }
-    return null
-  }
-
-  // Validate biography input
-  const validateBiography = (biography) => {
-    if (biography && biography.trim().length > 500) {
-      return 'Bio must be less than 500 characters'
-    }
-    return null
-  }
-
-  // Validate phone input
-  const validatePhone = (phone) => {
-    if (phone && phone.trim().length > 0) {
-      // Remove all non-digit characters for validation
-      const digitsOnly = phone.replace(/\D/g, '')
-      if (digitsOnly.length < 10) {
-        return 'Phone number must have at least 10 digits'
-      }
-      if (digitsOnly.length > 15) {
-        return 'Phone number must have no more than 15 digits'
-      }
-    }
-    return null
-  }
 
 
   // Handle form submission
@@ -242,79 +141,39 @@ export default function UserSettings() {
     
     try {
       setSaving(true)
-      setError('')
-      setSuccess('')
-
-      // Validate all fields
-      const firstNameError = validateName(userProfile.first_name, 'First name')
-      if (firstNameError) {
-        setError(firstNameError)
-        return
-      }
-
-      const lastNameError = validateName(userProfile.last_name, 'Last name')
-      if (lastNameError) {
-        setError(lastNameError)
-        return
-      }
-
-      const usernameError = validateUsername(userProfile.username)
-      if (usernameError) {
-        setError(usernameError)
-        return
-      }
-
-      const biographyError = validateBiography(userProfile.biography)
-      if (biographyError) {
-        setError(biographyError)
-        return
-      }
-
-      const phoneError = validatePhone(userProfile.phone)
-      if (phoneError) {
-        setError(phoneError)
-        return
-      }
 
 
-      // Update user metadata first (this is the source of truth)
-      const { error: metadataError } = await supabase.auth.updateUser({
+      // Update user metadata (excluding username - handled separately)
+      await supabase.auth.updateUser({
         data: {
+          first_name: userProfile.first_name.trim(),
+          last_name: userProfile.last_name.trim(),
+          biography: userProfile.biography.trim(),
+          phone: userProfile.phone.trim()
+        }
+      })
+      
+      // Update the users table directly (primary source for username)
+      await supabase
+        .from('users')
+        .update({
           first_name: userProfile.first_name.trim(),
           last_name: userProfile.last_name.trim(),
           username: userProfile.username.trim(),
           biography: userProfile.biography.trim(),
-          phone: userProfile.phone.trim(),
-          avatar_url: userProfile.avatar_url
-        }
-      })
-      
-      if (metadataError) {
-        console.error('Auth metadata update error:', metadataError)
-        throw new Error(`Failed to update profile: ${metadataError.message}`)
-      }
+          phone: userProfile.phone.trim()
+        })
+        .eq('id', user.id)
 
-      // The database trigger will automatically sync the users table
-      // Wait a moment for the trigger to complete, then refresh the profile
-      await new Promise(resolve => setTimeout(resolve, 500))
+      // Refresh the profile to get the latest data
       await fetchUserProfile()
-
-      setSuccess('Profile updated successfully!')
-      setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
       console.error('Profile update error:', err)
-      setError(err.message || 'Failed to update your profile. Please try again.')
     } finally {
       setSaving(false)
     }
   }
 
-  // Helper function to get avatar initial
-  const getAvatarInitial = () => {
-    if (userProfile.first_name) return userProfile.first_name.charAt(0).toUpperCase()
-    if (userProfile.email) return userProfile.email.charAt(0).toUpperCase()
-    return 'U'
-  }
 
   // Loading state
   if (authLoading || loading) {
@@ -350,44 +209,6 @@ export default function UserSettings() {
       <h2>User Settings</h2>
       <p className={styles.pageSubtitle}>Manage your account information and preferences</p>
       
-      {/* Profile Picture */}
-      <div className={styles.profileSection}>
-        <div className={styles.profilePicture}>
-          <div className={styles.avatarContainer}>
-            {userProfile.avatar_url ? (
-              <img 
-                src={userProfile.avatar_url} 
-                alt="Profile" 
-                className={styles.avatarImage}
-              />
-            ) : (
-              <div className={styles.avatarPlaceholder}>
-                {getAvatarInitial()}
-              </div>
-            )}
-            <div className={styles.uploadOverlay}>
-              <label htmlFor="avatar-upload" className={styles.uploadLabel}>
-                {uploading ? (
-                  <div className={styles.uploadSpinner}>⋯</div>
-                ) : (
-                  <svg className={styles.uploadIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
-                    <circle cx="12" cy="13" r="3"/>
-                  </svg>
-                )}
-              </label>
-              <input
-                id="avatar-upload"
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarUpload}
-                className={styles.hiddenInput}
-                disabled={uploading}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
       
       {/* Settings Form */}
       <div className={styles.settingsForm}>
@@ -405,15 +226,11 @@ export default function UserSettings() {
                 name="first_name"
                 value={userProfile.first_name}
                 onChange={handleInputChange}
-                className={`${styles.input} ${userProfile.first_name && validateName(userProfile.first_name, 'First name') ? styles.inputError : ''}`}
+                className={styles.input}
                 placeholder="Enter your first name"
+                maxLength={100}
                 required
               />
-              {userProfile.first_name && validateName(userProfile.first_name, 'First name') && (
-                <div className={styles.fieldError}>
-                  {validateName(userProfile.first_name, 'First name')}
-                </div>
-              )}
             </div>
             <div className={styles.formGroup}>
               <label htmlFor="last_name" className={styles.label}>
@@ -426,15 +243,11 @@ export default function UserSettings() {
                 name="last_name"
                 value={userProfile.last_name}
                 onChange={handleInputChange}
-                className={`${styles.input} ${userProfile.last_name && validateName(userProfile.last_name, 'Last name') ? styles.inputError : ''}`}
+                className={styles.input}
                 placeholder="Enter your last name"
+                maxLength={100}
                 required
               />
-              {userProfile.last_name && validateName(userProfile.last_name, 'Last name') && (
-                <div className={styles.fieldError}>
-                  {validateName(userProfile.last_name, 'Last name')}
-                </div>
-              )}
             </div>
           </div>
 
@@ -452,40 +265,31 @@ export default function UserSettings() {
                 name="username"
                 value={userProfile.username}
                 onChange={handleInputChange}
-                className={`${styles.input} ${userProfile.username && validateUsername(userProfile.username) ? styles.inputError : ''}`}
+                className={styles.input}
                 placeholder="Enter your username"
                 required
               />
             </div>
-            {userProfile.username && validateUsername(userProfile.username) && (
-              <div className={styles.fieldError}>
-                {validateUsername(userProfile.username)}
-              </div>
-            )}
           </div>
 
           {/* Bio */}
           <div className={styles.formGroup}>
             <label htmlFor="biography" className={styles.label}>
               Bio
-              <span className={styles.characterCount}>
-                {userProfile.biography.length}/500
-              </span>
             </label>
             <textarea
               id="biography"
               name="biography"
               value={userProfile.biography}
               onChange={handleInputChange}
-              className={`${styles.textarea} ${userProfile.biography && validateBiography(userProfile.biography) ? styles.inputError : ''}`}
+              className={styles.textarea}
               placeholder="Tell us about yourself..."
+              maxLength={500}
               rows={2}
             />
-            {userProfile.biography && validateBiography(userProfile.biography) && (
-              <div className={styles.fieldError}>
-                {validateBiography(userProfile.biography)}
-              </div>
-            )}
+            <div className={styles.characterCount}>
+              {userProfile.biography.length}/500
+            </div>
           </div>
 
 
@@ -515,14 +319,12 @@ export default function UserSettings() {
               name="phone"
               value={userProfile.phone}
               onChange={handleInputChange}
-              className={`${styles.input} ${userProfile.phone && validatePhone(userProfile.phone) ? styles.inputError : ''}`}
+              className={styles.input}
               placeholder="Enter your phone number"
+              maxLength={11}
+              pattern="[0-9]*"
+              inputMode="numeric"
             />
-            {userProfile.phone && validatePhone(userProfile.phone) && (
-              <div className={styles.fieldError}>
-                {validatePhone(userProfile.phone)}
-              </div>
-            )}
           </div>
 
           {/* Save Button */}
@@ -581,13 +383,6 @@ export default function UserSettings() {
             </div>
           </div>
 
-          {/* Messages */}
-          {error && (
-            <div className={styles.errorMessage}>{error}</div>
-          )}
-          {success && (
-            <div className={styles.successMessage}>{success}</div>
-          )}
         </form>
       </div>
     </div>
