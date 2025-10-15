@@ -112,9 +112,6 @@
 }
 
 /* Section Spacing */
-.socialSection {
-  margin: 40px 0;
-}
 
 .paymentsSection, .securitySection {
   margin: 24px 0;
@@ -134,64 +131,6 @@
   line-height: 1.4;
 }
 
-/* Social Links */
-.socialGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  width: 100%;
-}
-
-.socialInput {
-  position: relative;
-  display: flex;
-  align-items: center;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  background: #fff;
-  transition: all 200ms ease;
-  width: 100%;
-}
-
-.socialInput:focus-within {
-  border-color: #000;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-}
-
-.socialPrefix {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 16px;
-  background: #f8f8f8;
-  border-right: 1px solid #d0d0d0;
-  font-size: 0.75rem;
-  color: #707070;
-  white-space: nowrap;
-  border-radius: 4px 0 0 4px;
-}
-
-.socialIcon { 
-  width: 14px; 
-  height: 14px; 
-  color: #404040; 
-  flex-shrink: 0; 
-}
-
-.socialInputField {
-  flex: 1;
-  border: none;
-  padding: 12px 16px;
-  font-size: 0.875rem;
-  color: #000;
-  background: transparent;
-  outline: none;
-  border-radius: 0 4px 4px 0;
-}
-
-.socialInputField::placeholder {
-  color: #a0a0a0;
-}
 
 /* Form Elements */
 .form {
@@ -410,17 +349,12 @@
   .avatarPlaceholder { font-size: 1.25rem; }
   .uploadOverlay { width: 20px; height: 20px; }
   .uploadIcon { width: 10px; height: 10px; }
-  .socialGrid { grid-template-columns: 1fr; gap: 12px; }
-  .socialSection { margin: 32px 0; }
   .paymentsSection, .securitySection { margin: 20px 0; }
   .securityItem, .paymentItem { padding: 16px 0; gap: 12px; }
   .securityIcon, .paymentIcon { width: 36px; height: 36px; padding: 10px; }
   .securityTitle, .paymentTitle { font-size: 0.9rem; }
   .securityDescription, .paymentDescription { font-size: 0.8rem; }
   .securityButton, .paymentButton { padding: 8px 16px; font-size: 0.8rem; }
-  .socialPrefix { padding: 10px 12px; font-size: 0.7rem; }
-  .socialIcon { width: 12px; height: 12px; }
-  .socialInputField { padding: 10px 12px; font-size: 0.8rem; }
   .form { gap: 20px; }
   .nameFields { grid-template-columns: 1fr; gap: 20px; }
   .formGroup { gap: 6px; }
@@ -437,13 +371,8 @@
   .avatarPlaceholder { font-size: 1.375rem; }
   .uploadOverlay { width: 22px; height: 22px; }
   .uploadIcon { width: 11px; height: 11px; }
-  .socialGrid { gap: 14px; }
-  .socialSection { margin: 36px 0; }
   .paymentsSection, .securitySection { margin: 24px 0; }
   .securityItem, .paymentItem { padding: 18px 0; }
-  .socialPrefix { padding: 11px 14px; font-size: 0.72rem; }
-  .socialIcon { width: 13px; height: 13px; }
-  .socialInputField { padding: 11px 14px; font-size: 0.85rem; }
   .form { gap: 22px; }
 }
 
@@ -456,8 +385,6 @@
   .avatarPlaceholder { font-size: 1.75rem; }
   .uploadOverlay { width: 26px; height: 26px; }
   .uploadIcon { width: 14px; height: 14px; }
-  .socialGrid { gap: 18px; }
-  .socialSection { margin: 44px 0; }
   .paymentsSection, .securitySection { margin: 28px 0; }
   .securityItem, .paymentItem { padding: 24px 0; }
   .form { gap: 28px; }
