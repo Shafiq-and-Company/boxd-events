@@ -42,7 +42,7 @@ export default function UserSettings() {
     }
   }, [user, authLoading, router])
 
-  // Ensure user record exists in public.users table (NOT auth.users)
+  // Ensure user record exists in users table
   const ensureUserRecord = async () => {
     try {
       const { data: existingUser, error: checkError } = await supabase
@@ -52,8 +52,6 @@ export default function UserSettings() {
         .single()
 
       if (checkError && checkError.code === 'PGRST116') {
-        // User record doesn't exist, create it
-        console.log('User record not found, creating new record')
         const { error: insertError } = await supabase
           .from('users')
           .insert({
@@ -73,16 +71,12 @@ export default function UserSettings() {
           })
 
         if (insertError) {
-          console.error('Error creating user record:', insertError)
           throw insertError
         }
-        console.log('User record created successfully')
       } else if (checkError) {
-        console.error('Error checking user record:', checkError)
         throw checkError
       }
     } catch (err) {
-      console.error('Error ensuring user record:', err)
       // Don't throw here, continue with the flow
     }
   }
@@ -92,8 +86,6 @@ export default function UserSettings() {
     try {
       setLoading(true)
       setError('')
-
-      console.log('Fetching user profile for user ID:', user.id)
 
       // Ensure user record exists first
       await ensureUserRecord()
@@ -105,10 +97,8 @@ export default function UserSettings() {
         .single()
 
       if (profileError) {
-        console.error('Profile fetch error:', profileError)
         // If user record doesn't exist, try to create it and fetch again
         if (profileError.code === 'PGRST116') {
-          console.log('User record not found, attempting to create it...')
           await ensureUserRecord()
           // Try fetching again after creating the record
           const { data: retryProfile, error: retryError } = await supabase
@@ -123,23 +113,25 @@ export default function UserSettings() {
           
           // Use retry data
           const metadata = user.user_metadata || {}
-          console.log('Fetched profile data from users (retry):', retryProfile)
-          console.log('User metadata from auth.users:', metadata)
+          const emailName = user.email?.split('@')[0] || ''
+          const emailParts = emailName.split('.')
+          const fallbackFirstName = emailParts[0] || ''
+          const fallbackLastName = emailParts[1] || ''
 
           setUserProfile({
-            first_name: retryProfile.first_name || metadata.first_name || '',
-            last_name: retryProfile.last_name || metadata.last_name || '',
+            first_name: retryProfile.first_name || fallbackFirstName,
+            last_name: retryProfile.last_name || fallbackLastName,
             email: retryProfile.email || user.email || '',
-            phone: retryProfile.phone || metadata.phone || '',
-            username: retryProfile.username || metadata.username || user.email?.split('@')[0] || '',
-            biography: retryProfile.biography || metadata.biography || '',
+            phone: retryProfile.phone || '',
+            username: retryProfile.username || user.email?.split('@')[0] || '',
+            biography: retryProfile.biography || '',
             avatar_url: metadata.avatar_url || '',
-            instagram: retryProfile.instagram || metadata.instagram || '',
-            youtube: retryProfile.youtube || metadata.youtube || '',
-            linkedin: retryProfile.linkedin || metadata.linkedin || '',
-            twitter: retryProfile.twitter || metadata.twitter || '',
-            tiktok: retryProfile.tiktok || metadata.tiktok || '',
-            website: retryProfile.website || metadata.website || ''
+            instagram: retryProfile.instagram || '',
+            youtube: retryProfile.youtube || '',
+            linkedin: retryProfile.linkedin || '',
+            twitter: retryProfile.twitter || '',
+            tiktok: retryProfile.tiktok || '',
+            website: retryProfile.website || ''
           })
           return
         }
@@ -148,27 +140,27 @@ export default function UserSettings() {
 
       // Get avatar_url from user metadata (not stored in users table)
       const metadata = user.user_metadata || {}
-      
-      console.log('Fetched profile data from users:', profile)
-      console.log('User metadata from auth.users:', metadata)
+      const emailName = user.email?.split('@')[0] || ''
+      const emailParts = emailName.split('.')
+      const fallbackFirstName = emailParts[0] || ''
+      const fallbackLastName = emailParts[1] || ''
 
       setUserProfile({
-        first_name: profile.first_name || metadata.first_name || '',
-        last_name: profile.last_name || metadata.last_name || '',
+        first_name: profile.first_name || fallbackFirstName,
+        last_name: profile.last_name || fallbackLastName,
         email: profile.email || user.email || '',
-        phone: profile.phone || metadata.phone || '',
-        username: profile.username || metadata.username || user.email?.split('@')[0] || '',
-        biography: profile.biography || metadata.biography || '',
+        phone: profile.phone || '',
+        username: profile.username || user.email?.split('@')[0] || '',
+        biography: profile.biography || '',
         avatar_url: metadata.avatar_url || '',
-        instagram: profile.instagram || metadata.instagram || '',
-        youtube: profile.youtube || metadata.youtube || '',
-        linkedin: profile.linkedin || metadata.linkedin || '',
-        twitter: profile.twitter || metadata.twitter || '',
-        tiktok: profile.tiktok || metadata.tiktok || '',
-        website: profile.website || metadata.website || ''
+        instagram: profile.instagram || '',
+        youtube: profile.youtube || '',
+        linkedin: profile.linkedin || '',
+        twitter: profile.twitter || '',
+        tiktok: profile.tiktok || '',
+        website: profile.website || ''
       })
     } catch (err) {
-      console.error('Error fetching user profile:', err)
       setError('Failed to load your profile information. Please try refreshing the page.')
     } finally {
       setLoading(false)
@@ -224,7 +216,7 @@ export default function UserSettings() {
       setError('')
       setSuccess('')
 
-      // First, try to update the public.users table (NOT auth.users)
+      // First, try to update the users table
       const updateData = {
         first_name: userProfile.first_name,
         last_name: userProfile.last_name,
@@ -238,20 +230,18 @@ export default function UserSettings() {
         tiktok: userProfile.tiktok,
         website: userProfile.website
       }
-      
-      console.log('Updating users table with data:', updateData)
-      console.log('User ID:', user.id)
-      console.log('Target table: users')
 
-      const { error: updateError } = await supabase
+      // Ensure user record exists before updating
+      await ensureUserRecord()
+      
+      const { data: updateResult, error: updateError } = await supabase
         .from('users')
         .update(updateData)
         .eq('id', user.id)
+        .select()
 
       if (updateError) {
-        console.error('Update error:', updateError)
         // If database update fails, try to update user metadata as fallback
-        console.log('Database update failed, trying metadata update as fallback')
         
         const { error: metadataError } = await supabase.auth.updateUser({
           data: {
@@ -271,15 +261,10 @@ export default function UserSettings() {
         })
         
         if (metadataError) {
-          console.error('Metadata update also failed:', metadataError)
           throw metadataError
         }
-        
-        console.log('Profile updated via metadata fallback')
       } else {
-        console.log('Profile updated successfully in database')
-        
-        // Update user metadata for avatar_url (not stored in public.users)
+        // Update user metadata for avatar_url (not stored in users table)
         const { error: metadataError } = await supabase.auth.updateUser({
           data: {
             avatar_url: userProfile.avatar_url
@@ -287,15 +272,18 @@ export default function UserSettings() {
         })
 
         if (metadataError) {
-          console.error('Avatar update failed:', metadataError)
           // Don't throw here, as the main profile was saved
         }
+        
+        // Force refresh the profile data to ensure UI shows updated values
+        setTimeout(async () => {
+          await fetchUserProfile()
+        }, 100)
       }
 
       setSuccess('Profile updated successfully!')
       setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
-      console.error('Error updating profile:', err)
       setError('Failed to update your profile. Please try again.')
     } finally {
       setSaving(false)
