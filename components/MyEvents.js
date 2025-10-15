@@ -267,9 +267,9 @@ export default function MyEvents({ onTabChange }) {
             <div className={styles.emptyState}>
               <div className={styles.emptyStateContent}>
                 <p className={styles.emptyStateText}>You haven't registered for any events yet.</p>
-                <p className={styles.emptyStateSubtext}>Discover exciting gaming events and tournaments happening near you.</p>
+                <p className={styles.emptyStateSubtext}>Find and join exciting gaming events.</p>
                 <button 
-                  onClick={() => router.push('/')}
+                  onClick={() => onTabChange ? onTabChange('discoverEvents') : router.push('/')}
                   className={styles.discoverButton}
                 >
                   Discover Events
@@ -291,7 +291,7 @@ export default function MyEvents({ onTabChange }) {
             <div className={styles.emptyState}>
               <div className={styles.emptyStateContent}>
                 <p className={styles.emptyStateText}>You haven't hosted any events yet.</p>
-                <p className={styles.emptyStateSubtext}>Create your own gaming events and tournaments.</p>
+                <p className={styles.emptyStateSubtext}>Create and manage your own events.</p>
                 <button 
                   onClick={() => onTabChange ? onTabChange('createEvent') : router.push('/create-event')}
                   className={styles.discoverButton}
