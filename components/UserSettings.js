@@ -42,37 +42,91 @@ export default function UserSettings() {
     }
   }, [user, authLoading, router])
 
-  // Fetch user profile data
+  // Ensure user record exists in public.users table (NOT auth.users)
+  const ensureUserRecord = async () => {
+    try {
+      const { data: existingUser, error: checkError } = await supabase
+        .from('public.users')
+        .select('id')
+        .eq('id', user.id)
+        .single()
+
+      if (checkError && checkError.code === 'PGRST116') {
+        // User record doesn't exist, create it
+        console.log('User record not found, creating new record')
+        const { error: insertError } = await supabase
+          .from('public.users')
+          .insert({
+            id: user.id,
+            first_name: user.user_metadata?.first_name || '',
+            last_name: user.user_metadata?.last_name || '',
+            email: user.email || '',
+            username: user.user_metadata?.username || user.email?.split('@')[0] || '',
+            biography: user.user_metadata?.biography || '',
+            phone: user.user_metadata?.phone || '',
+            instagram: user.user_metadata?.instagram || '',
+            youtube: user.user_metadata?.youtube || '',
+            linkedin: user.user_metadata?.linkedin || '',
+            twitter: user.user_metadata?.twitter || '',
+            tiktok: user.user_metadata?.tiktok || '',
+            website: user.user_metadata?.website || ''
+          })
+
+        if (insertError) {
+          console.error('Error creating user record:', insertError)
+          throw insertError
+        }
+        console.log('User record created successfully')
+      } else if (checkError) {
+        console.error('Error checking user record:', checkError)
+        throw checkError
+      }
+    } catch (err) {
+      console.error('Error ensuring user record:', err)
+      // Don't throw here, continue with the flow
+    }
+  }
+
+  // Fetch user profile data from public.users table (NOT auth.users)
   const fetchUserProfile = async () => {
     try {
       setLoading(true)
       setError('')
 
+      // Ensure user record exists first
+      await ensureUserRecord()
+
       const { data: profile, error: profileError } = await supabase
-        .from('users')
+        .from('public.users')
         .select('first_name, last_name, email, username, biography, phone, instagram, youtube, linkedin, twitter, tiktok, website')
         .eq('id', user.id)
         .single()
 
-      if (profileError) throw profileError
+      if (profileError) {
+        console.error('Profile fetch error:', profileError)
+        throw profileError
+      }
 
       // Get avatar_url from user metadata (not stored in public.users)
       const metadata = user.user_metadata || {}
+      
+      console.log('Fetched profile data from public.users:', profile)
+      console.log('User metadata from auth.users:', metadata)
 
       setUserProfile({
-        first_name: profile.first_name || '',
-        last_name: profile.last_name || '',
+        first_name: profile.first_name || metadata.first_name || '',
+        last_name: profile.last_name || metadata.last_name || '',
         email: profile.email || user.email || '',
-        phone: profile.phone || '',
-        username: profile.username || user.email?.split('@')[0] || '',
-        biography: profile.biography || '',
+        phone: profile.phone || metadata.phone || '',
+        username: profile.username || metadata.username || user.email?.split('@')[0] || '',
+        biography: profile.biography || metadata.biography || '',
         avatar_url: metadata.avatar_url || '',
-        instagram: profile.instagram || '',
-        youtube: profile.youtube || '',
-        linkedin: profile.linkedin || '',
-        twitter: profile.twitter || '',
-        tiktok: profile.tiktok || '',
-        website: profile.website || ''
+        instagram: profile.instagram || metadata.instagram || '',
+        youtube: profile.youtube || metadata.youtube || '',
+        linkedin: profile.linkedin || metadata.linkedin || '',
+        twitter: profile.twitter || metadata.twitter || '',
+        tiktok: profile.tiktok || metadata.tiktok || '',
+        website: profile.website || metadata.website || ''
       })
     } catch (err) {
       console.error('Error fetching user profile:', err)
@@ -131,34 +185,73 @@ export default function UserSettings() {
       setError('')
       setSuccess('')
 
-      // Update user profile in public.users table
+      // First, try to update the public.users table (NOT auth.users)
+      const updateData = {
+        first_name: userProfile.first_name,
+        last_name: userProfile.last_name,
+        username: userProfile.username,
+        biography: userProfile.biography,
+        phone: userProfile.phone,
+        instagram: userProfile.instagram,
+        youtube: userProfile.youtube,
+        linkedin: userProfile.linkedin,
+        twitter: userProfile.twitter,
+        tiktok: userProfile.tiktok,
+        website: userProfile.website
+      }
+      
+      console.log('Updating public.users table with data:', updateData)
+      console.log('User ID:', user.id)
+      console.log('Target table: public.users')
+
       const { error: updateError } = await supabase
-        .from('users')
-        .update({
-          first_name: userProfile.first_name,
-          last_name: userProfile.last_name,
-          username: userProfile.username,
-          biography: userProfile.biography,
-          phone: userProfile.phone,
-          instagram: userProfile.instagram,
-          youtube: userProfile.youtube,
-          linkedin: userProfile.linkedin,
-          twitter: userProfile.twitter,
-          tiktok: userProfile.tiktok,
-          website: userProfile.website
-        })
+        .from('public.users')
+        .update(updateData)
         .eq('id', user.id)
 
-      if (updateError) throw updateError
-
-      // Update user metadata for avatar_url (not stored in public.users)
-      const { error: metadataError } = await supabase.auth.updateUser({
-        data: {
-          avatar_url: userProfile.avatar_url
+      if (updateError) {
+        console.error('Update error:', updateError)
+        // If database update fails, try to update user metadata as fallback
+        console.log('Database update failed, trying metadata update as fallback')
+        
+        const { error: metadataError } = await supabase.auth.updateUser({
+          data: {
+            first_name: userProfile.first_name,
+            last_name: userProfile.last_name,
+            username: userProfile.username,
+            biography: userProfile.biography,
+            phone: userProfile.phone,
+            instagram: userProfile.instagram,
+            youtube: userProfile.youtube,
+            linkedin: userProfile.linkedin,
+            twitter: userProfile.twitter,
+            tiktok: userProfile.tiktok,
+            website: userProfile.website,
+            avatar_url: userProfile.avatar_url
+          }
+        })
+        
+        if (metadataError) {
+          console.error('Metadata update also failed:', metadataError)
+          throw metadataError
         }
-      })
+        
+        console.log('Profile updated via metadata fallback')
+      } else {
+        console.log('Profile updated successfully in database')
+        
+        // Update user metadata for avatar_url (not stored in public.users)
+        const { error: metadataError } = await supabase.auth.updateUser({
+          data: {
+            avatar_url: userProfile.avatar_url
+          }
+        })
 
-      if (metadataError) throw metadataError
+        if (metadataError) {
+          console.error('Avatar update failed:', metadataError)
+          // Don't throw here, as the main profile was saved
+        }
+      }
 
       setSuccess('Profile updated successfully!')
       setTimeout(() => setSuccess(''), 3000)
