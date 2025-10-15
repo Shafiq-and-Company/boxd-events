@@ -234,7 +234,30 @@ export default function EventDetail() {
       <div className={styles.container}>
         <div className={styles.eventDetail}>
           <div className={styles.eventHero}>
-            <div className={styles.eventImage}></div>
+            <div className={styles.eventImage}>
+              {event.banner_image_url ? (
+                <img 
+                  src={event.banner_image_url} 
+                  alt={event.title}
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'cover',
+                    borderRadius: '4px'
+                  }}
+                />
+              ) : (
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  color: '#999',
+                  fontSize: '0.9rem'
+                }}>
+                  No image
+                </div>
+              )}
+            </div>
             <div className={styles.eventHeader}>
               {event.game_title && (
                 <div className={styles.gameTitle}>{event.game_title}</div>

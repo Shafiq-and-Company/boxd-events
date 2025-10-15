@@ -19,6 +19,7 @@ The `events` table stores information about gaming events and tournaments.
 | `state` | text | YES | null | Event state |
 | `host` | text | YES | null | Event host (user ID) |
 | `host_id` | uuid | YES | null | Event host user ID (foreign key to users) |
+| `banner_image_url` | text | YES | null | URL to banner image stored in Supabase |
 
 ## Row Level Security (RLS) Policies
 
