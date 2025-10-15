@@ -213,12 +213,6 @@ export default function UserSettings() {
           Profile
         </button>
         <button
-          className={`${styles.tabButton} ${activeTab === 'payments' ? styles.tabButtonActive : ''}`}
-          onClick={() => setActiveTab('payments')}
-        >
-          Payments
-        </button>
-        <button
           className={`${styles.tabButton} ${activeTab === 'security' ? styles.tabButtonActive : ''}`}
           onClick={() => setActiveTab('security')}
         >
@@ -362,32 +356,6 @@ export default function UserSettings() {
         </div>
       )}
 
-      {/* Payments Tab */}
-      {activeTab === 'payments' && (
-        <div className={styles.settingsForm}>
-          <div className={styles.paymentsSection}>
-            <h3 className={styles.sectionTitle}>Payments</h3>
-            <p className={styles.sectionSubtitle}>Manage your payment settings and connect your Stripe account.</p>
-            
-            <div className={styles.paymentItem}>
-              <div className={styles.paymentIcon}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 1v6l3-3 3 3V1"/>
-                  <path d="M21 12v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6"/>
-                  <path d="M3 12h18"/>
-                </svg>
-              </div>
-              <div className={styles.paymentContent}>
-                <h4 className={styles.paymentTitle}>Stripe Account</h4>
-                <p className={styles.paymentDescription}>Link your Stripe account to receive payments for your events.</p>
-              </div>
-              <button type="button" className={styles.paymentButton}>
-                Connect Stripe
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Security Tab */}
       {activeTab === 'security' && (

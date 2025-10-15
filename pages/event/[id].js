@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../../lib/AuthContext'
-import { loadStripe } from '@stripe/stripe-js'
 import NavBar from '../../components/NavBar'
 import styles from './EventDetail.module.css'
 
@@ -13,14 +12,12 @@ export default function EventDetail() {
   const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
-  const [paymentSuccess, setPaymentSuccess] = useState(false)
-  const [paymentError, setPaymentError] = useState(null)
-  const [redirectHandled, setRedirectHandled] = useState(false)
+  const [isProcessingRSVP, setIsProcessingRSVP] = useState(false)
+  const [rsvpSuccess, setRsvpSuccess] = useState(false)
+  const [rsvpError, setRsvpError] = useState(null)
   const [isAlreadyRegistered, setIsAlreadyRegistered] = useState(false)
   const [checkingRegistration, setCheckingRegistration] = useState(false)
   const [registrationDetails, setRegistrationDetails] = useState(null)
-  const [stripeSessionId, setStripeSessionId] = useState(null)
 
   const handleTabChange = (tab) => {
     if (tab === 'upcoming') {
@@ -53,22 +50,6 @@ export default function EventDetail() {
     }
   }
 
-  // Handle success redirect from Stripe
-  useEffect(() => {
-    // Simple check for success parameters
-    const urlParams = new URLSearchParams(window.location.search)
-    const rsvp = urlParams.get('rsvp')
-    const sessionId = urlParams.get('session_id')
-    
-    console.log('Payment redirect check:', { rsvp, sessionId, user, authLoading, event })
-    
-    if (rsvp === 'success' && sessionId && !redirectHandled && !authLoading && user && event) {
-      console.log('Payment success detected, creating RSVP with session ID:', sessionId)
-      setStripeSessionId(sessionId)
-      setRedirectHandled(true)
-      createRSVPFromPayment(sessionId)
-    }
-  }, [router, redirectHandled, user, authLoading, event])
 
   const fetchEvent = async () => {
     try {
@@ -108,7 +89,7 @@ export default function EventDetail() {
       
       const { data, error } = await supabase
         .from('rsvps')
-        .select('user_id, event_id, status, payment_status, stripe_session_id, created_at, updated_at')
+        .select('user_id, event_id, status, payment_status, created_at, updated_at')
         .eq('user_id', user.id)
         .eq('event_id', event.id)
         .eq('status', 'going')
@@ -165,29 +146,23 @@ export default function EventDetail() {
 
     // Check if already registered
     if (isAlreadyRegistered) {
-      setPaymentError('You are already registered for this event.')
+      setRsvpError('You are already registered for this event.')
       return
     }
 
-    // If event is free, just create RSVP
-    if (!event.cost || event.cost === 0) {
-      await createRSVP()
-      return
-    }
-
-    // For paid events, process payment
-    await processPayment()
+    // Create RSVP (all events are now free)
+    await createRSVP()
   }
 
   const createRSVP = async () => {
     if (!user || !event) {
-      setPaymentError('Authentication error. Please try again.')
+      setRsvpError('Authentication error. Please try again.')
       return
     }
 
     try {
-      setIsProcessingPayment(true)
-      setPaymentError(null)
+      setIsProcessingRSVP(true)
+      setRsvpError(null)
       
       const { error } = await supabase
         .from('rsvps')
@@ -200,12 +175,12 @@ export default function EventDetail() {
 
       if (error) {
         console.error('Error creating RSVP:', error)
-        setPaymentError('Error creating RSVP. Please try again.')
+        setRsvpError('Error creating RSVP. Please try again.')
         return
       }
 
       // RSVP succeeded - update registration status and redirect to home page
-      setPaymentSuccess(true)
+      setRsvpSuccess(true)
       setIsAlreadyRegistered(true)
       
       // Show success message briefly, then redirect
@@ -215,126 +190,13 @@ export default function EventDetail() {
       
     } catch (err) {
       console.error('Error creating RSVP:', err)
-      setPaymentError('Error creating RSVP. Please try again.')
+      setRsvpError('Error creating RSVP. Please try again.')
     } finally {
-      setIsProcessingPayment(false)
+      setIsProcessingRSVP(false)
     }
   }
 
-  const createRSVPFromPayment = async (sessionId) => {
-    if (!user || !event) {
-      console.error('User or event not available for RSVP creation')
-      setPaymentError('Authentication error. Please try again.')
-      return
-    }
 
-    try {
-      console.log('Creating RSVP from payment success with session ID:', sessionId)
-      console.log('User context:', { user, authLoading })
-      
-      setIsProcessingPayment(true)
-      setPaymentError(null)
-      
-      console.log('Creating RSVP with user ID:', user.id)
-      
-      const { error } = await supabase
-        .from('rsvps')
-        .insert({
-          user_id: user.id,
-          event_id: event.id,
-          status: 'going',
-          payment_status: 'paid',
-          stripe_session_id: sessionId
-        })
-
-      if (error) {
-        console.error('Error creating RSVP from payment:', error)
-        setPaymentError('Error creating RSVP. Please try again.')
-        return
-      }
-
-      console.log('RSVP created successfully from payment')
-      setPaymentSuccess(true)
-      setIsAlreadyRegistered(true)
-      
-      // Refresh RSVP status to ensure UI is updated
-      setTimeout(() => {
-        checkRegistrationStatus()
-      }, 1000)
-      
-      // Show success message briefly, then redirect
-      setTimeout(() => {
-        console.log('Redirecting to My Events page')
-        router.push('/?tab=myEvents&rsvp=success')
-      }, 3000)
-      
-    } catch (err) {
-      console.error('Error creating RSVP from payment:', err)
-      setPaymentError('Error creating RSVP. Please try again.')
-    } finally {
-      setIsProcessingPayment(false)
-    }
-  }
-
-  const processPayment = async () => {
-    try {
-      setIsProcessingPayment(true)
-      setPaymentError(null)
-
-      // Check if Stripe keys are configured
-      if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-        setPaymentError('Payment processing is not available. Please contact the administrator.')
-        return
-      }
-
-      // Initialize Stripe
-      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
-      
-      if (!stripe) {
-        setPaymentError('Payment system failed to load. Please try again later.')
-        return
-      }
-
-      // Create checkout session on the server
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          eventId: event.id,
-          userId: user.id,
-          amount: Math.round(event.cost * 100), // Convert to cents
-        }),
-      })
-
-      if (!response.ok) {
-        setPaymentError(`Server error: ${response.status} ${response.statusText}. Please try again.`)
-        return
-      }
-
-      const { sessionId, url, error: serverError } = await response.json()
-
-      if (serverError) {
-        setPaymentError(`Payment setup failed: ${serverError}`)
-        return
-      }
-
-      if (!url) {
-        setPaymentError('Payment system error. Please try again.')
-        return
-      }
-
-      // Redirect to Stripe Checkout using modern approach
-      window.location.href = url
-      
-    } catch (err) {
-      console.error('Payment error:', err)
-      setPaymentError(`Payment failed: ${err.message}`)
-    } finally {
-      setIsProcessingPayment(false)
-    }
-  }
 
   if (loading) {
     console.log('Event detail loading state:', { loading, event, error, id })
@@ -472,23 +334,23 @@ export default function EventDetail() {
                 }}>
                   ✓ Going
                 </div>
-              ) : paymentSuccess ? (
+              ) : rsvpSuccess ? (
                 <div className={styles.successMessage}>
                   Successfully registered for this event!
                 </div>
               ) : (
-                <div className={styles.paymentSection}>
-                  {paymentError && (
+                <div className={styles.rsvpSection}>
+                  {rsvpError && (
                     <div className={styles.errorMessage}>
-                      {paymentError}
+                      {rsvpError}
                     </div>
                   )}
                   <button 
                     className={styles.rsvpButton}
                     onClick={handleRSVP}
-                    disabled={isProcessingPayment || checkingRegistration}
+                    disabled={isProcessingRSVP || checkingRegistration}
                   >
-                    {isProcessingPayment ? 'Processing...' : checkingRegistration ? 'Checking...' : 'RSVP Now'}
+                    {isProcessingRSVP ? 'Processing...' : checkingRegistration ? 'Checking...' : 'RSVP Now'}
                   </button>
                 </div>
               )}
@@ -534,17 +396,6 @@ export default function EventDetail() {
                   }}>
                     {registrationDetails.payment_status}
                   </div>
-                  {registrationDetails.stripe_session_id && (
-                    <div style={{ 
-                      background: '#e2e3e5', 
-                      padding: '4px 8px', 
-                      borderRadius: '12px', 
-                      fontSize: '12px',
-                      fontFamily: 'monospace'
-                    }}>
-                      stripe: {registrationDetails.stripe_session_id.slice(0, 8)}
-                    </div>
-                  )}
                 </>
               ) : (
                 <div style={{ 
@@ -555,17 +406,6 @@ export default function EventDetail() {
                   fontFamily: 'monospace'
                 }}>
                   no rsvp
-                </div>
-              )}
-              {stripeSessionId && !registrationDetails && (
-                <div style={{ 
-                  background: '#fff3cd', 
-                  padding: '4px 8px', 
-                  borderRadius: '12px', 
-                  fontSize: '12px',
-                  fontFamily: 'monospace'
-                }}>
-                  session: {stripeSessionId.slice(0, 8)}
                 </div>
               )}
             </div>

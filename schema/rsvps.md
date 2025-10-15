@@ -10,7 +10,6 @@ The `rsvps` table manages user event registrations and payment status.
 | `event_id` | uuid | NO | null | Foreign key to events table |
 | `status` | text | NO | 'going' | RSVP status (going, maybe, not_going) |
 | `payment_status` | text | YES | 'pending' | Payment status (pending, paid, failed, refunded) |
-| `stripe_session_id` | text | YES | null | Stripe checkout session ID |
 | `created_at` | timestamptz | YES | now() | Record creation time |
 | `updated_at` | timestamptz | YES | now() | Record update time |
 
@@ -62,33 +61,6 @@ CREATE POLICY "Users can delete their own RSVPs" ON rsvps
 ```
 **Purpose**: Users can cancel their event registrations
 
-### Policy 5: Webhook RSVP Creation
-```sql
--- Allow webhook operations to create RSVPs for paid events
-CREATE POLICY "Allow webhook RSVP creation" ON rsvps
-    FOR INSERT
-    TO authenticated
-    WITH CHECK (
-        payment_status = 'paid' AND
-        stripe_session_id IS NOT NULL AND
-        user_id IS NOT NULL AND
-        event_id IS NOT NULL
-    );
-```
-**Purpose**: Enables Stripe webhooks to create RSVPs for paid events
-
-### Policy 6: Webhook RSVP Updates
-```sql
--- Allow webhook operations to update RSVPs
-CREATE POLICY "Allow webhook RSVP updates" ON rsvps
-    FOR UPDATE
-    TO authenticated
-    USING (true)
-    WITH CHECK (
-        payment_status IN ('paid', 'pending', 'failed', 'refunded')
-    );
-```
-**Purpose**: Enables Stripe webhooks to update payment status
 
 ### Policy 7: Event Hosts Can View RSVPs for Their Events
 ```sql
@@ -141,15 +113,13 @@ CREATE POLICY "Public can view RSVP counts" ON rsvps
 2. **Manage Event**: Hosts can update/delete their events (separate from RSVP policies)
 
 #### System Operations
-1. **Stripe Webhooks**: Service role creates/updates RSVPs after payment
-2. **Admin Operations**: Service role can manage all RSVPs for administrative purposes
+1. **Admin Operations**: Service role can manage all RSVPs for administrative purposes
 
 ## Application Integration
 
 ### Key Operations
 - **User RSVP**: Create, update, delete own RSVPs
 - **Event Host**: View RSVPs for their events
-- **Payment**: Service role handles payment status updates
 - **Public**: Optional public access for event statistics
 
 ## Policy Testing

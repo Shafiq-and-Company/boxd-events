@@ -10,11 +10,9 @@
   },
   "dependencies": {
     "@netlify/plugin-nextjs": "^5.13.5",
-    "@stripe/stripe-js": "^8.0.0",
     "@supabase/supabase-js": "^2.74.0",
     "next": "^15.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "stripe": "^19.1.0"
+    "react-dom": "^18.2.0"
   }
 }

@@ -38,7 +38,6 @@ export default function MyEvents() {
           event_id,
           status,
           payment_status,
-          stripe_session_id,
           created_at,
           events (
             id,
@@ -63,7 +62,6 @@ export default function MyEvents() {
         ...rsvp.events,
         rsvpStatus: rsvp.status,
         paymentStatus: rsvp.payment_status,
-        stripeSessionId: rsvp.stripe_session_id,
         rsvpCreatedAt: rsvp.created_at
       })) || []
 

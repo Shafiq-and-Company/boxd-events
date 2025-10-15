@@ -76,7 +76,7 @@ CREATE POLICY "Service role can manage all events" ON events
     USING (true)
     WITH CHECK (true);
 ```
-**Purpose**: Enables Stripe webhooks and system operations
+**Purpose**: Enables system operations and administrative access
 
 ## Implementation Notes
 
@@ -84,4 +84,4 @@ CREATE POLICY "Service role can manage all events" ON events
 - **Read**: Public access for discovery
 - **Create**: Authenticated users only
 - **Update/Delete**: Owner-only access
-- **System**: Service role for webhooks
+- **System**: Service role for administrative operations
