@@ -46,7 +46,7 @@ export default function UserSettings() {
   const ensureUserRecord = async () => {
     try {
       const { data: existingUser, error: checkError } = await supabase
-        .from('public.users')
+        .from('users')
         .select('id')
         .eq('id', user.id)
         .single()
@@ -55,7 +55,7 @@ export default function UserSettings() {
         // User record doesn't exist, create it
         console.log('User record not found, creating new record')
         const { error: insertError } = await supabase
-          .from('public.users')
+          .from('users')
           .insert({
             id: user.id,
             first_name: user.user_metadata?.first_name || '',
@@ -87,30 +87,69 @@ export default function UserSettings() {
     }
   }
 
-  // Fetch user profile data from public.users table (NOT auth.users)
+  // Fetch user profile data from users table
   const fetchUserProfile = async () => {
     try {
       setLoading(true)
       setError('')
 
+      console.log('Fetching user profile for user ID:', user.id)
+
       // Ensure user record exists first
       await ensureUserRecord()
 
       const { data: profile, error: profileError } = await supabase
-        .from('public.users')
+        .from('users')
         .select('first_name, last_name, email, username, biography, phone, instagram, youtube, linkedin, twitter, tiktok, website')
         .eq('id', user.id)
         .single()
 
       if (profileError) {
         console.error('Profile fetch error:', profileError)
+        // If user record doesn't exist, try to create it and fetch again
+        if (profileError.code === 'PGRST116') {
+          console.log('User record not found, attempting to create it...')
+          await ensureUserRecord()
+          // Try fetching again after creating the record
+          const { data: retryProfile, error: retryError } = await supabase
+            .from('users')
+            .select('first_name, last_name, email, username, biography, phone, instagram, youtube, linkedin, twitter, tiktok, website')
+            .eq('id', user.id)
+            .single()
+          
+          if (retryError) {
+            throw retryError
+          }
+          
+          // Use retry data
+          const metadata = user.user_metadata || {}
+          console.log('Fetched profile data from users (retry):', retryProfile)
+          console.log('User metadata from auth.users:', metadata)
+
+          setUserProfile({
+            first_name: retryProfile.first_name || metadata.first_name || '',
+            last_name: retryProfile.last_name || metadata.last_name || '',
+            email: retryProfile.email || user.email || '',
+            phone: retryProfile.phone || metadata.phone || '',
+            username: retryProfile.username || metadata.username || user.email?.split('@')[0] || '',
+            biography: retryProfile.biography || metadata.biography || '',
+            avatar_url: metadata.avatar_url || '',
+            instagram: retryProfile.instagram || metadata.instagram || '',
+            youtube: retryProfile.youtube || metadata.youtube || '',
+            linkedin: retryProfile.linkedin || metadata.linkedin || '',
+            twitter: retryProfile.twitter || metadata.twitter || '',
+            tiktok: retryProfile.tiktok || metadata.tiktok || '',
+            website: retryProfile.website || metadata.website || ''
+          })
+          return
+        }
         throw profileError
       }
 
-      // Get avatar_url from user metadata (not stored in public.users)
+      // Get avatar_url from user metadata (not stored in users table)
       const metadata = user.user_metadata || {}
       
-      console.log('Fetched profile data from public.users:', profile)
+      console.log('Fetched profile data from users:', profile)
       console.log('User metadata from auth.users:', metadata)
 
       setUserProfile({
@@ -130,7 +169,7 @@ export default function UserSettings() {
       })
     } catch (err) {
       console.error('Error fetching user profile:', err)
-      setError('Failed to load your profile information')
+      setError('Failed to load your profile information. Please try refreshing the page.')
     } finally {
       setLoading(false)
     }
@@ -200,12 +239,12 @@ export default function UserSettings() {
         website: userProfile.website
       }
       
-      console.log('Updating public.users table with data:', updateData)
+      console.log('Updating users table with data:', updateData)
       console.log('User ID:', user.id)
-      console.log('Target table: public.users')
+      console.log('Target table: users')
 
       const { error: updateError } = await supabase
-        .from('public.users')
+        .from('users')
         .update(updateData)
         .eq('id', user.id)
 
