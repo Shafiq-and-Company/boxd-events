@@ -18,8 +18,45 @@
   color: #707070;
 }
 
-.paymentsSection, .securitySection {
-  margin: 24px 0;
+/* Tab Switcher */
+.tabSwitcher {
+  display: flex;
+  border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 24px;
+  gap: 0;
+}
+
+.tabButton {
+  background: none;
+  border: none;
+  padding: 12px 24px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #707070;
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-bottom: 2px solid transparent;
+  position: relative;
+}
+
+.tabButton:hover {
+  color: #404040;
+  background: #f8f8f8;
+}
+
+.tabButtonActive {
+  color: #000000;
+  font-weight: 500;
+  border-bottom-color: #000000;
+}
+
+.tabButtonActive:hover {
+  color: #000000;
+  background: none;
+}
+
+.profileSection, .paymentsSection, .securitySection {
+  margin: 0;
 }
 
 .sectionTitle {
@@ -34,7 +71,6 @@
   color: #707070;
   margin-bottom: 24px;
 }
-
 
 /* Form Elements */
 .form {
@@ -212,7 +248,7 @@
 }
 
 /* Messages */
-.loading, .error, .notLoggedIn { 
+.loading, .notLoggedIn { 
   padding: 32px; 
   font-size: 1rem; 
   background: #f8f8f8; 
@@ -225,11 +261,6 @@
   border: none; 
 }
 
-.error { 
-  color: #000; 
-  padding: 24px; 
-}
-
 /* Responsive Design */
 @media (max-width: 767px) {
   .userSettings { padding: 16px 8px; }
@@ -238,12 +269,11 @@
   .input, .textarea { padding: 10px 14px; font-size: 0.8rem; }
   .textarea { min-height: 50px; }
   .label { font-size: 0.7rem; }
-  .saveButton { padding: 10px 20px; font-size: 0.8rem; }
+  .saveButton, .securityButton, .paymentButton { padding: 10px 20px; font-size: 0.8rem; }
   .securityItem, .paymentItem { padding: 16px 0; gap: 12px; }
   .securityIcon, .paymentIcon { width: 36px; height: 36px; padding: 10px; }
   .securityTitle, .paymentTitle { font-size: 0.9rem; }
   .securityDescription, .paymentDescription { font-size: 0.8rem; }
-  .securityButton, .paymentButton { padding: 8px 16px; font-size: 0.8rem; }
 }
 
 /* Accessibility */

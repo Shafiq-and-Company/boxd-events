@@ -11,6 +11,7 @@ export default function UserSettings() {
   // State management
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [activeTab, setActiveTab] = useState('profile')
   
   const [userProfile, setUserProfile] = useState({
     first_name: '',
@@ -132,16 +133,12 @@ export default function UserSettings() {
     setUserProfile(prev => ({ ...prev, [name]: value }))
   }
 
-
-
-
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault()
     
     try {
       setSaving(true)
-
 
       // Update user metadata (excluding username - handled separately)
       await supabase.auth.updateUser({
@@ -174,7 +171,6 @@ export default function UserSettings() {
     }
   }
 
-
   // Loading state
   if (authLoading || loading) {
     return (
@@ -203,16 +199,41 @@ export default function UserSettings() {
     )
   }
 
-
   return (
     <div className={styles.userSettings}>
       <h2>User Settings</h2>
       <p className={styles.pageSubtitle}>Manage your account information and preferences</p>
       
+      {/* Tab Switcher */}
+      <div className={styles.tabSwitcher}>
+        <button
+          className={`${styles.tabButton} ${activeTab === 'profile' ? styles.tabButtonActive : ''}`}
+          onClick={() => setActiveTab('profile')}
+        >
+          Profile
+        </button>
+        <button
+          className={`${styles.tabButton} ${activeTab === 'payments' ? styles.tabButtonActive : ''}`}
+          onClick={() => setActiveTab('payments')}
+        >
+          Payments
+        </button>
+        <button
+          className={`${styles.tabButton} ${activeTab === 'security' ? styles.tabButtonActive : ''}`}
+          onClick={() => setActiveTab('security')}
+        >
+          Security
+        </button>
+      </div>
       
-      {/* Settings Form */}
-      <div className={styles.settingsForm}>
-        <form onSubmit={handleSubmit} className={styles.form}>
+      {/* Profile Tab */}
+      {activeTab === 'profile' && (
+        <div className={styles.settingsForm}>
+          <div className={styles.profileSection}>
+            <h3 className={styles.sectionTitle}>Profile Information</h3>
+            <p className={styles.sectionSubtitle}>Manage your personal information and account details.</p>
+          </div>
+          <form onSubmit={handleSubmit} className={styles.form}>
           {/* Name Fields */}
           <div className={styles.nameFields}>
             <div className={styles.formGroup}>
@@ -292,7 +313,6 @@ export default function UserSettings() {
             </div>
           </div>
 
-
           {/* Email */}
           <div className={styles.formGroup}>
             <label htmlFor="email" className={styles.label}>Email Address</label>
@@ -338,7 +358,13 @@ export default function UserSettings() {
             </button>
           </div>
 
-          {/* Payments Section */}
+          </form>
+        </div>
+      )}
+
+      {/* Payments Tab */}
+      {activeTab === 'payments' && (
+        <div className={styles.settingsForm}>
           <div className={styles.paymentsSection}>
             <h3 className={styles.sectionTitle}>Payments</h3>
             <p className={styles.sectionSubtitle}>Manage your payment settings and connect your Stripe account.</p>
@@ -360,8 +386,12 @@ export default function UserSettings() {
               </button>
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Security Section */}
+      {/* Security Tab */}
+      {activeTab === 'security' && (
+        <div className={styles.settingsForm}>
           <div className={styles.securitySection}>
             <h3 className={styles.sectionTitle}>Password & Security</h3>
             <p className={styles.sectionSubtitle}>Manage your account password and security settings.</p>
@@ -382,9 +412,8 @@ export default function UserSettings() {
               </button>
             </div>
           </div>
-
-        </form>
-      </div>
+        </div>
+      )}
     </div>
   )
 }
