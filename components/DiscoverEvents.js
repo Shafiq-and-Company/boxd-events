@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
+import PageTitle from './PageTitle'
 import styles from './DiscoverEvents.module.css'
 
 export default function DiscoverEvents() {
@@ -116,7 +117,7 @@ export default function DiscoverEvents() {
   if (loading) {
     return (
       <div className={styles.discoverEvents}>
-        <h2>Discover Events</h2>
+        <PageTitle title="Discover Events" subtitle="Explore gaming events and tournaments" />
         <div className={styles.loading}>Loading events...</div>
       </div>
     )
@@ -125,7 +126,7 @@ export default function DiscoverEvents() {
   if (error) {
     return (
       <div className={styles.discoverEvents}>
-        <h2>Discover Events</h2>
+        <PageTitle title="Discover Events" subtitle="Explore gaming events and tournaments" />
         <div className={styles.error}>Error loading events: {error}</div>
       </div>
     )
@@ -133,8 +134,7 @@ export default function DiscoverEvents() {
 
   return (
     <div className={styles.discoverEvents}>
-      <h2>Discover Events</h2>
-      <p className={styles.tagline}>Explore gaming events and tournaments</p>
+      <PageTitle title="Discover Events" subtitle="Explore gaming events and tournaments" />
       
       <div className={styles.filters}>
         <div className={styles.gameFilters}>

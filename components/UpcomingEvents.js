@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
+import PageTitle from './PageTitle'
 import styles from './UpcomingEvents.module.css'
 
 export default function UpcomingEvents() {
@@ -97,7 +98,7 @@ export default function UpcomingEvents() {
   if (loading) {
     return (
       <div className={styles.upcomingEvents}>
-        <h2>Upcoming Events</h2>
+        <PageTitle title="Upcoming Events" subtitle="Find out what's happening near you" />
         <div className={styles.loading}>Loading events...</div>
       </div>
     )
@@ -106,7 +107,7 @@ export default function UpcomingEvents() {
   if (error) {
     return (
       <div className={styles.upcomingEvents}>
-        <h2>Upcoming Events</h2>
+        <PageTitle title="Upcoming Events" subtitle="Find out what's happening near you" />
         <div className={styles.error}>Error loading events: {error}</div>
       </div>
     )
@@ -114,8 +115,7 @@ export default function UpcomingEvents() {
 
   return (
     <div className={styles.upcomingEvents}>
-      <h2>Upcoming Events</h2>
-      <p className={styles.tagline}>Find out what's happening near you</p>
+      <PageTitle title="Upcoming Events" subtitle="Find out what's happening near you" />
       {events.length === 0 ? (
         <div className={styles.noEvents}>No upcoming events found.</div>
       ) : (

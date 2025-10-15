@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabaseClient'
+import PageTitle from './PageTitle'
 import styles from './MyEvents.module.css'
 
 export default function MyEvents() {
@@ -136,7 +137,7 @@ export default function MyEvents() {
   if (authLoading || loading || hostedLoading) {
     return (
       <div className={styles.myEvents}>
-        <h2>My Events</h2>
+        <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
         <div className={styles.loading}>Loading your events...</div>
       </div>
     )
@@ -145,7 +146,7 @@ export default function MyEvents() {
   if (!user) {
     return (
       <div className={styles.myEvents}>
-        <h2>My Events</h2>
+        <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
         <div className={styles.notLoggedIn}>
           <p>You need to be signed in to see your registered events.</p>
           <button 
@@ -162,7 +163,7 @@ export default function MyEvents() {
   if (error || hostedError) {
     return (
       <div className={styles.myEvents}>
-        <h2>My Events</h2>
+        <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
         <div className={styles.error}>
           {error && `Error loading events: ${error}`}
           {hostedError && `Error loading hosted events: ${hostedError}`}
@@ -234,8 +235,7 @@ export default function MyEvents() {
 
   return (
     <div className={styles.myEvents}>
-      <h2>My Events</h2>
-      <p className={styles.pageSubtitle}>Manage your event registrations and hosted events</p>
+      <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
       
       {/* Tab Switcher */}
       <div className={styles.tabSwitcher}>

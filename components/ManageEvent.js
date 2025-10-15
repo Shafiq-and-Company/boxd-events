@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
+import PageTitle from './PageTitle'
 import styles from './ManageEvent.module.css'
 
 export default function ManageEvent() {
@@ -159,14 +160,11 @@ export default function ManageEvent() {
     }
   }
 
-  const handleCancel = () => {
-    router.push('/?tab=myEvents')
-  }
 
   if (!user) {
     return (
       <div className={styles.manageEvent}>
-        <h2>Edit Event</h2>
+        <PageTitle title="Manage Event" subtitle="Update your event details" />
         <div className={styles.authRequired}>
           Please log in to edit an event.
         </div>
@@ -177,7 +175,7 @@ export default function ManageEvent() {
   if (fetchLoading) {
     return (
       <div className={styles.manageEvent}>
-        <h2>Edit Event</h2>
+        <PageTitle title="Manage Event" subtitle="Update your event details" />
         <div className={styles.loading}>Loading event details...</div>
       </div>
     )
@@ -186,23 +184,17 @@ export default function ManageEvent() {
   if (error && !fetchLoading) {
     return (
       <div className={styles.manageEvent}>
-        <h2>Edit Event</h2>
+        <PageTitle title="Manage Event" subtitle="Update your event details" />
         <div className={styles.errorMessage}>
           {error}
         </div>
-        <button onClick={handleCancel} className={styles.cancelButton}>
-          Back to My Events
-        </button>
       </div>
     )
   }
 
   return (
     <div className={styles.manageEvent}>
-      <div className={styles.header}>
-        <h2>Edit Event</h2>
-        <p className={styles.tagline}>Update your event details</p>
-      </div>
+      <PageTitle title="Manage Event" subtitle="Update your event details" />
       
       {success && (
         <div className={styles.successMessage}>
@@ -512,22 +504,13 @@ export default function ManageEvent() {
 
         </div>
 
-        <div className={styles.buttonGroup}>
-          <button 
-            type="button"
-            onClick={handleCancel}
-            className={styles.cancelButton}
-          >
-            Cancel
-          </button>
-          <button 
-            type="submit" 
-            disabled={loading}
-            className={styles.submitButton}
-          >
-            {loading ? 'Updating Event...' : 'Update Event'}
-          </button>
-        </div>
+        <button 
+          type="submit" 
+          disabled={loading}
+          className={styles.submitButton}
+        >
+          {loading ? 'Updating Event...' : 'Update Event'}
+        </button>
         </form>
       </div>
     </div>

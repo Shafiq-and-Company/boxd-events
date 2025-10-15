@@ -2,38 +2,16 @@
 /* Black, White, Gray Only */
 
 .createEvent {
-  max-width: 700px;
-  padding: 24px 0;
+  max-width: 800px;
+  padding: 24px 12px;
   margin: 0 auto;
 }
 
-.header {
-  margin-bottom: 24px;
-}
-
-.createEvent h2 {
-  text-align: left;
-  margin-bottom: 8px;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #000000;
-  letter-spacing: -0.5px;
-}
-
-.tagline {
-  text-align: left;
-  margin-bottom: 32px;
-  font-size: 1rem;
-  font-weight: 400;
-  color: #707070;
-  line-height: 1.5;
-  letter-spacing: 0px;
-}
 
 .formContainer {
-  background: #ffffff;
-  border-radius: 6px;
-  padding: 24px;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
 }
 
 .form {
@@ -616,6 +594,13 @@
   .formRowThree {
     grid-template-columns: 2fr 1fr 1fr;
     gap: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .createEvent {
+    max-width: 800px;
+    padding: 32px 24px;
   }
 }
 

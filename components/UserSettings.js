@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabaseClient'
+import PageTitle from './PageTitle'
 import styles from './UserSettings.module.css'
 
 export default function UserSettings() {
@@ -175,7 +176,7 @@ export default function UserSettings() {
   if (authLoading || loading) {
     return (
       <div className={styles.userSettings}>
-        <h2>User Settings</h2>
+        <PageTitle title="User Settings" subtitle="Manage your account information and preferences" />
         <div className={styles.loading}>Loading your profile...</div>
       </div>
     )
@@ -185,7 +186,7 @@ export default function UserSettings() {
   if (!user) {
     return (
       <div className={styles.userSettings}>
-        <h2>User Settings</h2>
+        <PageTitle title="User Settings" subtitle="Manage your account information and preferences" />
         <div className={styles.notLoggedIn}>
           <p>You need to be signed in to access your settings.</p>
           <button 
@@ -201,8 +202,7 @@ export default function UserSettings() {
 
   return (
     <div className={styles.userSettings}>
-      <h2>User Settings</h2>
-      <p className={styles.pageSubtitle}>Manage your account information and preferences</p>
+      <PageTitle title="User Settings" subtitle="Manage your account information and preferences" />
       
       {/* Tab Switcher */}
       <div className={styles.tabSwitcher}>
