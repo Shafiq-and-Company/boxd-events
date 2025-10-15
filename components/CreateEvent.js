@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
 import PageTitle from './PageTitle'
@@ -14,19 +14,15 @@ export default function CreateEvent() {
     ends_at: '',
     game_title: '',
     city: '',
-    cost: '',
     state: '',
-    capacity_enabled: false,
-    capacity_min: '',
-    capacity_max: '',
-    recurring_enabled: false,
-    recurring_frequency: 'weekly',
-    recurring_end_date: '',
-    recurring_days: []
+    zip_code: ''
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
+  const [games, setGames] = useState([])
+  const [gamesLoading, setGamesLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -36,14 +32,40 @@ export default function CreateEvent() {
     }))
   }
 
-  const handleDayToggle = (day) => {
-    setFormData(prev => ({
-      ...prev,
-      recurring_days: prev.recurring_days.includes(day)
-        ? prev.recurring_days.filter(d => d !== day)
-        : [...prev.recurring_days, day]
-    }))
+  // Fetch games from the games table
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('games')
+          .select('game_title')
+          .order('game_title')
+
+        if (error) {
+          throw error
+        }
+
+        setGames(data || [])
+      } catch (err) {
+        console.error('Error fetching games:', err.message)
+        setError('Failed to load games')
+      } finally {
+        setGamesLoading(false)
+      }
+    }
+
+    fetchGames()
+  }, [])
+
+  // Filter games based on search term
+  const filteredGames = games.filter(game => 
+    game.game_title.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value)
   }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -67,8 +89,7 @@ export default function CreateEvent() {
         game_title: formData.game_title,
         city: formData.city,
         state: formData.state,
-        cost: formData.cost || 0,
-        host: user.id,
+        zip_code: formData.zip_code,
         host_id: user.id
       }
 
@@ -90,15 +111,8 @@ export default function CreateEvent() {
         ends_at: '',
         game_title: '',
         city: '',
-        cost: '',
         state: '',
-        capacity_enabled: false,
-        capacity_min: '',
-        capacity_max: '',
-        recurring_enabled: false,
-        recurring_frequency: 'weekly',
-        recurring_end_date: '',
-        recurring_days: []
+        zip_code: ''
       })
 
       // Clear success message after 3 seconds
@@ -193,38 +207,45 @@ export default function CreateEvent() {
         </div>
 
         <div className={styles.gameSection}>
-          <div className={styles.gameOptions}>
-            <button
-              type="button"
-              className={`${styles.gameOption} ${formData.game_title === 'Game1' ? styles.gameOptionSelected : ''}`}
-              onClick={() => setFormData(prev => ({ ...prev, game_title: 'Game1' }))}
-            >
-              <div className={styles.gameImage}>
-                <div className={styles.imagePlaceholder}>G1</div>
+          {gamesLoading ? (
+            <div className={styles.gameLoading}>Loading games...</div>
+          ) : (
+            <>
+              <div className={styles.gameSearchContainer}>
+                <input
+                  type="text"
+                  placeholder="Search games..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className={styles.gameSearchInput}
+                />
               </div>
-              <span className={styles.gameLabel}>Game1</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.gameOption} ${formData.game_title === 'Game2' ? styles.gameOptionSelected : ''}`}
-              onClick={() => setFormData(prev => ({ ...prev, game_title: 'Game2' }))}
-            >
-              <div className={styles.gameImage}>
-                <div className={styles.imagePlaceholder}>G2</div>
+              
+              <div className={styles.gameOptions}>
+                {filteredGames.map((game, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    className={`${styles.gameOption} ${formData.game_title === game.game_title ? styles.gameOptionSelected : ''}`}
+                    onClick={() => setFormData(prev => ({ ...prev, game_title: game.game_title }))}
+                  >
+                    <div className={styles.gameImage}>
+                      <div className={styles.imagePlaceholder}>
+                        {game.game_title.charAt(0).toUpperCase()}
+                      </div>
+                    </div>
+                    <span className={styles.gameLabel}>{game.game_title}</span>
+                  </button>
+                ))}
               </div>
-              <span className={styles.gameLabel}>Game2</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.gameOption} ${formData.game_title === 'Game3' ? styles.gameOptionSelected : ''}`}
-              onClick={() => setFormData(prev => ({ ...prev, game_title: 'Game3' }))}
-            >
-              <div className={styles.gameImage}>
-                <div className={styles.imagePlaceholder}>G3</div>
-              </div>
-              <span className={styles.gameLabel}>Game3</span>
-            </button>
-          </div>
+
+              {filteredGames.length === 0 && searchTerm && (
+                <div className={styles.noGamesFound}>
+                  No games found matching "{searchTerm}"
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         <div className={styles.descriptionSection}>
@@ -258,6 +279,18 @@ export default function CreateEvent() {
             <div className={styles.formGroup}>
               <input
                 type="text"
+                id="zip_code"
+                name="zip_code"
+                value={formData.zip_code}
+                onChange={handleInputChange}
+                className={styles.input}
+                placeholder="Zip Code"
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <input
+                type="text"
                 id="city"
                 name="city"
                 value={formData.city}
@@ -281,160 +314,6 @@ export default function CreateEvent() {
           </div>
         </div>
 
-        <div className={styles.eventOptionsSection}>
-          <div className={styles.sectionHeader}>
-            <span className={styles.sectionLabel}>Event Options</span>
-          </div>
-          
-          <div className={styles.formGroup}>
-              <div className={styles.costSliderContainer}>
-                <div className={styles.costSliderHeader}>
-                  <span className={styles.costLabel}>Tickets</span>
-                </div>
-                <div className={styles.costSliderWrapper}>
-                  <input
-                    type="range"
-                    id="cost"
-                    name="cost"
-                    min="0"
-                    max="100"
-                    step="5"
-                    value={formData.cost || '0'}
-                    onChange={handleInputChange}
-                    className={styles.costSlider}
-                  />
-                  <div className={styles.costSliderLabels}>
-                    <span>Free</span>
-                    <div className={styles.costValueDisplay}>
-                      <span className={styles.costValue}>
-                        {formData.cost === '' || formData.cost === '0' ? 'Free' : `$${formData.cost}`}
-                      </span>
-                    </div>
-                    <span>$100</span>
-                  </div>
-                </div>
-              </div>
-          </div>
-
-          <div className={styles.sectionDivider}></div>
-
-          <div className={styles.formGroup}>
-            <div className={styles.capacityContainer}>
-              <div className={styles.capacityHeader}>
-                <span className={styles.capacityLabel}>Capacity</span>
-              </div>
-              
-              <div className={styles.capacityRow}>
-                <div className={styles.capacityCheckboxWrapper}>
-                  <input
-                    type="checkbox"
-                    id="capacity_enabled"
-                    name="capacity_enabled"
-                    checked={formData.capacity_enabled}
-                    onChange={handleInputChange}
-                    className={styles.capacityCheckbox}
-                  />
-                </div>
-                
-                <div className={styles.capacityInputs}>
-                  <input
-                    type="number"
-                    id="capacity_min"
-                    name="capacity_min"
-                    min="0"
-                    max="100"
-                    value={formData.capacity_min || ''}
-                    onChange={handleInputChange}
-                    disabled={!formData.capacity_enabled}
-                    className={styles.capacityNumberInput}
-                    placeholder="Min"
-                  />
-                  <input
-                    type="number"
-                    id="capacity_max"
-                    name="capacity_max"
-                    min="0"
-                    max="100"
-                    value={formData.capacity_max || ''}
-                    onChange={handleInputChange}
-                    disabled={!formData.capacity_enabled}
-                    className={styles.capacityNumberInput}
-                    placeholder="Max"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className={styles.sectionDivider}></div>
-
-          <div className={styles.formGroup}>
-            <div className={styles.recurringContainer}>
-              <div className={styles.recurringHeader}>
-                <span className={styles.recurringLabel}>Recurring</span>
-              </div>
-              
-              <div className={styles.recurringRow}>
-                <div className={styles.recurringCheckboxWrapper}>
-                  <input
-                    type="checkbox"
-                    id="recurring_enabled"
-                    name="recurring_enabled"
-                    checked={formData.recurring_enabled}
-                    onChange={handleInputChange}
-                    className={styles.recurringCheckbox}
-                  />
-                </div>
-                
-                <div className={styles.recurringOptions}>
-                  <div className={styles.recurringFrequency}>
-                    <select
-                      id="recurring_frequency"
-                      name="recurring_frequency"
-                      value={formData.recurring_frequency}
-                      onChange={handleInputChange}
-                      disabled={!formData.recurring_enabled}
-                      className={styles.recurringSelect}
-                    >
-                      <option value="weekly">Weekly</option>
-                    </select>
-                  </div>
-                  
-                  <div className={styles.recurringEndDate}>
-                    <input
-                      type="date"
-                      id="recurring_end_date"
-                      name="recurring_end_date"
-                      value={formData.recurring_end_date}
-                      onChange={handleInputChange}
-                      disabled={!formData.recurring_enabled}
-                      className={styles.recurringDateInput}
-                    />
-                  </div>
-                </div>
-              </div>
-              
-               <div className={styles.recurringDays}>
-                 <div className={styles.recurringDaysGrid}>
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-                    <button
-                      key={day}
-                      type="button"
-                      onClick={() => handleDayToggle(day)}
-                      disabled={!formData.recurring_enabled}
-                      className={`${styles.recurringDayButton} ${
-                        formData.recurring_days.includes(day) ? styles.recurringDaySelected : ''
-                      } ${!formData.recurring_enabled ? styles.recurringDayDisabled : ''}`}
-                    >
-                      {day}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
 
         <button 
           type="submit" 
