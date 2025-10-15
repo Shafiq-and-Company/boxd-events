@@ -7,9 +7,18 @@ The `users` table stores user profile information and authentication data.
 | Column | Type | Nullable | Default | Description |
 |--------|------|----------|---------|-------------|
 | `id` | uuid | NO | gen_random_uuid() | Primary key, matches auth.users.id |
-| `first_name` | text | NO | null | User's first name |
-| `last_name` | text | NO | null | User's last name |
-| `email` | text | NO | null | User's email address |
+| `first_name` | text | YES | null | User's first name |
+| `last_name` | text | YES | null | User's last name |
+| `email` | text | YES | null | User's email address |
+| `username` | text | YES | null | User's username |
+| `biography` | text | YES | null | User's bio/description |
+| `phone` | text | YES | null | User's phone number |
+| `instagram` | text | YES | null | Instagram username |
+| `youtube` | text | YES | null | YouTube username |
+| `linkedin` | text | YES | null | LinkedIn username |
+| `twitter` | text | YES | null | Twitter/X username |
+| `tiktok` | text | YES | null | TikTok username |
+| `website` | text | YES | null | Personal website URL |
 | `created_at` | timestamp with time zone | YES | now() | Record creation time |
 
 ## Authentication Integration
@@ -20,12 +29,24 @@ The `users` table stores user profile information and authentication data.
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.users (id, first_name, last_name, email, created_at)
+  INSERT INTO public.users (
+    id, first_name, last_name, email, username, biography, phone,
+    instagram, youtube, linkedin, twitter, tiktok, website, created_at
+  )
   VALUES (
     new.id,
     COALESCE(new.raw_user_meta_data->>'first_name', ''),
     COALESCE(new.raw_user_meta_data->>'last_name', ''),
     new.email,
+    COALESCE(new.raw_user_meta_data->>'username', ''),
+    COALESCE(new.raw_user_meta_data->>'biography', ''),
+    COALESCE(new.raw_user_meta_data->>'phone', ''),
+    COALESCE(new.raw_user_meta_data->>'instagram', ''),
+    COALESCE(new.raw_user_meta_data->>'youtube', ''),
+    COALESCE(new.raw_user_meta_data->>'linkedin', ''),
+    COALESCE(new.raw_user_meta_data->>'twitter', ''),
+    COALESCE(new.raw_user_meta_data->>'tiktok', ''),
+    COALESCE(new.raw_user_meta_data->>'website', ''),
     new.created_at
   );
   RETURN new;
@@ -48,7 +69,16 @@ BEGIN
   SET 
     first_name = COALESCE(new.raw_user_meta_data->>'first_name', old.raw_user_meta_data->>'first_name', ''),
     last_name = COALESCE(new.raw_user_meta_data->>'last_name', old.raw_user_meta_data->>'last_name', ''),
-    email = new.email
+    email = new.email,
+    username = COALESCE(new.raw_user_meta_data->>'username', old.raw_user_meta_data->>'username', ''),
+    biography = COALESCE(new.raw_user_meta_data->>'biography', old.raw_user_meta_data->>'biography', ''),
+    phone = COALESCE(new.raw_user_meta_data->>'phone', old.raw_user_meta_data->>'phone', ''),
+    instagram = COALESCE(new.raw_user_meta_data->>'instagram', old.raw_user_meta_data->>'instagram', ''),
+    youtube = COALESCE(new.raw_user_meta_data->>'youtube', old.raw_user_meta_data->>'youtube', ''),
+    linkedin = COALESCE(new.raw_user_meta_data->>'linkedin', old.raw_user_meta_data->>'linkedin', ''),
+    twitter = COALESCE(new.raw_user_meta_data->>'twitter', old.raw_user_meta_data->>'twitter', ''),
+    tiktok = COALESCE(new.raw_user_meta_data->>'tiktok', old.raw_user_meta_data->>'tiktok', ''),
+    website = COALESCE(new.raw_user_meta_data->>'website', old.raw_user_meta_data->>'website', '')
   WHERE id = new.id;
   RETURN new;
 END;

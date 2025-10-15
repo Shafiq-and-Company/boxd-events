@@ -21,7 +21,7 @@ export default function UserSettings() {
     email: '',
     phone: '',
     username: '',
-    bio: '',
+    biography: '',
     avatar_url: '',
     instagram: '',
     youtube: '',
@@ -66,7 +66,7 @@ export default function UserSettings() {
         email: profile.email || user.email || '',
         phone: metadata.phone || '',
         username,
-        bio: metadata.bio || '',
+        biography: metadata.biography || '',
         avatar_url: metadata.avatar_url || '',
         instagram: metadata.instagram || '',
         youtube: metadata.youtube || '',
@@ -147,7 +147,7 @@ export default function UserSettings() {
       const { error: metadataError } = await supabase.auth.updateUser({
         data: {
           username: userProfile.username,
-          bio: userProfile.bio,
+          biography: userProfile.biography,
           avatar_url: userProfile.avatar_url,
           phone: userProfile.phone,
           instagram: userProfile.instagram,
@@ -334,11 +334,11 @@ export default function UserSettings() {
 
           {/* Bio */}
           <div className={styles.formGroup}>
-            <label htmlFor="bio" className={styles.label}>Bio</label>
+            <label htmlFor="biography" className={styles.label}>Bio</label>
             <textarea
-              id="bio"
-              name="bio"
-              value={userProfile.bio}
+              id="biography"
+              name="biography"
+              value={userProfile.biography}
               onChange={handleInputChange}
               className={styles.textarea}
               placeholder="Tell us about yourself..."
