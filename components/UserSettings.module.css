@@ -1,5 +1,6 @@
-/* UserSettings Component - Optimized CSS */
+/* UserSettings Component - Clean CSS */
 
+/* Layout */
 .userSettings {
   max-width: 800px;
   padding: 24px 12px;
@@ -21,6 +22,7 @@
   line-height: 1.5;
 }
 
+/* Profile Section */
 .profileSection {
   margin-bottom: 32px;
 }
@@ -42,7 +44,11 @@
   border: 2px solid #e8e8e8;
 }
 
-.avatarImage { object-fit: cover; display: block; }
+.avatarImage { 
+  object-fit: cover; 
+  display: block; 
+}
+
 .avatarPlaceholder {
   background: #f8f8f8;
   display: flex;
@@ -84,9 +90,17 @@
   color: #fff;
 }
 
-.uploadIcon, .uploadSpinner { color: #fff; }
-.uploadIcon { width: 12px; height: 12px; }
-.uploadSpinner { font-size: 0.75rem; animation: spin 1s linear infinite; }
+.uploadIcon { 
+  width: 12px; 
+  height: 12px; 
+  color: #fff; 
+}
+
+.uploadSpinner { 
+  color: #fff; 
+  font-size: 0.75rem; 
+  animation: spin 1s linear infinite; 
+}
 
 @keyframes spin {
   from { transform: rotate(0deg); }
@@ -97,8 +111,13 @@
   display: none;
 }
 
-.socialSection, .securitySection {
-  margin: 32px 0;
+/* Section Spacing */
+.socialSection {
+  margin: 40px 0;
+}
+
+.paymentsSection, .securitySection {
+  margin: 24px 0;
 }
 
 .sectionTitle {
@@ -115,6 +134,7 @@
   line-height: 1.4;
 }
 
+/* Social Links */
 .socialGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -151,7 +171,12 @@
   border-radius: 4px 0 0 4px;
 }
 
-.socialIcon { width: 14px; height: 14px; color: #404040; flex-shrink: 0; }
+.socialIcon { 
+  width: 14px; 
+  height: 14px; 
+  color: #404040; 
+  flex-shrink: 0; 
+}
 
 .socialInputField {
   flex: 1;
@@ -168,6 +193,7 @@
   color: #a0a0a0;
 }
 
+/* Form Elements */
 .form {
   display: flex;
   flex-direction: column;
@@ -217,179 +243,9 @@
   cursor: not-allowed;
 }
 
-.input::placeholder, .textarea::placeholder { color: #a0a0a0; }
-
-/* Security Section Styles */
-.toggleContainer {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.input::placeholder, .textarea::placeholder { 
+  color: #a0a0a0; 
 }
-
-.toggle {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
-}
-
-.toggleInput {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggleSlider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #d0d0d0;
-  transition: 200ms ease;
-  border-radius: 24px;
-}
-
-.toggleSlider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 200ms ease;
-  border-radius: 50%;
-}
-
-.toggleInput:checked + .toggleSlider {
-  background-color: #000;
-}
-
-.toggleInput:checked + .toggleSlider:before {
-  transform: translateX(20px);
-}
-
-.toggleLabel {
-  font-size: 0.875rem;
-  color: #000;
-  font-weight: 400;
-}
-
-.passkeyContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.passkeyButton {
-  background: #f8f8f8;
-  color: #000;
-  border: 1px solid #d0d0d0;
-  padding: 12px 16px;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 200ms ease;
-  align-self: flex-start;
-}
-
-.passkeyButton:hover {
-  background: #e8e8e8;
-  border-color: #a0a0a0;
-}
-
-.passwordContainer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  background: #fff;
-  min-height: 48px;
-}
-
-.passwordInfo {
-  flex: 1;
-}
-
-.passwordSubtitle {
-  margin: 0;
-  font-size: 0.875rem;
-  color: #707070;
-  font-weight: 400;
-}
-
-.changePasswordButton {
-  background: #000;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 200ms ease;
-  white-space: nowrap;
-}
-
-.changePasswordButton:hover {
-  background: #404040;
-  transform: translateY(-1px);
-}
-
-/* Security Items */
-.securityItem {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px 0;
-  border-bottom: 1px solid #e8e8e8;
-}
-
-.securityItem:last-child {
-  border-bottom: none;
-}
-
-.securityIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: #f8f8f8;
-  border-radius: 8px;
-  color: #707070;
-  flex-shrink: 0;
-  padding: 12px;
-  box-sizing: border-box;
-}
-
-.securityContent {
-  flex: 1;
-  min-width: 0;
-}
-
-.securityTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #000;
-  margin: 0 0 4px 0;
-}
-
-.securityDescription {
-  font-size: 0.875rem;
-  color: #707070;
-  margin: 0;
-  line-height: 1.4;
-}
-
-
-
-
 
 .textarea {
   font-family: inherit;
@@ -413,7 +269,9 @@
   z-index: 1;
 }
 
-.usernameInput .input { padding-left: 32px; }
+.usernameInput .input { 
+  padding-left: 32px; 
+}
 
 .helpText {
   font-size: 0.75rem;
@@ -428,7 +286,8 @@
   margin-top: 8px;
 }
 
-.saveButton, .signInButton, .securityButton {
+/* Buttons */
+.saveButton, .signInButton, .securityButton, .paymentButton {
   background: #000;
   color: #fff;
   border: none;
@@ -440,7 +299,10 @@
   font-size: 0.875rem;
 }
 
-.saveButton:hover:not(:disabled), .signInButton:hover, .securityButton:hover {
+.saveButton:hover:not(:disabled), 
+.signInButton:hover, 
+.securityButton:hover, 
+.paymentButton:hover {
   background: #404040;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -453,8 +315,57 @@
   box-shadow: none;
 }
 
-.signInButton { margin-top: 16px; }
+.signInButton { 
+  margin-top: 16px; 
+}
 
+/* Security & Payment Items */
+.securityItem, .paymentItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.securityItem:last-child, .paymentItem:last-child {
+  border-bottom: none;
+}
+
+.securityIcon, .paymentIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  color: #707070;
+  flex-shrink: 0;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.securityContent, .paymentContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.securityTitle, .paymentTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 4px 0;
+}
+
+.securityDescription, .paymentDescription {
+  font-size: 0.875rem;
+  color: #707070;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Messages */
 .errorMessage, .successMessage {
   padding: 12px 16px;
   border-radius: 4px;
@@ -463,8 +374,15 @@
   border: 1px solid #d0d0d0;
 }
 
-.errorMessage { background: #f8f8f8; color: #000; }
-.successMessage { background: #f0f8f0; color: #404040; }
+.errorMessage { 
+  background: #f8f8f8; 
+  color: #000; 
+}
+
+.successMessage { 
+  background: #f0f8f0; 
+  color: #404040; 
+}
 
 .loading, .error, .notLoggedIn { 
   padding: 32px; 
@@ -473,8 +391,16 @@
   border: 1px solid #d0d0d0; 
   color: #707070; 
 }
-.loading { background: transparent; border: none; }
-.error { color: #000; padding: 24px; }
+
+.loading { 
+  background: transparent; 
+  border: none; 
+}
+
+.error { 
+  color: #000; 
+  padding: 24px; 
+}
 
 /* Responsive Design */
 @media (max-width: 767px) {
@@ -485,12 +411,13 @@
   .uploadOverlay { width: 20px; height: 20px; }
   .uploadIcon { width: 10px; height: 10px; }
   .socialGrid { grid-template-columns: 1fr; gap: 12px; }
-  .socialSection, .securitySection { margin: 24px 0; }
-  .securityItem { padding: 16px 0; gap: 12px; }
-  .securityIcon { width: 36px; height: 36px; padding: 10px; }
-  .securityTitle { font-size: 0.9rem; }
-  .securityDescription { font-size: 0.8rem; }
-  .securityButton { padding: 8px 16px; font-size: 0.8rem; }
+  .socialSection { margin: 32px 0; }
+  .paymentsSection, .securitySection { margin: 20px 0; }
+  .securityItem, .paymentItem { padding: 16px 0; gap: 12px; }
+  .securityIcon, .paymentIcon { width: 36px; height: 36px; padding: 10px; }
+  .securityTitle, .paymentTitle { font-size: 0.9rem; }
+  .securityDescription, .paymentDescription { font-size: 0.8rem; }
+  .securityButton, .paymentButton { padding: 8px 16px; font-size: 0.8rem; }
   .socialPrefix { padding: 10px 12px; font-size: 0.7rem; }
   .socialIcon { width: 12px; height: 12px; }
   .socialInputField { padding: 10px 12px; font-size: 0.8rem; }
@@ -502,6 +429,7 @@
   .label { font-size: 0.7rem; }
   .saveButton { padding: 10px 20px; font-size: 0.8rem; }
 }
+
 @media (min-width: 768px) and (max-width: 1023px) {
   .userSettings { padding: 20px 16px; }
   .profileSection { margin-bottom: 28px; }
@@ -510,13 +438,15 @@
   .uploadOverlay { width: 22px; height: 22px; }
   .uploadIcon { width: 11px; height: 11px; }
   .socialGrid { gap: 14px; }
-  .socialSection, .securitySection { margin: 28px 0; }
-  .securityItem { padding: 18px 0; }
+  .socialSection { margin: 36px 0; }
+  .paymentsSection, .securitySection { margin: 24px 0; }
+  .securityItem, .paymentItem { padding: 18px 0; }
   .socialPrefix { padding: 11px 14px; font-size: 0.72rem; }
   .socialIcon { width: 13px; height: 13px; }
   .socialInputField { padding: 11px 14px; font-size: 0.85rem; }
   .form { gap: 22px; }
 }
+
 @media (min-width: 1024px) {
   .userSettings { max-width: 800px; padding: 32px 24px; }
   .userSettings h2 { font-size: 1.75rem; margin-bottom: 10px; }
@@ -527,8 +457,9 @@
   .uploadOverlay { width: 26px; height: 26px; }
   .uploadIcon { width: 14px; height: 14px; }
   .socialGrid { gap: 18px; }
-  .socialSection, .securitySection { margin: 36px 0; }
-  .securityItem { padding: 24px 0; }
+  .socialSection { margin: 44px 0; }
+  .paymentsSection, .securitySection { margin: 28px 0; }
+  .securityItem, .paymentItem { padding: 24px 0; }
   .form { gap: 28px; }
   .nameFields { gap: 20px; }
   .formGroup { gap: 10px; }
@@ -537,7 +468,8 @@
   .label { font-size: 0.8rem; }
   .saveButton { padding: 14px 28px; font-size: 0.9rem; }
 }
-/* Accessibility & Motion */
+
+/* Accessibility */
 .input:focus-within, .saveButton:focus-within { 
   outline: 2px solid #000; 
   outline-offset: 2px; 

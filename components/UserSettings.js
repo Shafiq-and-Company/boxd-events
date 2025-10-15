@@ -7,10 +7,14 @@ import styles from './UserSettings.module.css'
 export default function UserSettings() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  
+  // State management
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  
   const [userProfile, setUserProfile] = useState({
     first_name: '',
     last_name: '',
@@ -26,19 +30,19 @@ export default function UserSettings() {
     tiktok: '',
     website: ''
   })
-  const [uploading, setUploading] = useState(false)
 
+  // Auth redirect
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/login')
       return
     }
-
     if (user) {
       fetchUserProfile()
     }
   }, [user, authLoading, router])
 
+  // Fetch user profile data
   const fetchUserProfile = async () => {
     try {
       setLoading(true)
@@ -50,36 +54,26 @@ export default function UserSettings() {
         .eq('id', user.id)
         .single()
 
-      if (profileError) {
-        throw profileError
-      }
+      if (profileError) throw profileError
 
-      // Get username, bio, avatar, phone, and social links from user metadata or generate from email
-      const username = user.user_metadata?.username || user.email?.split('@')[0] || ''
-      const bio = user.user_metadata?.bio || ''
-      const avatar_url = user.user_metadata?.avatar_url || ''
-      const phone = user.user_metadata?.phone || ''
-      const instagram = user.user_metadata?.instagram || ''
-      const youtube = user.user_metadata?.youtube || ''
-      const linkedin = user.user_metadata?.linkedin || ''
-      const twitter = user.user_metadata?.twitter || ''
-      const tiktok = user.user_metadata?.tiktok || ''
-      const website = user.user_metadata?.website || ''
+      // Extract metadata with fallbacks
+      const metadata = user.user_metadata || {}
+      const username = metadata.username || user.email?.split('@')[0] || ''
 
       setUserProfile({
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
         email: profile.email || user.email || '',
-        phone: phone,
-        username: username,
-        bio: bio,
-        avatar_url: avatar_url,
-        instagram: instagram,
-        youtube: youtube,
-        linkedin: linkedin,
-        twitter: twitter,
-        tiktok: tiktok,
-        website: website
+        phone: metadata.phone || '',
+        username,
+        bio: metadata.bio || '',
+        avatar_url: metadata.avatar_url || '',
+        instagram: metadata.instagram || '',
+        youtube: metadata.youtube || '',
+        linkedin: metadata.linkedin || '',
+        twitter: metadata.twitter || '',
+        tiktok: metadata.tiktok || '',
+        website: metadata.website || ''
       })
     } catch (err) {
       console.error('Error fetching user profile:', err)
@@ -89,14 +83,13 @@ export default function UserSettings() {
     }
   }
 
+  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setUserProfile(prev => ({
-      ...prev,
-      [name]: value
-    }))
+    setUserProfile(prev => ({ ...prev, [name]: value }))
   }
 
+  // Handle avatar upload
   const handleAvatarUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
@@ -105,31 +98,21 @@ export default function UserSettings() {
       setUploading(true)
       setError('')
 
-      // Create a unique filename
       const fileExt = file.name.split('.').pop()
       const fileName = `${user.id}-${Date.now()}.${fileExt}`
       const filePath = `avatars/${fileName}`
 
-      // Upload file to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file)
 
-      if (uploadError) {
-        throw uploadError
-      }
+      if (uploadError) throw uploadError
 
-      // Get public URL
       const { data } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath)
 
-      // Update user profile with new avatar URL
-      setUserProfile(prev => ({
-        ...prev,
-        avatar_url: data.publicUrl
-      }))
-
+      setUserProfile(prev => ({ ...prev, avatar_url: data.publicUrl }))
       setSuccess('Profile picture updated successfully!')
       setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
@@ -140,6 +123,7 @@ export default function UserSettings() {
     }
   }
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault()
     
@@ -157,11 +141,9 @@ export default function UserSettings() {
         })
         .eq('id', user.id)
 
-      if (updateError) {
-        throw updateError
-      }
+      if (updateError) throw updateError
 
-      // Update username, bio, avatar, phone, and social links in user metadata
+      // Update user metadata
       const { error: metadataError } = await supabase.auth.updateUser({
         data: {
           username: userProfile.username,
@@ -177,16 +159,10 @@ export default function UserSettings() {
         }
       })
 
-      if (metadataError) {
-        throw metadataError
-      }
+      if (metadataError) throw metadataError
 
       setSuccess('Profile updated successfully!')
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        setSuccess('')
-      }, 3000)
+      setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
       console.error('Error updating profile:', err)
       setError('Failed to update your profile. Please try again.')
@@ -195,11 +171,14 @@ export default function UserSettings() {
     }
   }
 
-  const handleSignIn = () => {
-    router.push('/login')
+  // Helper function to get avatar initial
+  const getAvatarInitial = () => {
+    if (userProfile.first_name) return userProfile.first_name.charAt(0).toUpperCase()
+    if (userProfile.email) return userProfile.email.charAt(0).toUpperCase()
+    return 'U'
   }
 
-
+  // Loading state
   if (authLoading || loading) {
     return (
       <div className={styles.userSettings}>
@@ -209,6 +188,7 @@ export default function UserSettings() {
     )
   }
 
+  // Not logged in state
   if (!user) {
     return (
       <div className={styles.userSettings}>
@@ -216,7 +196,7 @@ export default function UserSettings() {
         <div className={styles.notLoggedIn}>
           <p>You need to be signed in to access your settings.</p>
           <button 
-            onClick={handleSignIn}
+            onClick={() => router.push('/login')}
             className={styles.signInButton}
           >
             Sign In
@@ -226,11 +206,46 @@ export default function UserSettings() {
     )
   }
 
+  // Social media configuration
+  const socialPlatforms = [
+    {
+      id: 'instagram',
+      prefix: 'instagram.com/',
+      icon: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z'
+    },
+    {
+      id: 'youtube',
+      prefix: 'youtube.com/@',
+      icon: 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'
+    },
+    {
+      id: 'linkedin',
+      prefix: 'linkedin.com/in/',
+      icon: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z'
+    },
+    {
+      id: 'twitter',
+      prefix: 'x.com/',
+      icon: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'
+    },
+    {
+      id: 'tiktok',
+      prefix: 'tiktok.com/@',
+      icon: 'M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-.88-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z'
+    },
+    {
+      id: 'website',
+      prefix: 'https://',
+      icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'
+    }
+  ]
+
   return (
     <div className={styles.userSettings}>
       <h2>User Settings</h2>
       <p className={styles.pageSubtitle}>Manage your account information and preferences</p>
       
+      {/* Profile Picture */}
       <div className={styles.profileSection}>
         <div className={styles.profilePicture}>
           <div className={styles.avatarContainer}>
@@ -242,8 +257,7 @@ export default function UserSettings() {
               />
             ) : (
               <div className={styles.avatarPlaceholder}>
-                {userProfile.first_name ? userProfile.first_name.charAt(0).toUpperCase() : 
-                 userProfile.email ? userProfile.email.charAt(0).toUpperCase() : 'U'}
+                {getAvatarInitial()}
               </div>
             )}
             <div className={styles.uploadOverlay}>
@@ -270,13 +284,13 @@ export default function UserSettings() {
         </div>
       </div>
       
+      {/* Settings Form */}
       <div className={styles.settingsForm}>
         <form onSubmit={handleSubmit} className={styles.form}>
+          {/* Name Fields */}
           <div className={styles.nameFields}>
             <div className={styles.formGroup}>
-              <label htmlFor="first_name" className={styles.label}>
-                First Name
-              </label>
+              <label htmlFor="first_name" className={styles.label}>First Name</label>
               <input
                 type="text"
                 id="first_name"
@@ -287,11 +301,8 @@ export default function UserSettings() {
                 placeholder="Enter your first name"
               />
             </div>
-
             <div className={styles.formGroup}>
-              <label htmlFor="last_name" className={styles.label}>
-                Last Name
-              </label>
+              <label htmlFor="last_name" className={styles.label}>Last Name</label>
               <input
                 type="text"
                 id="last_name"
@@ -304,10 +315,9 @@ export default function UserSettings() {
             </div>
           </div>
 
+          {/* Username */}
           <div className={styles.formGroup}>
-            <label htmlFor="username" className={styles.label}>
-              Username
-            </label>
+            <label htmlFor="username" className={styles.label}>Username</label>
             <div className={styles.usernameInput}>
               <span className={styles.atSymbol}>@</span>
               <input
@@ -322,10 +332,9 @@ export default function UserSettings() {
             </div>
           </div>
 
+          {/* Bio */}
           <div className={styles.formGroup}>
-            <label htmlFor="bio" className={styles.label}>
-              Bio
-            </label>
+            <label htmlFor="bio" className={styles.label}>Bio</label>
             <textarea
               id="bio"
               name="bio"
@@ -337,136 +346,38 @@ export default function UserSettings() {
             />
           </div>
 
+          {/* Social Links */}
           <div className={styles.socialSection}>
             <h3 className={styles.sectionTitle}>Social links</h3>
             <p className={styles.sectionSubtitle}>Connect your social media accounts to share your events and connect with other users.</p>
             <div className={styles.socialGrid}>
-              <div className={styles.formGroup}>
-                <div className={styles.socialInput}>
-                  <span className={styles.socialPrefix}>
-                    <svg className={styles.socialIcon} width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                    </svg>
-                    instagram.com/
-                  </span>
-                  <input
-                    type="text"
-                    id="instagram"
-                    name="instagram"
-                    value={userProfile.instagram}
-                    onChange={handleInputChange}
-                    className={styles.socialInputField}
-                    placeholder="username"
-                  />
+              {socialPlatforms.map(platform => (
+                <div key={platform.id} className={styles.formGroup}>
+                  <div className={styles.socialInput}>
+                    <span className={styles.socialPrefix}>
+                      <svg className={styles.socialIcon} width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path d={platform.icon}/>
+                      </svg>
+                      {platform.prefix}
+                    </span>
+                    <input
+                      type="text"
+                      id={platform.id}
+                      name={platform.id}
+                      value={userProfile[platform.id]}
+                      onChange={handleInputChange}
+                      className={styles.socialInputField}
+                      placeholder={platform.id === 'website' ? 'yourwebsite.com' : 'username'}
+                    />
+                  </div>
                 </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <div className={styles.socialInput}>
-                  <span className={styles.socialPrefix}>
-                    <svg className={styles.socialIcon} width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                    </svg>
-                    youtube.com/@
-                  </span>
-                  <input
-                    type="text"
-                    id="youtube"
-                    name="youtube"
-                    value={userProfile.youtube}
-                    onChange={handleInputChange}
-                    className={styles.socialInputField}
-                    placeholder="username"
-                  />
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <div className={styles.socialInput}>
-                  <span className={styles.socialPrefix}>
-                    <svg className={styles.socialIcon} width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                    </svg>
-                    linkedin.com/in/
-                  </span>
-                  <input
-                    type="text"
-                    id="linkedin"
-                    name="linkedin"
-                    value={userProfile.linkedin}
-                    onChange={handleInputChange}
-                    className={styles.socialInputField}
-                    placeholder="username"
-                  />
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <div className={styles.socialInput}>
-                  <span className={styles.socialPrefix}>
-                    <svg className={styles.socialIcon} width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                    </svg>
-                    x.com/
-                  </span>
-                  <input
-                    type="text"
-                    id="twitter"
-                    name="twitter"
-                    value={userProfile.twitter}
-                    onChange={handleInputChange}
-                    className={styles.socialInputField}
-                    placeholder="username"
-                  />
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <div className={styles.socialInput}>
-                  <span className={styles.socialPrefix}>
-                    <svg className={styles.socialIcon} width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-.88-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                    </svg>
-                    tiktok.com/@
-                  </span>
-                  <input
-                    type="text"
-                    id="tiktok"
-                    name="tiktok"
-                    value={userProfile.tiktok}
-                    onChange={handleInputChange}
-                    className={styles.socialInputField}
-                    placeholder="username"
-                  />
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <div className={styles.socialInput}>
-                  <span className={styles.socialPrefix}>
-                    <svg className={styles.socialIcon} width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    https://
-                  </span>
-                  <input
-                    type="text"
-                    id="website"
-                    name="website"
-                    value={userProfile.website}
-                    onChange={handleInputChange}
-                    className={styles.socialInputField}
-                    placeholder="yourwebsite.com"
-                  />
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
+          {/* Email */}
           <div className={styles.formGroup}>
-            <label htmlFor="email" className={styles.label}>
-              Email Address
-            </label>
+            <label htmlFor="email" className={styles.label}>Email Address</label>
             <input
               type="email"
               id="email"
@@ -481,10 +392,9 @@ export default function UserSettings() {
             </p>
           </div>
 
+          {/* Phone */}
           <div className={styles.formGroup}>
-            <label htmlFor="phone" className={styles.label}>
-              Phone Number
-            </label>
+            <label htmlFor="phone" className={styles.label}>Phone Number</label>
             <input
               type="tel"
               id="phone"
@@ -496,6 +406,7 @@ export default function UserSettings() {
             />
           </div>
 
+          {/* Save Button */}
           <div className={styles.formActions}>
             <button
               type="submit"
@@ -506,9 +417,33 @@ export default function UserSettings() {
             </button>
           </div>
 
+          {/* Payments Section */}
+          <div className={styles.paymentsSection}>
+            <h3 className={styles.sectionTitle}>Payments</h3>
+            <p className={styles.sectionSubtitle}>Manage your payment settings and connect your Stripe account.</p>
+            
+            <div className={styles.paymentItem}>
+              <div className={styles.paymentIcon}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 1v6l3-3 3 3V1"/>
+                  <path d="M21 12v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6"/>
+                  <path d="M3 12h18"/>
+                </svg>
+              </div>
+              <div className={styles.paymentContent}>
+                <h4 className={styles.paymentTitle}>Stripe Account</h4>
+                <p className={styles.paymentDescription}>Link your Stripe account to receive payments for your events.</p>
+              </div>
+              <button type="button" className={styles.paymentButton}>
+                Connect Stripe
+              </button>
+            </div>
+          </div>
+
+          {/* Security Section */}
           <div className={styles.securitySection}>
             <h3 className={styles.sectionTitle}>Password & Security</h3>
-            <p className={styles.sectionSubtitle}>Secure your account with password and two-factor authentication.</p>
+            <p className={styles.sectionSubtitle}>Manage your account password and security settings.</p>
             
             <div className={styles.securityItem}>
               <div className={styles.securityIcon}>
@@ -525,52 +460,14 @@ export default function UserSettings() {
                 Check Your Email
               </button>
             </div>
-
-            <div className={styles.securityItem}>
-              <div className={styles.securityIcon}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  <path d="M9 12l2 2 4-4"/>
-                </svg>
-              </div>
-              <div className={styles.securityContent}>
-                <h4 className={styles.securityTitle}>Two-Factor Authentication</h4>
-                <p className={styles.securityDescription}>Please set a password before enabling two-factor authentication.</p>
-              </div>
-              <button type="button" className={styles.securityButton}>
-                Enable 2FA
-              </button>
-            </div>
-
-            <div className={styles.securityItem}>
-              <div className={styles.securityIcon}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M15 7h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-3"/>
-                  <path d="M10 17H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5"/>
-                  <path d="M8 21l4-7 4 7"/>
-                </svg>
-              </div>
-              <div className={styles.securityContent}>
-                <h4 className={styles.securityTitle}>Passkeys</h4>
-                <p className={styles.securityDescription}>Passkeys are a secure and convenient way to sign in.</p>
-              </div>
-              <button type="button" className={styles.securityButton}>
-                Add Passkey
-              </button>
-            </div>
           </div>
 
-
+          {/* Messages */}
           {error && (
-            <div className={styles.errorMessage}>
-              {error}
-            </div>
+            <div className={styles.errorMessage}>{error}</div>
           )}
-
           {success && (
-            <div className={styles.successMessage}>
-              {success}
-            </div>
+            <div className={styles.successMessage}>{success}</div>
           )}
         </form>
       </div>
