@@ -50,30 +50,29 @@ export default function UserSettings() {
 
       const { data: profile, error: profileError } = await supabase
         .from('users')
-        .select('first_name, last_name, email')
+        .select('first_name, last_name, email, username, biography, phone, instagram, youtube, linkedin, twitter, tiktok, website')
         .eq('id', user.id)
         .single()
 
       if (profileError) throw profileError
 
-      // Extract metadata with fallbacks
+      // Get avatar_url from user metadata (not stored in public.users)
       const metadata = user.user_metadata || {}
-      const username = metadata.username || user.email?.split('@')[0] || ''
 
       setUserProfile({
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
         email: profile.email || user.email || '',
-        phone: metadata.phone || '',
-        username,
-        biography: metadata.biography || '',
+        phone: profile.phone || '',
+        username: profile.username || user.email?.split('@')[0] || '',
+        biography: profile.biography || '',
         avatar_url: metadata.avatar_url || '',
-        instagram: metadata.instagram || '',
-        youtube: metadata.youtube || '',
-        linkedin: metadata.linkedin || '',
-        twitter: metadata.twitter || '',
-        tiktok: metadata.tiktok || '',
-        website: metadata.website || ''
+        instagram: profile.instagram || '',
+        youtube: profile.youtube || '',
+        linkedin: profile.linkedin || '',
+        twitter: profile.twitter || '',
+        tiktok: profile.tiktok || '',
+        website: profile.website || ''
       })
     } catch (err) {
       console.error('Error fetching user profile:', err)
@@ -132,23 +131,14 @@ export default function UserSettings() {
       setError('')
       setSuccess('')
 
-      // Update user profile in database
+      // Update user profile in public.users table
       const { error: updateError } = await supabase
         .from('users')
         .update({
           first_name: userProfile.first_name,
-          last_name: userProfile.last_name
-        })
-        .eq('id', user.id)
-
-      if (updateError) throw updateError
-
-      // Update user metadata
-      const { error: metadataError } = await supabase.auth.updateUser({
-        data: {
+          last_name: userProfile.last_name,
           username: userProfile.username,
           biography: userProfile.biography,
-          avatar_url: userProfile.avatar_url,
           phone: userProfile.phone,
           instagram: userProfile.instagram,
           youtube: userProfile.youtube,
@@ -156,6 +146,15 @@ export default function UserSettings() {
           twitter: userProfile.twitter,
           tiktok: userProfile.tiktok,
           website: userProfile.website
+        })
+        .eq('id', user.id)
+
+      if (updateError) throw updateError
+
+      // Update user metadata for avatar_url (not stored in public.users)
+      const { error: metadataError } = await supabase.auth.updateUser({
+        data: {
+          avatar_url: userProfile.avatar_url
         }
       })
 
