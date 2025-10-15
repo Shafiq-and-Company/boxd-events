@@ -1,6 +1,4 @@
-/* UserSettings Component - Clean CSS */
-
-/* Layout */
+/* UserSettings Component */
 .userSettings {
   max-width: 800px;
   padding: 24px 12px;
@@ -12,106 +10,13 @@
   font-size: 1.5rem;
   font-weight: 500;
   color: #000;
-  letter-spacing: -0.5px;
 }
 
 .pageSubtitle {
   margin-bottom: 32px;
   font-size: 0.9rem;
   color: #707070;
-  line-height: 1.5;
 }
-
-/* Profile Section */
-.profileSection {
-  margin-bottom: 32px;
-}
-
-.profilePicture {
-  display: flex;
-  align-items: flex-start;
-}
-
-.avatarContainer {
-  position: relative;
-  display: inline-block;
-}
-
-.avatarImage, .avatarPlaceholder {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 2px solid #e8e8e8;
-}
-
-.avatarImage { 
-  object-fit: cover; 
-  display: block; 
-}
-
-.avatarPlaceholder {
-  background: #f8f8f8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #707070;
-}
-
-.uploadOverlay {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 24px;
-  height: 24px;
-  background: #000;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 200ms ease;
-  border: 2px solid #fff;
-}
-
-.uploadOverlay:hover {
-  background: #404040;
-  transform: scale(1.1);
-}
-
-.uploadLabel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  color: #fff;
-}
-
-.uploadIcon { 
-  width: 12px; 
-  height: 12px; 
-  color: #fff; 
-}
-
-.uploadSpinner { 
-  color: #fff; 
-  font-size: 0.75rem; 
-  animation: spin 1s linear infinite; 
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.hiddenInput {
-  display: none;
-}
-
-/* Section Spacing */
 
 .paymentsSection, .securitySection {
   margin: 24px 0;
@@ -128,34 +33,26 @@
   font-size: 0.875rem;
   color: #707070;
   margin-bottom: 24px;
-  line-height: 1.4;
 }
 
 
 /* Form Elements */
-.settingsForm {
-  width: 100%;
-}
-
 .form {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  width: 100%;
 }
 
 .nameFields {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  width: 100%;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 100%;
 }
 
 .label {
@@ -172,17 +69,6 @@
   font-size: 0.7rem;
   color: #a0a0a0;
   margin-left: auto;
-}
-
-.fieldError {
-  font-size: 0.7rem;
-  color: #e74c3c;
-  margin-top: 4px;
-}
-
-.inputError {
-  border-color: #e74c3c !important;
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1) !important;
 }
 
 .input, .textarea {
@@ -222,7 +108,6 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: 100%;
 }
 
 .atSymbol {
@@ -242,7 +127,6 @@
   font-size: 0.75rem;
   color: #707070;
   margin-top: 4px;
-  line-height: 1.4;
 }
 
 .formActions {
@@ -308,12 +192,10 @@
   color: #707070;
   flex-shrink: 0;
   padding: 12px;
-  box-sizing: border-box;
 }
 
 .securityContent, .paymentContent {
   flex: 1;
-  min-width: 0;
 }
 
 .securityTitle, .paymentTitle {
@@ -327,28 +209,9 @@
   font-size: 0.875rem;
   color: #707070;
   margin: 0;
-  line-height: 1.4;
 }
 
 /* Messages */
-.errorMessage, .successMessage {
-  padding: 12px 16px;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  margin-top: 8px;
-  border: 1px solid #d0d0d0;
-}
-
-.errorMessage { 
-  background: #f8f8f8; 
-  color: #000; 
-}
-
-.successMessage { 
-  background: #f0f8f0; 
-  color: #404040; 
-}
-
 .loading, .error, .notLoggedIn { 
   padding: 32px; 
   font-size: 1rem; 
@@ -370,56 +233,17 @@
 /* Responsive Design */
 @media (max-width: 767px) {
   .userSettings { padding: 16px 8px; }
-  .profileSection { margin-bottom: 24px; }
-  .avatarImage, .avatarPlaceholder { width: 60px; height: 60px; }
-  .avatarPlaceholder { font-size: 1.25rem; }
-  .uploadOverlay { width: 20px; height: 20px; }
-  .uploadIcon { width: 10px; height: 10px; }
-  .paymentsSection, .securitySection { margin: 20px 0; }
+  .nameFields { grid-template-columns: 1fr; gap: 20px; }
+  .form { gap: 20px; }
+  .input, .textarea { padding: 10px 14px; font-size: 0.8rem; }
+  .textarea { min-height: 50px; }
+  .label { font-size: 0.7rem; }
+  .saveButton { padding: 10px 20px; font-size: 0.8rem; }
   .securityItem, .paymentItem { padding: 16px 0; gap: 12px; }
   .securityIcon, .paymentIcon { width: 36px; height: 36px; padding: 10px; }
   .securityTitle, .paymentTitle { font-size: 0.9rem; }
   .securityDescription, .paymentDescription { font-size: 0.8rem; }
   .securityButton, .paymentButton { padding: 8px 16px; font-size: 0.8rem; }
-  .form { gap: 20px; }
-  .nameFields { grid-template-columns: 1fr; gap: 20px; }
-  .formGroup { gap: 6px; }
-  .input, .textarea { padding: 10px 14px; font-size: 0.8rem; }
-  .textarea { min-height: 50px; }
-  .label { font-size: 0.7rem; }
-  .saveButton { padding: 10px 20px; font-size: 0.8rem; }
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .userSettings { padding: 20px 16px; }
-  .profileSection { margin-bottom: 28px; }
-  .avatarImage, .avatarPlaceholder { width: 70px; height: 70px; }
-  .avatarPlaceholder { font-size: 1.375rem; }
-  .uploadOverlay { width: 22px; height: 22px; }
-  .uploadIcon { width: 11px; height: 11px; }
-  .paymentsSection, .securitySection { margin: 24px 0; }
-  .securityItem, .paymentItem { padding: 18px 0; }
-  .form { gap: 22px; }
-}
-
-@media (min-width: 1024px) {
-  .userSettings { max-width: 800px; padding: 32px 24px; }
-  .userSettings h2 { font-size: 1.75rem; margin-bottom: 10px; }
-  .pageSubtitle { font-size: 1rem; margin-bottom: 40px; }
-  .profileSection { margin-bottom: 36px; }
-  .avatarImage, .avatarPlaceholder { width: 90px; height: 90px; }
-  .avatarPlaceholder { font-size: 1.75rem; }
-  .uploadOverlay { width: 26px; height: 26px; }
-  .uploadIcon { width: 14px; height: 14px; }
-  .paymentsSection, .securitySection { margin: 28px 0; }
-  .securityItem, .paymentItem { padding: 24px 0; }
-  .form { gap: 28px; }
-  .nameFields { gap: 20px; }
-  .formGroup { gap: 10px; }
-  .input, .textarea { padding: 14px 18px; font-size: 0.9rem; }
-  .textarea { min-height: 70px; }
-  .label { font-size: 0.8rem; }
-  .saveButton { padding: 14px 28px; font-size: 0.9rem; }
 }
 
 /* Accessibility */
@@ -432,11 +256,5 @@
   .input, .saveButton, .saveButton:hover { 
     transition: none; 
     transform: none; 
-  } 
-}
-
-@media (prefers-contrast: high) { 
-  .input, .input:focus { 
-    border-color: #000; 
   } 
 }
