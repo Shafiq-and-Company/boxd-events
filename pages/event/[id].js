@@ -15,7 +15,6 @@ export default function EventDetail() {
   const [isProcessingRSVP, setIsProcessingRSVP] = useState(false)
   const [isAlreadyRegistered, setIsAlreadyRegistered] = useState(false)
   const [checkingRegistration, setCheckingRegistration] = useState(false)
-  const [registrationDetails, setRegistrationDetails] = useState(null)
   const [copySuccess, setCopySuccess] = useState(false)
 
   const handleTabChange = (tab) => {
@@ -60,7 +59,6 @@ export default function EventDetail() {
 
       setEvent(data)
     } catch (err) {
-      console.error('Error fetching event:', err)
       setError(err.message)
     } finally {
       setLoading(false)
@@ -85,19 +83,14 @@ export default function EventDetail() {
         .maybeSingle()
 
       if (error) {
-        console.error('Error checking registration status:', error)
         setIsAlreadyRegistered(false)
-        setRegistrationDetails(null)
         return
       }
 
       const isRegistered = !!data
       setIsAlreadyRegistered(isRegistered)
-      setRegistrationDetails(data)
     } catch (err) {
-      console.error('Error checking registration status:', err)
       setIsAlreadyRegistered(false)
-      setRegistrationDetails(null)
     } finally {
       setCheckingRegistration(false)
     }
@@ -112,7 +105,6 @@ export default function EventDetail() {
       year: 'numeric'
     })
   }
-
 
   const formatCalendarMonth = (dateString) => {
     const date = new Date(dateString)
@@ -153,7 +145,7 @@ export default function EventDetail() {
       setCopySuccess(true)
       setTimeout(() => setCopySuccess(false), 2000)
     } catch (err) {
-      console.error('Failed to copy link:', err)
+      // Silent fail for copy functionality
     }
   }
 
@@ -191,7 +183,6 @@ export default function EventDetail() {
         })
 
       if (error) {
-        console.error('Error creating RSVP:', error)
         return
       }
 
@@ -204,7 +195,7 @@ export default function EventDetail() {
       }, 2000)
       
     } catch (err) {
-      console.error('Error creating RSVP:', err)
+      // Silent fail for RSVP creation
     } finally {
       setIsProcessingRSVP(false)
     }
@@ -298,6 +289,22 @@ export default function EventDetail() {
 
             <div className={styles.rightColumn}>
               <h1 className={styles.eventTitle}>{event.title}</h1>
+              
+              {/* Mobile Hosted By - only visible on mobile */}
+              <div className={styles.hostedByMobile}>
+                <div className={styles.hostedByIcon}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+                <div className={styles.hostedByText}>
+                  <div className={styles.hostedByLabel}>Hosted by</div>
+                  <div className={styles.hostName}>
+                    {event.host_user?.first_name || 'Unknown Host'}
+                  </div>
+                </div>
+              </div>
 
               <div className={styles.eventInfo}>
                 <div className={styles.dateTime}>
