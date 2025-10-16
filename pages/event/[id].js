@@ -419,16 +419,6 @@ export default function EventDetail() {
             </div>
           </div>
 
-          {!user && (
-            <div className={styles.loginPrompt}>
-              <button 
-                className={styles.loginButton}
-                onClick={() => router.push('/login')}
-              >
-                Login to RSVP
-              </button>
-            </div>
-          )}
 
         </div>
       </div>
