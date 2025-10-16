@@ -1,5 +1,13 @@
 /* BOXD Event Detail - Ultra Minimal CSS */
 
+.pageWrapper {
+  background: 
+    linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-size: 8px 8px;
+  min-height: 100vh;
+}
+
 .container {
   max-width: 800px;
   margin: 0 auto;
@@ -11,10 +19,6 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.eventHero {
-  margin-bottom: 20px;
 }
 
 .eventImage {
@@ -29,10 +33,6 @@
   margin: 0 auto;
 }
 
-.eventHeader {
-  padding: 0;
-  margin-top: 0;
-}
 
 .eventTitle {
   font-size: 2.5rem;
@@ -43,14 +43,39 @@
   letter-spacing: -0.5px;
 }
 
-.gameTitle {
-  display: inline-block;
-  background: #f5f5f5;
-  color: #666;
-  padding: 4px 8px;
-  border-radius: 2px;
+.hostManagement {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding: 8px 12px;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hostManagementText {
   font-size: 0.8rem;
-  margin-bottom: 8px;
+  color: #666;
+}
+
+.manageButton {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.manageButton:hover {
+  background: #333333;
 }
 
 .hostedBy {
@@ -58,10 +83,6 @@
   align-items: center;
   gap: 12px;
   margin-top: 16px;
-  padding: 12px;
-  background: #fafafa;
-  border-radius: 6px;
-  border: 1px solid #f0f0f0;
   width: 300px;
   margin-left: auto;
   margin-right: auto;
@@ -105,26 +126,10 @@
   align-items: start;
 }
 
-.leftColumn {
+.leftColumn, .rightColumn {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.rightColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.eventContent {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.rsvpSection {
-  margin-bottom: 24px;
 }
 
 .rsvpCard {
@@ -218,28 +223,66 @@
   padding: 20px;
 }
 
-.loginButton {
+.loginButton, .rsvpButton {
   background: #000000;
   color: #ffffff;
   border: none;
-  padding: 12px 24px;
+  padding: 16px 24px;
   font-size: 0.9rem;
   font-weight: 400;
   cursor: pointer;
   border-radius: 6px;
-  min-width: 120px;
-  letter-spacing: -0.25px;
+  width: 100%;
   transition: background-color 0.2s ease;
+  letter-spacing: -0.25px;
 }
 
-.loginButton:hover {
+.loginButton {
+  padding: 12px 24px;
+  min-width: 120px;
+  width: auto;
+}
+
+.loginButton:hover, .rsvpButton:hover:not(:disabled) {
   background: #333333;
 }
 
-.eventLayout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+.rsvpButton:disabled {
+  background: #e8e8e8;
+  color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.inviteButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  padding: 16px 24px;
+  font-size: 0.9rem;
+  font-weight: 400;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+  height: 100%;
+  letter-spacing: -0.25px;
+}
+
+.inviteButton:hover {
+  background: #333333;
+}
+
+.inviteButton:active {
+  transform: translateY(1px);
 }
 
 .eventInfo {
@@ -276,56 +319,27 @@
   margin-top: 4px;
 }
 
-.eventCards {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-.eventCard {
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.eventCard:hover {
-  border-color: #e0e0e0;
-}
-
-.cardHeader {
-  background: #fafafa;
-  padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.cardHeader h3 {
-  font-size: 0.8rem;
-  color: #666;
-  margin: 0;
-}
-
-.cardContent {
-  padding: 16px;
-}
-
-.dateTime {
+.dateTime, .locationInfo {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.calendarIcon {
+.calendarIcon, .locationIcon {
   width: 48px;
   height: 48px;
   background: #f5f5f5;
   border-radius: 6px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   border: 1px solid #e0e0e0;
+  color: #666;
+}
+
+.calendarIcon {
+  flex-direction: column;
 }
 
 .calendarMonth {
@@ -344,7 +358,7 @@
   line-height: 1;
 }
 
-.dateTimeText {
+.dateTimeText, .locationText {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -363,142 +377,11 @@
   line-height: 1.2;
 }
 
-.locationInfo {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.locationIcon {
-  width: 48px;
-  height: 48px;
-  background: #f5f5f5;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid #e0e0e0;
-  color: #666;
-}
-
-.locationText {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.locationTitle {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #666;
-}
-
 .locationAddress {
   font-size: 0.95rem;
   font-weight: 600;
   color: #000;
   line-height: 1.2;
-}
-
-.hostedByInfo {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.hostedByIcon {
-  width: 48px;
-  height: 48px;
-  background: #f5f5f5;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid #e0e0e0;
-  font-size: 1.2rem;
-}
-
-.hostedByText {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.hostedByTitle {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #666;
-}
-
-.hostedByName {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #000;
-  line-height: 1.2;
-}
-
-.location, .price, .description {
-  font-size: 0.8rem;
-  color: #000;
-}
-
-.description {
-  line-height: 1.5;
-}
-
-.eventActions {
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  border-radius: 4px;
-  padding: 16px;
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 16px;
-}
-
-.rsvpButton {
-  background: #000000;
-  color: #ffffff;
-  border: none;
-  padding: 16px 24px;
-  font-size: 0.9rem;
-  font-weight: 400;
-  cursor: pointer;
-  border-radius: 6px;
-  width: 100%;
-  transition: background-color 0.2s ease;
-  letter-spacing: -0.25px;
-}
-
-.rsvpButton:hover:not(:disabled) {
-  background: #333333;
-}
-
-.rsvpButton:disabled {
-  background: #e8e8e8;
-  color: #a0a0a0;
-  cursor: not-allowed;
-}
-
-.successMessage, .errorMessage {
-  background: #f8f8f8;
-  border: 1px solid #e8e8e8;
-  border-radius: 6px;
-  padding: 12px;
-  font-size: 0.8rem;
-  font-weight: 400;
-  text-align: center;
-  margin-bottom: 12px;
-}
-
-.successMessage {
-  color: #000000;
-}
-
-.errorMessage {
-  color: #707070;
 }
 
 .loading, .error {
@@ -536,36 +419,7 @@
     font-size: 1.1rem;
   }
   
-  .eventCards {
-    gap: 8px;
-  }
-  
-  .cardHeader {
-    padding: 8px 12px;
-  }
-  
-  .cardContent {
-    padding: 12px;
-  }
-  
-  .eventActions {
-    justify-content: flex-start;
-  }
-  
   .rsvpButton {
-    width: 100%;
     padding: 12px 16px;
-  }
-}
-
-@media (min-width: 768px) {
-  .eventLayout {
-    grid-template-columns: 1fr 2fr;
-    gap: 32px;
-    align-items: start;
-  }
-  
-  .eventCards {
-    grid-template-columns: repeat(2, 1fr);
   }
 }

@@ -6,9 +6,7 @@ export default function ManageEventPage() {
   const router = useRouter()
 
   const handleTabChange = (tab) => {
-    if (tab === 'splash') {
-      router.push('/')
-    } else if (tab === 'upcoming') {
+    if (tab === 'upcoming') {
       router.push('/?tab=upcoming')
     } else {
       router.push(`/?tab=${tab}`)
