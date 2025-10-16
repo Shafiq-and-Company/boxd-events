@@ -17,6 +17,8 @@ export default function EventDetail() {
   const [checkingRegistration, setCheckingRegistration] = useState(false)
   const [copySuccess, setCopySuccess] = useState(false)
   const [showUnregisterConfirm, setShowUnregisterConfirm] = useState(false)
+  const [attendees, setAttendees] = useState([])
+  const [loadingAttendees, setLoadingAttendees] = useState(false)
 
   const handleTabChange = (tab) => {
     if (tab === 'upcoming') {
@@ -39,6 +41,12 @@ export default function EventDetail() {
       setIsAlreadyRegistered(false)
     }
   }, [user, event, authLoading])
+
+  useEffect(() => {
+    if (event) {
+      fetchAttendees()
+    }
+  }, [event])
 
   const fetchEvent = async () => {
     try {
@@ -97,6 +105,39 @@ export default function EventDetail() {
     }
   }
 
+  const fetchAttendees = async () => {
+    if (!event) return
+    
+    try {
+      setLoadingAttendees(true)
+      
+      const { data, error } = await supabase
+        .from('rsvps')
+        .select(`
+          user_id,
+          created_at,
+          users:user_id (
+            username,
+            first_name
+          )
+        `)
+        .eq('event_id', event.id)
+        .eq('status', 'going')
+        .order('created_at', { ascending: true })
+
+      if (error) {
+        setAttendees([])
+        return
+      }
+
+      setAttendees(data || [])
+    } catch (err) {
+      setAttendees([])
+    } finally {
+      setLoadingAttendees(false)
+    }
+  }
+
   const formatDate = (dateString) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
@@ -150,6 +191,46 @@ export default function EventDetail() {
     }
   }
 
+  const renderAttendeesSection = () => (
+    <div className={styles.attendeesSection}>
+      <div className={styles.attendeesHeader}>
+        <div className={styles.attendeesIcon}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div className={styles.attendeesText}>
+          <div className={styles.attendeesLabel}>
+            {loadingAttendees ? 'Loading...' : 
+             attendees.length === 0 ? 'No attendees yet' :
+             attendees.length === 1 ? '1 person attending' :
+             `${attendees.length} people attending`}
+          </div>
+        </div>
+      </div>
+      
+      {!loadingAttendees && attendees.length > 0 && (
+        <div className={styles.attendeesList}>
+          {attendees.map((attendee) => (
+            <div key={attendee.user_id} className={styles.attendeeItem}>
+              <div className={styles.attendeeIcon}>
+                <div className={styles.attendeeInitial}>
+                  {(attendee.users?.username?.charAt(0) || attendee.users?.first_name?.charAt(0) || 'U').toUpperCase()}
+                </div>
+              </div>
+              <div className={styles.attendeeName}>
+                {attendee.users?.username || attendee.users?.first_name || 'Unknown User'}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+
   const handleRSVP = async () => {
     // Check if user is logged in
     if (!user) {
@@ -187,8 +268,9 @@ export default function EventDetail() {
         return
       }
 
-      // RSVP succeeded - update registration status and redirect to home page
+      // RSVP succeeded - update registration status and refresh attendees
       setIsAlreadyRegistered(true)
+      fetchAttendees() // Refresh attendees list
       
       // Show success message briefly, then redirect
       setTimeout(() => {
@@ -221,9 +303,10 @@ export default function EventDetail() {
         return
       }
 
-      // Unregister succeeded - update registration status
+      // Unregister succeeded - update registration status and refresh attendees
       setIsAlreadyRegistered(false)
       setShowUnregisterConfirm(false)
+      fetchAttendees() // Refresh attendees list
       
     } catch (err) {
       // Silent fail for unregistration
@@ -316,6 +399,9 @@ export default function EventDetail() {
                   </div>
                 </div>
               </div>
+
+              {/* Attendees Section */}
+              {renderAttendeesSection()}
             </div>
 
             <div className={styles.rightColumn}>
@@ -484,6 +570,9 @@ export default function EventDetail() {
                     </div>
                   </div>
                 )}
+
+                {/* Mobile Attendees Section - only visible on mobile */}
+                {renderAttendeesSection()}
 
               </div>
             </div>
