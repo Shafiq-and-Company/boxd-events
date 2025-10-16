@@ -16,6 +16,7 @@ export default function EventDetail() {
   const [isAlreadyRegistered, setIsAlreadyRegistered] = useState(false)
   const [checkingRegistration, setCheckingRegistration] = useState(false)
   const [copySuccess, setCopySuccess] = useState(false)
+  const [showUnregisterConfirm, setShowUnregisterConfirm] = useState(false)
 
   const handleTabChange = (tab) => {
     if (tab === 'upcoming') {
@@ -201,6 +202,36 @@ export default function EventDetail() {
     }
   }
 
+  const handleUnregister = async () => {
+    if (!user || !event) {
+      return
+    }
+
+    try {
+      setIsProcessingRSVP(true)
+      
+      const { error } = await supabase
+        .from('rsvps')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('event_id', event.id)
+        .eq('status', 'going')
+
+      if (error) {
+        return
+      }
+
+      // Unregister succeeded - update registration status
+      setIsAlreadyRegistered(false)
+      setShowUnregisterConfirm(false)
+      
+    } catch (err) {
+      // Silent fail for unregistration
+    } finally {
+      setIsProcessingRSVP(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className={styles.pageWrapper}>
@@ -339,10 +370,37 @@ export default function EventDetail() {
                 <div className={styles.rsvpCard}>
                     <div className={styles.rsvpHeader}>
                       <h3>Registration</h3>
+                      {isAlreadyRegistered && (
+                        <button 
+                          onClick={() => setShowUnregisterConfirm(true)}
+                          style={{
+                            background: 'transparent',
+                            color: '#999',
+                            border: 'none',
+                            fontSize: '0.8rem',
+                            cursor: 'pointer',
+                            textDecoration: 'underline',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.color = '#666';
+                            e.target.style.background = '#f5f5f5';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.color = '#999';
+                            e.target.style.background = 'transparent';
+                          }}
+                          disabled={isProcessingRSVP}
+                        >
+                          I can't make it anymore
+                        </button>
+                      )}
                     </div>
                     <div className={styles.rsvpContent}>
                       <div className={styles.welcomeMessage}>
-                        {isAlreadyRegistered ? 'See you there!' : 'Welcome! Register below to join this event.'}
+                        {isAlreadyRegistered ? 'You\'re registered for this event!' : 'Welcome! Register below to join this event.'}
                       </div>
                       {user && (
                         <div className={styles.userInfo}>
@@ -370,35 +428,47 @@ export default function EventDetail() {
                         </div>
                       )}
                       <div className={styles.buttonContainer}>
-                        <button 
-                          className={styles.rsvpButton}
-                          onClick={handleRSVP}
-                          disabled={isProcessingRSVP || checkingRegistration || isAlreadyRegistered}
-                        >
-                          {isProcessingRSVP ? 'Processing...' : 
-                           checkingRegistration ? 'Checking...' : 
-                           isAlreadyRegistered ? 'Registered' : 
-                           'One-Click RSVP'}
-                        </button>
-                        
-                        {isAlreadyRegistered && (
+                        {!isAlreadyRegistered ? (
                           <button 
-                            className={styles.inviteButton}
-                            onClick={copyEventLink}
-                            title="Invite a friend to this event"
+                            className={styles.rsvpButton}
+                            onClick={handleRSVP}
+                            disabled={isProcessingRSVP || checkingRegistration}
                           >
-                            {copySuccess ? (
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M20 6L9 17l-5-5"/>
-                              </svg>
-                            ) : (
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-                              </svg>
-                            )}
-                            {copySuccess ? 'Copied!' : 'Invite a Friend'}
+                            {isProcessingRSVP ? 'Processing...' : 
+                             checkingRegistration ? 'Checking...' : 
+                             'One-Click RSVP'}
                           </button>
+                        ) : (
+                          <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+                            <button 
+                              className={styles.rsvpButton}
+                              style={{ 
+                                background: '#e8e8e8', 
+                                color: '#666',
+                                flex: 1
+                              }}
+                              disabled
+                            >
+                              Registered
+                            </button>
+                            <button 
+                              className={styles.inviteButton}
+                              onClick={copyEventLink}
+                              title="Invite a friend to this event"
+                            >
+                              {copySuccess ? (
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M20 6L9 17l-5-5"/>
+                                </svg>
+                              ) : (
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                </svg>
+                              )}
+                              {copySuccess ? 'Copied!' : 'Invite'}
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -422,6 +492,68 @@ export default function EventDetail() {
 
         </div>
       </div>
+      
+      {/* Unregister Confirmation Dialog */}
+      {showUnregisterConfirm && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'white',
+            padding: '24px',
+            borderRadius: '8px',
+            maxWidth: '400px',
+            width: '90%',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
+          }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.1rem', fontWeight: '600' }}>
+              Unregister from Event
+            </h3>
+            <p style={{ margin: '0 0 24px 0', color: '#666', lineHeight: '1.5' }}>
+              Are you sure you want to unregister from "{event.title}"? You can always register again later.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowUnregisterConfirm(false)}
+                style={{
+                  background: 'transparent',
+                  color: '#666',
+                  border: '1px solid #e8e8e8',
+                  padding: '8px 16px',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUnregister}
+                disabled={isProcessingRSVP}
+                style={{
+                  background: '#dc3545',
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: '4px',
+                  cursor: isProcessingRSVP ? 'not-allowed' : 'pointer',
+                  opacity: isProcessingRSVP ? 0.6 : 1
+                }}
+              >
+                {isProcessingRSVP ? 'Unregistering...' : 'Unregister'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

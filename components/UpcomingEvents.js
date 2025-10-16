@@ -9,36 +9,69 @@ export default function UpcomingEvents() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [userRsvps, setUserRsvps] = useState(new Set())
+  const [userProfile, setUserProfile] = useState(null)
   const { user } = useAuth()
 
   useEffect(() => {
     fetchUpcomingEvents()
-  }, [])
+  }, [user])
 
   useEffect(() => {
     if (user) {
       fetchUserRsvps()
+      fetchUserProfile()
     } else {
       setUserRsvps(new Set())
+      setUserProfile(null)
     }
   }, [user])
 
   const fetchUpcomingEvents = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .gte('starts_at', new Date().toISOString())
-        .order('starts_at', { ascending: true })
-        .limit(5)
+      
+      // Only fetch events if user is logged in
+      if (!user) {
+        setEvents([])
+        return
+      }
+      
+      // Use the same successful pattern as MyEvents.js
+      const { data: rsvps, error: rsvpError } = await supabase
+        .from('rsvps')
+        .select(`
+          event_id,
+          status,
+          events (
+            id,
+            title,
+            description,
+            location,
+            city,
+            game_title,
+            starts_at,
+            ends_at,
+            cost,
+            banner_image_url
+          )
+        `)
+        .eq('user_id', user.id)
+        .eq('status', 'going')
+        .order('starts_at', { foreignTable: 'events', ascending: true })
 
-      if (error) {
-        throw error
+      if (rsvpError) {
+        throw rsvpError
       }
 
-      setEvents(data || [])
+      const userEvents = rsvps?.map(rsvp => ({
+        ...rsvp.events,
+        rsvpStatus: rsvp.status
+      })) || []
+
+      console.log('Fetched events:', userEvents)
+      setEvents(userEvents)
     } catch (err) {
+      console.error('Error fetching events:', err)
       setError(err.message)
     } finally {
       setLoading(false)
@@ -72,6 +105,32 @@ export default function UpcomingEvents() {
     }
   }
 
+  const fetchUserProfile = async () => {
+    if (!user) {
+      setUserProfile(null)
+      return
+    }
+    
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('first_name, last_name, zip_code')
+        .eq('id', user.id)
+        .single()
+
+      if (error) {
+        console.error('Error fetching user profile:', error)
+        setUserProfile(null)
+        return
+      }
+
+      setUserProfile(data)
+    } catch (err) {
+      console.error('Error fetching user profile:', err)
+      setUserProfile(null)
+    }
+  }
+
   const formatDate = (dateString) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
@@ -82,6 +141,15 @@ export default function UpcomingEvents() {
       hour: '2-digit',
       minute: '2-digit'
     })
+  }
+
+  const getPersonalizedSubtitle = () => {
+    if (!user || !userProfile) {
+      return "Events you're attending"
+    }
+    
+    const firstName = userProfile.first_name || 'there'
+    return `Hey ${firstName}! Here are the events you're attending`
   }
 
   const handleEventClick = (eventId) => {
@@ -98,7 +166,7 @@ export default function UpcomingEvents() {
   if (loading) {
     return (
       <div className={styles.upcomingEvents}>
-        <PageTitle title="Upcoming Events" subtitle="Find out what's happening near you" />
+        <PageTitle title="Upcoming Events" subtitle={getPersonalizedSubtitle()} />
         <div className={styles.loading}>Loading events...</div>
       </div>
     )
@@ -107,7 +175,7 @@ export default function UpcomingEvents() {
   if (error) {
     return (
       <div className={styles.upcomingEvents}>
-        <PageTitle title="Upcoming Events" subtitle="Find out what's happening near you" />
+        <PageTitle title="Upcoming Events" subtitle={getPersonalizedSubtitle()} />
         <div className={styles.error}>Error loading events: {error}</div>
       </div>
     )
@@ -115,9 +183,14 @@ export default function UpcomingEvents() {
 
   return (
     <div className={styles.upcomingEvents}>
-      <PageTitle title="Upcoming Events" subtitle="Find out what's happening near you" />
+        <PageTitle title="Upcoming Events" subtitle={getPersonalizedSubtitle()} />
       {events.length === 0 ? (
-        <div className={styles.noEvents}>No upcoming events found.</div>
+        <div className={styles.noEvents}>
+          {user 
+            ? "You're not attending any upcoming events yet. Discover events to join!"
+            : 'Please log in to see your events.'
+          }
+        </div>
       ) : (
         <div className={styles.eventsList}>
           {events.map((event) => {
