@@ -8,6 +8,7 @@ import UserSettings from '../components/UserSettings'
 import Pricing from '../components/Pricing'
 import NavBar from '../components/NavBar'
 import PaymentConfirmation from '../components/PaymentConfirmation'
+import Splash from '../components/Splash'
 
 export default function Home() {
   const router = useRouter()
@@ -43,6 +44,8 @@ export default function Home() {
     setActiveTab(tab)
     if (tab === 'upcoming') {
       router.push('/?tab=upcoming', undefined, { shallow: true })
+    } else if (tab === 'splash') {
+      router.push('/?tab=splash', undefined, { shallow: true })
     } else {
       router.push(`/?tab=${tab}`, undefined, { shallow: true })
     }
@@ -50,6 +53,8 @@ export default function Home() {
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'splash':
+        return <Splash onTabChange={handleTabChange} />
       case 'upcoming':
         return <UpcomingEvents />
       case 'discover':

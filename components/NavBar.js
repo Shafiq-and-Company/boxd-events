@@ -35,7 +35,7 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
     <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
       <div 
         className={styles.logo}
-        onClick={() => router.push('/')}
+        onClick={() => onTabChange && onTabChange('splash')}
       >
         <img 
           src="/logo.png" 
