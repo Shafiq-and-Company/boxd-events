@@ -32,7 +32,6 @@ export default function CreateEvent() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(false)
   const [games, setGames] = useState([])
   const [gamesLoading, setGamesLoading] = useState(true)
   const [bannerFile, setBannerFile] = useState(null)
@@ -40,10 +39,10 @@ export default function CreateEvent() {
   const [uploading, setUploading] = useState(false)
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target
+    const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: value
     }))
   }
 
@@ -172,8 +171,6 @@ export default function CreateEvent() {
         throw error
       }
 
-      setSuccess(true)
-      
       // Show success popup and navigate to My Events
       setTimeout(() => {
         alert('Event created successfully!')
@@ -210,48 +207,51 @@ export default function CreateEvent() {
       )}
 
       <div className={styles.formContainer}>
-        <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.bannerSection}>
-          <div className={styles.bannerImage}>
-            {bannerPreview ? (
-              <img 
-                src={bannerPreview} 
-                alt="Banner preview" 
-                className={styles.bannerPreview}
+        <div className={styles.twoColumnLayout}>
+          <div className={styles.bannerColumn}>
+            <div className={styles.bannerImage}>
+              {bannerPreview ? (
+                <img 
+                  src={bannerPreview} 
+                  alt="Banner preview" 
+                  className={styles.bannerPreview}
+                />
+              ) : (
+                <div className={styles.bannerPlaceholder}>
+                  <div className={styles.uploadText}>Upload banner image</div>
+                </div>
+              )}
+              <input
+                type="file"
+                id="bannerFile"
+                name="bannerFile"
+                accept="image/*"
+                onChange={handleFileChange}
+                className={styles.fileInput}
               />
-            ) : (
-              <div className={styles.bannerPlaceholder}>
-                <div className={styles.uploadText}>Upload banner image</div>
-              </div>
-            )}
-            <input
-              type="file"
-              id="bannerFile"
-              name="bannerFile"
-              accept="image/*"
-              onChange={handleFileChange}
-              className={styles.fileInput}
-            />
-            <label htmlFor="bannerFile" className={styles.fileInputLabel}>
-              {bannerFile ? 'Change Image' : 'Choose Image'}
-            </label>
-            {bannerFile && (
-              <button
-                type="button"
-                onClick={() => {
-                  setBannerFile(null)
-                  setBannerPreview(null)
-                  // Reset file input
-                  const fileInput = document.getElementById('bannerFile')
-                  if (fileInput) fileInput.value = ''
-                }}
-                className={styles.removeImageButton}
-              >
-                Remove Image
-              </button>
-            )}
+              <label htmlFor="bannerFile" className={styles.fileInputLabel}>
+                {bannerFile ? 'Change Image' : 'Choose Image'}
+              </label>
+              {bannerFile && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBannerFile(null)
+                    setBannerPreview(null)
+                    // Reset file input
+                    const fileInput = document.getElementById('bannerFile')
+                    if (fileInput) fileInput.value = ''
+                  }}
+                  className={styles.removeImageButton}
+                >
+                  Remove Image
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+
+          <div className={styles.formColumn}>
+            <form onSubmit={handleSubmit} className={styles.form}>
 
         <div className={styles.formGroup}>
           <input
@@ -293,33 +293,6 @@ export default function CreateEvent() {
               />
             </div>
           </div>
-        </div>
-
-        <div className={styles.gameSection}>
-          {gamesLoading ? (
-            <div className={styles.gameLoading}>Loading games...</div>
-          ) : (
-            <>
-              <div className={styles.gameOptions}>
-                {games.map((game, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    className={`${styles.gameOption} ${formData.game_title === game.game_title ? styles.gameOptionSelected : ''}`}
-                    onClick={() => setFormData(prev => ({ ...prev, game_title: game.game_title }))}
-                  >
-                    <div className={styles.gameImage}>
-                      <div className={styles.imagePlaceholder}>
-                        {game.game_title.charAt(0).toUpperCase()}
-                      </div>
-                    </div>
-                    <span className={styles.gameLabel}>{game.game_title}</span>
-                  </button>
-                ))}
-              </div>
-
-            </>
-          )}
         </div>
 
         <div className={styles.descriptionSection}>
@@ -388,15 +361,44 @@ export default function CreateEvent() {
           </div>
         </div>
 
+        <div className={styles.gameSection}>
+          {gamesLoading ? (
+            <div className={styles.gameLoading}>Loading games...</div>
+          ) : (
+            <>
+              <div className={styles.gameOptions}>
+                {games.map((game, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    className={`${styles.gameOption} ${formData.game_title === game.game_title ? styles.gameOptionSelected : ''}`}
+                    onClick={() => setFormData(prev => ({ ...prev, game_title: game.game_title }))}
+                  >
+                    <div className={styles.gameImage}>
+                      <div className={styles.imagePlaceholder}>
+                        {game.game_title.charAt(0).toUpperCase()}
+                      </div>
+                    </div>
+                    <span className={styles.gameLabel}>{game.game_title}</span>
+                  </button>
+                ))}
+              </div>
 
-        <button 
-          type="submit" 
-          disabled={loading || uploading}
-          className={styles.submitButton}
-        >
-          {uploading ? 'Uploading Image...' : loading ? 'Creating Event...' : 'Create Event'}
-        </button>
-        </form>
+            </>
+          )}
+        </div>
+
+
+            <button 
+              type="submit" 
+              disabled={loading || uploading}
+              className={styles.submitButton}
+            >
+              {uploading ? 'Uploading Image...' : loading ? 'Creating Event...' : 'Create Event'}
+            </button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   )

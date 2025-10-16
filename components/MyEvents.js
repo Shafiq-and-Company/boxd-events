@@ -62,6 +62,7 @@ export default function MyEvents({ onTabChange }) {
         `)
         .eq('user_id', user.id)
         .eq('status', 'going')
+        .order('starts_at', { foreignTable: 'events', ascending: true })
 
       if (rsvpError) {
         throw rsvpError
@@ -104,7 +105,7 @@ export default function MyEvents({ onTabChange }) {
           banner_image_url
         `)
         .eq('host_id', user.id)
-        .order('starts_at', { ascending: true })
+        .order('created_at', { ascending: false })
 
       if (eventsError) {
         throw eventsError

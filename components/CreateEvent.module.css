@@ -6,6 +6,26 @@
   margin: 0 auto;
 }
 
+.formContainer {
+  width: 100%;
+}
+
+.twoColumnLayout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.bannerColumn {
+  position: sticky;
+  top: 24px;
+}
+
+.formColumn {
+  width: 100%;
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -15,8 +35,8 @@
 /* Banner */
 .bannerImage {
   width: 100%;
-  height: 200px;
-  border: 2px dashed #ccc;
+  aspect-ratio: 1;
+  border: 1px solid #ccc;
   border-radius: 8px;
   background: #fafafa;
   display: flex;
@@ -27,15 +47,9 @@
   overflow: hidden;
 }
 
-.bannerImage:hover {
-  border-color: #999;
-  background: #f5f5f5;
-}
-
 .uploadText {
+  color: #999;
   font-size: 0.875rem;
-  color: #666;
-  text-align: center;
 }
 
 .fileInput {
@@ -44,43 +58,33 @@
 
 .fileInputLabel {
   position: absolute;
-  bottom: 12px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
   background: #000;
   color: #fff;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 4px;
   font-size: 0.75rem;
   cursor: pointer;
-}
-
-.fileInputLabel:hover {
-  background: #333;
 }
 
 .bannerPreview {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
 }
 
 .removeImageButton {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 4px;
+  right: 4px;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
   border: none;
-  border-radius: 4px;
-  padding: 4px 8px;
+  padding: 4px 6px;
   font-size: 0.7rem;
   cursor: pointer;
-}
-
-.removeImageButton:hover {
-  background: rgba(0, 0, 0, 0.9);
 }
 
 /* Layout */
@@ -97,7 +101,7 @@
 }
 
 /* Form Inputs */
-.input, .textarea, .select, .titleInput {
+.input, .textarea, .titleInput {
   width: 100%;
   border: none;
   border-bottom: 1px solid #ccc;
@@ -111,10 +115,10 @@
 .titleInput {
   padding: 12px 0;
   border-bottom: 2px solid #ccc;
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
 
-.input:focus, .textarea:focus, .select:focus, .titleInput:focus {
+.input:focus, .textarea:focus, .titleInput:focus {
   outline: none;
   border-bottom: 2px solid #999;
 }
@@ -132,12 +136,9 @@
   min-height: 80px;
 }
 
-.select {
-  cursor: pointer;
-}
 
 /* Sections */
-.dateTimeSection, .gameSection, .descriptionSection, .locationSection, .eventOptionsSection {
+.dateTimeSection, .gameSection, .descriptionSection, .locationSection {
   padding: 16px;
   background: #fafafa;
   border-radius: 4px;
@@ -148,7 +149,7 @@
 .gameOptions {
   display: flex;
   flex-direction: column;
-  max-height: 200px;
+  max-height: 120px;
   overflow-y: auto;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -226,36 +227,6 @@
 }
 
 
-/* Cost Slider */
-.costSlider {
-  width: 100%;
-  height: 4px;
-  background: #e8e8e8;
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-}
-
-.costSlider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #000;
-  cursor: pointer;
-  border: 2px solid #fff;
-}
-
-.costSlider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #000;
-  cursor: pointer;
-  border: 2px solid #fff;
-}
 
 
 /* Submit Button */
@@ -300,6 +271,21 @@
 
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .twoColumnLayout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .bannerColumn {
+    position: static;
+  }
+  
+  .bannerImage {
+    aspect-ratio: 1;
+  }
+}
+
 @media (max-width: 767px) {
   .createEvent {
     padding: 16px 8px;
@@ -314,17 +300,17 @@
     gap: 12px;
   }
   
-  .dateTimeSection, .gameSection, .descriptionSection, .locationSection, .eventOptionsSection {
+  .dateTimeSection, .gameSection, .descriptionSection, .locationSection {
     padding: 8px;
     margin-bottom: 8px;
   }
   
   .bannerImage {
-    height: 120px;
+    aspect-ratio: 1;
   }
   
   .titleInput {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     padding: 10px 0;
   }
   
@@ -338,7 +324,7 @@
   }
   
   .gameOptions {
-    max-height: 150px;
+    max-height: 100px;
   }
   
   .gameOption {
@@ -375,17 +361,17 @@
     gap: 12px;
   }
   
-  .dateTimeSection, .gameSection, .descriptionSection, .locationSection, .eventOptionsSection {
+  .dateTimeSection, .gameSection, .descriptionSection, .locationSection {
     padding: 6px;
     margin-bottom: 6px;
   }
   
   .bannerImage {
-    height: 100px;
+    aspect-ratio: 1;
   }
   
   .titleInput {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     padding: 8px 0;
   }
   
@@ -399,7 +385,7 @@
   }
   
   .gameOptions {
-    max-height: 120px;
+    max-height: 80px;
   }
   
   .gameOption {
