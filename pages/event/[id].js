@@ -128,9 +128,7 @@ export default function EventDetail() {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      year: 'numeric'
     })
   }
 
@@ -140,6 +138,38 @@ export default function EventDetail() {
       hour: '2-digit',
       minute: '2-digit'
     })
+  }
+
+  const formatCalendarMonth = (dateString) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      month: 'short'
+    }).toUpperCase()
+  }
+
+  const formatCalendarDay = (dateString) => {
+    const date = new Date(dateString)
+    return date.getDate().toString()
+  }
+
+  const formatTimeRange = (startDate, endDate) => {
+    const start = new Date(startDate)
+    const end = endDate ? new Date(endDate) : null
+    
+    const startTime = start.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+    
+    if (end) {
+      const endTime = end.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+      return `${startTime} - ${endTime}`
+    }
+    
+    return startTime
   }
 
   const handleRSVP = async () => {
@@ -206,7 +236,14 @@ export default function EventDetail() {
   if (loading) {
     console.log('Event detail loading state:', { loading, event, error, id })
     return (
-      <div style={{ flex: 1 }}>
+      <div style={{
+        background: `
+          linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px)
+        `,
+        backgroundSize: '8px 8px',
+        flex: 1
+      }}>
         <NavBar activeTab="" onTabChange={handleTabChange} />
         <div className={styles.container}>
           <div className={styles.loading}>Loading event...</div>
@@ -217,7 +254,14 @@ export default function EventDetail() {
 
   if (error || !event) {
     return (
-      <div style={{ flex: 1 }}>
+      <div style={{
+        background: `
+          linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px)
+        `,
+        backgroundSize: '8px 8px',
+        flex: 1
+      }}>
         <NavBar activeTab="" onTabChange={handleTabChange} />
         <div className={styles.container}>
           <div className={styles.error}>
@@ -229,215 +273,223 @@ export default function EventDetail() {
   }
 
   return (
-    <div style={{ flex: 1 }}>
+    <div style={{
+      background: `
+        linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px)
+      `,
+      backgroundSize: '8px 8px',
+      flex: 1
+    }}>
       <NavBar activeTab="" onTabChange={handleTabChange} />
       <div className={styles.container}>
         <div className={styles.eventDetail}>
-          <div className={styles.eventHero}>
-            <div className={styles.eventImage}>
-              {event.banner_image_url ? (
-                <img 
-                  src={event.banner_image_url} 
-                  alt={event.title}
-                  style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'cover',
-                    borderRadius: '4px'
-                  }}
-                />
-              ) : (
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  color: '#999',
-                  fontSize: '0.9rem'
-                }}>
-                  No image
-                </div>
-              )}
-            </div>
-            <div className={styles.eventHeader}>
-              {event.game_title && (
-                <div className={styles.gameTitle}>{event.game_title}</div>
-              )}
-              <h1 className={styles.eventTitle}>{event.title}</h1>
-              {event.host_user && event.host_user.first_name && (
-                <div className={styles.hostedBy}>
-                  <span className={styles.hostedByLabel}>Hosted by</span>
-                  <span className={styles.hostName}>{event.host_user.first_name}</span>
-                </div>
-              )}
-            </div>
-          </div>
 
-          <div className={styles.eventContent}>
-            <div className={styles.eventCards}>
-              <div className={styles.eventCard}>
-                <div className={styles.cardHeader}>
-                  <h3>Date & Time</h3>
+          <div className={styles.pageLayout}>
+            <div className={styles.leftColumn}>
+              <div className={styles.eventImage}>
+                {event.banner_image_url ? (
+                  <img 
+                    src={event.banner_image_url} 
+                    alt={event.title}
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: 'cover',
+                      borderRadius: '4px'
+                    }}
+                  />
+                ) : (
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    color: '#999',
+                    fontSize: '0.9rem'
+                  }}>
+                    No image
+                  </div>
+                )}
+              </div>
+              
+              <div className={styles.hostedBy}>
+                <div className={styles.hostedByIcon}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
                 </div>
-                <div className={styles.cardContent}>
-                  <div className={styles.dateTime}>
-                    <div className={styles.date}>{formatDate(event.starts_at)}</div>
-                    <div className={styles.timeContainer}>
-                      <div className={styles.timeLabel}>Starts:</div>
-                      <div className={styles.time}>{formatTime(event.starts_at)}</div>
-                    </div>
-                    {event.ends_at && (
-                      <div className={styles.timeContainer}>
-                        <div className={styles.timeLabel}>Ends:</div>
-                        <div className={styles.time}>{formatTime(event.ends_at)}</div>
-                      </div>
-                    )}
+                <div className={styles.hostedByText}>
+                  <div className={styles.hostedByLabel}>Hosted by</div>
+                  <div className={styles.hostName}>
+                    {event.host_user?.first_name || 'Unknown Host'}
                   </div>
                 </div>
               </div>
-
-              {event.location && (
-                <div className={styles.eventCard}>
-                  <div className={styles.cardHeader}>
-                    <h3>Location</h3>
-                  </div>
-                  <div className={styles.cardContent}>
-                    <div className={styles.location}>
-                      {event.location}
-                      {event.city && `, ${event.city}`}
-                      {event.state && `, ${event.state}`}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {event.cost && (
-                <div className={styles.eventCard}>
-                  <div className={styles.cardHeader}>
-                    <h3>Price</h3>
-                  </div>
-                  <div className={styles.cardContent}>
-                    <div className={styles.price}>
-                      {event.cost} USD
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {event.description && (
-                <div className={styles.eventCard}>
-                  <div className={styles.cardHeader}>
-                    <h3>About This Event</h3>
-                  </div>
-                  <div className={styles.cardContent}>
-                    <div className={styles.description}>
-                      {event.description}
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
-            <div className={styles.eventActions}>
-              {!user ? (
-                <button 
-                  className={styles.rsvpButton}
-                  onClick={() => router.push('/login')}
-                >
-                  Login to RSVP
-                </button>
-              ) : checkingRegistration ? (
-                <div className={styles.loading}>
-                  Checking registration status...
+            <div className={styles.rightColumn}>
+              <div className={styles.eventHeader}>
+                <h1 className={styles.eventTitle}>{event.title}</h1>
+              </div>
+
+              <div className={styles.eventInfo}>
+                <div className={styles.dateTime}>
+                  <div className={styles.calendarIcon}>
+                    <div className={styles.calendarMonth}>{formatCalendarMonth(event.starts_at)}</div>
+                    <div className={styles.calendarDay}>{formatCalendarDay(event.starts_at)}</div>
+                  </div>
+                  <div className={styles.dateTimeText}>
+                    <div className={styles.dateText}>{formatDate(event.starts_at)}</div>
+                    <div className={styles.timeText}>{formatTimeRange(event.starts_at, event.ends_at)}</div>
+                  </div>
                 </div>
-              ) : isAlreadyRegistered ? (
-                <div style={{ 
-                  background: '#d4edda', 
-                  color: '#155724',
-                  padding: '8px 16px', 
-                  borderRadius: '20px', 
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  textAlign: 'center',
-                  display: 'inline-block'
-                }}>
-                  ✓ Going
-                </div>
-              ) : rsvpSuccess ? (
-                <div className={styles.successMessage}>
-                  Successfully registered for this event!
-                </div>
-              ) : (
+
+                {event.location && (
+                  <div className={styles.locationInfo}>
+                    <div className={styles.locationIcon}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                      </svg>
+                    </div>
+                    <div className={styles.locationText}>
+                      <div className={styles.locationAddress}>
+                        {event.location}
+                        {event.city && `, ${event.city}`}
+                        {event.state && `, ${event.state}`}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className={styles.rsvpSection}>
-                  {rsvpError && (
-                    <div className={styles.errorMessage}>
-                      {rsvpError}
+                  <div className={styles.rsvpCard}>
+                    <div className={styles.rsvpHeader}>
+                      <h3>Registration</h3>
+                    </div>
+                    <div className={styles.rsvpContent}>
+                      <div className={styles.welcomeMessage}>
+                        Welcome! Register below to join this event.
+                      </div>
+                      {user && (
+                        <div className={styles.userInfo}>
+                          <div className={styles.userIcon}>
+                            {user.user_metadata?.avatar_url ? (
+                              <img 
+                                src={user.user_metadata.avatar_url} 
+                                alt="Profile" 
+                                className={styles.userAvatar}
+                              />
+                            ) : (
+                              <div className={styles.userInitial}>
+                                {user.user_metadata?.first_name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                              </div>
+                            )}
+                          </div>
+                          <div className={styles.userDetails}>
+                            <div className={styles.userName}>
+                              {user.user_metadata?.first_name || user.email?.split('@')[0] || 'User'}
+                            </div>
+                            <div className={styles.userEmail}>
+                              {user.email}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <button 
+                        className={styles.rsvpButton}
+                        onClick={handleRSVP}
+                        disabled={isProcessingRSVP || checkingRegistration || isAlreadyRegistered}
+                      >
+                        {isProcessingRSVP ? 'Processing...' : 
+                         checkingRegistration ? 'Checking...' : 
+                         isAlreadyRegistered ? 'Already Registered' : 
+                         'One-Click RSVP'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {event.description && (
+                  <div className={styles.aboutSection}>
+                    <div className={styles.aboutText}>
+                      <div className={styles.aboutTitle}>About</div>
+                      <div className={styles.aboutDescription}>
+                        {event.description}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Debug information pills */}
+                <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ 
+                    background: '#f0f0f0', 
+                    padding: '4px 8px', 
+                    borderRadius: '12px', 
+                    fontSize: '12px',
+                    fontFamily: 'monospace'
+                  }}>
+                    user: {user?.id?.slice(0, 8) || 'none'}
+                  </div>
+                  <div style={{ 
+                    background: '#f0f0f0', 
+                    padding: '4px 8px', 
+                    borderRadius: '12px', 
+                    fontSize: '12px',
+                    fontFamily: 'monospace'
+                  }}>
+                    event: {event?.id?.slice(0, 8) || 'none'}
+                  </div>
+                  {registrationDetails ? (
+                    <>
+                      <div style={{ 
+                        background: registrationDetails.status === 'going' ? '#d4edda' : '#f8d7da', 
+                        padding: '4px 8px', 
+                        borderRadius: '12px', 
+                        fontSize: '12px',
+                        fontFamily: 'monospace'
+                      }}>
+                        {registrationDetails.status}
+                      </div>
+                      <div style={{ 
+                        background: registrationDetails.payment_status === 'paid' ? '#d4edda' : '#fff3cd', 
+                        padding: '4px 8px', 
+                        borderRadius: '12px', 
+                        fontSize: '12px',
+                        fontFamily: 'monospace'
+                      }}>
+                        {registrationDetails.payment_status}
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ 
+                      background: '#f8d7da', 
+                      padding: '4px 8px', 
+                      borderRadius: '12px', 
+                      fontSize: '12px',
+                      fontFamily: 'monospace'
+                    }}>
+                      no rsvp
                     </div>
                   )}
-                  <button 
-                    className={styles.rsvpButton}
-                    onClick={handleRSVP}
-                    disabled={isProcessingRSVP || checkingRegistration}
-                  >
-                    {isProcessingRSVP ? 'Processing...' : checkingRegistration ? 'Checking...' : 'RSVP Now'}
-                  </button>
                 </div>
-              )}
-            </div>
-
-            {/* Debug information pills */}
-            <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              <div style={{ 
-                background: '#f0f0f0', 
-                padding: '4px 8px', 
-                borderRadius: '12px', 
-                fontSize: '12px',
-                fontFamily: 'monospace'
-              }}>
-                user: {user?.id?.slice(0, 8) || 'none'}
               </div>
-              <div style={{ 
-                background: '#f0f0f0', 
-                padding: '4px 8px', 
-                borderRadius: '12px', 
-                fontSize: '12px',
-                fontFamily: 'monospace'
-              }}>
-                event: {event?.id?.slice(0, 8) || 'none'}
-              </div>
-              {registrationDetails ? (
-                <>
-                  <div style={{ 
-                    background: registrationDetails.status === 'going' ? '#d4edda' : '#f8d7da', 
-                    padding: '4px 8px', 
-                    borderRadius: '12px', 
-                    fontSize: '12px',
-                    fontFamily: 'monospace'
-                  }}>
-                    {registrationDetails.status}
-                  </div>
-                  <div style={{ 
-                    background: registrationDetails.payment_status === 'paid' ? '#d4edda' : '#fff3cd', 
-                    padding: '4px 8px', 
-                    borderRadius: '12px', 
-                    fontSize: '12px',
-                    fontFamily: 'monospace'
-                  }}>
-                    {registrationDetails.payment_status}
-                  </div>
-                </>
-              ) : (
-                <div style={{ 
-                  background: '#f8d7da', 
-                  padding: '4px 8px', 
-                  borderRadius: '12px', 
-                  fontSize: '12px',
-                  fontFamily: 'monospace'
-                }}>
-                  no rsvp
-                </div>
-              )}
             </div>
           </div>
+
+          {!user && (
+            <div className={styles.loginPrompt}>
+              <button 
+                className={styles.loginButton}
+                onClick={() => router.push('/login')}
+              >
+                Login to RSVP
+              </button>
+            </div>
+          )}
+
         </div>
       </div>
     </div>
