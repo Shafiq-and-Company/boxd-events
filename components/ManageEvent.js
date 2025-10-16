@@ -25,12 +25,12 @@ export default function ManageEvent() {
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-  const [deleteLoading, setDeleteLoading] = useState(false)
   const [games, setGames] = useState([])
   const [gamesLoading, setGamesLoading] = useState(true)
   const [bannerImageUrl, setBannerImageUrl] = useState(null)
-  const [updateSuccess, setUpdateSuccess] = useState(false)
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const [imageUploading, setImageUploading] = useState(false)
 
   // Helper functions
   const formatDateForInput = (dateString) => {
@@ -39,10 +39,56 @@ export default function ManageEvent() {
     return date.toISOString().slice(0, 16)
   }
 
+  const uploadImage = async (file) => {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}.${fileExt}`
+    const filePath = `event-banners/${fileName}`
+
+    const { data, error } = await supabase.storage
+      .from('event_banner_images')
+      .upload(filePath, file)
+
+    if (error) throw error
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('event_banner_images')
+      .getPublicUrl(filePath)
+
+    return publicUrl
+  }
+
+  const showNotification = (title, body) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, {
+        body,
+        icon: '/favicon.ico'
+      })
+    }
+  }
+
   // Event handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setImageFile(file)
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setImagePreview(e.target.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleRemoveImage = () => {
+    setImageFile(null)
+    setImagePreview(null)
+    const fileInput = document.getElementById('bannerFile')
+    if (fileInput) fileInput.value = ''
   }
 
   const handleSubmit = async (e) => {
@@ -57,6 +103,15 @@ export default function ManageEvent() {
     setError(null)
 
     try {
+      let bannerImageUrl = formData.banner_image_url
+      
+      // Upload new image if one was selected
+      if (imageFile) {
+        setImageUploading(true)
+        bannerImageUrl = await uploadImage(imageFile)
+        setImageUploading(false)
+      }
+
       const eventData = {
         title: formData.title,
         description: formData.description,
@@ -66,7 +121,8 @@ export default function ManageEvent() {
         game_title: formData.game_title,
         city: formData.city,
         state: formData.state,
-        cost: formData.cost || 0
+        cost: formData.cost || 0,
+        banner_image_url: bannerImageUrl
       }
 
       const { data, error } = await supabase
@@ -86,52 +142,12 @@ export default function ManageEvent() {
         return
       }
 
-      // Show success feedback and refresh form data
-      setUpdateSuccess(true)
-      setTimeout(() => setUpdateSuccess(false), 3000)
-      
-      // Refresh the form data to show updated values
+      showNotification('Event Updated', 'Your event has been updated successfully!')
       await fetchEventData()
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleDeleteEvent = async () => {
-    if (!user) {
-      setError('You must be logged in to delete an event')
-      return
-    }
-
-    setDeleteLoading(true)
-    setError(null)
-
-    try {
-      // Delete RSVPs first
-      const { error: rsvpError } = await supabase
-        .from('rsvps')
-        .delete()
-        .eq('event_id', id)
-
-      if (rsvpError) throw rsvpError
-
-      // Delete event
-      const { error: eventError } = await supabase
-        .from('events')
-        .delete()
-        .eq('id', id)
-        .eq('host_id', user.id)
-
-      if (eventError) throw eventError
-
-      router.push('/my-events?tab=hosting')
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setDeleteLoading(false)
-      setShowDeleteConfirm(false)
     }
   }
 
@@ -191,13 +207,18 @@ export default function ManageEvent() {
 
   // Effects
   useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission()
+    }
+  }, [])
+
+  useEffect(() => {
     if (id && user) fetchEventData()
   }, [id, user])
 
   useEffect(() => {
     fetchGames()
   }, [])
-
 
   // Early returns
   if (!user) {
@@ -235,15 +256,17 @@ export default function ManageEvent() {
         <div className={styles.errorMessage}>{error}</div>
       )}
 
-      {updateSuccess && (
-        <div className={styles.successMessage}>Event updated successfully!</div>
-      )}
-
       <div className={styles.formContainer}>
         <div className={styles.twoColumnLayout}>
           <div className={styles.bannerColumn}>
             <div className={styles.bannerImage}>
-              {bannerImageUrl ? (
+              {imagePreview ? (
+                <img 
+                  src={imagePreview} 
+                  alt="Banner preview" 
+                  className={styles.bannerPreview}
+                />
+              ) : bannerImageUrl ? (
                 <img 
                   src={bannerImageUrl} 
                   alt="Event banner" 
@@ -253,6 +276,26 @@ export default function ManageEvent() {
                 <div className={styles.bannerPlaceholder}>
                   <div className={styles.uploadText}>Upload banner image</div>
                 </div>
+              )}
+              <input
+                type="file"
+                id="bannerFile"
+                name="bannerFile"
+                accept="image/*"
+                onChange={handleImageChange}
+                className={styles.fileInput}
+              />
+              <label htmlFor="bannerFile" className={styles.fileInputLabel}>
+                {imageFile ? 'Change Image' : 'Choose Image'}
+              </label>
+              {imageFile && (
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className={styles.removeImageButton}
+                >
+                  Remove Image
+                </button>
               )}
             </div>
           </div>
@@ -378,57 +421,15 @@ export default function ManageEvent() {
 
               <button 
                 type="submit" 
-                disabled={loading}
+                disabled={loading || imageUploading}
                 className={styles.submitButton}
               >
-                {loading ? 'Updating Event...' : 'Update Event'}
-              </button>
-
-              <div className={styles.buttonSpacer}></div>
-              <div className={styles.deleteDivider}></div>
-
-              <button
-                type="button"
-                onClick={() => setShowDeleteConfirm(true)}
-                className={styles.deleteButton}
-                disabled={loading || deleteLoading}
-              >
-                Delete Event
+                {loading ? 'Updating Event...' : imageUploading ? 'Uploading Image...' : 'Update Event'}
               </button>
             </form>
           </div>
         </div>
       </div>
-
-      {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <h3 className={styles.modalTitle}>Delete Event</h3>
-            <p className={styles.modalMessage}>
-              This action cannot be undone and will remove all RSVPs.
-            </p>
-            <div className={styles.modalActions}>
-              <button
-                type="button"
-                onClick={() => setShowDeleteConfirm(false)}
-                className={styles.cancelButton}
-                disabled={deleteLoading}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleDeleteEvent}
-                className={styles.confirmDeleteButton}
-                disabled={deleteLoading}
-              >
-                {deleteLoading ? 'Deleting...' : 'Delete'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

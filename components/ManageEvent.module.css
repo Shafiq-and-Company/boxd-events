@@ -1,4 +1,4 @@
-/* ManageEvent Component - Ultra Minimal CSS */
+/* ManageEvent Component - Clean CSS */
 
 .manageEvent {
   max-width: 800px;
@@ -45,6 +45,28 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  transition: border-color 200ms ease;
+}
+
+.bannerImage:hover {
+  border-color: #999;
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileInputLabel {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
 }
 
 .uploadText {
@@ -56,6 +78,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.removeImageButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  border: none;
+  padding: 4px 6px;
+  font-size: 0.7rem;
+  cursor: pointer;
 }
 
 .bannerPreview {
@@ -231,43 +265,8 @@
   cursor: not-allowed;
 }
 
-.buttonSpacer {
-  height: 8px;
-}
-
-.deleteDivider {
-  height: 1px;
-  background: #e8e8e8;
-  margin: 12px 0;
-}
-
-.deleteButton {
-  background: transparent;
-  color: #999;
-  border: 1px solid #e8e8e8;
-  border-radius: 4px;
-  padding: 12px 24px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 200ms ease;
-  width: 100%;
-}
-
-.deleteButton:hover:not(:disabled) {
-  color: #666;
-  border-color: #ccc;
-  background: #fafafa;
-}
-
-.deleteButton:disabled {
-  color: #ccc;
-  border-color: #e8e8e8;
-  cursor: not-allowed;
-  background: transparent;
-}
-
 /* Messages */
-.errorMessage, .successMessage, .authRequired, .loading {
+.errorMessage, .authRequired, .loading {
   padding: 12px 0;
   font-size: 0.75rem;
   margin-bottom: 24px;
@@ -278,110 +277,10 @@
   border-bottom: 1px solid #666;
 }
 
-.successMessage {
-  color: #28a745;
-  border-bottom: 1px solid #28a745;
-}
-
 .authRequired, .loading {
   color: #999;
   text-align: center;
   padding: 40px 0;
-}
-
-/* Modal */
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.modalContent {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 24px;
-  max-width: 400px;
-  width: 100%;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.modalTitle {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: #000000;
-  margin: 0 0 12px 0;
-  text-align: center;
-}
-
-.modalMessage {
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: #666666;
-  margin: 0 0 24px 0;
-  line-height: 1.5;
-  text-align: center;
-}
-
-.modalActions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-
-.cancelButton {
-  background: #ffffff;
-  color: #666666;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 0.875rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all 200ms ease;
-}
-
-.cancelButton:hover:not(:disabled) {
-  color: #000000;
-  border-color: #999999;
-  background: #fafafa;
-}
-
-.cancelButton:disabled {
-  color: #cccccc;
-  border-color: #e8e8e8;
-  cursor: not-allowed;
-  background: #ffffff;
-}
-
-.confirmDeleteButton {
-  background: #000000;
-  color: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 0.875rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all 200ms ease;
-}
-
-.confirmDeleteButton:hover:not(:disabled) {
-  background: #333333;
-  border-color: #333333;
-}
-
-.confirmDeleteButton:disabled {
-  background: #999999;
-  border-color: #999999;
-  cursor: not-allowed;
 }
 
 /* Responsive */
@@ -448,7 +347,6 @@
   }
   
   .submitButton {
-    width: 100%;
     padding: 12px 20px;
     font-size: 0.8rem;
     margin-top: 12px;
@@ -505,6 +403,16 @@
     padding: 10px 16px;
     font-size: 0.75rem;
     margin-top: 10px;
+  }
+  
+  .fileInputLabel {
+    padding: 4px 8px;
+    font-size: 0.65rem;
+  }
+  
+  .removeImageButton {
+    padding: 2px 4px;
+    font-size: 0.6rem;
   }
 }
 
