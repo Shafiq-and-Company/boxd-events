@@ -6,12 +6,23 @@ import styles from './CreateEvent.module.css'
 
 export default function CreateEvent() {
   const { user } = useAuth()
+  // Get today's date in the format required for datetime-local input
+  const getTodayDateTime = () => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+  }
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     location: '',
-    starts_at: '',
-    ends_at: '',
+    starts_at: getTodayDateTime(),
+    ends_at: getTodayDateTime(),
     game_title: '',
     city: '',
     state: '',
@@ -22,7 +33,6 @@ export default function CreateEvent() {
   const [success, setSuccess] = useState(false)
   const [games, setGames] = useState([])
   const [gamesLoading, setGamesLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
   const [bannerFile, setBannerFile] = useState(null)
   const [bannerPreview, setBannerPreview] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -60,14 +70,6 @@ export default function CreateEvent() {
     fetchGames()
   }, [])
 
-  // Filter games based on search term
-  const filteredGames = games.filter(game => 
-    game.game_title.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value)
-  }
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]
@@ -173,8 +175,8 @@ export default function CreateEvent() {
         title: '',
         description: '',
         location: '',
-        starts_at: '',
-        ends_at: '',
+        starts_at: getTodayDateTime(),
+        ends_at: getTodayDateTime(),
         game_title: '',
         city: '',
         state: '',
@@ -313,18 +315,8 @@ export default function CreateEvent() {
             <div className={styles.gameLoading}>Loading games...</div>
           ) : (
             <>
-              <div className={styles.gameSearchContainer}>
-                <input
-                  type="text"
-                  placeholder="Search games..."
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  className={styles.gameSearchInput}
-                />
-              </div>
-              
               <div className={styles.gameOptions}>
-                {filteredGames.map((game, index) => (
+                {games.map((game, index) => (
                   <button
                     key={index}
                     type="button"
@@ -341,11 +333,6 @@ export default function CreateEvent() {
                 ))}
               </div>
 
-              {filteredGames.length === 0 && searchTerm && (
-                <div className={styles.noGamesFound}>
-                  No games found matching "{searchTerm}"
-                </div>
-              )}
             </>
           )}
         </div>
