@@ -257,47 +257,6 @@
   border: 2px solid #fff;
 }
 
-/* Checkboxes */
-.capacityCheckbox, .recurringCheckbox {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  background: #fff;
-  cursor: pointer;
-}
-
-.capacityCheckbox:checked, .recurringCheckbox:checked {
-  background: #000;
-  border-color: #000;
-}
-
-/* Number Inputs */
-.capacityNumberInput, .recurringSelect, .recurringDateInput {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  color: #000;
-  background: #fff;
-}
-
-.capacityNumberInput:disabled, .recurringSelect:disabled, .recurringDateInput:disabled {
-  background: #f5f5f5;
-  color: #999;
-  cursor: not-allowed;
-  border-color: #e8e8e8;
-}
-
-.capacityNumberInput:focus:not(:disabled), .recurringSelect:focus:not(:disabled), .recurringDateInput:focus:not(:disabled) {
-  outline: none;
-  border-color: #999;
-}
-
-.capacityNumberInput::placeholder {
-  color: #999;
-}
 
 /* Submit Button */
 .submitButton {
@@ -322,15 +281,10 @@
 }
 
 /* Messages */
-.successMessage, .errorMessage, .authRequired {
+.errorMessage, .authRequired {
   padding: 12px 0;
   font-size: 0.75rem;
   margin-bottom: 24px;
-}
-
-.successMessage {
-  color: #000;
-  border-bottom: 1px solid #000;
 }
 
 .errorMessage {
@@ -344,46 +298,6 @@
   padding: 40px 0;
 }
 
-/* Recurring Days */
-.recurringDaysGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-}
-
-.recurringDayButton {
-  padding: 6px 2px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
-  color: #666;
-  font-size: 0.75rem;
-  cursor: pointer;
-  text-align: center;
-}
-
-.recurringDayButton:hover {
-  border-color: #999;
-  background: #f5f5f5;
-}
-
-.recurringDaySelected {
-  background: #000;
-  color: #fff;
-  border-color: #000;
-}
-
-.recurringDaySelected:hover {
-  background: #333;
-  border-color: #333;
-}
-
-.recurringDayDisabled {
-  background: #f5f5f5;
-  color: #999;
-  cursor: not-allowed;
-  border-color: #e8e8e8;
-}
 
 /* Responsive */
 @media (max-width: 767px) {
@@ -442,21 +356,6 @@
   }
   
   
-  .capacityRow {
-    flex-direction: column;
-    gap: 6px;
-  }
-  
-  .capacityInputs {
-    width: 100%;
-    gap: 8px;
-  }
-  
-  .capacityNumberInput {
-    width: 100%;
-    padding: 6px 8px;
-    font-size: 0.8rem;
-  }
   
   .submitButton {
     width: 100%;
@@ -465,26 +364,6 @@
     margin-top: 12px;
   }
   
-  .recurringRow {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .recurringOptions {
-    width: 100%;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .recurringDaysGrid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-  }
-  
-  .recurringDayButton {
-    padding: 4px 1px;
-    font-size: 0.7rem;
-  }
 }
 
 @media (max-width: 480px) {

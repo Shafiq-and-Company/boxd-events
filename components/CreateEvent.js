@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
 import PageTitle from './PageTitle'
@@ -6,6 +7,7 @@ import styles from './CreateEvent.module.css'
 
 export default function CreateEvent() {
   const { user } = useAuth()
+  const router = useRouter()
   // Get today's date in the format required for datetime-local input
   const getTodayDateTime = () => {
     const now = new Date()
@@ -171,24 +173,12 @@ export default function CreateEvent() {
       }
 
       setSuccess(true)
-      setFormData({
-        title: '',
-        description: '',
-        location: '',
-        starts_at: getTodayDateTime(),
-        ends_at: getTodayDateTime(),
-        game_title: '',
-        city: '',
-        state: '',
-        zip_code: ''
-      })
-      setBannerFile(null)
-      setBannerPreview(null)
-
-      // Clear success message after 3 seconds
+      
+      // Show success popup and navigate to My Events
       setTimeout(() => {
-        setSuccess(false)
-      }, 3000)
+        alert('Event created successfully!')
+        router.push('/?tab=myEvents')
+      }, 1000)
 
     } catch (err) {
       setError(err.message)
@@ -212,11 +202,6 @@ export default function CreateEvent() {
     <div className={styles.createEvent}>
       <PageTitle title="Create Event" subtitle="Host your own gaming event" />
       
-      {success && (
-        <div className={styles.successMessage}>
-          Event created successfully!
-        </div>
-      )}
 
       {error && (
         <div className={styles.errorMessage}>
