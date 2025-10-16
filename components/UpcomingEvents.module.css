@@ -1,12 +1,10 @@
-/* UpcomingEvents Component - Hyper Minimal CSS */
-/* Johnny Ive Minimalism - Component-Specific Styles */
+/* UpcomingEvents Component - Clean Minimal CSS */
 
 .upcomingEvents {
   max-width: 800px;
   padding: 24px 12px;
   margin: 0 auto;
 }
-
 
 .eventsList {
   display: grid;
@@ -20,14 +18,11 @@
   background: #ffffff;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
-  padding: 0;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  display: flex;
-  flex-direction: column;
-  min-height: 240px;
+  aspect-ratio: 1;
   position: relative;
   cursor: pointer;
   overflow: hidden;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .eventCard:hover {
@@ -36,16 +31,17 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* Image Section */
 .eventImage {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 120px;
+  height: 100%;
   background: #f8f8f8;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid #e8e8e8;
-  position: relative;
+  z-index: 1;
 }
 
 .imagePlaceholder {
@@ -59,34 +55,18 @@
   font-size: 1.5rem;
   font-weight: 500;
   color: #707070;
-  letter-spacing: 0px;
 }
 
-.registeredBadge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: #d4edda;
-  color: #155724;
-  padding: 8px;
-  border-radius: 50%;
-  font-size: 0.8rem;
-  font-weight: 500;
-  z-index: 1;
-  box-shadow: 0 2px 4px rgba(212, 237, 218, 0.2);
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Content Section */
 .eventContent {
+  position: relative;
+  z-index: 2;
   padding: 16px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  justify-content: flex-end;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.8) 100%);
+  color: white;
 }
 
 .eventHeader {
@@ -94,15 +74,13 @@
   flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
-  flex: 0 0 auto;
 }
 
 .eventTitle {
   font-size: 1.25rem;
   font-weight: 500;
-  color: #000000;
+  color: #ffffff;
   line-height: 1.4;
-  letter-spacing: -0.25px;
   height: 3.5rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -114,77 +92,42 @@
 
 .gameTitle {
   display: inline-block;
-  background: #f8f8f8;
+  background: rgba(255, 255, 255, 0.9);
   color: #404040;
   padding: 6px 12px;
   border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 400;
-  border: 1px solid #d0d0d0;
-  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   align-self: flex-start;
   order: -1;
   min-height: 20px;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
   white-space: nowrap;
   line-height: 1.2;
-  text-align: left;
 }
 
 .eventDetails {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex: 1;
-  justify-content: flex-start;
 }
 
-.eventDetails > * {
-  flex-shrink: 0;
+.eventDate, .eventLocation {
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .eventDate {
-  color: #404040;
-  font-weight: 400;
-  font-size: 0.875rem;
-  line-height: 1.4;
   margin-bottom: 4px;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  white-space: nowrap;
 }
 
 .eventLocation {
-  color: #707070;
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
   margin-bottom: 8px;
-  white-space: nowrap;
-}
-
-.eventDescription {
-  color: #404040;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  font-weight: 400;
-  flex: 1;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
 }
 
 /* State Classes */
@@ -214,16 +157,7 @@
 /* Responsive Design */
 @media (max-width: 767px) {
   .eventsList {
-    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-  }
-  
-  .eventCard {
-    min-height: 200px;
-  }
-  
-  .eventImage {
-    height: 60px;
   }
   
   .eventContent {
@@ -231,68 +165,39 @@
   }
   
   .gameTitle {
-    min-height: 14px;
     font-size: 0.6rem;
     padding: 2px 4px;
-    text-align: left;
-    align-self: flex-start;
+    min-height: 14px;
   }
   
   .eventHeader {
-    flex-direction: column;
-    align-items: flex-start;
     gap: 4px;
     margin-bottom: 8px;
   }
   
   .eventTitle {
-    margin-right: 0;
-    margin-bottom: 4px;
     font-size: 0.85rem;
     height: 2rem;
     line-height: 1.2;
+    margin-bottom: 4px;
   }
   
   .eventDetails {
     gap: 6px;
-    flex: 1;
-    justify-content: flex-start;
   }
   
-  .eventDate {
+  .eventDate, .eventLocation {
     font-size: 0.75rem;
     line-height: 1.3;
     white-space: normal;
     overflow: visible;
     display: block;
-  }
-  
-  .eventLocation {
-    font-size: 0.75rem;
-    line-height: 1.3;
-    white-space: normal;
-    overflow: visible;
-    display: block;
-  }
-  
-  .eventDescription {
-    display: none;
   }
 }
 
-/* Extra small mobile screens */
 @media (max-width: 480px) {
   .eventsList {
-    grid-template-columns: repeat(3, 1fr);
     gap: 6px;
-  }
-  
-  .eventCard {
-    min-height: 180px;
-  }
-  
-  .eventImage {
-    height: 50px;
   }
   
   .eventContent {
@@ -312,28 +217,15 @@
     display: block;
   }
   
-  .eventDescription {
-    display: none;
-  }
-  
   .gameTitle {
     font-size: 0.55rem;
     padding: 1px 3px;
   }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 768px) {
   .eventsList {
-    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-  }
-  
-  .eventCard {
-    min-height: 260px;
-  }
-  
-  .eventImage {
-    height: 100px;
   }
   
   .eventContent {
@@ -341,37 +233,14 @@
   }
   
   .gameTitle {
-    min-height: 20px;
     font-size: 0.75rem;
+    min-height: 20px;
   }
 }
 
 @media (min-width: 1024px) {
   .upcomingEvents {
-    max-width: 800px;
     padding: 32px 24px;
-  }
-  
-  .eventsList {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-  
-  .eventCard {
-    min-height: 260px;
-  }
-  
-  .eventImage {
-    height: 100px;
-  }
-  
-  .eventContent {
-    padding: 18px;
-  }
-  
-  .gameTitle {
-    min-height: 18px;
-    font-size: 0.7rem;
   }
   
   .eventTitle { 
@@ -379,7 +248,14 @@
     height: 3rem;
   }
   
-  .eventDate, .eventLocation, .eventDescription { font-size: 0.8rem; }
+  .eventDate, .eventLocation { 
+    font-size: 0.8rem; 
+  }
+  
+  .gameTitle {
+    font-size: 0.7rem;
+    min-height: 18px;
+  }
 }
 
 /* Accessibility */
@@ -388,14 +264,20 @@
   outline-offset: 2px;
 }
 
-/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-  .eventCard { transition: none; }
-  .eventCard:hover { transform: none; }
+  .eventCard { 
+    transition: none; 
+  }
+  .eventCard:hover { 
+    transform: none; 
+  }
 }
 
-/* High Contrast */
 @media (prefers-contrast: high) {
-  .eventCard { border-color: #000000; }
-  .eventCard:hover { border-color: #000000; }
+  .eventCard { 
+    border-color: #000000; 
+  }
+  .eventCard:hover { 
+    border-color: #000000; 
+  }
 }

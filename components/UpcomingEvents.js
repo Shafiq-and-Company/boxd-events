@@ -8,7 +8,6 @@ export default function UpcomingEvents() {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [userRsvps, setUserRsvps] = useState(new Set())
   const [userProfile, setUserProfile] = useState(null)
   const { user } = useAuth()
 
@@ -18,10 +17,8 @@ export default function UpcomingEvents() {
 
   useEffect(() => {
     if (user) {
-      fetchUserRsvps()
       fetchUserProfile()
     } else {
-      setUserRsvps(new Set())
       setUserProfile(null)
     }
   }, [user])
@@ -78,32 +75,6 @@ export default function UpcomingEvents() {
     }
   }
 
-  const fetchUserRsvps = async () => {
-    if (!user) {
-      setUserRsvps(new Set())
-      return
-    }
-    
-    try {
-      const { data, error } = await supabase
-        .from('rsvps')
-        .select('event_id, status')
-        .eq('user_id', user.id)
-        .eq('status', 'going')
-
-      if (error) {
-        console.error('Error fetching user RSVPs:', error)
-        setUserRsvps(new Set())
-        return
-      }
-
-      const rsvpEventIds = new Set(data?.map(rsvp => rsvp.event_id) || [])
-      setUserRsvps(rsvpEventIds)
-    } catch (err) {
-      console.error('Error fetching user RSVPs:', err)
-      setUserRsvps(new Set())
-    }
-  }
 
   const fetchUserProfile = async () => {
     if (!user) {
@@ -144,24 +115,13 @@ export default function UpcomingEvents() {
   }
 
   const getPersonalizedSubtitle = () => {
-    if (!user || !userProfile) {
-      return "Events you're attending"
-    }
-    
-    const firstName = userProfile.first_name || 'there'
-    return `Hey ${firstName}! Here are the events you're attending`
+    return "Here are the events you're registered for"
   }
 
   const handleEventClick = (eventId) => {
     window.location.href = `/event/${eventId}`
   }
 
-  // Function to refresh RSVPs (can be called from parent components)
-  const refreshRsvps = () => {
-    if (user) {
-      fetchUserRsvps()
-    }
-  }
 
   if (loading) {
     return (
@@ -194,7 +154,6 @@ export default function UpcomingEvents() {
       ) : (
         <div className={styles.eventsList}>
           {events.map((event) => {
-            const isRegistered = userRsvps.has(event.id)
             return (
               <div 
                 key={event.id} 
@@ -216,11 +175,6 @@ export default function UpcomingEvents() {
                   ) : (
                     <div className={styles.imagePlaceholder}>
                       {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
-                    </div>
-                  )}
-                  {isRegistered && (
-                    <div className={styles.registeredBadge}>
-                      ✓
                     </div>
                   )}
                 </div>
@@ -245,11 +199,6 @@ export default function UpcomingEvents() {
                     </div>
                   )}
                   
-                  {event.description && (
-                    <div className={styles.eventDescription}>
-                      {event.description}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>

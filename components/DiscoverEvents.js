@@ -193,18 +193,17 @@ export default function DiscoverEvents() {
                       {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
                     </div>
                   )}
-                  {isRegistered && (
-                    <div className={styles.registeredBadge}>
-                      ✓
-                    </div>
-                  )}
                 </div>
                 
                 <div className={styles.eventContent}>
                   <div className={styles.eventHeader}>
                     <h3 className={styles.eventTitle}>{event.title}</h3>
                     {event.game_title && (
-                      <span className={styles.gameTitle}>{event.game_title}</span>
+                      <span className={styles.gameTitle}>
+                        {event.game_title.length > 30 
+                          ? `${event.game_title.substring(0, 30)}...` 
+                          : event.game_title}
+                      </span>
                     )}
                   </div>
                 
@@ -220,11 +219,6 @@ export default function DiscoverEvents() {
                     </div>
                   )}
                   
-                  {event.description && (
-                    <div className={styles.eventDescription}>
-                      {event.description}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
