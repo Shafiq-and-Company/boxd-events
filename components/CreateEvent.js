@@ -171,10 +171,10 @@ export default function CreateEvent() {
         throw error
       }
 
-      // Show success popup and navigate to My Events
+      // Show success popup and navigate to manage event page
       setTimeout(() => {
         alert('Event created successfully!')
-        router.push('/?tab=myEvents')
+        router.push(`/manage-event/${data[0].id}`)
       }, 1000)
 
     } catch (err) {

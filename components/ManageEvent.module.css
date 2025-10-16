@@ -1,5 +1,4 @@
 /* ManageEvent Component - Ultra Minimal CSS */
-/* Black, White, Gray Only */
 
 .manageEvent {
   max-width: 800px;
@@ -7,11 +6,24 @@
   margin: 0 auto;
 }
 
-
 .formContainer {
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
+  width: 100%;
+}
+
+.twoColumnLayout {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.bannerColumn {
+  position: sticky;
+  top: 24px;
+}
+
+.formColumn {
+  width: 100%;
 }
 
 .form {
@@ -20,27 +32,24 @@
   gap: 24px;
 }
 
-/* Banner Section */
-.bannerSection {
-  margin-bottom: 8px;
-}
-
+/* Banner */
 .bannerImage {
   width: 100%;
-  height: 200px;
-  border: 2px dashed #cccccc;
+  aspect-ratio: 1;
+  border: 1px solid #ccc;
   border-radius: 8px;
   background: #fafafa;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 200ms ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.bannerImage:hover {
-  border-color: #999999;
-  background: #f5f5f5;
+.uploadText {
+  color: #999;
+  font-size: 0.875rem;
 }
 
 .bannerPlaceholder {
@@ -49,24 +58,13 @@
   justify-content: center;
 }
 
-.uploadText {
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: #666666;
-  text-align: center;
+.bannerPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.formGroup {
-  display: flex;
-  flex-direction: column;
-}
-
-.sectionDivider {
-  height: 1px;
-  background: #e8e8e8;
-  margin: 16px 0;
-}
-
+/* Layout */
 .formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -79,95 +77,43 @@
   gap: 16px;
 }
 
-/* Section Headers */
-.sectionHeader {
-  margin-bottom: 12px;
-}
-
-.sectionLabel {
-  font-size: 0.625rem;
-  font-weight: 400;
-  color: #999999;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.input, .textarea {
+/* Form Inputs */
+.input, .textarea, .titleInput {
   width: 100%;
-  padding: 8px 0;
   border: none;
-  border-bottom: 1px solid #cccccc;
-  border-radius: 0;
-  font-size: 1rem;
-  font-weight: 400;
-  color: #000000;
+  border-bottom: 1px solid #ccc;
   background: transparent;
-  transition: border-color 200ms ease;
-  box-sizing: border-box;
+  padding: 8px 0;
+  font-size: 1rem;
+  color: #000;
+  font-family: inherit;
 }
 
 .titleInput {
-  width: 100%;
   padding: 12px 0;
-  border: none;
-  border-bottom: 2px solid #cccccc;
-  border-radius: 0;
-  font-size: 1.5rem;
-  font-weight: 400;
-  color: #000000;
-  background: transparent;
-  transition: border-color 200ms ease;
-  box-sizing: border-box;
+  border-bottom: 2px solid #ccc;
+  font-size: 2rem;
+}
+
+.input:focus, .textarea:focus, .titleInput:focus {
+  outline: none;
+  border-bottom: 2px solid #999;
 }
 
 .titleInput:focus {
-  outline: none;
-  border-bottom: 3px solid #999999;
+  border-bottom: 3px solid #999;
 }
 
-.input:focus, .textarea:focus {
-  outline: none;
-  border-bottom: 2px solid #999999;
-}
-
-.titleInput::placeholder {
-  color: #999999;
-  font-weight: 400;
-}
-
-.input::placeholder, .textarea::placeholder {
-  color: #999999;
-  font-weight: 400;
+.input::placeholder, .textarea::placeholder, .titleInput::placeholder {
+  color: #999;
 }
 
 .textarea {
   resize: vertical;
   min-height: 80px;
-  font-family: inherit;
-  line-height: 1.5;
 }
 
-.select {
-  width: 100%;
-  padding: 8px 0;
-  border: none;
-  border-bottom: 1px solid #cccccc;
-  border-radius: 0;
-  font-size: 1rem;
-  font-weight: 400;
-  color: #000000;
-  background: transparent;
-  transition: border-color 200ms ease;
-  box-sizing: border-box;
-  cursor: pointer;
-}
-
-.select:focus {
-  outline: none;
-  border-bottom: 2px solid #999999;
-}
-
-/* Section Styling */
+/* Sections */
 .dateTimeSection, .gameSection, .descriptionSection, .locationSection {
   padding: 16px;
   background: #fafafa;
@@ -178,47 +124,53 @@
 /* Game Options */
 .gameOptions {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  max-height: 120px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
 }
 
 .gameOption {
-  background: #ffffff;
-  border: 1px solid #cccccc;
-  border-radius: 6px;
-  padding: 12px;
+  background: #fff;
+  border: none;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 12px 16px;
   cursor: pointer;
-  transition: all 200ms ease;
-  flex: 1;
-  min-width: 100px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  text-align: left;
+  transition: background-color 150ms ease;
+}
+
+.gameOption:last-child {
+  border-bottom: none;
 }
 
 .gameOption:hover {
-  border-color: #999999;
+  background: #f5f5f5;
 }
 
 .gameOptionSelected {
-  background: #000000;
-  border-color: #000000;
+  background: #000;
+  color: #fff;
 }
 
 .gameOptionSelected:hover {
-  background: #333333;
-  border-color: #333333;
+  background: #333;
 }
 
 .gameImage {
-  width: 48px;
-  height: 48px;
+  width: 24px;
+  height: 24px;
   border-radius: 4px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .imagePlaceholder {
@@ -228,621 +180,116 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.875rem;
+  font-size: 0.6rem;
   font-weight: 600;
-  color: #666666;
+  color: #666;
   border-radius: 4px;
 }
 
 .gameOptionSelected .imagePlaceholder {
-  background: #333333;
-  color: #ffffff;
+  background: #333;
+  color: #fff;
 }
 
 .gameLabel {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #666666;
-  text-align: center;
-}
-
-.gameOptionSelected .gameLabel {
-  color: #ffffff;
-}
-
-.eventOptionsSection {
-  padding: 16px;
-  background: #fafafa;
-  border-radius: 4px;
-  border: 1px solid #e8e8e8;
-}
-
-/* Cost Slider */
-.costSliderContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 80px;
-}
-
-.costSliderHeader {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.costLabel {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #000000;
-  text-transform: none;
-  letter-spacing: 0px;
-}
-
-.costSliderWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.costValue {
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #000000;
-}
-
-.costValueDisplay {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.costSlider {
-  width: 100%;
-  height: 4px;
-  border-radius: 2px;
-  background: #e8e8e8;
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-}
-
-.costSlider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #000000;
-  cursor: pointer;
-  border: 2px solid #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.costSlider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #000000;
-  cursor: pointer;
-  border: 2px solid #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.costSlider:focus {
-  outline: none;
-}
-
-.costSlider:focus::-webkit-slider-thumb {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-}
-
-.costSlider:focus::-moz-range-thumb {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-}
-
-.costSliderLabels {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  font-size: 0.75rem;
-  color: #666666;
-  margin-top: 4px;
-  text-align: center;
-}
-
-/* Capacity Section */
-.capacityContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 80px;
-}
-
-.capacityHeader {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.capacityRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.capacityCheckboxWrapper {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.capacityCheckbox {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #cccccc;
-  border-radius: 3px;
-  background: #ffffff;
-  cursor: pointer;
-  transition: all 200ms ease;
-}
-
-.capacityCheckbox:checked {
-  background: #000000;
-  border-color: #000000;
-}
-
-.capacityCheckbox:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
-}
-
-.capacityLabel {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #000000;
-  text-transform: none;
-  letter-spacing: 0px;
-  cursor: pointer;
-}
-
-.capacityInputs {
-  display: flex;
-  gap: 12px;
+  font-weight: 400;
+  color: #000;
   flex: 1;
 }
 
-.capacityNumberInput {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
+.gameOptionSelected .gameLabel {
+  color: #fff;
+}
+
+.gameLoading {
+  color: #999;
   font-size: 0.875rem;
-  font-weight: 400;
-  color: #000000;
-  background: #ffffff;
-  transition: all 200ms ease;
-  box-sizing: border-box;
+  text-align: center;
+  padding: 20px;
 }
 
-.capacityNumberInput:disabled {
-  background: #f5f5f5;
-  color: #999999;
-  cursor: not-allowed;
-  border-color: #e8e8e8;
-}
-
-.capacityNumberInput:focus:not(:disabled) {
-  outline: none;
-  border-color: #999999;
-}
-
-.capacityNumberInput::placeholder {
-  color: #999999;
-  font-weight: 400;
-}
-
-
+/* Buttons */
 .submitButton {
-  background: #000000;
-  color: #ffffff;
+  background: #000;
+  color: #fff;
   border: none;
   border-radius: 4px;
   padding: 12px 24px;
   font-size: 0.875rem;
-  font-weight: 500;
   cursor: pointer;
-  transition: background-color 200ms ease;
   margin-top: 16px;
   width: 100%;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .submitButton:hover:not(:disabled) {
-  background: #333333;
+  background: #333;
 }
 
 .submitButton:disabled {
-  background: #999999;
+  background: #999;
   cursor: not-allowed;
 }
 
-.submitButton:active:not(:disabled) {
-  background: #000000;
+.buttonSpacer {
+  height: 8px;
 }
 
-
-/* Message Styles */
-.successMessage, .errorMessage, .authRequired, .loading {
-  padding: 12px 0;
-  border-radius: 0;
-  font-size: 0.75rem;
-  font-weight: 400;
-  margin-bottom: 24px;
-  line-height: 1.4;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.successMessage {
-  background: transparent;
-  color: #000000;
-  border: none;
-  border-bottom: 1px solid #000000;
-}
-
-.errorMessage {
-  background: transparent;
-  color: #666666;
-  border: none;
-  border-bottom: 1px solid #666666;
-}
-
-.authRequired, .loading {
-  background: transparent;
-  color: #999999;
-  border: none;
-  text-align: center;
-  padding: 40px 0;
-}
-
-/* Recurring Section */
-.recurringContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 80px;
-}
-
-.recurringHeader {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.recurringRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.recurringCheckboxWrapper {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.recurringCheckbox {
-  width: 20px;
-  height: 20px;
-  border: 1px solid #cccccc;
-  border-radius: 3px;
-  background: #ffffff;
-  cursor: pointer;
-  transition: all 200ms ease;
-}
-
-.recurringCheckbox:checked {
-  background: #000000;
-  border-color: #000000;
-}
-
-.recurringCheckbox:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
-}
-
-.recurringLabel {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #000000;
-  text-transform: none;
-  letter-spacing: 0px;
-  cursor: pointer;
-}
-
-.recurringOptions {
-  display: flex;
-  gap: 12px;
-  flex: 1;
-}
-
-.recurringFrequency {
-  flex: 1;
-}
-
-.recurringSelect {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: #000000;
-  background: #ffffff;
-  transition: all 200ms ease;
-  box-sizing: border-box;
-}
-
-.recurringSelect:disabled {
-  background: #f5f5f5;
-  color: #999999;
-  cursor: not-allowed;
-  border-color: #e8e8e8;
-}
-
-.recurringSelect:focus:not(:disabled) {
-  outline: none;
-  border-color: #999999;
-}
-
-.recurringEndDate {
-  flex: 1;
-}
-
-.recurringDateInput {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: #000000;
-  background: #ffffff;
-  transition: all 200ms ease;
-  box-sizing: border-box;
-}
-
-.recurringDateInput:disabled {
-  background: #f5f5f5;
-  color: #999999;
-  cursor: not-allowed;
-  border-color: #e8e8e8;
-}
-
-.recurringDateInput:focus:not(:disabled) {
-  outline: none;
-  border-color: #999999;
-}
-
-.recurringDays {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.recurringDaysLabel {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #666666;
-}
-
-.recurringDaysGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-}
-
-.recurringDayButton {
-  padding: 6px 2px;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
-  background: #ffffff;
-  color: #666666;
-  font-size: 0.75rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all 200ms ease;
-  text-align: center;
-}
-
-.recurringDayButton:hover {
-  border-color: #999999;
-  background: #f5f5f5;
-}
-
-.recurringDaySelected {
-  background: #000000;
-  color: #ffffff;
-  border-color: #000000;
-}
-
-.recurringDaySelected:hover {
-  background: #333333;
-  border-color: #333333;
-}
-
-.recurringDayDisabled {
-  background: #f5f5f5;
-  color: #999999;
-  cursor: not-allowed;
-  border-color: #e8e8e8;
-}
-
-.recurringDayDisabled:hover {
-  background: #f5f5f5;
-  color: #999999;
-  border-color: #e8e8e8;
-}
-
-/* Responsive Design */
-@media (max-width: 767px) {
-  .manageEvent {
-    padding: 24px 12px;
-  }
-  
-  .formContainer {
-    padding: 20px 16px;
-    margin: 0;
-  }
-  
-  .formRow {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  .formRowThree {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  .dateTimeSection, .gameSection, .descriptionSection, .locationSection, .eventOptionsSection {
-    padding: 12px;
-  }
-  
-  .bannerImage {
-    height: 150px;
-  }
-  
-  .uploadText {
-    font-size: 0.75rem;
-  }
-  
-  .gameOptions {
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .gameOption {
-    width: 100%;
-    flex-direction: row;
-    justify-content: flex-start;
-    text-align: left;
-    gap: 12px;
-  }
-  
-  .gameImage {
-    width: 40px;
-    height: 40px;
-    flex-shrink: 0;
-  }
-  
-  .gameLabel {
-    text-align: left;
-  }
-  
-  .capacityRow {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  
-  .capacityInputs {
-    width: 100%;
-    justify-content: flex-start;
-  }
-  
-  .capacityNumberInput {
-    width: 100%;
-  }
-  
-  .submitButton {
-    width: 100%;
-    padding: 14px 24px;
-  }
-  
-  .recurringRow {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  
-  .recurringOptions {
-    width: 100%;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .recurringDaysGrid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-  }
-  
-  .recurringDayButton {
-    padding: 4px 1px;
-    font-size: 0.7rem;
-  }
-  
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .formContainer {
-    padding: 20px;
-  }
-  
-  .formRowThree {
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 16px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .manageEvent {
-    max-width: 800px;
-    padding: 32px 24px;
-  }
-}
-
-/* Delete Event Section */
-.deleteSection {
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #e8e8e8;
-  display: flex;
-  justify-content: center;
+.deleteDivider {
+  height: 1px;
+  background: #e8e8e8;
+  margin: 12px 0;
 }
 
 .deleteButton {
   background: transparent;
-  color: #999999;
+  color: #999;
   border: 1px solid #e8e8e8;
   border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 0.75rem;
-  font-weight: 400;
+  padding: 12px 24px;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 200ms ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  width: 100%;
 }
 
 .deleteButton:hover:not(:disabled) {
-  color: #666666;
-  border-color: #cccccc;
+  color: #666;
+  border-color: #ccc;
   background: #fafafa;
 }
 
 .deleteButton:disabled {
-  color: #cccccc;
+  color: #ccc;
   border-color: #e8e8e8;
   cursor: not-allowed;
   background: transparent;
 }
 
-/* Modal Styles */
+/* Messages */
+.errorMessage, .successMessage, .authRequired, .loading {
+  padding: 12px 0;
+  font-size: 0.75rem;
+  margin-bottom: 24px;
+}
+
+.errorMessage {
+  color: #666;
+  border-bottom: 1px solid #666;
+}
+
+.successMessage {
+  color: #28a745;
+  border-bottom: 1px solid #28a745;
+}
+
+.authRequired, .loading {
+  color: #999;
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* Modal */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -899,8 +346,6 @@
   font-weight: 400;
   cursor: pointer;
   transition: all 200ms ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .cancelButton:hover:not(:disabled) {
@@ -926,8 +371,6 @@
   font-weight: 400;
   cursor: pointer;
   transition: all 200ms ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .confirmDeleteButton:hover:not(:disabled) {
@@ -941,8 +384,133 @@
   cursor: not-allowed;
 }
 
-/* Accessibility */
-.input:focus, .textarea:focus, .select:focus, .submitButton:focus, .cancelButton:focus, .deleteButton:focus, .confirmDeleteButton:focus {
-  outline: 1px solid #000000;
-  outline-offset: 1px;
+/* Responsive */
+@media (max-width: 1024px) {
+  .twoColumnLayout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .bannerColumn {
+    position: static;
+  }
+}
+
+@media (max-width: 767px) {
+  .manageEvent {
+    padding: 16px 8px;
+  }
+  
+  .form {
+    gap: 16px;
+  }
+  
+  .formRow, .formRowThree {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .dateTimeSection, .gameSection, .descriptionSection, .locationSection {
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .titleInput {
+    font-size: 1.5rem;
+    padding: 10px 0;
+  }
+  
+  .input, .textarea {
+    padding: 6px 0;
+    font-size: 0.9rem;
+  }
+  
+  .textarea {
+    min-height: 60px;
+  }
+  
+  .gameOptions {
+    max-height: 100px;
+  }
+  
+  .gameOption {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  
+  .gameImage {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .gameLabel {
+    font-size: 0.8rem;
+  }
+  
+  .submitButton {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 0.8rem;
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .manageEvent {
+    padding: 12px 6px;
+  }
+  
+  .form {
+    gap: 12px;
+  }
+  
+  .dateTimeSection, .gameSection, .descriptionSection, .locationSection {
+    padding: 6px;
+    margin-bottom: 6px;
+  }
+  
+  .titleInput {
+    font-size: 1.25rem;
+    padding: 8px 0;
+  }
+  
+  .input, .textarea {
+    padding: 4px 0;
+    font-size: 0.85rem;
+  }
+  
+  .textarea {
+    min-height: 50px;
+  }
+  
+  .gameOptions {
+    max-height: 80px;
+  }
+  
+  .gameOption {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  
+  .gameImage {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .gameLabel {
+    font-size: 0.75rem;
+  }
+  
+  .submitButton {
+    padding: 10px 16px;
+    font-size: 0.75rem;
+    margin-top: 10px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .manageEvent {
+    max-width: 800px;
+    padding: 32px 24px;
+  }
 }

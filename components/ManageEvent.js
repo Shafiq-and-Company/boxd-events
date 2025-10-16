@@ -10,6 +10,7 @@ export default function ManageEvent() {
   const router = useRouter()
   const { id } = router.query
   
+  // State
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -19,98 +20,29 @@ export default function ManageEvent() {
     game_title: '',
     city: '',
     cost: '',
-    state: '',
-    capacity_enabled: false,
-    capacity_min: '',
-    capacity_max: '',
-    recurring_enabled: false,
-    recurring_frequency: 'weekly',
-    recurring_end_date: '',
-    recurring_days: []
+    state: ''
   })
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [games, setGames] = useState([])
+  const [gamesLoading, setGamesLoading] = useState(true)
+  const [bannerImageUrl, setBannerImageUrl] = useState(null)
+  const [updateSuccess, setUpdateSuccess] = useState(false)
 
-  // Fetch event data when component mounts or id changes
-  useEffect(() => {
-    if (id && user) {
-      fetchEventData()
-    }
-  }, [id, user])
-
-  const fetchEventData = async () => {
-    try {
-      setFetchLoading(true)
-      setError(null)
-
-      const { data: event, error: fetchError } = await supabase
-        .from('events')
-        .select('*')
-        .eq('id', id)
-        .eq('host_id', user.id) // Ensure user owns this event
-        .single()
-
-      if (fetchError) {
-        throw fetchError
-      }
-
-      if (!event) {
-        throw new Error('Event not found or you do not have permission to edit it')
-      }
-
-      // Format dates for datetime-local inputs
-      const formatDateForInput = (dateString) => {
-        if (!dateString) return ''
-        const date = new Date(dateString)
-        return date.toISOString().slice(0, 16)
-      }
-
-      setFormData({
-        title: event.title || '',
-        description: event.description || '',
-        location: event.location || '',
-        starts_at: formatDateForInput(event.starts_at),
-        ends_at: formatDateForInput(event.ends_at),
-        game_title: event.game_title || '',
-        city: event.city || '',
-        cost: event.cost || '',
-        state: event.state || '',
-        capacity_enabled: false, // These fields don't exist in current schema
-        capacity_min: '',
-        capacity_max: '',
-        recurring_enabled: false,
-        recurring_frequency: 'weekly',
-        recurring_end_date: '',
-        recurring_days: []
-      })
-
-    } catch (err) {
-      console.error('Error fetching event:', err)
-      setError(err.message)
-    } finally {
-      setFetchLoading(false)
-    }
+  // Helper functions
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    return date.toISOString().slice(0, 16)
   }
 
+  // Event handlers
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
-  }
-
-  const handleDayToggle = (day) => {
-    setFormData(prev => ({
-      ...prev,
-      recurring_days: prev.recurring_days.includes(day)
-        ? prev.recurring_days.filter(d => d !== day)
-        : [...prev.recurring_days, day]
-    }))
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e) => {
@@ -125,7 +57,6 @@ export default function ManageEvent() {
     setError(null)
 
     try {
-      // Prepare event data for update
       const eventData = {
         title: formData.title,
         description: formData.description,
@@ -142,19 +73,25 @@ export default function ManageEvent() {
         .from('events')
         .update(eventData)
         .eq('id', id)
-        .eq('host_id', user.id) // Ensure user owns this event
+        .eq('host_id', user.id)
+        .select()
 
       if (error) {
+        console.error('Database update error:', error)
         throw error
       }
 
-      setSuccess(true)
+      if (!data || data.length === 0) {
+        setError('No rows were updated. You may not have permission to edit this event.')
+        return
+      }
 
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        setSuccess(false)
-      }, 3000)
-
+      // Show success feedback and refresh form data
+      setUpdateSuccess(true)
+      setTimeout(() => setUpdateSuccess(false), 3000)
+      
+      // Refresh the form data to show updated values
+      await fetchEventData()
     } catch (err) {
       setError(err.message)
     } finally {
@@ -172,28 +109,23 @@ export default function ManageEvent() {
     setError(null)
 
     try {
-      // First delete all RSVPs for this event (cascade delete)
+      // Delete RSVPs first
       const { error: rsvpError } = await supabase
         .from('rsvps')
         .delete()
         .eq('event_id', id)
 
-      if (rsvpError) {
-        throw rsvpError
-      }
+      if (rsvpError) throw rsvpError
 
-      // Then delete the event itself
+      // Delete event
       const { error: eventError } = await supabase
         .from('events')
         .delete()
         .eq('id', id)
-        .eq('host_id', user.id) // Ensure user owns this event
+        .eq('host_id', user.id)
 
-      if (eventError) {
-        throw eventError
-      }
+      if (eventError) throw eventError
 
-      // Redirect to MyEvents page with hosting tab active after successful deletion
       router.push('/my-events?tab=hosting')
     } catch (err) {
       setError(err.message)
@@ -203,14 +135,76 @@ export default function ManageEvent() {
     }
   }
 
+  // Data fetching
+  const fetchEventData = async () => {
+    try {
+      setFetchLoading(true)
+      setError(null)
 
+      const { data: event, error } = await supabase
+        .from('events')
+        .select('*')
+        .eq('id', id)
+        .eq('host_id', user.id)
+        .single()
+
+      if (error) throw error
+      if (!event) throw new Error('Event not found or you do not have permission to edit it')
+
+      setFormData({
+        title: event.title || '',
+        description: event.description || '',
+        location: event.location || '',
+        starts_at: formatDateForInput(event.starts_at),
+        ends_at: formatDateForInput(event.ends_at),
+        game_title: event.game_title || '',
+        city: event.city || '',
+        cost: event.cost || '',
+        state: event.state || ''
+      })
+
+      setBannerImageUrl(event.banner_image_url || null)
+    } catch (err) {
+      console.error('Error fetching event:', err)
+      setError(err.message)
+    } finally {
+      setFetchLoading(false)
+    }
+  }
+
+  const fetchGames = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('games')
+        .select('game_title')
+        .order('game_title')
+
+      if (error) throw error
+      setGames(data || [])
+    } catch (err) {
+      console.error('Error fetching games:', err.message)
+      setError('Failed to load games')
+    } finally {
+      setGamesLoading(false)
+    }
+  }
+
+  // Effects
+  useEffect(() => {
+    if (id && user) fetchEventData()
+  }, [id, user])
+
+  useEffect(() => {
+    fetchGames()
+  }, [])
+
+
+  // Early returns
   if (!user) {
     return (
       <div className={styles.manageEvent}>
         <PageTitle title="Manage Event" subtitle="Update your event details" />
-        <div className={styles.authRequired}>
-          Please log in to edit an event.
-        </div>
+        <div className={styles.authRequired}>Please log in to edit an event.</div>
       </div>
     )
   }
@@ -228,9 +222,7 @@ export default function ManageEvent() {
     return (
       <div className={styles.manageEvent}>
         <PageTitle title="Manage Event" subtitle="Update your event details" />
-        <div className={styles.errorMessage}>
-          {error}
-        </div>
+        <div className={styles.errorMessage}>{error}</div>
       </div>
     )
   }
@@ -239,333 +231,172 @@ export default function ManageEvent() {
     <div className={styles.manageEvent}>
       <PageTitle title="Manage Event" subtitle="Update your event details" />
       
-      {success && (
-        <div className={styles.successMessage}>
-          Event updated successfully!
-        </div>
+      {error && (
+        <div className={styles.errorMessage}>{error}</div>
       )}
 
-      {error && (
-        <div className={styles.errorMessage}>
-          {error}
-        </div>
+      {updateSuccess && (
+        <div className={styles.successMessage}>Event updated successfully!</div>
       )}
 
       <div className={styles.formContainer}>
-        <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.bannerSection}>
-          <div className={styles.bannerImage}>
-            <div className={styles.bannerPlaceholder}>
-              <div className={styles.uploadText}>Upload banner image</div>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.formGroup}>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
-            className={styles.titleInput}
-            placeholder="Event Title"
-          />
-        </div>
-
-        <div className={styles.dateTimeSection}>
-          <div className={styles.formRow}>
-            <div className={styles.formGroup}>
-              <input
-                type="datetime-local"
-                id="starts_at"
-                name="starts_at"
-                value={formData.starts_at}
-                onChange={handleInputChange}
-                required
-                className={styles.input}
-                placeholder="Start Date & Time"
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <input
-                type="datetime-local"
-                id="ends_at"
-                name="ends_at"
-                value={formData.ends_at}
-                onChange={handleInputChange}
-                className={styles.input}
-                placeholder="End Date & Time"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.gameSection}>
-          <div className={styles.gameOptions}>
-            <button
-              type="button"
-              className={`${styles.gameOption} ${formData.game_title === 'Game1' ? styles.gameOptionSelected : ''}`}
-              onClick={() => setFormData(prev => ({ ...prev, game_title: 'Game1' }))}
-            >
-              <div className={styles.gameImage}>
-                <div className={styles.imagePlaceholder}>G1</div>
-              </div>
-              <span className={styles.gameLabel}>Game1</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.gameOption} ${formData.game_title === 'Game2' ? styles.gameOptionSelected : ''}`}
-              onClick={() => setFormData(prev => ({ ...prev, game_title: 'Game2' }))}
-            >
-              <div className={styles.gameImage}>
-                <div className={styles.imagePlaceholder}>G2</div>
-              </div>
-              <span className={styles.gameLabel}>Game2</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.gameOption} ${formData.game_title === 'Game3' ? styles.gameOptionSelected : ''}`}
-              onClick={() => setFormData(prev => ({ ...prev, game_title: 'Game3' }))}
-            >
-              <div className={styles.gameImage}>
-                <div className={styles.imagePlaceholder}>G3</div>
-              </div>
-              <span className={styles.gameLabel}>Game3</span>
-            </button>
-          </div>
-        </div>
-
-        <div className={styles.descriptionSection}>
-          <div className={styles.formGroup}>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              className={styles.textarea}
-              placeholder="Event Description"
-              rows="3"
-            />
-          </div>
-        </div>
-
-        <div className={styles.locationSection}>
-          <div className={styles.formRowThree}>
-            <div className={styles.formGroup}>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                className={styles.input}
-                placeholder="Address"
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                className={styles.input}
-                placeholder="City"
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <input
-                type="text"
-                id="state"
-                name="state"
-                value={formData.state}
-                onChange={handleInputChange}
-                className={styles.input}
-                placeholder="State"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.eventOptionsSection}>
-          <div className={styles.sectionHeader}>
-            <span className={styles.sectionLabel}>Event Options</span>
-          </div>
-          
-          <div className={styles.formGroup}>
-              <div className={styles.costSliderContainer}>
-                <div className={styles.costSliderHeader}>
-                  <span className={styles.costLabel}>Tickets</span>
+        <div className={styles.twoColumnLayout}>
+          <div className={styles.bannerColumn}>
+            <div className={styles.bannerImage}>
+              {bannerImageUrl ? (
+                <img 
+                  src={bannerImageUrl} 
+                  alt="Event banner" 
+                  className={styles.bannerPreview}
+                />
+              ) : (
+                <div className={styles.bannerPlaceholder}>
+                  <div className={styles.uploadText}>Upload banner image</div>
                 </div>
-                <div className={styles.costSliderWrapper}>
-                  <input
-                    type="range"
-                    id="cost"
-                    name="cost"
-                    min="0"
-                    max="100"
-                    step="5"
-                    value={formData.cost || '0'}
-                    onChange={handleInputChange}
-                    className={styles.costSlider}
-                  />
-                  <div className={styles.costSliderLabels}>
-                    <span>Free</span>
-                    <div className={styles.costValueDisplay}>
-                      <span className={styles.costValue}>
-                        {formData.cost === '' || formData.cost === '0' ? 'Free' : `$${formData.cost}`}
-                      </span>
-                    </div>
-                    <span>$100</span>
-                  </div>
-                </div>
-              </div>
-          </div>
-
-          <div className={styles.sectionDivider}></div>
-
-          <div className={styles.formGroup}>
-            <div className={styles.capacityContainer}>
-              <div className={styles.capacityHeader}>
-                <span className={styles.capacityLabel}>Capacity</span>
-              </div>
-              
-              <div className={styles.capacityRow}>
-                <div className={styles.capacityCheckboxWrapper}>
-                  <input
-                    type="checkbox"
-                    id="capacity_enabled"
-                    name="capacity_enabled"
-                    checked={formData.capacity_enabled}
-                    onChange={handleInputChange}
-                    className={styles.capacityCheckbox}
-                  />
-                </div>
-                
-                <div className={styles.capacityInputs}>
-                  <input
-                    type="number"
-                    id="capacity_min"
-                    name="capacity_min"
-                    min="0"
-                    max="100"
-                    value={formData.capacity_min || ''}
-                    onChange={handleInputChange}
-                    disabled={!formData.capacity_enabled}
-                    className={styles.capacityNumberInput}
-                    placeholder="Min"
-                  />
-                  <input
-                    type="number"
-                    id="capacity_max"
-                    name="capacity_max"
-                    min="0"
-                    max="100"
-                    value={formData.capacity_max || ''}
-                    onChange={handleInputChange}
-                    disabled={!formData.capacity_enabled}
-                    className={styles.capacityNumberInput}
-                    placeholder="Max"
-                  />
-                </div>
-              </div>
+              )}
             </div>
           </div>
 
-          <div className={styles.sectionDivider}></div>
-
-          <div className={styles.formGroup}>
-            <div className={styles.recurringContainer}>
-              <div className={styles.recurringHeader}>
-                <span className={styles.recurringLabel}>Recurring</span>
+          <div className={styles.formColumn}>
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <div className={styles.formGroup}>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.titleInput}
+                  placeholder="Event Title"
+                />
               </div>
-              
-              <div className={styles.recurringRow}>
-                <div className={styles.recurringCheckboxWrapper}>
-                  <input
-                    type="checkbox"
-                    id="recurring_enabled"
-                    name="recurring_enabled"
-                    checked={formData.recurring_enabled}
-                    onChange={handleInputChange}
-                    className={styles.recurringCheckbox}
-                  />
-                </div>
-                
-                <div className={styles.recurringOptions}>
-                  <div className={styles.recurringFrequency}>
-                    <select
-                      id="recurring_frequency"
-                      name="recurring_frequency"
-                      value={formData.recurring_frequency}
-                      onChange={handleInputChange}
-                      disabled={!formData.recurring_enabled}
-                      className={styles.recurringSelect}
-                    >
-                      <option value="weekly">Weekly</option>
-                    </select>
-                  </div>
-                  
-                  <div className={styles.recurringEndDate}>
+
+              <div className={styles.dateTimeSection}>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
                     <input
-                      type="date"
-                      id="recurring_end_date"
-                      name="recurring_end_date"
-                      value={formData.recurring_end_date}
+                      type="datetime-local"
+                      id="starts_at"
+                      name="starts_at"
+                      value={formData.starts_at}
                       onChange={handleInputChange}
-                      disabled={!formData.recurring_enabled}
-                      className={styles.recurringDateInput}
+                      required
+                      className={styles.input}
+                      placeholder="Start Date & Time"
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <input
+                      type="datetime-local"
+                      id="ends_at"
+                      name="ends_at"
+                      value={formData.ends_at}
+                      onChange={handleInputChange}
+                      className={styles.input}
+                      placeholder="End Date & Time"
                     />
                   </div>
                 </div>
               </div>
-              
-               <div className={styles.recurringDays}>
-                 <div className={styles.recurringDaysGrid}>
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-                    <button
-                      key={day}
-                      type="button"
-                      onClick={() => handleDayToggle(day)}
-                      disabled={!formData.recurring_enabled}
-                      className={`${styles.recurringDayButton} ${
-                        formData.recurring_days.includes(day) ? styles.recurringDaySelected : ''
-                      } ${!formData.recurring_enabled ? styles.recurringDayDisabled : ''}`}
-                    >
-                      {day}
-                    </button>
-                  ))}
+
+              <div className={styles.descriptionSection}>
+                <div className={styles.formGroup}>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    className={styles.textarea}
+                    placeholder="Event Description"
+                    rows="3"
+                  />
                 </div>
               </div>
-            </div>
+
+              <div className={styles.locationSection}>
+                <div className={styles.formRowThree}>
+                  <div className={styles.formGroup}>
+                    <input
+                      type="text"
+                      id="location"
+                      name="location"
+                      value={formData.location}
+                      onChange={handleInputChange}
+                      className={styles.input}
+                      placeholder="Address"
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <input
+                      type="text"
+                      id="city"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      className={styles.input}
+                      placeholder="City"
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <input
+                      type="text"
+                      id="state"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      className={styles.input}
+                      placeholder="State"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.gameSection}>
+                {gamesLoading ? (
+                  <div className={styles.gameLoading}>Loading games...</div>
+                ) : (
+                  <div className={styles.gameOptions}>
+                    {games.map((game, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        className={`${styles.gameOption} ${formData.game_title === game.game_title ? styles.gameOptionSelected : ''}`}
+                        onClick={() => setFormData(prev => ({ ...prev, game_title: game.game_title }))}
+                      >
+                        <div className={styles.gameImage}>
+                          <div className={styles.imagePlaceholder}>
+                            {game.game_title.charAt(0).toUpperCase()}
+                          </div>
+                        </div>
+                        <span className={styles.gameLabel}>{game.game_title}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={loading}
+                className={styles.submitButton}
+              >
+                {loading ? 'Updating Event...' : 'Update Event'}
+              </button>
+
+              <div className={styles.buttonSpacer}></div>
+              <div className={styles.deleteDivider}></div>
+
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                className={styles.deleteButton}
+                disabled={loading || deleteLoading}
+              >
+                Delete Event
+              </button>
+            </form>
           </div>
-
-        </div>
-
-        <button 
-          type="submit" 
-          disabled={loading}
-          className={styles.submitButton}
-        >
-          {loading ? 'Updating Event...' : 'Update Event'}
-        </button>
-        </form>
-
-        {/* Delete Event Section */}
-        <div className={styles.deleteSection}>
-          <button
-            type="button"
-            onClick={() => setShowDeleteConfirm(true)}
-            className={styles.deleteButton}
-            disabled={loading || deleteLoading}
-          >
-            Delete Event
-          </button>
         </div>
       </div>
 
@@ -575,7 +406,7 @@ export default function ManageEvent() {
           <div className={styles.modalContent}>
             <h3 className={styles.modalTitle}>Delete Event</h3>
             <p className={styles.modalMessage}>
-              Are you sure you want to delete this event? This action cannot be undone and will remove all RSVPs.
+              This action cannot be undone and will remove all RSVPs.
             </p>
             <div className={styles.modalActions}>
               <button
@@ -592,7 +423,7 @@ export default function ManageEvent() {
                 className={styles.confirmDeleteButton}
                 disabled={deleteLoading}
               >
-                {deleteLoading ? 'Deleting...' : 'Delete Event'}
+                {deleteLoading ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           </div>

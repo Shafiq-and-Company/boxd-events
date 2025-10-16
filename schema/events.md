@@ -37,40 +37,50 @@ CREATE POLICY "Anyone can view events" ON events
 ```
 **Purpose**: Enables public event discovery without authentication
 
-### Policy 2: Authenticated Create
+### Policy 2: Authenticated Create with Host ID
 ```sql
--- Allow authenticated users to create events
+-- Allow authenticated users to create events with proper host_id
 CREATE POLICY "Authenticated users can create events" ON events
     FOR INSERT
     TO authenticated
-    WITH CHECK (true);
+    WITH CHECK (auth.uid() = host_id);
 ```
-**Purpose**: Prevents spam by requiring authentication for event creation
+**Purpose**: Ensures users can only create events where they are the host
 
-### Policy 3: Owner Update
+### Policy 3: Host Read Access
 ```sql
--- Allow event creators to update their own events
-CREATE POLICY "Users can update their own events" ON events
+-- Allow event hosts to read their own events
+CREATE POLICY "Hosts can read their own events" ON events
+    FOR SELECT
+    TO authenticated
+    USING (auth.uid() = host_id);
+```
+**Purpose**: Ensures hosts can read their own events (in addition to public read)
+
+### Policy 4: Host Update Access
+```sql
+-- Allow event hosts to update their own events
+CREATE POLICY "Hosts can update their own events" ON events
     FOR UPDATE
     TO authenticated
     USING (auth.uid() = host_id)
     WITH CHECK (auth.uid() = host_id);
 ```
-**Purpose**: Users can only modify events they created
+**Purpose**: Hosts can only update events they created
 
-### Policy 4: Owner Delete
+### Policy 5: Host Delete Access
 ```sql
--- Allow event creators to delete their own events
-CREATE POLICY "Users can delete their own events" ON events
+-- Allow event hosts to delete their own events
+CREATE POLICY "Hosts can delete their own events" ON events
     FOR DELETE
     TO authenticated
     USING (auth.uid() = host_id);
 ```
-**Purpose**: Users can only delete events they created
+**Purpose**: Hosts can only delete events they created
 
-### Policy 5: Service Role Access
+### Policy 6: Service Role Access
 ```sql
--- Allow service role to manage all events (for webhooks)
+-- Allow service role to manage all events (for webhooks and admin)
 CREATE POLICY "Service role can manage all events" ON events
     FOR ALL
     TO service_role
@@ -81,8 +91,27 @@ CREATE POLICY "Service role can manage all events" ON events
 
 ## Implementation Notes
 
-## Key Operations
-- **Read**: Public access for discovery
-- **Create**: Authenticated users only
-- **Update/Delete**: Owner-only access
+### Security Model
+- **Public Read**: Anyone can view events for discovery
+- **Host Management**: Only event hosts can manage their own events
+- **Authentication Required**: All write operations require authentication
+- **Host ID Validation**: Ensures users can only create events where they are the host
+
+### Key Operations
+- **Read**: Public access for discovery + Host access to own events
+- **Create**: Authenticated users only (must be host)
+- **Update**: Host-only access to own events
+- **Delete**: Host-only access to own events
 - **System**: Service role for administrative operations
+
+### Policy Enforcement
+- **INSERT**: Users can only create events where `auth.uid() = host_id`
+- **SELECT**: Public read + Host read of own events
+- **UPDATE**: Hosts can only update events where `auth.uid() = host_id`
+- **DELETE**: Hosts can only delete events where `auth.uid() = host_id`
+
+### Security Benefits
+- Prevents users from creating events with incorrect host_id
+- Ensures hosts can manage their events even if public access is restricted
+- Maintains data integrity by enforcing host ownership
+- Allows for future admin features while maintaining security
