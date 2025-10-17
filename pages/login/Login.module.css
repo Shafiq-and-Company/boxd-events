@@ -171,31 +171,35 @@
   transform: translateX(-50%);
 }
 
-.googleButton {
+.googleButton, .discordButton {
   width: 100%;
-  padding: 14px 16px;
+  padding: 10px 16px;
   background-color: #ffffff;
   color: #333;
   border: 1px solid #e1e1e1;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 400;
   cursor: pointer;
   transition: all 200ms ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
 }
 
-.googleButton:hover:not(:disabled) {
+.discordButton {
+  margin-top: 8px;
+}
+
+.googleButton:hover:not(:disabled), .discordButton:hover:not(:disabled) {
   background-color: #f8f8f8;
   border-color: #ccc;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: none;
+  box-shadow: none;
 }
 
-.googleButton:disabled {
+.googleButton:disabled, .discordButton:disabled {
   background-color: #f8f8f8;
   border-color: #e1e1e1;
   color: #999;
@@ -204,12 +208,12 @@
   box-shadow: none;
 }
 
-.googleButton:focus {
+.googleButton:focus, .discordButton:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
 }
 
-.googleIcon {
+.googleIcon, .discordIcon {
   flex-shrink: 0;
 }
 
@@ -294,9 +298,14 @@
     padding: 14px 16px;
   }
   
-  .submitButton, .googleButton {
+  .submitButton {
     padding: 16px;
     font-size: 16px;
+  }
+  
+  .googleButton, .discordButton {
+    padding: 12px 16px;
+    font-size: 14px;
   }
   
   .divider {
@@ -329,13 +338,13 @@
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .input, .submitButton, .googleButton, .toggleButton { 
+  .input, .submitButton, .googleButton, .discordButton, .toggleButton { 
     transition: none; 
   }
 }
 
 @media (prefers-contrast: high) {
-  .input, .input:focus, .submitButton, .googleButton { 
+  .input, .input:focus, .submitButton, .googleButton, .discordButton { 
     border-color: #000000; 
   }
 }

@@ -184,7 +184,7 @@
 }
 
 /* Security & Google Auth Buttons */
-.securityButton, .googleLinkedButton {
+.securityButton, .googleLinkedButton, .discordLinkedButton {
   background: #16a34a;
   color: #ffffff;
   border: none;
@@ -200,20 +200,20 @@
   min-width: 100px;
 }
 
-.securityButton:hover, .googleLinkedButton:hover {
+.securityButton:hover, .googleLinkedButton:hover, .discordLinkedButton:hover {
   background: #dc2626;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
 }
 
-.securityButton:disabled, .googleLinkedButton:disabled {
+.securityButton:disabled, .googleLinkedButton:disabled, .discordLinkedButton:disabled {
   background: #a0a0a0;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-/* Google Button Hover Text Effect */
+/* Google & Discord Button Hover Text Effect */
 .buttonText {
   display: block;
   transition: opacity 200ms ease;
@@ -229,11 +229,13 @@
   transition: opacity 200ms ease;
 }
 
-.googleLinkedButton:hover .buttonText {
+.googleLinkedButton:hover .buttonText,
+.discordLinkedButton:hover .buttonText {
   opacity: 0;
 }
 
-.googleLinkedButton:hover .buttonHoverText {
+.googleLinkedButton:hover .buttonHoverText,
+.discordLinkedButton:hover .buttonHoverText {
   opacity: 1;
 }
 
@@ -348,7 +350,7 @@
   .input, .textarea { padding: 10px 14px; font-size: 0.8rem; }
   .textarea { min-height: 50px; }
   .label { font-size: 0.7rem; }
-  .saveButton, .securityButton { padding: 10px 20px; font-size: 0.8rem; }
+  .saveButton, .securityButton, .googleLinkedButton, .discordLinkedButton { padding: 10px 20px; font-size: 0.8rem; }
   .securityItem { 
     padding: 16px 0; 
     gap: 12px; 
@@ -389,7 +391,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) { 
-  .input, .saveButton, .saveButton:hover { 
+  .input, .saveButton, .saveButton:hover, .googleLinkedButton, .discordLinkedButton { 
     transition: none; 
     transform: none; 
   } 
