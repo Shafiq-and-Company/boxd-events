@@ -61,6 +61,12 @@
   margin: 0 auto;
 }
 
+/* Hosting Events Grid - 2 columns */
+.eventsList.hosting {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
 /* Event Cards */
 .eventCard {
   background: #ffffff;
@@ -331,6 +337,11 @@
     gap: 8px;
   }
   
+  .eventsList.hosting {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
   .eventContent {
     padding: 10px;
   }
@@ -389,6 +400,11 @@
 @media (max-width: 480px) {
   .eventsList {
     gap: 6px;
+  }
+  
+  .eventsList.hosting {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
   
   .eventContent {
@@ -451,6 +467,11 @@
     gap: 20px;
   }
   
+  .eventsList.hosting {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  
   .eventContent {
     padding: 14px;
   }
@@ -485,6 +506,11 @@
   .eventsList {
     grid-template-columns: repeat(4, 1fr);
     gap: 18px;
+  }
+  
+  .eventsList.hosting {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
   
   .eventContent {

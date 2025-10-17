@@ -316,7 +316,7 @@ export default function MyEvents({ onTabChange }) {
               </div>
             </div>
           ) : (
-            <div className={styles.eventsList}>
+            <div className={`${styles.eventsList} ${styles.hosting}`}>
               {hostedEvents.map(event => renderEventCard(event, true))}
             </div>
           )}
