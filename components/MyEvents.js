@@ -210,9 +210,6 @@ export default function MyEvents({ onTabChange }) {
       <div className={styles.eventContent}>
         <div className={styles.eventHeader}>
           <h3 className={styles.eventTitle}>{event.title}</h3>
-          {event.game_title && (
-            <span className={styles.gameTitle}>{event.game_title}</span>
-          )}
         </div>
         
         <div className={styles.eventDetails}>
@@ -226,14 +223,16 @@ export default function MyEvents({ onTabChange }) {
               {event.city && `, ${event.city}`}
             </div>
           )}
-          
-          {event.description && (
-            <div className={styles.eventDescription}>
-              {event.description}
-            </div>
-          )}
         </div>
       </div>
+      
+      {event.game_title && (
+        <span className={styles.gameTitle}>
+          {event.game_title.length > 30 
+            ? `${event.game_title.substring(0, 30)}...` 
+            : event.game_title}
+        </span>
+      )}
       
       {isHosted && (
         <div className={styles.eventActions}>

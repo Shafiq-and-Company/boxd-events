@@ -1,6 +1,6 @@
-/* MyEvents Component - Hyper Minimal CSS */
-/* Johnny Ive Minimalism - Component-Specific Styles */
+/* MyEvents Component - Clean Minimal CSS */
 
+/* Layout */
 .myEvents {
   max-width: 800px;
   padding: 24px 12px;
@@ -14,9 +14,6 @@
 .section:last-child {
   margin-bottom: 0;
 }
-
-
-
 
 /* Tab Switcher */
 .tabSwitcher {
@@ -55,16 +52,7 @@
   background: none;
 }
 
-.tagline {
-  text-align: left;
-  margin-bottom: 24px;
-  font-size: 0.9rem;
-  font-weight: 400;
-  color: #707070;
-  line-height: 1.5;
-  letter-spacing: 0px;
-}
-
+/* Events Grid */
 .eventsList {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -73,18 +61,16 @@
   margin: 0 auto;
 }
 
+/* Event Cards */
 .eventCard {
   background: #ffffff;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
-  padding: 0;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  display: flex;
-  flex-direction: column;
-  min-height: 220px;
+  aspect-ratio: 1;
   position: relative;
   cursor: pointer;
   overflow: hidden;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .eventCard:hover {
@@ -93,15 +79,17 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* Image Section */
 .eventImage {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100px;
+  height: 100%;
   background: #f8f8f8;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid #e8e8e8;
+  z-index: 1;
 }
 
 .imagePlaceholder {
@@ -115,113 +103,121 @@
   font-size: 1.25rem;
   font-weight: 500;
   color: #707070;
-  letter-spacing: 0px;
 }
 
-/* Content Section */
 .eventContent {
+  position: relative;
+  z-index: 2;
   padding: 12px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  justify-content: flex-end;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.8) 100%);
+  color: white;
 }
 
 .eventHeader {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 10px;
-  flex: 0 0 auto;
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
 .eventTitle {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #000000;
+  color: #ffffff;
   line-height: 1.2;
-  letter-spacing: -0.25px;
   height: 2.2rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .gameTitle {
-  display: inline-block;
-  background: #f8f8f8;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(255, 255, 255, 0.9);
   color: #404040;
   padding: 3px 6px;
   border-radius: 3px;
   font-size: 0.65rem;
   font-weight: 400;
-  border: 1px solid #d0d0d0;
-  flex-shrink: 0;
-  align-self: flex-start;
-  order: -1;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   min-height: 16px;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
   white-space: nowrap;
   line-height: 1.1;
+  z-index: 3;
+  max-width: calc(100% - 16px);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .eventDetails {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  flex: 1;
-  justify-content: flex-start;
 }
 
-.eventDetails > * {
-  flex-shrink: 0;
+.eventDate, .eventLocation {
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .eventDate {
-  color: #404040;
-  font-weight: 400;
-  font-size: 0.75rem;
-  line-height: 1.2;
-  margin-bottom: 1px;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  white-space: nowrap;
+  margin-bottom: 2px;
 }
 
 .eventLocation {
-  color: #707070;
-  font-size: 0.75rem;
-  font-weight: 400;
-  line-height: 1.2;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin-bottom: 2px;
-  white-space: nowrap;
+  margin-bottom: 4px;
 }
 
-.eventDescription {
+/* Event Actions */
+.eventActions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+}
+
+.editButton {
+  background: rgba(255, 255, 255, 0.95);
   color: #404040;
-  font-size: 0.75rem;
-  line-height: 1.3;
-  font-weight: 400;
-  flex: 1;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
+  border: 1px solid #d0d0d0;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.editButton:hover {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.editButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* State Classes */
@@ -328,7 +324,6 @@
   transform: translateY(-1px);
 }
 
-
 /* Responsive Design */
 @media (max-width: 767px) {
   .eventsList {
@@ -336,64 +331,47 @@
     gap: 8px;
   }
   
-  .eventCard {
-    min-height: 180px;
-  }
-  
-  .eventImage {
-    height: 60px;
-  }
-  
   .eventContent {
-    padding: 8px;
+    padding: 10px;
   }
   
   .gameTitle {
-    min-height: 14px;
-    font-size: 0.6rem;
-    padding: 2px 4px;
-    align-self: flex-start;
+    font-size: 0.65rem;
+    padding: 3px 6px;
+    min-height: 16px;
+    top: 8px;
+    left: 8px;
+    max-width: calc(100% - 16px);
   }
   
   .eventHeader {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    margin-bottom: 8px;
+    gap: 6px;
+    margin-bottom: 10px;
   }
   
   .eventTitle {
-    margin-right: 0;
-    margin-bottom: 4px;
-    font-size: 0.85rem;
-    height: 2rem;
-    line-height: 1.2;
+    font-size: 0.9rem;
+    height: 2.4rem;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   
   .eventDetails {
-    gap: 6px;
-    flex: 1;
-    justify-content: flex-start;
+    gap: 4px;
   }
   
-  .eventDate {
-    font-size: 0.75rem;
-    line-height: 1.3;
-    white-space: normal;
-    overflow: visible;
+  .eventDate, .eventLocation {
+    font-size: 0.8rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     display: block;
-  }
-  
-  .eventLocation {
-    font-size: 0.75rem;
-    line-height: 1.3;
-    white-space: normal;
-    overflow: visible;
-    display: block;
-  }
-  
-  .eventDescription {
-    display: none;
   }
   
   .editButton {
@@ -408,45 +386,51 @@
   }
 }
 
-/* Extra small mobile screens */
 @media (max-width: 480px) {
   .eventsList {
-    grid-template-columns: repeat(3, 1fr);
     gap: 6px;
   }
   
-  .eventCard {
-    min-height: 160px;
-  }
-  
-  .eventImage {
-    height: 50px;
-  }
-  
   .eventContent {
-    padding: 6px;
+    padding: 8px;
   }
   
   .eventTitle {
-    font-size: 0.8rem;
-    height: 1.8rem;
+    font-size: 0.85rem;
+    height: 2.2rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   
   .eventDate, .eventLocation {
-    font-size: 0.7rem;
-    line-height: 1.3;
-    white-space: normal;
-    overflow: visible;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     display: block;
   }
   
-  .eventDescription {
-    display: none;
+  .gameTitle {
+    font-size: 0.6rem;
+    padding: 2px 4px;
+    min-height: 14px;
+    top: 6px;
+    left: 6px;
+    max-width: calc(100% - 12px);
   }
   
-  .gameTitle {
-    font-size: 0.55rem;
-    padding: 1px 3px;
+  .eventHeader {
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  
+  .eventDetails {
+    gap: 3px;
   }
   
   .editButton {
@@ -467,21 +451,13 @@
     gap: 20px;
   }
   
-  .eventCard {
-    min-height: 250px;
-  }
-  
-  .eventImage {
-    height: 90px;
-  }
-  
   .eventContent {
     padding: 14px;
   }
   
   .gameTitle {
-    min-height: 16px;
     font-size: 0.65rem;
+    min-height: 16px;
   }
   
   .editButton {
@@ -506,18 +482,9 @@
     margin-bottom: 40px;
   }
   
-  
   .eventsList {
     grid-template-columns: repeat(4, 1fr);
     gap: 18px;
-  }
-  
-  .eventCard {
-    min-height: 220px;
-  }
-  
-  .eventImage {
-    height: 80px;
   }
   
   .eventContent {
@@ -525,8 +492,8 @@
   }
   
   .gameTitle {
-    min-height: 14px;
     font-size: 0.6rem;
+    min-height: 14px;
   }
   
   .eventTitle { 
@@ -534,7 +501,9 @@
     height: 2rem;
   }
   
-  .eventDate, .eventLocation, .eventDescription { font-size: 0.7rem; }
+  .eventDate, .eventLocation { 
+    font-size: 0.7rem; 
+  }
   
   .editButton {
     width: 32px;
@@ -560,44 +529,6 @@
   .eventCard:hover { transform: none; }
   .editButton { transition: none; }
   .editButton:hover { transform: none; }
-}
-
-/* Event Actions */
-.eventActions {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 10;
-}
-
-.editButton {
-  background: rgba(255, 255, 255, 0.95);
-  color: #404040;
-  border: 1px solid #d0d0d0;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
-
-.editButton:hover {
-  background: #000000;
-  color: #ffffff;
-  border-color: #000000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.editButton:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* High Contrast */

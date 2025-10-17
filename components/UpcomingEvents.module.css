@@ -1,5 +1,6 @@
 /* UpcomingEvents Component - Clean Minimal CSS */
 
+/* Layout */
 .upcomingEvents {
   max-width: 800px;
   padding: 24px 12px;
@@ -14,6 +15,7 @@
   margin: 0 auto;
 }
 
+/* Event Card */
 .eventCard {
   background: #ffffff;
   border: 1px solid #e8e8e8;
@@ -31,6 +33,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
+/* Event Image */
 .eventImage {
   position: absolute;
   top: 0;
@@ -57,6 +60,7 @@
   color: #707070;
 }
 
+/* Event Content */
 .eventContent {
   position: relative;
   z-index: 2;
@@ -157,29 +161,31 @@
 /* Responsive Design */
 @media (max-width: 767px) {
   .eventsList {
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
   
   .eventContent {
-    padding: 8px;
-  }
-  
-  .gameTitle {
-    font-size: 0.6rem;
-    padding: 2px 4px;
-    min-height: 14px;
+    padding: 12px;
   }
   
   .eventHeader {
-    gap: 4px;
-    margin-bottom: 8px;
+    gap: 8px;
+    margin-bottom: 12px;
   }
   
   .eventTitle {
-    font-size: 0.85rem;
-    height: 2rem;
-    line-height: 1.2;
-    margin-bottom: 4px;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    min-height: 2.6rem;
+    max-height: 2.6rem;
+  }
+  
+  .gameTitle {
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    min-height: 18px;
   }
   
   .eventDetails {
@@ -201,25 +207,37 @@
   }
   
   .eventContent {
-    padding: 6px;
+    padding: 10px;
+  }
+  
+  .eventHeader {
+    gap: 6px;
+    margin-bottom: 10px;
   }
   
   .eventTitle {
-    font-size: 0.8rem;
-    height: 1.8rem;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    min-height: 2.4rem;
+    max-height: 2.4rem;
+  }
+  
+  .gameTitle {
+    font-size: 0.6rem;
+    padding: 3px 6px;
+    min-height: 16px;
+  }
+  
+  .eventDetails {
+    gap: 4px;
   }
   
   .eventDate, .eventLocation {
     font-size: 0.7rem;
-    line-height: 1.3;
+    line-height: 1.2;
     white-space: normal;
     overflow: visible;
     display: block;
-  }
-  
-  .gameTitle {
-    font-size: 0.55rem;
-    padding: 1px 3px;
   }
 }
 
