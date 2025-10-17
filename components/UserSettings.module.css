@@ -235,6 +235,92 @@
   margin: 0;
 }
 
+.passwordResetMessage {
+  font-size: 0.875rem;
+  margin: 8px 0 0 0;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: #f0f8ff;
+  color: #0066cc;
+  border: 1px solid #b3d9ff;
+}
+
+.passwordResetMessage.error {
+  background: #fff5f5;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.statusIndicator {
+  margin-top: 8px;
+}
+
+.statusText {
+  font-size: 0.875rem;
+  color: #16a34a;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusTextUnlinked {
+  font-size: 0.875rem;
+  color: #dc2626;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.linkedButton {
+  background: #16a34a !important;
+  color: #ffffff !important;
+}
+
+.linkedButton:hover {
+  background: #15803d !important;
+}
+
+.unlinkedButton {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+.unlinkedButton:hover {
+  background: #b91c1c !important;
+}
+
+.googleAuthActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.refreshButton {
+  background: #f8f8f8;
+  color: #404040;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 200ms ease;
+  padding: 6px 12px;
+}
+
+.refreshButton:hover:not(:disabled) {
+  background: #e8e8e8;
+  border-color: #a0a0a0;
+}
+
+.refreshButton:disabled {
+  background: #f8f8f8;
+  color: #a0a0a0;
+  cursor: not-allowed;
+}
+
 /* Messages */
 .loading, .notLoggedIn { 
   padding: 32px; 

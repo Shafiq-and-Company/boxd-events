@@ -184,9 +184,73 @@
   .toggleButton { transition: none; }
 }
 
+/* Google Sign-in Button */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  position: relative;
+}
+
+.divider::before {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: #e8e8e8;
+}
+
+.dividerText {
+  background-color: #ffffff;
+  color: #a0a0a0;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 0 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.googleButton {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  color: #404040;
+  border: 1px solid #e8e8e8;
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.googleButton:hover:not(:disabled) {
+  background-color: #f8f8f8;
+  border-color: #d0d0d0;
+}
+
+.googleButton:disabled {
+  background-color: #f8f8f8;
+  border-color: #e8e8e8;
+  color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.googleButton:focus {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+.googleIcon {
+  flex-shrink: 0;
+}
+
 /* High Contrast */
 @media (prefers-contrast: high) {
   .input { border-color: #000000; }
   .input:focus { border-color: #000000; }
   .submitButton { border-color: #000000; }
+  .googleButton { border-color: #000000; }
 }
