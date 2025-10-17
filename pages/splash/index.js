@@ -6,7 +6,7 @@ export default function SplashPage() {
   const router = useRouter();
 
   const handleGetStarted = () => {
-    router.push('/?tab=createEvent');
+    window.open('https://forms.gle/z9zBsz1Dyq66oqcv6', '_blank');
   };
 
   return (
@@ -34,7 +34,7 @@ export default function SplashPage() {
             </p>
 
             <button className={styles.primaryButton} onClick={handleGetStarted}>
-              <span>Find Local Events</span>
+              <span>Create an Event Now</span>
             </button>
           </div>
           <div className={styles.heroImage}>
