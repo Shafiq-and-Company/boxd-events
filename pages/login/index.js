@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '../../lib/AuthContext'
-import NavBar from '../../components/NavBar'
 import styles from './Login.module.css'
 
 export default function Login() {
@@ -63,13 +62,7 @@ export default function Login() {
   }
 
   return (
-    <div style={{ flex: 1 }}>
-      <NavBar hideMiddleNav={true} />
-      <div className={styles.loginContainer}>
-        <div className={styles.imageBackground}>
-          <div className={styles.imageOverlay}></div>
-        </div>
-      
+    <div className={styles.loginContainer}>
       <div className={styles.loginCard}>
         <div className={styles.iconContainer}>
           <div className={styles.doorIcon}>
@@ -172,7 +165,6 @@ export default function Login() {
             }
           </button>
         </div>
-      </div>
       </div>
     </div>
   )

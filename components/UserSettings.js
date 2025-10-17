@@ -17,6 +17,7 @@ export default function UserSettings() {
   const [passwordResetMessage, setPasswordResetMessage] = useState('')
   const [passwordResetError, setPasswordResetError] = useState(false)
   const [googleAuthStatus, setGoogleAuthStatus] = useState(null)
+  const [unlinkLoading, setUnlinkLoading] = useState(false)
   
   const [userProfile, setUserProfile] = useState({
     first_name: '',
@@ -134,6 +135,40 @@ export default function UserSettings() {
   const refreshGoogleAuthStatus = async () => {
     setGoogleAuthStatus(null) // Show loading state
     await checkGoogleAuthStatus()
+  }
+
+  // Handle Google unlink
+  const handleGoogleUnlink = async () => {
+    try {
+      setUnlinkLoading(true)
+      setGoogleAuthStatus(null) // Show loading state
+      
+      // Call API endpoint to unlink Google identity
+      const { error } = await supabase.auth.unlinkIdentity({
+        provider: 'google'
+      })
+      
+      if (error) {
+        console.error('Error unlinking Google auth:', error)
+        throw error
+      }
+      
+      // Refresh the auth status after unlinking
+      await checkGoogleAuthStatus()
+      
+      // Show success message
+      alert('Successfully unlinked from Google!')
+      
+    } catch (err) {
+      console.error('Error unlinking Google auth:', err)
+      
+      // Fallback: Show user that they need to contact support or re-authenticate
+      alert('Unable to unlink Google account automatically. Please contact support or sign out and sign back in to change your authentication method.')
+      
+      await checkGoogleAuthStatus() // Reset status on error
+    } finally {
+      setUnlinkLoading(false)
+    }
   }
 
   // Helper function to build user profile with fallbacks
@@ -426,14 +461,16 @@ export default function UserSettings() {
                   </p>
                 )}
               </div>
-              <button 
-                type="button" 
-                className={styles.securityButton}
-                onClick={handlePasswordReset}
-                disabled={passwordResetLoading}
-              >
-                {passwordResetLoading ? 'Sending...' : 'Password Reset'}
-              </button>
+              <div className={styles.securityActions}>
+                <button 
+                  type="button" 
+                  className={styles.securityButton}
+                  onClick={handlePasswordReset}
+                  disabled={passwordResetLoading}
+                >
+                  {passwordResetLoading ? 'Sending...' : 'Password Reset'}
+                </button>
+              </div>
             </div>
 
             <div className={styles.securityItem}>
@@ -455,29 +492,34 @@ export default function UserSettings() {
                     : 'Checking Google authentication status...'
                   }
                 </p>
+              </div>
+              <div className={styles.securityActions}>
                 {googleAuthStatus === true && (
-                  <div className={styles.statusIndicator}>
-                    <span className={styles.statusText}>✓ Linked to Google</span>
-                  </div>
+                  <button 
+                    type="button" 
+                    className={styles.googleLinkedButton}
+                    onClick={handleGoogleUnlink}
+                    disabled={googleAuthStatus === null || unlinkLoading}
+                    title="Click to unlink Google account"
+                  >
+                    <span className={styles.buttonText}>
+                      {unlinkLoading ? 'Unlinking...' : 'Linked'}
+                    </span>
+                    <span className={styles.buttonHoverText}>
+                      {unlinkLoading ? 'Unlinking...' : 'Unlink'}
+                    </span>
+                  </button>
                 )}
                 {googleAuthStatus === false && (
-                  <div className={styles.statusIndicator}>
-                    <span className={styles.statusTextUnlinked}>Not linked to Google</span>
-                  </div>
+                  <button 
+                    type="button" 
+                    className={styles.refreshButton}
+                    onClick={refreshGoogleAuthStatus}
+                    disabled={googleAuthStatus === null}
+                  >
+                    Refresh
+                  </button>
                 )}
-              </div>
-              <div className={styles.googleAuthActions}>
-                <button 
-                  type="button" 
-                  className={styles.refreshButton}
-                  onClick={refreshGoogleAuthStatus}
-                  disabled={googleAuthStatus === null}
-                >
-                  Refresh
-                </button>
-                <div className={`${styles.securityButton} ${googleAuthStatus === true ? styles.linkedButton : styles.unlinkedButton}`}>
-                  {googleAuthStatus === true ? '✓ Linked' : googleAuthStatus === false ? 'Not Linked' : 'Checking...'}
-                </div>
               </div>
             </div>
           </div>

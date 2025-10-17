@@ -194,7 +194,8 @@
 
 /* Security & Payment Items */
 .securityItem, .paymentItem {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 16px;
   padding: 20px 0;
@@ -219,7 +220,18 @@
 }
 
 .securityContent, .paymentContent {
-  flex: 1;
+  min-width: 0; /* Allow content to shrink */
+}
+
+.securityActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.securityButton svg {
+  width: 16px;
+  height: 16px;
 }
 
 .securityTitle, .paymentTitle {
@@ -255,6 +267,11 @@
   margin-top: 8px;
 }
 
+.statusIndicatorInline {
+  margin-top: 4px;
+  display: inline-block;
+}
+
 .statusText {
   font-size: 0.875rem;
   color: #16a34a;
@@ -264,6 +281,19 @@
   gap: 4px;
 }
 
+.statusTextInline {
+  font-size: 0.75rem;
+  color: #16a34a;
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0fdf4;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #bbf7d0;
+}
+
 .statusTextUnlinked {
   font-size: 0.875rem;
   color: #dc2626;
@@ -271,6 +301,19 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+.statusTextUnlinkedInline {
+  font-size: 0.75rem;
+  color: #dc2626;
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fef2f2;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #fecaca;
 }
 
 .linkedButton {
@@ -321,6 +364,108 @@
   cursor: not-allowed;
 }
 
+.unlinkButton {
+  background: #dc2626;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.unlinkButton:hover:not(:disabled) {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.unlinkButton:disabled {
+  background: #a0a0a0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.unlinkIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.googleStatusContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.googleStatusText {
+  font-size: 0.875rem;
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.googleStatusTextUnlinked {
+  font-size: 0.875rem;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.googleLinkedButton {
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease;
+  padding: 12px 24px;
+  font-size: 0.875rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.googleLinkedButton:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.googleLinkedButton:disabled {
+  background: #a0a0a0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.buttonText {
+  display: block;
+  transition: opacity 200ms ease;
+}
+
+.buttonHoverText {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.googleLinkedButton:hover .buttonText {
+  opacity: 0;
+}
+
+.googleLinkedButton:hover .buttonHoverText {
+  opacity: 1;
+}
+
 /* Messages */
 .loading, .notLoggedIn { 
   padding: 32px; 
@@ -344,8 +489,28 @@
   .textarea { min-height: 50px; }
   .label { font-size: 0.7rem; }
   .saveButton, .securityButton, .paymentButton { padding: 10px 20px; font-size: 0.8rem; }
-  .securityItem, .paymentItem { padding: 16px 0; gap: 12px; }
-  .securityIcon, .paymentIcon { width: 36px; height: 36px; padding: 10px; }
+  .securityItem, .paymentItem { 
+    padding: 16px 0; 
+    gap: 12px; 
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .securityIcon, .paymentIcon { 
+    width: 36px; 
+    height: 36px; 
+    padding: 10px; 
+    grid-row: 1;
+  }
+  .securityContent, .paymentContent {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .securityActions {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-self: start;
+    margin-top: 8px;
+  }
   .securityTitle, .paymentTitle { font-size: 0.9rem; }
   .securityDescription, .paymentDescription { font-size: 0.8rem; }
 }
