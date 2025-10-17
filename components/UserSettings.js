@@ -36,15 +36,9 @@ export default function UserSettings() {
     }
     if (user) {
       fetchUserProfile()
-    }
-  }, [user, authLoading, router])
-
-  // Check Google auth status when user changes
-  useEffect(() => {
-    if (user) {
       checkGoogleAuthStatus()
     }
-  }, [user])
+  }, [user, authLoading, router])
 
   // Ensure user record exists in users table
   const ensureUserRecord = async () => {
@@ -104,9 +98,6 @@ export default function UserSettings() {
 
       if (profileError) throw profileError
       setUserProfile(buildUserProfile(profile))
-      
-      // Check Google auth status
-      checkGoogleAuthStatus()
     } catch (err) {
       console.error('Profile fetch error:', err)
     } finally {
@@ -121,7 +112,6 @@ export default function UserSettings() {
       if (currentUser?.identities) {
         const hasGoogleAuth = currentUser.identities.some(identity => identity.provider === 'google')
         setGoogleAuthStatus(hasGoogleAuth)
-        console.log('Google auth status:', hasGoogleAuth, 'Identities:', currentUser.identities)
       } else {
         setGoogleAuthStatus(false)
       }
@@ -131,41 +121,24 @@ export default function UserSettings() {
     }
   }
 
-  // Refresh Google auth status
-  const refreshGoogleAuthStatus = async () => {
-    setGoogleAuthStatus(null) // Show loading state
-    await checkGoogleAuthStatus()
-  }
-
   // Handle Google unlink
   const handleGoogleUnlink = async () => {
     try {
       setUnlinkLoading(true)
-      setGoogleAuthStatus(null) // Show loading state
+      setGoogleAuthStatus(null)
       
-      // Call API endpoint to unlink Google identity
       const { error } = await supabase.auth.unlinkIdentity({
         provider: 'google'
       })
       
-      if (error) {
-        console.error('Error unlinking Google auth:', error)
-        throw error
-      }
+      if (error) throw error
       
-      // Refresh the auth status after unlinking
       await checkGoogleAuthStatus()
-      
-      // Show success message
       alert('Successfully unlinked from Google!')
-      
     } catch (err) {
       console.error('Error unlinking Google auth:', err)
-      
-      // Fallback: Show user that they need to contact support or re-authenticate
       alert('Unable to unlink Google account automatically. Please contact support or sign out and sign back in to change your authentication method.')
-      
-      await checkGoogleAuthStatus() // Reset status on error
+      await checkGoogleAuthStatus()
     } finally {
       setUnlinkLoading(false)
     }
@@ -514,7 +487,7 @@ export default function UserSettings() {
                   <button 
                     type="button" 
                     className={styles.refreshButton}
-                    onClick={refreshGoogleAuthStatus}
+                    onClick={checkGoogleAuthStatus}
                     disabled={googleAuthStatus === null}
                   >
                     Refresh
