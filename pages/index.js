@@ -19,16 +19,8 @@ export default function Home() {
       setActiveTab(router.query.tab)
     }
     
-    // Handle success messages from payment/RSVP
-    if (router.query.payment === 'success') {
-      setSuccessMessage('Payment successful! You have been registered for the event.')
-      // Clear the message after 5 seconds
-      setTimeout(() => {
-        setSuccessMessage(null)
-        // Clean up URL
-        router.replace('/', undefined, { shallow: true })
-      }, 5000)
-    } else if (router.query.rsvp === 'success') {
+    // Handle success messages from RSVP
+    if (router.query.rsvp === 'success') {
       setSuccessMessage('Successfully registered for the event!')
       // Clear the message after 5 seconds
       setTimeout(() => {
@@ -62,8 +54,6 @@ export default function Home() {
         return <UserSettings />
       case 'pricing':
         return <Pricing />
-      case 'about':
-        return <div>About content coming soon...</div>
       default:
         return <UpcomingEvents />
     }

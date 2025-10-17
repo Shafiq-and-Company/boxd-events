@@ -1,4 +1,12 @@
-# BOXD Events
+# Locals
+
+Locals is a platform designed for discovering, creating, and managing real-world gaming events — from casual board game nights and trading card meetups to esports tournaments and LAN parties. The app acts as a community hub where players can find "locals" happening nearby, join events, or organize their own.
+
+For organizers, Locals provides a full suite of tools tailored for gaming events: automated tournament setup and bracket management (for games like Smash, Magic, or Valorant), check-in and registration handling, and promotion tools for sharing events across social platforms.
+
+For participants, it's a discovery engine with filters for location, date, game type, and skill level, plus social features for following venues, clubs, or other players. Event pages are designed to be visually appealing and informative out of the box — showcasing branding, schedules, and live results without requiring design work.
+
+In short, Locals is part social discovery app, part event management platform, and part tournament organizer toolkit — purpose-built for the grassroots gaming community.
 
 ## Brand Kit - Johnny Ive Minimalism
 

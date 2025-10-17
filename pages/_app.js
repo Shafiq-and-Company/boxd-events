@@ -6,12 +6,13 @@ import { useRouter } from 'next/router'
 function Application({ Component, pageProps }) {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
+  const isSplashPage = router.pathname === '/splash'
   
   return (
     <AuthProvider>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Component {...pageProps} />
-        {!isLoginPage && <Footer />}
+        {!isLoginPage && !isSplashPage && <Footer />}
       </div>
     </AuthProvider>
   )
