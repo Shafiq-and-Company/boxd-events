@@ -31,6 +31,8 @@ export default function ManageEvent() {
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
   const [imageUploading, setImageUploading] = useState(false)
+  const [attendees, setAttendees] = useState([])
+  const [loadingAttendees, setLoadingAttendees] = useState(false)
 
   // Helper functions
   const formatDateForInput = (dateString) => {
@@ -205,6 +207,39 @@ export default function ManageEvent() {
     }
   }
 
+  const fetchAttendees = async () => {
+    if (!id) return
+    
+    try {
+      setLoadingAttendees(true)
+      
+      const { data, error } = await supabase
+        .from('rsvps')
+        .select(`
+          user_id,
+          created_at,
+          users:user_id (
+            username,
+            first_name
+          )
+        `)
+        .eq('event_id', id)
+        .eq('status', 'going')
+        .order('created_at', { ascending: true })
+
+      if (error) {
+        setAttendees([])
+        return
+      }
+
+      setAttendees(data || [])
+    } catch (err) {
+      setAttendees([])
+    } finally {
+      setLoadingAttendees(false)
+    }
+  }
+
   // Effects
   useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
@@ -219,6 +254,12 @@ export default function ManageEvent() {
   useEffect(() => {
     fetchGames()
   }, [])
+
+  useEffect(() => {
+    if (id) {
+      fetchAttendees()
+    }
+  }, [id])
 
   // Early returns
   if (!user) {
@@ -298,6 +339,61 @@ export default function ManageEvent() {
                 </button>
               )}
             </div>
+
+            {/* Desktop Hosted By Section */}
+            <div className={styles.hostedBy}>
+              <div className={styles.hostedByIcon}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+              <div className={styles.hostedByText}>
+                <div className={styles.hostedByLabel}>Hosted by</div>
+                <div className={styles.hostName}>
+                  {user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'You'}
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop Attendees Section */}
+            <div className={styles.attendeesSection}>
+              <div className={styles.attendeesHeader}>
+                <div className={styles.attendeesIcon}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                </div>
+                <div className={styles.attendeesText}>
+                  <div className={styles.attendeesLabel}>
+                    {loadingAttendees ? 'Loading...' : 
+                     attendees.length === 0 ? 'No attendees yet' :
+                     attendees.length === 1 ? '1 person attending' :
+                     `${attendees.length} people attending`}
+                  </div>
+                </div>
+              </div>
+              
+              {!loadingAttendees && attendees.length > 0 && (
+                <div className={styles.attendeesList}>
+                  {attendees.map((attendee) => (
+                    <div key={attendee.user_id} className={styles.attendeeItem}>
+                      <div className={styles.attendeeIcon}>
+                        <div className={styles.attendeeInitial}>
+                          {(attendee.users?.username?.charAt(0) || attendee.users?.first_name?.charAt(0) || 'U').toUpperCase()}
+                        </div>
+                      </div>
+                      <div className={styles.attendeeName}>
+                        {attendee.users?.username || attendee.users?.first_name || 'Unknown User'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className={styles.formColumn}>
@@ -313,6 +409,22 @@ export default function ManageEvent() {
                   className={styles.titleInput}
                   placeholder="Event Title"
                 />
+              </div>
+
+              {/* Hosted By Section - Mobile */}
+              <div className={styles.hostedByMobile}>
+                <div className={styles.hostedByIcon}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+                <div className={styles.hostedByText}>
+                  <div className={styles.hostedByLabel}>Hosted by</div>
+                  <div className={styles.hostName}>
+                    {user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'You'}
+                  </div>
+                </div>
               </div>
 
               <div className={styles.dateTimeSection}>
@@ -414,6 +526,45 @@ export default function ManageEvent() {
                         </div>
                         <span className={styles.gameLabel}>{game.game_title}</span>
                       </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Attendees Section - Mobile */}
+              <div className={styles.attendeesSectionMobile}>
+                <div className={styles.attendeesHeader}>
+                  <div className={styles.attendeesIcon}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                  </div>
+                  <div className={styles.attendeesText}>
+                    <div className={styles.attendeesLabel}>
+                      {loadingAttendees ? 'Loading...' : 
+                       attendees.length === 0 ? 'No attendees yet' :
+                       attendees.length === 1 ? '1 person attending' :
+                       `${attendees.length} people attending`}
+                    </div>
+                  </div>
+                </div>
+                
+                {!loadingAttendees && attendees.length > 0 && (
+                  <div className={styles.attendeesList}>
+                    {attendees.map((attendee) => (
+                      <div key={attendee.user_id} className={styles.attendeeItem}>
+                        <div className={styles.attendeeIcon}>
+                          <div className={styles.attendeeInitial}>
+                            {(attendee.users?.username?.charAt(0) || attendee.users?.first_name?.charAt(0) || 'U').toUpperCase()}
+                          </div>
+                        </div>
+                        <div className={styles.attendeeName}>
+                          {attendee.users?.username || attendee.users?.first_name || 'Unknown User'}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 )}
