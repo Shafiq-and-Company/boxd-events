@@ -35,7 +35,7 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
     <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
       <div 
         className={styles.logo}
-        onClick={() => onTabChange && onTabChange('splash')}
+        onClick={() => onTabChange && onTabChange('upcoming')}
       >
         <img 
           src="/logo.png" 
