@@ -5,13 +5,11 @@
   margin: 0 auto;
 }
 
-
 /* Tab Switcher */
 .tabSwitcher {
   display: flex;
   border-bottom: 1px solid #e8e8e8;
   margin-bottom: 24px;
-  gap: 0;
 }
 
 .tabButton {
@@ -24,7 +22,6 @@
   cursor: pointer;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   border-bottom: 2px solid transparent;
-  position: relative;
 }
 
 .tabButton:hover {
@@ -33,20 +30,17 @@
 }
 
 .tabButtonActive {
-  color: #000000;
+  color: #000;
   font-weight: 500;
-  border-bottom-color: #000000;
+  border-bottom-color: #000;
 }
 
 .tabButtonActive:hover {
-  color: #000000;
+  color: #000;
   background: none;
 }
 
-.profileSection, .paymentsSection, .securitySection {
-  margin: 0;
-}
-
+/* Sections */
 .sectionTitle {
   font-size: 1.25rem;
   font-weight: 600;
@@ -160,7 +154,7 @@
 }
 
 /* Buttons */
-.saveButton, .signInButton, .securityButton, .paymentButton {
+.saveButton, .signInButton {
   background: #000;
   color: #fff;
   border: none;
@@ -172,10 +166,7 @@
   font-size: 0.875rem;
 }
 
-.saveButton:hover:not(:disabled), 
-.signInButton:hover, 
-.securityButton:hover, 
-.paymentButton:hover {
+.saveButton:hover:not(:disabled), .signInButton:hover {
   background: #404040;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -192,8 +183,62 @@
   margin-top: 16px; 
 }
 
-/* Security & Payment Items */
-.securityItem, .paymentItem {
+/* Security & Google Auth Buttons */
+.securityButton, .googleLinkedButton {
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease;
+  padding: 12px 24px;
+  font-size: 0.875rem;
+  position: relative;
+  overflow: hidden;
+  width: 100px;
+  min-width: 100px;
+}
+
+.securityButton:hover, .googleLinkedButton:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.securityButton:disabled, .googleLinkedButton:disabled {
+  background: #a0a0a0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Google Button Hover Text Effect */
+.buttonText {
+  display: block;
+  transition: opacity 200ms ease;
+}
+
+.buttonHoverText {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.googleLinkedButton:hover .buttonText {
+  opacity: 0;
+}
+
+.googleLinkedButton:hover .buttonHoverText {
+  opacity: 1;
+}
+
+/* Security Items */
+.securityItem {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -202,11 +247,11 @@
   border-bottom: 1px solid #e8e8e8;
 }
 
-.securityItem:last-child, .paymentItem:last-child {
+.securityItem:last-child {
   border-bottom: none;
 }
 
-.securityIcon, .paymentIcon {
+.securityIcon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -219,8 +264,8 @@
   padding: 12px;
 }
 
-.securityContent, .paymentContent {
-  min-width: 0; /* Allow content to shrink */
+.securityContent {
+  min-width: 0;
 }
 
 .securityActions {
@@ -229,19 +274,14 @@
   justify-content: flex-end;
 }
 
-.securityButton svg {
-  width: 16px;
-  height: 16px;
-}
-
-.securityTitle, .paymentTitle {
+.securityTitle {
   font-size: 1rem;
   font-weight: 600;
   color: #000;
   margin: 0 0 4px 0;
 }
 
-.securityDescription, .paymentDescription {
+.securityDescription {
   font-size: 0.875rem;
   color: #707070;
   margin: 0;
@@ -261,84 +301,6 @@
   background: #fff5f5;
   color: #dc2626;
   border-color: #fecaca;
-}
-
-.statusIndicator {
-  margin-top: 8px;
-}
-
-.statusIndicatorInline {
-  margin-top: 4px;
-  display: inline-block;
-}
-
-.statusText {
-  font-size: 0.875rem;
-  color: #16a34a;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.statusTextInline {
-  font-size: 0.75rem;
-  color: #16a34a;
-  font-weight: 400;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: #f0fdf4;
-  padding: 2px 6px;
-  border-radius: 3px;
-  border: 1px solid #bbf7d0;
-}
-
-.statusTextUnlinked {
-  font-size: 0.875rem;
-  color: #dc2626;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.statusTextUnlinkedInline {
-  font-size: 0.75rem;
-  color: #dc2626;
-  font-weight: 400;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: #fef2f2;
-  padding: 2px 6px;
-  border-radius: 3px;
-  border: 1px solid #fecaca;
-}
-
-.linkedButton {
-  background: #16a34a !important;
-  color: #ffffff !important;
-}
-
-.linkedButton:hover {
-  background: #15803d !important;
-}
-
-.unlinkedButton {
-  background: #dc2626 !important;
-  color: #ffffff !important;
-}
-
-.unlinkedButton:hover {
-  background: #b91c1c !important;
-}
-
-.googleAuthActions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-end;
 }
 
 .refreshButton {
@@ -364,108 +326,6 @@
   cursor: not-allowed;
 }
 
-.unlinkButton {
-  background: #dc2626;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 200ms ease;
-  padding: 6px 12px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.unlinkButton:hover:not(:disabled) {
-  background: #b91c1c;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
-}
-
-.unlinkButton:disabled {
-  background: #a0a0a0;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.unlinkIcon {
-  width: 14px;
-  height: 14px;
-}
-
-.googleStatusContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.googleStatusText {
-  font-size: 0.875rem;
-  color: #16a34a;
-  font-weight: 500;
-}
-
-.googleStatusTextUnlinked {
-  font-size: 0.875rem;
-  color: #dc2626;
-  font-weight: 500;
-}
-
-.googleLinkedButton {
-  background: #16a34a;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 200ms ease;
-  padding: 12px 24px;
-  font-size: 0.875rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.googleLinkedButton:hover {
-  background: #dc2626;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
-}
-
-.googleLinkedButton:disabled {
-  background: #a0a0a0;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.buttonText {
-  display: block;
-  transition: opacity 200ms ease;
-}
-
-.buttonHoverText {
-  display: block;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  transition: opacity 200ms ease;
-}
-
-.googleLinkedButton:hover .buttonText {
-  opacity: 0;
-}
-
-.googleLinkedButton:hover .buttonHoverText {
-  opacity: 1;
-}
-
 /* Messages */
 .loading, .notLoggedIn { 
   padding: 32px; 
@@ -488,20 +348,20 @@
   .input, .textarea { padding: 10px 14px; font-size: 0.8rem; }
   .textarea { min-height: 50px; }
   .label { font-size: 0.7rem; }
-  .saveButton, .securityButton, .paymentButton { padding: 10px 20px; font-size: 0.8rem; }
-  .securityItem, .paymentItem { 
+  .saveButton, .securityButton { padding: 10px 20px; font-size: 0.8rem; }
+  .securityItem { 
     padding: 16px 0; 
     gap: 12px; 
     grid-template-columns: auto 1fr;
     grid-template-rows: auto auto auto;
   }
-  .securityIcon, .paymentIcon { 
+  .securityIcon { 
     width: 36px; 
     height: 36px; 
     padding: 10px; 
     grid-row: 1;
   }
-  .securityContent, .paymentContent {
+  .securityContent {
     grid-column: 1 / -1;
     grid-row: 2;
   }
@@ -511,8 +371,8 @@
     justify-self: start;
     margin-top: 8px;
   }
-  .securityTitle, .paymentTitle { font-size: 0.9rem; }
-  .securityDescription, .paymentDescription { font-size: 0.8rem; }
+  .securityTitle { font-size: 0.9rem; }
+  .securityDescription { font-size: 0.8rem; }
 }
 
 @media (min-width: 1024px) {

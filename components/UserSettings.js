@@ -468,7 +468,7 @@ export default function UserSettings() {
                   onClick={handlePasswordReset}
                   disabled={passwordResetLoading}
                 >
-                  {passwordResetLoading ? 'Sending...' : 'Password Reset'}
+                  {passwordResetLoading ? 'Sending...' : 'Reset'}
                 </button>
               </div>
             </div>
