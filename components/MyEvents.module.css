@@ -1,6 +1,6 @@
 /* MyEvents Component - Clean Minimal CSS */
 
-/* Layout */
+/* ===== LAYOUT ===== */
 .myEvents {
   max-width: 800px;
   padding: 24px 12px;
@@ -15,7 +15,7 @@
   margin-bottom: 0;
 }
 
-/* Tab Switcher */
+/* ===== TAB SWITCHER ===== */
 .tabSwitcher {
   display: flex;
   border-bottom: 1px solid #e8e8e8;
@@ -52,7 +52,7 @@
   background: none;
 }
 
-/* Events Grid */
+/* ===== EVENTS GRID ===== */
 .eventsList {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -61,13 +61,12 @@
   margin: 0 auto;
 }
 
-/* Hosting Events Grid - 2 columns */
 .eventsList.hosting {
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
 
-/* Event Cards */
+/* ===== EVENT CARDS ===== */
 .eventCard {
   background: #ffffff;
   border: 1px solid #e8e8e8;
@@ -188,7 +187,7 @@
   margin-bottom: 4px;
 }
 
-/* Event Actions */
+/* ===== EVENT ACTIONS ===== */
 .eventActions {
   position: absolute;
   top: 8px;
@@ -226,7 +225,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* State Classes */
+/* ===== STATE CLASSES ===== */
 .loading, .error, .noEvents {
   text-align: left;
   padding: 32px;
@@ -250,7 +249,7 @@
   color: #a0a0a0;
 }
 
-/* Empty State */
+/* ===== EMPTY STATE ===== */
 .emptyState {
   display: flex;
   justify-content: center;
@@ -279,23 +278,32 @@
   line-height: 1.5;
 }
 
-.discoverButton {
+/* ===== BUTTONS ===== */
+.discoverButton, .signInButton {
   background: #000000;
   color: #ffffff;
   border: none;
   padding: 12px 24px;
   border-radius: 4px;
-  font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   text-decoration: none;
   display: inline-block;
-  min-width: 140px;
   text-align: center;
 }
 
-.discoverButton:hover {
+.discoverButton {
+  font-size: 0.8rem;
+  min-width: 140px;
+}
+
+.signInButton {
+  font-size: 0.875rem;
+  margin-top: 16px;
+}
+
+.discoverButton:hover, .signInButton:hover {
   background: #404040;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -312,25 +320,7 @@
   border-radius: 0;
 }
 
-.signInButton {
-  background: #000000;
-  color: #ffffff;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  margin-top: 16px;
-}
-
-.signInButton:hover {
-  background: #404040;
-  transform: translateY(-1px);
-}
-
-/* Responsive Design */
+/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 767px) {
   .eventsList {
     grid-template-columns: repeat(3, 1fr);
@@ -346,43 +336,14 @@
     padding: 10px;
   }
   
-  .gameTitle {
-    font-size: 0.65rem;
-    padding: 3px 6px;
-    min-height: 16px;
-    top: 8px;
-    left: 8px;
-    max-width: calc(100% - 16px);
-  }
-  
-  .eventHeader {
-    gap: 6px;
-    margin-bottom: 10px;
-  }
-  
   .eventTitle {
     font-size: 0.9rem;
     height: 2.4rem;
     line-height: 1.3;
-    margin-bottom: 6px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .eventDetails {
-    gap: 4px;
   }
   
   .eventDate, .eventLocation {
     font-size: 0.8rem;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
   }
   
   .editButton {
@@ -403,7 +364,6 @@
   }
   
   .eventsList.hosting {
-    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
   
@@ -414,21 +374,10 @@
   .eventTitle {
     font-size: 0.85rem;
     height: 2.2rem;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
   
   .eventDate, .eventLocation {
     font-size: 0.75rem;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
   }
   
   .gameTitle {
@@ -438,15 +387,6 @@
     top: 6px;
     left: 6px;
     max-width: calc(100% - 12px);
-  }
-  
-  .eventHeader {
-    gap: 4px;
-    margin-bottom: 8px;
-  }
-  
-  .eventDetails {
-    gap: 3px;
   }
   
   .editButton {
@@ -468,17 +408,11 @@
   }
   
   .eventsList.hosting {
-    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
   }
   
   .eventContent {
     padding: 14px;
-  }
-  
-  .gameTitle {
-    font-size: 0.65rem;
-    min-height: 16px;
   }
   
   .editButton {
@@ -495,7 +429,6 @@
 
 @media (min-width: 1024px) {
   .myEvents {
-    max-width: 800px;
     padding: 32px 24px;
   }
   
@@ -504,22 +437,15 @@
   }
   
   .eventsList {
-    grid-template-columns: repeat(4, 1fr);
     gap: 18px;
   }
   
   .eventsList.hosting {
-    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
   }
   
   .eventContent {
     padding: 14px;
-  }
-  
-  .gameTitle {
-    font-size: 0.6rem;
-    min-height: 14px;
   }
   
   .eventTitle { 
@@ -529,6 +455,11 @@
   
   .eventDate, .eventLocation { 
     font-size: 0.7rem; 
+  }
+  
+  .gameTitle {
+    font-size: 0.6rem;
+    min-height: 14px;
   }
   
   .editButton {
@@ -543,24 +474,30 @@
   }
 }
 
-/* Accessibility */
+/* ===== ACCESSIBILITY ===== */
 .eventCard:focus-within {
   outline: 2px solid #000000;
   outline-offset: 2px;
 }
 
-/* Reduced Motion */
+/* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
-  .eventCard { transition: none; }
-  .eventCard:hover { transform: none; }
-  .editButton { transition: none; }
-  .editButton:hover { transform: none; }
+  .eventCard, .editButton { 
+    transition: none; 
+  }
+  .eventCard:hover, .editButton:hover { 
+    transform: none; 
+  }
 }
 
-/* High Contrast */
+/* ===== HIGH CONTRAST ===== */
 @media (prefers-contrast: high) {
-  .eventCard { border-color: #000000; }
-  .eventCard:hover { border-color: #000000; }
+  .eventCard { 
+    border-color: #000000; 
+  }
+  .eventCard:hover { 
+    border-color: #000000; 
+  }
   .editButton { 
     border-color: #000000; 
     background: #ffffff;
