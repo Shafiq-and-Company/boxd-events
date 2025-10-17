@@ -79,7 +79,7 @@ export default function Login() {
           </div>
         </div>
         
-        <h1 className={styles.title}>Welcome to BOXD</h1>
+        <h1 className={styles.title}>Welcome to Locals</h1>
         <p className={styles.subtitle}>Please sign in or sign up below</p>
         
         <form onSubmit={handleSubmit} className={styles.form}>
