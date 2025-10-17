@@ -1,82 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import UpcomingEvents from '../components/UpcomingEvents'
-import DiscoverEvents from '../components/DiscoverEvents'
-import MyEvents from '../components/MyEvents'
-import CreateEvent from '../components/CreateEvent'
-import UserSettings from '../components/UserSettings'
-import Pricing from '../components/Pricing'
-import NavBar from '../components/NavBar'
-import PaymentConfirmation from '../components/PaymentConfirmation'
 
 export default function Home() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState('upcoming')
-  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
-    if (router.query.tab) {
-      setActiveTab(router.query.tab)
-    }
-    
-    // Handle success messages from RSVP
-    if (router.query.rsvp === 'success') {
-      setSuccessMessage('Successfully registered for the event!')
-      // Clear the message after 5 seconds
-      setTimeout(() => {
-        setSuccessMessage(null)
-        // Clean up URL but keep the tab
-        router.replace('/?tab=myEvents', undefined, { shallow: true })
-      }, 5000)
-    }
-  }, [router.query])
+    router.replace('/splash')
+  }, [router])
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab)
-    if (tab === 'upcoming') {
-      router.push('/?tab=upcoming', undefined, { shallow: true })
-    } else {
-      router.push(`/?tab=${tab}`, undefined, { shallow: true })
-    }
-  }
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'upcoming':
-        return <UpcomingEvents />
-      case 'discover':
-        return <DiscoverEvents />
-      case 'myEvents':
-        return <MyEvents onTabChange={handleTabChange} />
-      case 'createEvent':
-        return <CreateEvent />
-      case 'settings':
-        return <UserSettings />
-      case 'pricing':
-        return <Pricing />
-      default:
-        return <UpcomingEvents />
-    }
-  }
-
-  const handleCloseMessage = () => {
-    setSuccessMessage(null)
-    router.replace('/', undefined, { shallow: true })
-  }
-
-
-  return (
-    <div style={{
-      flex: 1
-    }}>
-      <NavBar activeTab={activeTab} onTabChange={handleTabChange} />
-      {successMessage && (
-        <PaymentConfirmation 
-          message={successMessage} 
-          onClose={handleCloseMessage}
-        />
-      )}
-      {renderContent()}
-    </div>
-  )
+  return null
 }
