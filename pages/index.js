@@ -70,7 +70,7 @@ export default function Home() {
       {activeTab === 'discover' && <DiscoverEvents onTabChange={handleTabChange} />}
       {activeTab === 'myEvents' && <MyEvents onTabChange={handleTabChange} />}
       {activeTab === 'createEvent' && <CreateEvent onTabChange={handleTabChange} />}
-      {activeTab === 'settings' && <UserSettings onTabChange={handleTabChange} />}
+      {activeTab === 'settings' && <UserSettings />}
     </div>
   )
 }
