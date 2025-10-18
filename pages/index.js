@@ -39,9 +39,7 @@ export default function Home() {
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
-        height: '100vh',
-        background: 'linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px)',
-        backgroundSize: '8px 8px'
+        height: '100vh'
       }}>
         <div>Loading...</div>
       </div>
@@ -55,11 +53,6 @@ export default function Home() {
 
   return (
     <div style={{
-      background: `
-        linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px)
-      `,
-      backgroundSize: '8px 8px',
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column'
