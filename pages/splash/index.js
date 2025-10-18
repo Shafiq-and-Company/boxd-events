@@ -1,25 +1,16 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import NavBar from '../../components/NavBar';
-import Footer from '../../components/Footer';
+import React from 'react';
+import SplashNav from './SplashNav';
+import SplashFooter from './SplashFooter';
 import styles from './Splash.module.css';
 
 export default function SplashPage() {
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState('splash');
-
   const handleGetStarted = () => {
     window.open('https://forms.gle/z9zBsz1Dyq66oqcv6', '_blank');
   };
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    router.push(`/?tab=${tab}`);
-  };
-
   return (
     <div className={styles.pageContainer}>
-      <NavBar activeTab={activeTab} onTabChange={handleTabChange} />
+      <SplashNav />
       {/* Hero Section */}
       <section className={styles.heroSection}>
         <div className={styles.heroContent}>
@@ -373,7 +364,7 @@ export default function SplashPage() {
         </div>
       </section>
       
-      <Footer />
+      <SplashFooter />
     </div>
   );
 }
