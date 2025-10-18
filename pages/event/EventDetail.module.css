@@ -1,10 +1,6 @@
 /* BOXD Event Detail - Ultra Minimal CSS */
 
 .pageWrapper {
-  background: 
-    linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
-  background-size: 8px 8px;
   min-height: 100vh;
 }
 

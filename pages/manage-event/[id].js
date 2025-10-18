@@ -15,11 +15,6 @@ export default function ManageEventPage() {
 
   return (
     <div style={{
-      background: `
-        linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px)
-      `,
-      backgroundSize: '8px 8px',
       minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column'
