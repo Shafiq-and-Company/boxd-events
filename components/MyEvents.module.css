@@ -62,8 +62,8 @@
 }
 
 .eventsList.hosting {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }
 
 /* ===== EVENT CARDS ===== */
@@ -328,8 +328,8 @@
   }
   
   .eventsList.hosting {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
   
   .eventContent {
@@ -364,7 +364,7 @@
   }
   
   .eventsList.hosting {
-    gap: 8px;
+    gap: 6px;
   }
   
   .eventContent {
@@ -408,7 +408,7 @@
   }
   
   .eventsList.hosting {
-    gap: 24px;
+    gap: 20px;
   }
   
   .eventContent {
@@ -441,7 +441,7 @@
   }
   
   .eventsList.hosting {
-    gap: 24px;
+    gap: 18px;
   }
   
   .eventContent {
