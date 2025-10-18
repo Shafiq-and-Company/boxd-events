@@ -7,12 +7,13 @@ function Application({ Component, pageProps }) {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
   const isSplashPage = router.pathname === '/splash'
+  const isManageTournamentPage = router.pathname === '/manage-tournament'
   
   return (
     <AuthProvider>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Component {...pageProps} />
-        {!isLoginPage && !isSplashPage && <Footer />}
+        {!isLoginPage && !isSplashPage && !isManageTournamentPage && <Footer />}
       </div>
     </AuthProvider>
   )
