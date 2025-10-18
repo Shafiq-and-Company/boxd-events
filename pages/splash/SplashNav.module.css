@@ -7,7 +7,6 @@
   z-index: 1000;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   width: 100%;
   display: flex;
@@ -55,22 +54,25 @@
   background: linear-gradient(135deg, #000000 0%, #404040 100%);
   border: 2px solid #000000;
   color: #FFFFFF;
-  padding: 8px 18px;
-  border-radius: 10px;
-  font-size: 14px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
+  justify-content: center;
   position: relative;
   overflow: hidden;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
+  min-width: 140px;
+  white-space: nowrap;
+  height: 48px;
 }
 
 .getStartedButton::before {
@@ -91,13 +93,14 @@
 .getStartedButton:hover {
   background: linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%);
   color: #000000;
-  transform: translateY(-1px) scale(1.01);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.1);
   border-color: #FFFFFF;
 }
 
 .getStartedButton:active {
   transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .buttonText {
@@ -123,8 +126,10 @@
   }
   
   .getStartedButton {
-    padding: 7px 16px;
-    font-size: 13px;
+    padding: 12px 24px;
+    font-size: 15px;
+    min-width: 130px;
+    height: 44px;
   }
 }
 
@@ -144,8 +149,10 @@
   }
   
   .getStartedButton {
-    padding: 6px 14px;
-    font-size: 12px;
+    padding: 10px 20px;
+    font-size: 14px;
+    min-width: 120px;
+    height: 40px;
   }
 }
 

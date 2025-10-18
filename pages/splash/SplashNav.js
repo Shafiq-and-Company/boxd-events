@@ -31,7 +31,7 @@ export default function SplashNav() {
           onClick={handleGetStarted}
           className={styles.getStartedButton}
         >
-          <span className={styles.buttonText}>Get Started Free</span>
+          <span className={styles.buttonText}>Get Started</span>
         </button>
       </div>
     </nav>
