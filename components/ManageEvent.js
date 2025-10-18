@@ -33,6 +33,7 @@ export default function ManageEvent() {
   const [imageUploading, setImageUploading] = useState(false)
   const [attendees, setAttendees] = useState([])
   const [loadingAttendees, setLoadingAttendees] = useState(false)
+  const [isTournament, setIsTournament] = useState(false)
 
   // Helper functions
   const formatDateForInput = (dateString) => {
@@ -529,6 +530,48 @@ export default function ManageEvent() {
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* Tournament Section */}
+              <div className={styles.tournamentSection}>
+                <div className={styles.tournamentRow}>
+                  <div className={styles.tournamentText}>
+                    <span className={styles.tournamentLabel}>Make this a tournament</span>
+                  </div>
+                  <div className={styles.tournamentActions}>
+                    {isTournament && (
+                      <button
+                        type="button"
+                        className={styles.manageTournamentButton}
+                        onClick={() => {
+                          // TODO: Implement tournament management navigation
+                          console.log('Navigate to tournament management')
+                        }}
+                        title="Manage tournament"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                          <path d="M4 22h16"/>
+                          <path d="M10 14.66V17c0 .55-.47.98-.97 1.21l-1.5.5c-.5.17-1.03.17-1.53 0l-1.5-.5C4.47 17.98 4 17.55 4 17v-2.34"/>
+                          <path d="M14 14.66V17c0 .55.47.98.97 1.21l1.5.5c.5.17 1.03.17 1.53 0l1.5-.5C19.53 17.98 20 17.55 20 17v-2.34"/>
+                          <path d="M18 2H6l2 7h8l2-7Z"/>
+                          <path d="M12 9v4"/>
+                        </svg>
+                        <span className={styles.manageTournamentText}>Manage Tournament</span>
+                      </button>
+                    )}
+                    <div className={styles.tournamentCheckbox}>
+                      <input
+                        type="checkbox"
+                        id="tournamentCheckbox"
+                        checked={isTournament}
+                        onChange={(e) => setIsTournament(e.target.checked)}
+                        className={styles.checkboxInput}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Attendees Section - Mobile */}
