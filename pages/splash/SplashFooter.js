@@ -53,7 +53,7 @@ export default function SplashFooter() {
       <div className={styles.footerBottom}>
         <div className={styles.footerBottomContent}>
           <p className={styles.copyright}>
-            © 2025 Locals. All rights reserved.
+            © 2025 BOXD Gaming. All rights reserved.
           </p>
         </div>
       </div>

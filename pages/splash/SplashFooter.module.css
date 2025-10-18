@@ -81,7 +81,7 @@
   display: inline-block;
 }
 
-.footerLink:hover {
+  .footerLink:hover {
   color: #FFFFFF;
   transform: translateX(4px);
 }
@@ -113,6 +113,7 @@
   font-weight: 400;
   padding: 8px 0;
 }
+
 
 
 /* Responsive Design */
@@ -152,6 +153,7 @@
   .copyright {
     padding: 6px 0;
   }
+  
 }
 
 @media (max-width: 480px) {
@@ -175,6 +177,7 @@
   .copyright {
     padding: 4px 0;
   }
+  
   
   .logo {
     gap: 8px;
@@ -200,6 +203,7 @@
   .copyright {
     font-size: 13px;
   }
+  
 }
 
 @media (max-width: 320px) {
@@ -224,6 +228,7 @@
     padding: 3px 0;
   }
   
+  
   .logoImage {
     height: 24px;
   }
@@ -247,6 +252,7 @@
   .copyright {
     font-size: 12px;
   }
+  
 }
 
 /* Accessibility */
