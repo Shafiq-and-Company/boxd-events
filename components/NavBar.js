@@ -46,7 +46,13 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
       {!hideMiddleNav && (
         <div className={styles.navLinks}>
           <button 
-            onClick={() => onTabChange && onTabChange('upcoming')} 
+            onClick={() => {
+              if (user) {
+                onTabChange && onTabChange('upcoming')
+              } else {
+                router.push('/splash')
+              }
+            }} 
             className={`${styles.navLink} ${activeTab === 'upcoming' ? styles.active : ''}`}
           >
             <svg className={styles.navIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -58,7 +64,13 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
             <span className={styles.navText}>Upcoming</span>
           </button>
           <button 
-            onClick={() => onTabChange && onTabChange('discover')} 
+            onClick={() => {
+              if (user) {
+                onTabChange && onTabChange('discover')
+              } else {
+                router.push('/splash')
+              }
+            }} 
             className={`${styles.navLink} ${activeTab === 'discover' ? styles.active : ''}`}
           >
             <svg className={styles.navIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -72,7 +84,7 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
               if (user) {
                 onTabChange && onTabChange('myEvents')
               } else {
-                router.push('/login')
+                router.push('/splash')
               }
             }} 
             className={`${styles.navLink} ${activeTab === 'myEvents' ? styles.active : ''}`}
@@ -95,7 +107,7 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
                 if (onTabChange) {
                   onTabChange('createEvent')
                 } else {
-                  router.push('/')
+                  router.push('/splash')
                 }
               }}
               className={styles.createEventButton}
@@ -132,7 +144,7 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
                     if (onTabChange) {
                       onTabChange('settings')
                     } else {
-                      router.push('/')
+                      router.push('/splash')
                     }
                     setIsProfileOpen(false)
                   }}
