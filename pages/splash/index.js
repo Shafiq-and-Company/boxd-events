@@ -1,5 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import NavBar from '../../components/NavBar';
+import Footer from '../../components/Footer';
 import styles from './Splash.module.css';
 
 export default function SplashPage() {
@@ -11,6 +13,7 @@ export default function SplashPage() {
 
   return (
     <div className={styles.pageContainer}>
+      <NavBar hideMiddleNav={true} />
       {/* Hero Section */}
       <section className={styles.heroSection}>
         <div className={styles.heroContent}>
@@ -363,6 +366,8 @@ export default function SplashPage() {
           </button>
         </div>
       </section>
+      
+      <Footer />
     </div>
   );
 }
