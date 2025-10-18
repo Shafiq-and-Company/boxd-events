@@ -92,7 +92,11 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
           <>
             <button 
               onClick={() => {
-                onTabChange && onTabChange('createEvent')
+                if (onTabChange) {
+                  onTabChange('createEvent')
+                } else {
+                  router.push('/')
+                }
               }}
               className={styles.createEventButton}
             >
@@ -125,7 +129,11 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
                 </div>
                 <button 
                   onClick={() => {
-                    onTabChange && onTabChange('settings')
+                    if (onTabChange) {
+                      onTabChange('settings')
+                    } else {
+                      router.push('/')
+                    }
                     setIsProfileOpen(false)
                   }}
                   className={styles.profileSettingsButton}
