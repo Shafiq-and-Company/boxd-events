@@ -1,6 +1,7 @@
 /* Rules Section */
 .rulesSection {
   margin-top: 20px;
+  max-width: 400px;
 }
 
 .rulesCard {
@@ -58,6 +59,10 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .rulesSection {
+    max-width: 100%;
+  }
+  
   .rulesCard {
     padding: 16px;
   }

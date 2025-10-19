@@ -1,6 +1,7 @@
 /* Analytics Section */
 .analyticsSection {
   margin-top: 20px;
+  max-width: 400px;
 }
 
 .analyticsCard {
@@ -56,6 +57,10 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .analyticsSection {
+    max-width: 100%;
+  }
+  
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
