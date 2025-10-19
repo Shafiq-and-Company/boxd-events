@@ -1,0 +1,78 @@
+/* Rules Section */
+.rulesSection {
+  margin-top: 20px;
+}
+
+.rulesCard {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rulesHeader {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.rulesTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.rulesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ruleItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ruleNumber {
+  background: #000;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.ruleText {
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .rulesCard {
+    padding: 16px;
+  }
+  
+  .ruleItem {
+    gap: 10px;
+  }
+  
+  .ruleNumber {
+    width: 18px;
+    height: 18px;
+    font-size: 0.7rem;
+  }
+  
+  .ruleText {
+    font-size: 0.8rem;
+  }
+}

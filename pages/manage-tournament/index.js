@@ -5,6 +5,7 @@ import { useAuth } from '../../lib/AuthContext';
 import SideBar from './SideBar';
 import TitleCard from './TitleCard';
 import TournamentStats from './TournamentStats';
+import CompetitionRules from './CompetitionRules';
 import styles from './manageTournament.module.css';
 
 // Single Elimination Bracket Component
@@ -461,36 +462,7 @@ const ManageTournament = () => {
         {activeTab === 'rules' && (
           <div className={styles.bracketsSection}>
             <TitleCard title="Tournament Rules" eventData={eventData} />
-            
-            <div className={styles.rulesSection}>
-              <div className={styles.rulesCard}>
-                <div className={styles.rulesHeader}>
-                  <h3 className={styles.rulesTitle}>Competition Rules</h3>
-                </div>
-                <div className={styles.rulesList}>
-                  <div className={styles.ruleItem}>
-                    <span className={styles.ruleNumber}>1</span>
-                    <span className={styles.ruleText}>Best of 3 matches for all rounds</span>
-                  </div>
-                  <div className={styles.ruleItem}>
-                    <span className={styles.ruleNumber}>2</span>
-                    <span className={styles.ruleText}>5-minute break between matches</span>
-                  </div>
-                  <div className={styles.ruleItem}>
-                    <span className={styles.ruleNumber}>3</span>
-                    <span className={styles.ruleText}>No substitutions after tournament starts</span>
-                  </div>
-                  <div className={styles.ruleItem}>
-                    <span className={styles.ruleNumber}>4</span>
-                    <span className={styles.ruleText}>Disconnection = automatic loss</span>
-                  </div>
-                  <div className={styles.ruleItem}>
-                    <span className={styles.ruleNumber}>5</span>
-                    <span className={styles.ruleText}>Final match is Best of 5</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <CompetitionRules />
           </div>
         )}
 
