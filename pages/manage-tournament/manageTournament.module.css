@@ -57,53 +57,6 @@
   max-width: 800px;
 }
 
-.sectionHeader {
-  margin-bottom: 24px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding-bottom: 16px;
-}
-
-.bracketsSection .sectionHeader {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.bracketsSection .sectionHeader .sectionTitle {
-  margin-bottom: 8px;
-}
-
-.bracketsSection .sectionHeader .eventInfo {
-  margin-top: 8px;
-}
-
-.sectionTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 8px 0;
-}
-
-.eventInfo {
-  margin-top: 8px;
-}
-
-.eventTitle {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: #374151;
-  margin: 0 0 4px 0;
-}
-
-.eventGame {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin: 0;
-}
 
 /* Participants List */
 .participantsList {

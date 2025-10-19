@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
 import SideBar from './SideBar';
+import TitleCard from './TitleCard';
 import styles from './manageTournament.module.css';
 
 // Single Elimination Bracket Component
@@ -271,15 +272,7 @@ const ManageTournament = () => {
       <div className={styles.mainContent}>
         {activeTab === 'participants' && (
           <div className={styles.bracketsSection}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Tournament Participants</h2>
-              {eventData && (
-                <div className={styles.eventInfo}>
-                  <h3 className={styles.eventTitle}>{eventData.title}</h3>
-                  <p className={styles.eventGame}>{eventData.game_title}</p>
-                </div>
-              )}
-            </div>
+            <TitleCard title="Tournament Participants" eventData={eventData} />
             
             {loadingParticipants ? (
               <div className={styles.loadingState}>
@@ -340,15 +333,7 @@ const ManageTournament = () => {
         
         {activeTab === 'settings' && (
           <div className={styles.bracketsSection}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Tournament Settings</h2>
-              {eventData && (
-                <div className={styles.eventInfo}>
-                  <h3 className={styles.eventTitle}>{eventData.title}</h3>
-                  <p className={styles.eventGame}>{eventData.game_title}</p>
-                </div>
-              )}
-            </div>
+            <TitleCard title="Tournament Settings" eventData={eventData} />
             
             <div className={styles.settingsGrid}>
               {/* Tournament Format */}
@@ -413,15 +398,7 @@ const ManageTournament = () => {
 
         {activeTab === 'prizes' && (
           <div className={styles.bracketsSection}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Prize Pool</h2>
-              {eventData && (
-                <div className={styles.eventInfo}>
-                  <h3 className={styles.eventTitle}>{eventData.title}</h3>
-                  <p className={styles.eventGame}>{eventData.game_title}</p>
-                </div>
-              )}
-            </div>
+            <TitleCard title="Prize Pool" eventData={eventData} />
             
             <div className={styles.prizeSection}>
               <div className={styles.prizeCard}>
@@ -450,15 +427,7 @@ const ManageTournament = () => {
 
         {activeTab === 'schedule' && (
           <div className={styles.bracketsSection}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Tournament Schedule</h2>
-              {eventData && (
-                <div className={styles.eventInfo}>
-                  <h3 className={styles.eventTitle}>{eventData.title}</h3>
-                  <p className={styles.eventGame}>{eventData.game_title}</p>
-                </div>
-              )}
-            </div>
+            <TitleCard title="Tournament Schedule" eventData={eventData} />
             
             <div className={styles.scheduleSection}>
               <div className={styles.scheduleCard}>
@@ -490,15 +459,7 @@ const ManageTournament = () => {
 
         {activeTab === 'rules' && (
           <div className={styles.bracketsSection}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Tournament Rules</h2>
-              {eventData && (
-                <div className={styles.eventInfo}>
-                  <h3 className={styles.eventTitle}>{eventData.title}</h3>
-                  <p className={styles.eventGame}>{eventData.game_title}</p>
-                </div>
-              )}
-            </div>
+            <TitleCard title="Tournament Rules" eventData={eventData} />
             
             <div className={styles.rulesSection}>
               <div className={styles.rulesCard}>
@@ -534,15 +495,7 @@ const ManageTournament = () => {
 
         {activeTab === 'brackets' && (
           <div className={styles.bracketsSection}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Tournament Brackets</h2>
-              {eventData && (
-                <div className={styles.eventInfo}>
-                  <h3 className={styles.eventTitle}>{eventData.title}</h3>
-                  <p className={styles.eventGame}>{eventData.game_title}</p>
-                </div>
-              )}
-            </div>
+            <TitleCard title="Tournament Brackets" eventData={eventData} />
             
             {participants.length > 0 ? (
               <div className={styles.bracketContainer}>
@@ -566,15 +519,7 @@ const ManageTournament = () => {
 
         {activeTab === 'analytics' && (
           <div className={styles.bracketsSection}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>Tournament Analytics</h2>
-              {eventData && (
-                <div className={styles.eventInfo}>
-                  <h3 className={styles.eventTitle}>{eventData.title}</h3>
-                  <p className={styles.eventGame}>{eventData.game_title}</p>
-                </div>
-              )}
-            </div>
+            <TitleCard title="Tournament Analytics" eventData={eventData} />
             
             <div className={styles.analyticsSection}>
               <div className={styles.analyticsCard}>
