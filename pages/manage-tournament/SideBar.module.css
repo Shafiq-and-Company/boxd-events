@@ -1,0 +1,145 @@
+/* Floating Sidebar */
+.sidebar {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 60px;
+  height: calc(100vh - 40px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar:hover {
+  transform: translateX(0);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Sidebar Content */
+.sidebarContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  gap: 8px;
+  height: 100%;
+  justify-content: space-between;
+}
+
+/* Sidebar Top Section */
+.sidebarTop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Sidebar Items */
+.sidebarItem {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  background: transparent;
+}
+
+.sidebarItem:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+.sidebarItem:hover .icon {
+  color: #000;
+  transform: scale(1.1);
+}
+
+/* Icon Styles */
+.icon {
+  width: 20px;
+  height: 20px;
+  color: #64748b;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover Tooltip */
+.sidebarItem::after {
+  content: attr(title);
+  position: absolute;
+  left: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1001;
+}
+
+.sidebarItem::before {
+  content: '';
+  position: absolute;
+  left: 64px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1001;
+}
+
+.sidebarItem:hover::after,
+.sidebarItem:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Active State */
+.sidebarItem.active {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.sidebarItem.active .icon {
+  color: #000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 50px;
+    top: 10px;
+    left: 10px;
+    height: calc(100vh - 20px);
+  }
+  
+  .sidebarItem {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+}
