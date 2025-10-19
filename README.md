@@ -8,7 +8,7 @@ For participants, it's a discovery engine with filters for location, date, game 
 
 In short, Locals is part social discovery app, part event management platform, and part tournament organizer toolkit — purpose-built for the grassroots gaming community.
 
-## Brand Kit - Johnny Ive Minimalism
+## Brand Kit - Minimalism
 
 BOXD embodies the design principles of luma.com, or lu.ma. We're limiting our colors to black, white, and everything in between
 
@@ -61,9 +61,6 @@ BOXD embodies the design principles of luma.com, or lu.ma. We're limiting our co
 
 This minimalist brand kit ensures every pixel serves a purpose while maintaining the highest standards of usability and aesthetic purity.
 
-## MVP - Lightweight Events App
-
-BOXD Events is a streamlined platform for discovering and registering for events with integrated payment processing. The MVP focuses on core functionality: authentication, event discovery, payment, and confirmation.
 
 ### Core Features
 
@@ -73,11 +70,14 @@ BOXD Events is a streamlined platform for discovering and registering for events
 - **Event Registration**: Simple RSVP system for event registration
 - **Registration Confirmation**: Real-time RSVP confirmation and status updates
 - **User Dashboard**: View registered events and RSVP history
+- **Profile Settings**: Manage Profile settings like name, email phone and linked accounts
 
 #### **Admin Capabilities**
 - **Event Management**: Create, edit, and manage events
 - **User Management**: Monitor registrations and user activity
 - **RSVP Tracking**: View registration history and analytics
+- **Tournament Management**: Link a Tournament to an event and manage the brackets
+
 
 #### **Technical Architecture**
 - **Backend**: Supabase for authentication, database, and real-time updates
@@ -99,18 +99,6 @@ BOXD Events is a streamlined platform for discovering and registering for events
 - **Performance**: Fast loading and responsive design
 - **Accessibility**: Mobile-first design with WCAG compliance
 
-## Next + Netlify Starter
-
-Think of this like a LEGO kit for websites.
-- **Next.js** is the box of LEGO bricks (the web app framework).
-- **Netlify** is the shelf where your finished model goes so everyone can see it (hosting).
-
-This starter gives you a tiny Next.js app that is ready to run on Netlify.
-It includes:
-- **2 sample components** in `components/`
-- **Global styles** in `styles/globals.css`
-- **`netlify.toml`** so Netlify knows how to build and serve
-- **`jsconfig.json`** to make imports like `components/Button` work nicely
 
 ## Quick Start
 
@@ -130,7 +118,7 @@ Visit `http://localhost:3000`
 4) Edit something
 Open `pages/index.js` and make a change. The browser updates automatically.
 
-## Deploying (Putting it on the shelf)
+## Deploying
 
 - Easiest: click the "Deploy to Netlify" button above and follow the steps.
 - Manual way:
