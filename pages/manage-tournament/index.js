@@ -9,6 +9,8 @@ import CompetitionRules from './CompetitionRules';
 import PrizeDistribution from './PrizeDistribution';
 import EventTimeline from './EventTimeline';
 import SingleElimBracket from './SingleElimBracket';
+import Participants from './Participants';
+import TournamentFormat from './TournamentFormat';
 import styles from './manageTournament.module.css';
 
 
@@ -204,126 +206,17 @@ const ManageTournament = () => {
         {activeTab === 'participants' && (
           <div className={styles.bracketsSection}>
             <TitleCard title="Tournament Participants" eventData={eventData} />
-            
-            {loadingParticipants ? (
-              <div className={styles.loadingState}>
-                <div className={styles.loadingSpinner}></div>
-                <p>Loading participants...</p>
-              </div>
-            ) : participants.length === 0 ? (
-              <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}>
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                    <circle cx="9" cy="7" r="4"/>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                  </svg>
-                </div>
-                <h3>No participants yet</h3>
-                <p>Participants will appear here once they RSVP to your event.</p>
-              </div>
-            ) : (
-              <div className={styles.participantsList}>
-                <div className={styles.participantsHeader}>
-                  <span className={styles.participantCount}>
-                    {participants.length} participant{participants.length !== 1 ? 's' : ''}
-                  </span>
-                </div>
-                {participants.map((participant, index) => (
-                  <div key={participant.user_id} className={styles.participantItem}>
-                    <div className={styles.participantNumber}>#{index + 1}</div>
-                    <div className={styles.participantAvatar}>
-                      <div className={styles.avatarInitial}>
-                        {(participant.users?.username?.charAt(0) || 
-                          participant.users?.first_name?.charAt(0) || 
-                          'U').toUpperCase()}
-                      </div>
-                    </div>
-                    <div className={styles.participantInfo}>
-                      <div className={styles.participantName}>
-                        {participant.users?.username || 
-                         participant.users?.first_name || 
-                         'Unknown User'}
-                      </div>
-                      <div className={styles.participantEmail}>
-                        {participant.users?.email}
-                      </div>
-                    </div>
-                    <div className={styles.participantStatus}>
-                      <span className={styles.statusBadge}>
-                        {participant.status}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <Participants 
+              participants={participants} 
+              loadingParticipants={loadingParticipants} 
+            />
           </div>
         )}
         
         {activeTab === 'settings' && (
           <div className={styles.bracketsSection}>
             <TitleCard title="Tournament Settings" eventData={eventData} />
-            
-            <div className={styles.settingsGrid}>
-              {/* Tournament Format */}
-              <div className={styles.settingCard}>
-                <div className={styles.settingHeader}>
-                  <h3 className={styles.settingTitle}>Tournament Format</h3>
-                  <span className={styles.settingBadge}>Single Elimination</span>
-                </div>
-                <div className={styles.settingOptions}>
-                  <div className={styles.optionItem}>
-                    <input type="radio" id="single-elim" name="format" defaultChecked />
-                    <label htmlFor="single-elim">Single Elimination</label>
-                  </div>
-                  <div className={styles.optionItem}>
-                    <input type="radio" id="double-elim" name="format" />
-                    <label htmlFor="double-elim">Double Elimination</label>
-                  </div>
-                  <div className={styles.optionItem}>
-                    <input type="radio" id="round-robin" name="format" />
-                    <label htmlFor="round-robin">Round Robin</label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tournament Configuration */}
-              <div className={styles.settingCard}>
-                <div className={styles.settingHeader}>
-                  <h3 className={styles.settingTitle}>Tournament Configuration</h3>
-                </div>
-                <div className={styles.configGrid}>
-                  <div className={styles.configItem}>
-                    <label className={styles.configLabel}>Max Participants</label>
-                    <input type="number" className={styles.configInput} defaultValue="32" min="8" max="64" />
-                  </div>
-                  <div className={styles.configItem}>
-                    <label className={styles.configLabel}>Match Duration (minutes)</label>
-                    <input type="number" className={styles.configInput} defaultValue="15" min="5" max="60" />
-                  </div>
-                  <div className={styles.configItem}>
-                    <label className={styles.configLabel}>Break Duration (minutes)</label>
-                    <input type="number" className={styles.configInput} defaultValue="5" min="2" max="15" />
-                  </div>
-                  <div className={styles.configItem}>
-                    <label className={styles.configLabel}>Streaming Enabled</label>
-                    <div className={styles.toggleSwitch}>
-                      <input type="checkbox" id="streaming" defaultChecked />
-                      <label htmlFor="streaming" className={styles.toggleLabel}></label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className={styles.actionButtons}>
-                <button className={styles.saveButton}>Save Settings</button>
-                <button className={styles.publishButton}>Publish Tournament</button>
-                <button className={styles.previewButton}>Preview Bracket</button>
-              </div>
-            </div>
+            <TournamentFormat />
           </div>
         )}
 
