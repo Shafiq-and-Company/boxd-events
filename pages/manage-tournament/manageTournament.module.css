@@ -282,72 +282,7 @@
 }
 
 
-.prizeTotal {
-  background: #000;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
 
-.prizeDistribution {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.prizeItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.prizePosition {
-  font-size: 0.875rem;
-  color: #374151;
-  font-weight: 500;
-}
-
-.prizeAmount {
-  font-size: 0.875rem;
-  color: #000;
-  font-weight: 600;
-}
-
-.scheduleInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.scheduleItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.scheduleItem:last-child {
-  border-bottom: none;
-}
-
-.scheduleLabel {
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.scheduleValue {
-  font-size: 0.875rem;
-  color: #374151;
-  font-weight: 500;
-}
 
 .configGrid {
   display: grid;
@@ -484,61 +419,7 @@
   color: white;
 }
 
-/* Prize Section */
-.prizeSection {
-  margin-top: 20px;
-}
 
-.prizeCard {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.prizeHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.prizeTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0;
-}
-
-/* Schedule Section */
-.scheduleSection {
-  margin-top: 20px;
-  max-width: 400px;
-}
-
-.scheduleCard {
-  background: white;
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.scheduleHeader {
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.scheduleTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0;
-}
 
 
 /* Brackets Section */

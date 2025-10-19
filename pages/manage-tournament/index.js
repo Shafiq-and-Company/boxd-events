@@ -6,6 +6,8 @@ import SideBar from './SideBar';
 import TitleCard from './TitleCard';
 import TournamentStats from './TournamentStats';
 import CompetitionRules from './CompetitionRules';
+import PrizeDistribution from './PrizeDistribution';
+import EventTimeline from './EventTimeline';
 import styles from './manageTournament.module.css';
 
 // Single Elimination Bracket Component
@@ -401,61 +403,14 @@ const ManageTournament = () => {
         {activeTab === 'prizes' && (
           <div className={styles.bracketsSection}>
             <TitleCard title="Prize Pool" eventData={eventData} />
-            
-            <div className={styles.prizeSection}>
-              <div className={styles.prizeCard}>
-                <div className={styles.prizeHeader}>
-                  <h3 className={styles.prizeTitle}>Prize Distribution</h3>
-                  <span className={styles.prizeTotal}>$500 Total</span>
-                </div>
-                <div className={styles.prizeDistribution}>
-                  <div className={styles.prizeItem}>
-                    <span className={styles.prizePosition}>1st Place</span>
-                    <span className={styles.prizeAmount}>$250</span>
-                  </div>
-                  <div className={styles.prizeItem}>
-                    <span className={styles.prizePosition}>2nd Place</span>
-                    <span className={styles.prizeAmount}>$150</span>
-                  </div>
-                  <div className={styles.prizeItem}>
-                    <span className={styles.prizePosition}>3rd Place</span>
-                    <span className={styles.prizeAmount}>$100</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <PrizeDistribution />
           </div>
         )}
 
         {activeTab === 'schedule' && (
           <div className={styles.bracketsSection}>
             <TitleCard title="Tournament Schedule" eventData={eventData} />
-            
-            <div className={styles.scheduleSection}>
-              <div className={styles.scheduleCard}>
-                <div className={styles.scheduleHeader}>
-                  <h3 className={styles.scheduleTitle}>Event Timeline</h3>
-                </div>
-                <div className={styles.scheduleInfo}>
-                  <div className={styles.scheduleItem}>
-                    <span className={styles.scheduleLabel}>Registration Deadline:</span>
-                    <span className={styles.scheduleValue}>March 15, 2024 at 11:59 PM</span>
-                  </div>
-                  <div className={styles.scheduleItem}>
-                    <span className={styles.scheduleLabel}>Tournament Start:</span>
-                    <span className={styles.scheduleValue}>March 16, 2024 at 2:00 PM</span>
-                  </div>
-                  <div className={styles.scheduleItem}>
-                    <span className={styles.scheduleLabel}>Expected Duration:</span>
-                    <span className={styles.scheduleValue}>4-6 hours</span>
-                  </div>
-                  <div className={styles.scheduleItem}>
-                    <span className={styles.scheduleLabel}>Check-in Time:</span>
-                    <span className={styles.scheduleValue}>1:30 PM (30 min before start)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <EventTimeline />
           </div>
         )}
 
