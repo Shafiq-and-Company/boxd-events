@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
 import SideBar from './SideBar';
 import TitleCard from './TitleCard';
+import TournamentStats from './TournamentStats';
 import styles from './manageTournament.module.css';
 
 // Single Elimination Bracket Component
@@ -520,30 +521,7 @@ const ManageTournament = () => {
         {activeTab === 'analytics' && (
           <div className={styles.bracketsSection}>
             <TitleCard title="Tournament Analytics" eventData={eventData} />
-            
-            <div className={styles.analyticsSection}>
-              <div className={styles.analyticsCard}>
-                <h3 className={styles.analyticsTitle}>Tournament Statistics</h3>
-                <div className={styles.statsGrid}>
-                  <div className={styles.statItem}>
-                    <span className={styles.statValue}>12</span>
-                    <span className={styles.statLabel}>Participants</span>
-                  </div>
-                  <div className={styles.statItem}>
-                    <span className={styles.statValue}>4-6</span>
-                    <span className={styles.statLabel}>Hours Duration</span>
-                  </div>
-                  <div className={styles.statItem}>
-                    <span className={styles.statValue}>$500</span>
-                    <span className={styles.statLabel}>Prize Pool</span>
-                  </div>
-                  <div className={styles.statItem}>
-                    <span className={styles.statValue}>Single</span>
-                    <span className={styles.statLabel}>Elimination</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <TournamentStats participants={participants} eventData={eventData} />
           </div>
         )}
       </div>
