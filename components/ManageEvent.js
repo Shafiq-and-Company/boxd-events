@@ -544,7 +544,7 @@ export default function ManageEvent() {
                         type="button"
                         className={styles.manageTournamentButton}
                         onClick={() => {
-                          router.push('/manage-tournament')
+                          router.push(`/manage-tournament?eventId=${id}`)
                         }}
                         title="Manage tournament"
                       >
