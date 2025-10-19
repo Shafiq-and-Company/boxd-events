@@ -11,6 +11,7 @@ import EventTimeline from './EventTimeline';
 import SingleElimBracket from './SingleElimBracket';
 import Participants from './Participants';
 import TournamentFormat from './TournamentFormat';
+import TournamentConfiguration from './TournamentConfiguration';
 import styles from './manageTournament.module.css';
 
 
@@ -216,7 +217,12 @@ const ManageTournament = () => {
         {activeTab === 'settings' && (
           <div className={styles.bracketsSection}>
             <TitleCard title="Tournament Settings" eventData={eventData} />
-            <TournamentFormat />
+            <div className={styles.settingsContainer}>
+              <TournamentFormat />
+            </div>
+            <div className={styles.settingsContainer}>
+              <TournamentConfiguration />
+            </div>
           </div>
         )}
 
