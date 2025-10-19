@@ -1,0 +1,160 @@
+/* Bracket Container */
+.bracketContainer {
+  margin-top: 20px;
+  overflow-x: auto;
+  padding: 20px 0;
+  width: 100%;
+}
+
+.bracket {
+  display: flex;
+  gap: 40px;
+  min-width: fit-content;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* Bracket Round */
+.bracketRound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+}
+
+.roundLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  text-align: center;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+}
+
+.roundMatches {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Match Styles */
+.match {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 40px;
+  margin-bottom: 8px;
+  background: transparent;
+}
+
+.matchParticipants {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.matchParticipant {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 8px 12px;
+  min-width: 160px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.matchParticipant:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.participantName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.placeholder {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Final round styling */
+.bracketRound:last-child .matchParticipant {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: #000;
+  font-weight: 600;
+}
+
+.bracketRound:last-child .participantName {
+  color: #000;
+}
+
+/* Winner highlighting */
+.matchParticipant.winner {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: #000;
+  font-weight: 600;
+}
+
+.matchParticipant.winner .participantName {
+  color: #000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .bracket {
+    gap: 20px;
+  }
+  
+  .bracketRound {
+    min-width: 150px;
+  }
+  
+  .matchParticipant {
+    min-width: 120px;
+    padding: 6px 8px;
+  }
+  
+  .participantName {
+    font-size: 0.8rem;
+  }
+  
+  .roundLabel {
+    font-size: 0.8rem;
+    padding: 3px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bracket {
+    gap: 15px;
+  }
+  
+  .bracketRound {
+    min-width: 120px;
+  }
+  
+  .matchParticipant {
+    min-width: 100px;
+    padding: 4px 6px;
+  }
+  
+  .participantName {
+    font-size: 0.75rem;
+  }
+  
+  .placeholder {
+    font-size: 0.75rem;
+  }
+}
