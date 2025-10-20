@@ -3,19 +3,6 @@ import styles from './BracketConfiguration.module.css';
 
 const BracketConfiguration = () => {
   const [format, setFormat] = useState('single-elimination');
-  const [seedingMethod, setSeedingMethod] = useState('random');
-
-  const handleShuffleSeeds = () => {
-    console.log('Shuffling seeds...');
-  };
-
-  const handleResetSeeds = () => {
-    console.log('Resetting seeds...');
-  };
-
-  const handleUpdateBracket = () => {
-    console.log('Updating bracket...');
-  };
 
   return (
     <div className={styles.configCard}>
@@ -38,40 +25,6 @@ const BracketConfiguration = () => {
           </select>
         </div>
 
-        <div className={styles.configRow}>
-          <label className={styles.configLabel}>Seeding Method</label>
-          <select 
-            className={styles.configSelect}
-            value={seedingMethod}
-            onChange={(e) => setSeedingMethod(e.target.value)}
-          >
-            <option value="random">Random</option>
-            <option value="skill-based">Skill Based</option>
-            <option value="registration-order">Registration Order</option>
-            <option value="manual">Manual</option>
-          </select>
-        </div>
-
-        <div className={styles.buttonRow}>
-          <button 
-            className={styles.configButton}
-            onClick={handleShuffleSeeds}
-          >
-            Shuffle Seeds
-          </button>
-          <button 
-            className={styles.configButton}
-            onClick={handleResetSeeds}
-          >
-            Reset Seeds
-          </button>
-          <button 
-            className={styles.configButton}
-            onClick={handleUpdateBracket}
-          >
-            Update Bracket
-          </button>
-        </div>
       </div>
     </div>
   );

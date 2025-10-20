@@ -46,7 +46,7 @@ const ManageTournament = () => {
         <div className={styles.contentLayout}>
           <div className={styles.leftColumn}>
             <BracketConfiguration />
-            <PlayerPanel />
+            <PlayerPanel eventId={eventId} />
           </div>
           <div className={styles.rightColumn}>
             <BracketVisualization />

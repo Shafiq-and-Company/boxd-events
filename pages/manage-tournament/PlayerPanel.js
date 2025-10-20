@@ -1,29 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabaseClient';
 import styles from './PlayerPanel.module.css';
 
-const PlayerPanel = () => {
-  const [activeBrackets, setActiveBrackets] = useState([
-    { id: 1, name: 'Main Bracket', status: 'Active', participants: 16 },
-    { id: 2, name: 'Consolation Bracket', status: 'Pending', participants: 8 }
-  ]);
+const PlayerPanel = ({ eventId }) => {
+  const [participants, setParticipants] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const [playerSettings, setPlayerSettings] = useState({
-    allowSpectators: true,
-    showPlayerStats: true,
-    enableChat: false,
-    autoAdvance: true
-  });
 
-  const handleToggleSetting = (setting) => {
-    setPlayerSettings(prev => ({
-      ...prev,
-      [setting]: !prev[setting]
-    }));
+  const fetchParticipants = async () => {
+    if (!eventId) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const { data, error } = await supabase
+        .from('rsvps')
+        .select(`
+          user_id,
+          created_at,
+          status,
+          payment_status,
+          users:user_id (
+            username,
+            first_name,
+            last_name
+          )
+        `)
+        .eq('event_id', eventId)
+        .eq('status', 'going')
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        setError('Failed to fetch participants');
+        return;
+      }
+
+      // Transform RSVP data to participant format
+      const participantsData = data.map((rsvp, index) => ({
+        id: rsvp.user_id,
+        name: rsvp.users?.first_name && rsvp.users?.last_name 
+          ? `${rsvp.users.first_name} ${rsvp.users.last_name}`
+          : rsvp.users?.username || 'Unknown Player',
+        rank: index + 1, // Rank based on RSVP order
+        rsvpDate: rsvp.created_at
+      }));
+
+      setParticipants(participantsData);
+    } catch (err) {
+      setError('Failed to fetch participants');
+      console.error('Error fetching participants:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleBracketAction = (bracketId, action) => {
-    console.log(`${action} bracket ${bracketId}`);
+  const handleParticipantAction = (participantId, action) => {
+    console.log(`${action} participant ${participantId}`);
   };
+
+  useEffect(() => {
+    if (eventId) {
+      fetchParticipants();
+    }
+  }, [eventId]);
 
   return (
     <div className={styles.panelCard}>
@@ -32,110 +73,36 @@ const PlayerPanel = () => {
       </div>
       
       <div className={styles.panelContent}>
-        {/* Active Brackets Section */}
+        {/* Participants List Section */}
         <div className={styles.section}>
-          <h4 className={styles.sectionTitle}>Active Brackets</h4>
-          <div className={styles.bracketsList}>
-            {activeBrackets.map((bracket) => (
-              <div key={bracket.id} className={styles.bracketItem}>
-                <div className={styles.bracketInfo}>
-                  <span className={styles.bracketName}>{bracket.name}</span>
-                  <span className={styles.bracketParticipants}>
-                    {bracket.participants} participants
-                  </span>
+          <h4 className={styles.sectionTitle}>Participants ({participants.length})</h4>
+          
+          {loading && (
+            <div className={styles.loadingMessage}>Loading participants...</div>
+          )}
+          
+          {error && (
+            <div className={styles.errorMessage}>{error}</div>
+          )}
+          
+          {!loading && !error && participants.length === 0 && (
+            <div className={styles.emptyMessage}>No participants yet</div>
+          )}
+          
+          {!loading && !error && participants.length > 0 && (
+            <div className={styles.participantsList}>
+              {participants.map((participant) => (
+                <div key={participant.id} className={styles.participantItem}>
+                  <div className={styles.participantInfo}>
+                    <div className={styles.participantName}>
+                      <span className={styles.rank}>#{participant.rank}</span>
+                      <span className={styles.name}>{participant.name}</span>
+                    </div>
+                  </div>
                 </div>
-                <div className={styles.bracketStatus}>
-                  <span className={`${styles.statusBadge} ${styles[bracket.status.toLowerCase()]}`}>
-                    {bracket.status}
-                  </span>
-                </div>
-                <div className={styles.bracketActions}>
-                  <button 
-                    className={styles.actionButton}
-                    onClick={() => handleBracketAction(bracket.id, 'view')}
-                  >
-                    View
-                  </button>
-                  <button 
-                    className={styles.actionButton}
-                    onClick={() => handleBracketAction(bracket.id, 'edit')}
-                  >
-                    Edit
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Player Settings Section */}
-        <div className={styles.section}>
-          <h4 className={styles.sectionTitle}>Player Settings</h4>
-          <div className={styles.settingsList}>
-            <div className={styles.settingItem}>
-              <label className={styles.settingLabel}>
-                <input
-                  type="checkbox"
-                  checked={playerSettings.allowSpectators}
-                  onChange={() => handleToggleSetting('allowSpectators')}
-                  className={styles.settingCheckbox}
-                />
-                Allow Spectators
-              </label>
+              ))}
             </div>
-            
-            <div className={styles.settingItem}>
-              <label className={styles.settingLabel}>
-                <input
-                  type="checkbox"
-                  checked={playerSettings.showPlayerStats}
-                  onChange={() => handleToggleSetting('showPlayerStats')}
-                  className={styles.settingCheckbox}
-                />
-                Show Player Stats
-              </label>
-            </div>
-            
-            <div className={styles.settingItem}>
-              <label className={styles.settingLabel}>
-                <input
-                  type="checkbox"
-                  checked={playerSettings.enableChat}
-                  onChange={() => handleToggleSetting('enableChat')}
-                  className={styles.settingCheckbox}
-                />
-                Enable Chat
-              </label>
-            </div>
-            
-            <div className={styles.settingItem}>
-              <label className={styles.settingLabel}>
-                <input
-                  type="checkbox"
-                  checked={playerSettings.autoAdvance}
-                  onChange={() => handleToggleSetting('autoAdvance')}
-                  className={styles.settingCheckbox}
-                />
-                Auto Advance Winners
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className={styles.section}>
-          <h4 className={styles.sectionTitle}>Quick Actions</h4>
-          <div className={styles.quickActions}>
-            <button className={styles.quickButton}>
-              Generate Brackets
-            </button>
-            <button className={styles.quickButton}>
-              Start Tournament
-            </button>
-            <button className={styles.quickButton}>
-              Pause Tournament
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </div>
