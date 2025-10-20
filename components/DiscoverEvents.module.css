@@ -24,8 +24,7 @@
 
 .gameFilterCard {
   background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  border: 1px solid #000000;
   padding: 0;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
@@ -38,12 +37,10 @@
 
 .gameFilterCard:hover {
   transform: translateY(-2px);
-  border-color: #a0a0a0;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .gameFilterCard.active {
-  border-color: #000000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -78,7 +75,7 @@
 
 .eventsList {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   max-width: 800px;
   margin: 0 auto;
@@ -86,9 +83,8 @@
 
 .eventCard {
   background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  aspect-ratio: 1;
+  border: 1px solid #000000;
+  height: 140px;
   position: relative;
   cursor: pointer;
   overflow: hidden;
@@ -97,28 +93,26 @@
 
 .eventCard:hover {
   transform: translateY(-2px);
-  border-color: #a0a0a0;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .eventImage {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 10px;
+  left: 10px;
+  width: 60px;
+  height: 60px;
   background: #f8f8f8;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
+  z-index: 2;
 }
 
 .imagePlaceholder {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   background: #d0d0d0;
-  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,100 +122,182 @@
 }
 
 .eventContent {
-  position: relative;
-  z-index: 2;
   padding: 12px;
+  padding-left: 80px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.8) 100%);
-  color: white;
+  justify-content: center;
+  background: #ffffff;
+  color: #000000;
 }
 
 .eventHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
   margin-bottom: 12px;
 }
 
 .eventTitle {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #ffffff;
-  line-height: 1.2;
-  height: 2.2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #000000;
+  line-height: 1.3;
+  margin-bottom: 8px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin-bottom: 6px;
 }
 
 .gameTitle {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: #f8f8f8;
   color: #404040;
-  padding: 3px 6px;
-  border-radius: 3px;
-  font-size: 0.65rem;
-  font-weight: 400;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  min-height: 16px;
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  border: 1px solid #e0e0e0;
+  display: inline-block;
+  margin-bottom: 8px;
   white-space: nowrap;
-  line-height: 1.1;
-  z-index: 3;
-  max-width: calc(100% - 16px);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.2;
+  max-width: fit-content;
 }
 
 .eventDetails {
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
 .eventDate, .eventLocation {
-  color: #ffffff;
-  font-size: 0.75rem;
+  color: #666666;
+  font-size: 0.85rem;
   font-weight: 400;
-  line-height: 1.2;
-  white-space: nowrap;
+  line-height: 1.4;
+}
+
+
+
+/* Events Near You Section */
+.eventsNearYou {
+  margin-bottom: 32px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.nearYouContent {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.mapPlaceholder {
+  background: #f8f8f8;
+  border: 1px solid #000000;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(120, 120, 120, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(120, 120, 120, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 120, 120, 0.05) 0%, transparent 50%);
+}
+
+.mapIcon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.mapText {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #707070;
+}
+
+.nearYouGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 12px;
+  flex: 1;
+}
+
+.nearYouCard {
+  background: #ffffff;
+  border: 1px solid #000000;
+  position: relative;
+  cursor: pointer;
   overflow: hidden;
-  text-overflow: ellipsis;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
 }
 
-.eventDate {
-  margin-bottom: 2px;
+.nearYouCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-.eventLocation {
-  margin-bottom: 4px;
+.nearYouBanner {
+  width: 56px;
+  height: 56px;
+  background: #f8f8f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(120, 120, 120, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(120, 120, 120, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 120, 120, 0.05) 0%, transparent 50%);
+  flex-shrink: 0;
+}
+
+.nearYouCardContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.placeholderText {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #707070;
+  text-align: center;
 }
 
 /* State Classes */
-.loading, .error, .noEvents {
+.loading, .noEvents {
   text-align: left;
   padding: 32px;
   font-size: 1rem;
   font-weight: 400;
-}
-
-.loading, .noEvents {
   color: #707070;
 }
 
 .error {
+  text-align: left;
+  padding: 24px;
+  font-size: 1rem;
+  font-weight: 400;
   color: #000000;
   background: #f8f8f8;
-  border: 1px solid #d0d0d0;
-  border-radius: 0;
-  padding: 24px;
+  border: 1px solid #000000;
 }
 
 .noEvents {
@@ -246,12 +322,37 @@
   }
   
   .eventsList {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .nearYouContent {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .mapPlaceholder {
+    width: 100%;
+    height: 200px;
+  }
+  
+  .nearYouGrid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     gap: 8px;
+    height: auto;
   }
   
   .eventContent {
-    padding: 10px;
+    padding: 12px;
+    padding-left: 80px;
+  }
+  
+  .eventImage {
+    width: 60px;
+    height: 60px;
+    top: 10px;
+    left: 10px;
   }
   
   .gameTitle {
@@ -269,8 +370,7 @@
   }
   
   .eventTitle {
-    font-size: 0.9rem;
-    height: 2.4rem;
+    font-size: 1rem;
     line-height: 1.3;
     margin-bottom: 6px;
     display: -webkit-box;
@@ -286,26 +386,53 @@
   
   .eventDate, .eventLocation {
     font-size: 0.8rem;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
+    line-height: 1.3;
   }
 }
 
 @media (max-width: 480px) {
   .eventsList {
-    gap: 6px;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .eventCard {
+    height: 120px;
+  }
+  
+  .eventImage {
+    width: 40px;
+    height: 40px;
+    top: 8px;
+    left: 8px;
   }
   
   .eventContent {
-    padding: 8px;
+    padding: 10px;
+    padding-left: 60px;
+  }
+  
+  .nearYouGrid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 6px;
+    height: auto;
+  }
+  
+  .mapPlaceholder {
+    height: 150px;
+  }
+  
+  .mapIcon {
+    font-size: 1.5rem;
+  }
+  
+  .mapText {
+    font-size: 0.8rem;
   }
   
   .eventTitle {
-    font-size: 0.85rem;
-    height: 2.2rem;
+    font-size: 0.95rem;
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -316,30 +443,16 @@
   
   .eventDate, .eventLocation {
     font-size: 0.75rem;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
+    line-height: 1.3;
   }
   
   .gameTitle {
-    font-size: 0.6rem;
-    padding: 2px 4px;
-    min-height: 14px;
-    top: 6px;
-    left: 6px;
-    max-width: calc(100% - 12px);
+    font-size: 0.65rem;
+    padding: 3px 6px;
+    margin-bottom: 6px;
   }
   
-  .eventHeader {
-    gap: 4px;
-    margin-bottom: 8px;
-  }
   
-  .eventDetails {
-    gap: 3px;
-  }
 }
 
 @media (min-width: 768px) {
@@ -353,17 +466,29 @@
   }
   
   .eventsList {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+  }
+  
+  .eventCard {
+    height: 160px;
+  }
+  
+  .eventImage {
+    width: 70px;
+    height: 70px;
+    top: 12px;
+    left: 12px;
   }
   
   .eventContent {
     padding: 14px;
+    padding-left: 100px;
   }
   
   .gameTitle {
-    font-size: 0.65rem;
-    min-height: 16px;
+    font-size: 0.7rem;
+    padding: 4px 8px;
   }
 }
 
@@ -382,26 +507,37 @@
   }
   
   .eventsList {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  
+  .eventCard {
+    height: 180px;
+  }
+  
+  .eventImage {
+    width: 80px;
+    height: 80px;
+    top: 14px;
+    left: 14px;
   }
   
   .eventContent {
-    padding: 14px;
+    padding: 16px;
+    padding-left: 110px;
   }
   
   .gameTitle {
-    font-size: 0.6rem;
-    min-height: 14px;
+    font-size: 0.7rem;
+    padding: 4px 8px;
   }
   
   .eventTitle { 
-    font-size: 0.85rem; 
-    height: 2rem;
+    font-size: 1.2rem;
   }
   
   .eventDate, .eventLocation { 
-    font-size: 0.7rem; 
+    font-size: 0.9rem;
   }
 }
 

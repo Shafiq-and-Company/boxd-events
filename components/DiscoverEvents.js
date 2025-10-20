@@ -136,7 +136,31 @@ export default function DiscoverEvents() {
     <div className={styles.discoverEvents}>
       <PageTitle title="Discover Events" subtitle="Explore gaming events and tournaments" />
       
+      {/* Events Near You Section */}
+      <div className={styles.eventsNearYou}>
+        <h2 className={styles.sectionTitle}>Events Near You</h2>
+        <div className={styles.nearYouContent}>
+          <div className={styles.mapPlaceholder}>
+            <div className={styles.mapIcon}>🗺️</div>
+            <span className={styles.mapText}>Map View</span>
+          </div>
+          <div className={styles.nearYouGrid}>
+            {Array.from({ length: 6 }, (_, index) => (
+              <div key={index} className={styles.nearYouCard}>
+                <div className={styles.nearYouBanner}>
+                  <span className={styles.placeholderText}>E{index + 1}</span>
+                </div>
+                <div className={styles.nearYouCardContent}>
+                  <span className={styles.placeholderText}>Event {index + 1}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className={styles.filters}>
+        <h2 className={styles.sectionTitle}>Browse By Category</h2>
         <div className={styles.gameFilters}>
           <div 
             onClick={() => handleGameChange('all')}
@@ -184,8 +208,7 @@ export default function DiscoverEvents() {
                       style={{ 
                         width: '100%', 
                         height: '100%', 
-                        objectFit: 'cover',
-                        borderRadius: '4px'
+                        objectFit: 'cover'
                       }}
                     />
                   ) : (
