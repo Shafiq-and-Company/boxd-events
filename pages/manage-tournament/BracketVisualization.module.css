@@ -1,0 +1,244 @@
+/* Bracket Card */
+.bracketCard {
+  background: #ffffff;
+  border-radius: 0;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 2px solid #000;
+  box-shadow: none;
+}
+
+.bracketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #000;
+}
+
+.bracketTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.bracketInfo {
+  display: flex;
+  gap: 16px;
+}
+
+.participantCount,
+.bracketType {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Bracket Container */
+.bracketContainer {
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.bracket {
+  display: flex;
+  gap: 40px;
+  min-width: fit-content;
+  align-items: flex-start;
+}
+
+/* Bracket Round */
+.bracketRound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+}
+
+.roundLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  text-align: center;
+  padding: 6px 12px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 0;
+  min-width: 120px;
+}
+
+.roundMatches {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Match Styles */
+.match {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 40px;
+  margin-bottom: 8px;
+}
+
+.matchParticipants {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.matchPlayer {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 0;
+  padding: 8px 12px;
+  min-width: 160px;
+  transition: all 0.2s ease;
+}
+
+.matchPlayer:hover {
+  border-color: #000;
+  background: #f9fafb;
+}
+
+.player1 {
+  border-bottom: 1px solid #d1d5db;
+}
+
+.player2 {
+  border-top: none;
+}
+
+.playerInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.playerSeed {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 0;
+  min-width: 20px;
+  text-align: center;
+}
+
+.playerName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.placeholder {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  padding: 4px 0;
+}
+
+/* Match Connector */
+.matchConnector {
+  width: 2px;
+  height: 20px;
+  background: #d1d5db;
+  margin: 4px 0;
+}
+
+/* Final round styling */
+.bracketRound:last-child .matchPlayer {
+  background: #f3f4f6;
+  border-color: #000;
+  font-weight: 600;
+}
+
+.bracketRound:last-child .playerName {
+  color: #000;
+}
+
+/* Winner highlighting */
+.matchPlayer.winner {
+  background: #f3f4f6;
+  border-color: #000;
+  font-weight: 600;
+}
+
+.matchPlayer.winner .playerName {
+  color: #000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .bracketCard {
+    padding: 16px;
+  }
+  
+  .bracketHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .bracketInfo {
+    gap: 12px;
+  }
+  
+  .bracket {
+    gap: 20px;
+  }
+  
+  .bracketRound {
+    min-width: 150px;
+  }
+  
+  .matchPlayer {
+    min-width: 120px;
+    padding: 6px 8px;
+  }
+  
+  .playerName {
+    font-size: 0.8rem;
+  }
+  
+  .roundLabel {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bracket {
+    gap: 15px;
+  }
+  
+  .bracketRound {
+    min-width: 120px;
+  }
+  
+  .matchPlayer {
+    min-width: 100px;
+    padding: 4px 6px;
+  }
+  
+  .playerName {
+    font-size: 0.75rem;
+  }
+  
+  .placeholder {
+    font-size: 0.75rem;
+  }
+}

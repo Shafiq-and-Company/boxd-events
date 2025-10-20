@@ -1,0 +1,221 @@
+/* Panel Card */
+.panelCard {
+  background: #ffffff;
+  border-radius: 0;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 2px solid #000;
+  box-shadow: none;
+}
+
+.panelHeader {
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #000;
+}
+
+.panelTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.panelContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Section Styling */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Brackets List */
+.bracketsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bracketItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 0;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.bracketItem:hover {
+  background: #f3f4f6;
+  border-color: #000;
+}
+
+.bracketInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.bracketName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.bracketParticipants {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.bracketStatus {
+  margin: 0 12px;
+}
+
+.statusBadge {
+  padding: 4px 8px;
+  border-radius: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+
+.statusBadge.active {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #16a34a;
+}
+
+.statusBadge.pending {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #f59e0b;
+}
+
+.bracketActions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionButton {
+  padding: 6px 12px;
+  border: 1px solid #000;
+  border-radius: 0;
+  background: #ffffff;
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Settings List */
+.settingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settingItem {
+  display: flex;
+  align-items: center;
+}
+
+.settingLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+}
+
+.settingCheckbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #000;
+  cursor: pointer;
+}
+
+/* Quick Actions */
+.quickActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.quickButton {
+  padding: 10px 16px;
+  border: 2px solid #000;
+  border-radius: 0;
+  background: #ffffff;
+  color: #000;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 120px;
+}
+
+.quickButton:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.quickButton:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .panelCard {
+    padding: 16px;
+  }
+  
+  .bracketItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .bracketStatus {
+    margin: 0;
+    align-self: flex-end;
+  }
+  
+  .bracketActions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .quickActions {
+    flex-direction: column;
+  }
+  
+  .quickButton {
+    flex: none;
+  }
+}

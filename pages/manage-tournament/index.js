@@ -4,6 +4,8 @@ import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
 import TitleCard from './TitleCard';
 import BracketConfiguration from './BracketConfiguration';
+import PlayerPanel from './PlayerPanel';
+import BracketVisualization from './BracketVisualization';
 import styles from './manageTournament.module.css';
 
 const ManageTournament = () => {
@@ -41,7 +43,15 @@ const ManageTournament = () => {
     <div className={styles.dashboard}>
       <div className={styles.mainContent}>
         <TitleCard title="Tournament Management" eventData={eventData} />
-        <BracketConfiguration />
+        <div className={styles.contentLayout}>
+          <div className={styles.leftColumn}>
+            <BracketConfiguration />
+            <PlayerPanel />
+          </div>
+          <div className={styles.rightColumn}>
+            <BracketVisualization />
+          </div>
+        </div>
       </div>
     </div>
   );
