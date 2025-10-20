@@ -5,9 +5,8 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: #FFFFFF;
+  border-bottom: 1px solid #E8E8E8;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -30,19 +29,18 @@
   gap: 12px;
   cursor: pointer;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 0;
   transition: background-color 200ms ease;
 }
 
 .logo:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #F8F8F8;
 }
 
 .logoImage {
   height: 32px;
   width: auto;
   object-fit: contain;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
   transition: opacity 200ms ease;
 }
 
@@ -51,17 +49,15 @@
 }
 
 .getStartedButton {
-  background: linear-gradient(135deg, #000000 0%, #404040 100%);
-  border: 2px solid #000000;
+  background: #000000;
+  border: 1px solid #000000;
   color: #FFFFFF;
   padding: 14px 28px;
-  border-radius: 12px;
+  border-radius: 0;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
@@ -75,32 +71,14 @@
   height: 48px;
 }
 
-.getStartedButton::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.6s ease;
-}
-
-.getStartedButton:hover::before {
-  left: 100%;
-}
-
 .getStartedButton:hover {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F0F0F0 100%);
+  background: #FFFFFF;
   color: #000000;
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.1);
-  border-color: #FFFFFF;
+  border-color: #000000;
 }
 
 .getStartedButton:active {
-  transform: translateY(-1px) scale(1.01);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background: #F0F0F0;
 }
 
 .buttonText {
