@@ -282,7 +282,7 @@
 }
 
 /* State Classes */
-.loading, .noEvents {
+.loading {
   text-align: left;
   padding: 32px;
   font-size: 1rem;
@@ -301,6 +301,10 @@
 }
 
 .noEvents {
+  text-align: left;
+  padding: 32px;
+  font-size: 1rem;
+  font-weight: 400;
   color: #a0a0a0;
 }
 
@@ -358,14 +362,10 @@
   .gameTitle {
     font-size: 0.65rem;
     padding: 3px 6px;
-    min-height: 16px;
-    top: 8px;
-    left: 8px;
-    max-width: calc(100% - 16px);
+    margin-bottom: 6px;
   }
   
   .eventHeader {
-    gap: 6px;
     margin-bottom: 10px;
   }
   
@@ -381,6 +381,8 @@
   }
   
   .eventDetails {
+    display: flex;
+    flex-direction: column;
     gap: 4px;
   }
   
@@ -451,8 +453,6 @@
     padding: 3px 6px;
     margin-bottom: 6px;
   }
-  
-  
 }
 
 @media (min-width: 768px) {

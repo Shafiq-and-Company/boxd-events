@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '../lib/AuthContext'
 import NavBar from '../components/NavBar'
-import UpcomingEvents from '../components/UpcomingEvents'
 import DiscoverEvents from '../components/DiscoverEvents'
 import MyEvents from '../components/MyEvents'
 import CreateEvent from '../components/CreateEvent'
@@ -11,7 +10,7 @@ import UserSettings from '../components/UserSettings'
 export default function Home() {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
-  const [activeTab, setActiveTab] = useState('upcoming')
+  const [activeTab, setActiveTab] = useState('discover')
 
   // Handle tab parameter from URL
   useEffect(() => {
@@ -59,7 +58,6 @@ export default function Home() {
     }}>
       <NavBar activeTab={activeTab} onTabChange={handleTabChange} />
       
-      {activeTab === 'upcoming' && <UpcomingEvents onTabChange={handleTabChange} />}
       {activeTab === 'discover' && <DiscoverEvents onTabChange={handleTabChange} />}
       {activeTab === 'myEvents' && <MyEvents onTabChange={handleTabChange} />}
       {activeTab === 'createEvent' && <CreateEvent onTabChange={handleTabChange} />}

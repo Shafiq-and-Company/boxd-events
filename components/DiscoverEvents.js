@@ -114,140 +114,134 @@ export default function DiscoverEvents() {
     return matchesGame
   })
 
-  if (loading) {
-    return (
-      <div className={styles.discoverEvents}>
-        <PageTitle title="Discover Events" subtitle="Explore gaming events and tournaments" />
-        <div className={styles.loading}>Loading events...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className={styles.discoverEvents}>
-        <PageTitle title="Discover Events" subtitle="Explore gaming events and tournaments" />
-        <div className={styles.error}>Error loading events: {error}</div>
-      </div>
-    )
-  }
-
   return (
     <div className={styles.discoverEvents}>
       <PageTitle title="Discover Events" subtitle="Explore gaming events and tournaments" />
       
-      {/* Events Near You Section */}
-      <div className={styles.eventsNearYou}>
-        <h2 className={styles.sectionTitle}>Events Near You</h2>
-        <div className={styles.nearYouContent}>
-          <div className={styles.mapPlaceholder}>
-            <div className={styles.mapIcon}>🗺️</div>
-            <span className={styles.mapText}>Map View</span>
-          </div>
-          <div className={styles.nearYouGrid}>
-            {Array.from({ length: 6 }, (_, index) => (
-              <div key={index} className={styles.nearYouCard}>
-                <div className={styles.nearYouBanner}>
-                  <span className={styles.placeholderText}>E{index + 1}</span>
-                </div>
-                <div className={styles.nearYouCardContent}>
-                  <span className={styles.placeholderText}>Event {index + 1}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      {loading && (
+        <div className={styles.loading}>Loading events...</div>
+      )}
 
-      <div className={styles.filters}>
-        <h2 className={styles.sectionTitle}>Browse By Category</h2>
-        <div className={styles.gameFilters}>
-          <div 
-            onClick={() => handleGameChange('all')}
-            className={`${styles.gameFilterCard} ${selectedGame === 'all' ? styles.active : ''}`}
-          >
-            <div className={styles.filterBackground}>
-              <span className={styles.filterTitle}>All Games</span>
-            </div>
-          </div>
-          {gameTitles.map(gameTitle => (
-            <div
-              key={gameTitle}
-              onClick={() => handleGameChange(gameTitle)}
-              className={`${styles.gameFilterCard} ${selectedGame === gameTitle ? styles.active : ''}`}
-            >
-              <div className={styles.filterBackground}>
-                <span className={styles.filterTitle}>{gameTitle}</span>
+      {error && (
+        <div className={styles.error}>Error loading events: {error}</div>
+      )}
+
+      {!loading && !error && (
+        <>
+          {/* Events Near You Section */}
+          <div className={styles.eventsNearYou}>
+            <h2 className={styles.sectionTitle}>Events Near You</h2>
+            <div className={styles.nearYouContent}>
+              <div className={styles.mapPlaceholder}>
+                <div className={styles.mapIcon}>🗺️</div>
+                <span className={styles.mapText}>Map View</span>
+              </div>
+              <div className={styles.nearYouGrid}>
+                {Array.from({ length: 6 }, (_, index) => (
+                  <div key={index} className={styles.nearYouCard}>
+                    <div className={styles.nearYouBanner}>
+                      <span className={styles.placeholderText}>E{index + 1}</span>
+                    </div>
+                    <div className={styles.nearYouCardContent}>
+                      <span className={styles.placeholderText}>Event {index + 1}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      {filteredEvents.length === 0 ? (
-        <div className={styles.noEvents}>
-          {selectedGame !== 'all' 
-            ? 'No events match your filter criteria.' 
-            : 'No events found.'}
-        </div>
-      ) : (
-        <div className={styles.eventsList}>
-          {filteredEvents.map((event) => {
-            const isRegistered = userRsvps.has(event.id)
-            return (
+          <div className={styles.filters}>
+            <h2 className={styles.sectionTitle}>Browse By Category</h2>
+            <div className={styles.gameFilters}>
               <div 
-                key={event.id} 
-                className={styles.eventCard}
-                onClick={() => handleEventClick(event.id)}
+                onClick={() => handleGameChange('all')}
+                className={`${styles.gameFilterCard} ${selectedGame === 'all' ? styles.active : ''}`}
               >
-                <div className={styles.eventImage}>
-                  {event.banner_image_url ? (
-                    <img 
-                      src={event.banner_image_url} 
-                      alt={event.title}
-                      style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        objectFit: 'cover'
-                      }}
-                    />
-                  ) : (
-                    <div className={styles.imagePlaceholder}>
-                      {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
-                    </div>
-                  )}
-                </div>
-                
-                <div className={styles.eventContent}>
-                  <div className={styles.eventHeader}>
-                    <h3 className={styles.eventTitle}>{event.title}</h3>
-                    {event.game_title && (
-                      <span className={styles.gameTitle}>
-                        {event.game_title.length > 30 
-                          ? `${event.game_title.substring(0, 30)}...` 
-                          : event.game_title}
-                      </span>
-                    )}
-                  </div>
-                
-                <div className={styles.eventDetails}>
-                  <div className={styles.eventDate}>
-                    {formatDate(event.starts_at)}
-                  </div>
-                  
-                  {event.location && (
-                    <div className={styles.eventLocation}>
-                      {event.location}
-                      {event.city && `, ${event.city}`}
-                    </div>
-                  )}
-                  
+                <div className={styles.filterBackground}>
+                  <span className={styles.filterTitle}>All Games</span>
                 </div>
               </div>
+              {gameTitles.map(gameTitle => (
+                <div
+                  key={gameTitle}
+                  onClick={() => handleGameChange(gameTitle)}
+                  className={`${styles.gameFilterCard} ${selectedGame === gameTitle ? styles.active : ''}`}
+                >
+                  <div className={styles.filterBackground}>
+                    <span className={styles.filterTitle}>{gameTitle}</span>
+                  </div>
+                </div>
+              ))}
             </div>
-            )
-          })}
-        </div>
+          </div>
+
+          {filteredEvents.length === 0 ? (
+            <div className={styles.noEvents}>
+              {selectedGame !== 'all' 
+                ? 'No events match your filter criteria.' 
+                : 'No events found.'}
+            </div>
+          ) : (
+            <div className={styles.eventsList}>
+              {filteredEvents.map((event) => {
+                const isRegistered = userRsvps.has(event.id)
+                return (
+                  <div 
+                    key={event.id} 
+                    className={styles.eventCard}
+                    onClick={() => handleEventClick(event.id)}
+                  >
+                    <div className={styles.eventImage}>
+                      {event.banner_image_url ? (
+                        <img 
+                          src={event.banner_image_url} 
+                          alt={event.title}
+                          style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'cover'
+                          }}
+                        />
+                      ) : (
+                        <div className={styles.imagePlaceholder}>
+                          {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className={styles.eventContent}>
+                      <div className={styles.eventHeader}>
+                        <h3 className={styles.eventTitle}>{event.title}</h3>
+                        {event.game_title && (
+                          <span className={styles.gameTitle}>
+                            {event.game_title.length > 30 
+                              ? `${event.game_title.substring(0, 30)}...` 
+                              : event.game_title}
+                          </span>
+                        )}
+                      </div>
+                    
+                    <div className={styles.eventDetails}>
+                      <div className={styles.eventDate}>
+                        {formatDate(event.starts_at)}
+                      </div>
+                      
+                      {event.location && (
+                        <div className={styles.eventLocation}>
+                          {event.location}
+                          {event.city && `, ${event.city}`}
+                        </div>
+                      )}
+                      
+                    </div>
+                  </div>
+                </div>
+                )
+              })}
+            </div>
+          )}
+        </>
       )}
     </div>
   )
