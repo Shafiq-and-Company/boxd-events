@@ -1,14 +1,17 @@
 /* UserSettings Component */
 .userSettings {
   width: 100%;
-  padding: 24px 12px;
+  padding: 24px 16px;
+  min-height: 100vh;
 }
 
 /* Section Divider */
 .sectionDivider {
-  margin: 32px 0 24px 0;
-  padding-top: 24px;
-  border-top: 1px solid #e8e8e8;
+  margin: 0;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px 0 20px;
 }
 
 /* Sections */
@@ -29,7 +32,11 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 24px;
 }
 
 .nameFields {
@@ -62,8 +69,7 @@
 
 .input, .textarea {
   padding: 12px 16px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
+  border: 2px solid #000;
   font-size: 0.875rem;
   color: #000;
   background: #fff;
@@ -73,8 +79,7 @@
 
 .input:focus, .textarea:focus {
   outline: none;
-  border-color: #000;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  border: 2px solid #333;
 }
 
 .input:disabled {
@@ -121,15 +126,14 @@
 .formActions {
   display: flex;
   justify-content: flex-start;
-  margin-top: 8px;
+  margin-top: 0;
 }
 
 /* Buttons */
 .saveButton {
   background: #000;
   color: #fff;
-  border: none;
-  border-radius: 4px;
+  border: 2px solid #000;
   font-weight: 500;
   cursor: pointer;
   transition: all 200ms ease;
@@ -138,13 +142,15 @@
 }
 
 .saveButton:hover:not(:disabled) {
-  background: #404040;
+  background: #333;
+  border: 2px solid #333;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .saveButton:disabled {
   background: #a0a0a0;
+  border: 2px solid #a0a0a0;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -154,8 +160,7 @@
 .securityButton, .googleLinkedButton, .discordLinkedButton {
   background: #16a34a;
   color: #ffffff;
-  border: none;
-  border-radius: 4px;
+  border: 2px solid #16a34a;
   font-weight: 500;
   cursor: pointer;
   transition: all 200ms ease;
@@ -170,8 +175,7 @@
 .discordUnlinkedButton {
   background: #a0a0a0;
   color: #ffffff;
-  border: none;
-  border-radius: 4px;
+  border: 2px solid #a0a0a0;
   font-weight: 500;
   cursor: pointer;
   transition: all 200ms ease;
@@ -185,18 +189,21 @@
 
 .securityButton:hover, .googleLinkedButton:hover, .discordLinkedButton:hover {
   background: #dc2626;
+  border: 2px solid #dc2626;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
 }
 
 .discordUnlinkedButton:hover {
   background: #707070;
+  border: 2px solid #707070;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(112, 112, 112, 0.15);
 }
 
 .securityButton:disabled, .googleLinkedButton:disabled, .discordLinkedButton:disabled {
   background: #a0a0a0;
+  border: 2px solid #a0a0a0;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -204,6 +211,7 @@
 
 .discordUnlinkedButton:disabled {
   background: #d0d0d0;
+  border: 2px solid #d0d0d0;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -241,12 +249,14 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 16px;
-  padding: 20px 0;
-  border-bottom: 1px solid #e8e8e8;
+  padding: 20px;
+  border: 2px solid #000;
+  background: #f8f8f8;
+  margin-bottom: 32px;
 }
 
 .securityItem:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .securityIcon {
@@ -255,8 +265,8 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: #f8f8f8;
-  border-radius: 8px;
+  background: #fff;
+  border: 2px solid #000;
   color: #707070;
   flex-shrink: 0;
   padding: 12px;
@@ -289,23 +299,21 @@
   font-size: 0.875rem;
   margin: 8px 0 0 0;
   padding: 8px 12px;
-  border-radius: 4px;
   background: #f0f8ff;
   color: #0066cc;
-  border: 1px solid #b3d9ff;
+  border: 2px solid #b3d9ff;
 }
 
 .passwordResetMessage.error {
   background: #fff5f5;
   color: #dc2626;
-  border-color: #fecaca;
+  border: 2px solid #fecaca;
 }
 
 .refreshButton {
   background: #f8f8f8;
   color: #404040;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
+  border: 2px solid #000;
   font-size: 0.75rem;
   font-weight: 400;
   cursor: pointer;
@@ -314,13 +322,15 @@
 }
 
 .refreshButton:hover:not(:disabled) {
-  background: #e8e8e8;
-  border-color: #a0a0a0;
+  background: #000;
+  color: #fff;
+  border: 2px solid #000;
 }
 
 .refreshButton:disabled {
   background: #f8f8f8;
   color: #a0a0a0;
+  border: 2px solid #a0a0a0;
   cursor: not-allowed;
 }
 
@@ -331,46 +341,102 @@
   font-size: 1rem;
   color: #707070;
   text-align: center;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 32px 24px;
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .form, .sectionDivider, .loading {
+    padding: 0 16px;
+  }
+}
+
 @media (max-width: 767px) {
-  .userSettings { padding: 16px 8px; }
-  .nameFields { grid-template-columns: 1fr; gap: 20px; }
-  .form { gap: 20px; }
-  .input, .textarea { padding: 10px 14px; font-size: 0.8rem; }
-  .textarea { min-height: 50px; }
-  .label { font-size: 0.7rem; }
-  .saveButton, .securityButton, .googleLinkedButton, .discordLinkedButton { padding: 10px 20px; font-size: 0.8rem; }
+  .userSettings { 
+    padding: 12px;
+  }
+  
+  .form, .sectionDivider {
+    padding: 0 12px;
+  }
+  
+  .nameFields { 
+    grid-template-columns: 1fr; 
+    gap: 20px; 
+  }
+  
+  .form { 
+    gap: 32px; 
+  }
+  
+  .input, .textarea { 
+    padding: 10px 14px; 
+    font-size: 0.8rem; 
+  }
+  
+  .textarea { 
+    min-height: 50px; 
+  }
+  
+  .label { 
+    font-size: 0.7rem; 
+  }
+  
+  .saveButton, .securityButton, .googleLinkedButton, .discordLinkedButton { 
+    padding: 10px 20px; 
+    font-size: 0.8rem; 
+  }
+  
   .securityItem { 
-    padding: 16px 0; 
+    padding: 16px; 
     gap: 12px; 
     grid-template-columns: auto 1fr;
     grid-template-rows: auto auto auto;
+    margin-bottom: 32px;
   }
+  
   .securityIcon { 
     width: 36px; 
     height: 36px; 
     padding: 10px; 
     grid-row: 1;
   }
+  
   .securityContent {
     grid-column: 1 / -1;
     grid-row: 2;
   }
+  
   .securityActions {
     grid-column: 1 / -1;
     grid-row: 3;
     justify-self: start;
     margin-top: 8px;
   }
-  .securityTitle { font-size: 0.9rem; }
-  .securityDescription { font-size: 0.8rem; }
+  
+  .securityTitle { 
+    font-size: 0.9rem; 
+  }
+  
+  .securityDescription { 
+    font-size: 0.8rem; 
+  }
+  
+  .loading {
+    padding: 24px 12px;
+  }
 }
 
 @media (min-width: 1024px) {
   .userSettings {
     padding: 32px 24px;
+  }
+  
+  .form, .sectionDivider, .loading {
+    padding: 0 32px;
   }
 }
 

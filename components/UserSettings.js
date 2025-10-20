@@ -410,10 +410,6 @@ export default function UserSettings() {
           </div>
 
           {/* Password Reset Section */}
-          <div className={styles.sectionDivider}>
-            <h3 className={styles.sectionTitle}>Password & Security</h3>
-            <p className={styles.sectionSubtitle}>Manage your account password and security settings.</p>
-          </div>
 
           <div className={styles.securityItem}>
             <div className={styles.securityIcon}>

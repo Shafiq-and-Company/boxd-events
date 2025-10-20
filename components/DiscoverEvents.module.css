@@ -2,7 +2,8 @@
 
 .discoverEvents {
   width: 100%;
-  padding: 24px 12px;
+  padding: 24px 16px;
+  min-height: 100vh;
 }
 
 .filters {
@@ -10,6 +11,10 @@
   flex-direction: column;
   gap: 20px;
   margin-bottom: 24px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 24px;
 }
 
 .gameFilters {
@@ -20,7 +25,7 @@
 
 .gameFilterCard {
   background: #ffffff;
-  border: 1px solid #000000;
+  border: 2px solid #000000;
   padding: 0;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
@@ -33,11 +38,22 @@
 
 .gameFilterCard:hover {
   transform: translateY(-2px);
+  border: 2px solid #333;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .gameFilterCard.active {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #000;
+  background: #000;
+  color: #fff;
+}
+
+.gameFilterCard.active .filterBackground {
+  background: #000;
+}
+
+.gameFilterCard.active .filterTitle {
+  color: #fff;
 }
 
 .filterBackground {
@@ -72,12 +88,16 @@
 .eventsList {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 20px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 24px;
 }
 
 .eventCard {
   background: #ffffff;
-  border: 1px solid #000000;
+  border: 2px solid #000000;
   height: 140px;
   position: relative;
   cursor: pointer;
@@ -87,6 +107,7 @@
 
 .eventCard:hover {
   transform: translateY(-2px);
+  border: 2px solid #333;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
@@ -97,6 +118,7 @@
   width: 60px;
   height: 60px;
   background: #f8f8f8;
+  border: 2px solid #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -149,7 +171,7 @@
   padding: 4px 8px;
   font-size: 0.7rem;
   font-weight: 500;
-  border: 1px solid #e0e0e0;
+  border: 2px solid #000;
   display: inline-block;
   margin-bottom: 8px;
   white-space: nowrap;
@@ -174,6 +196,10 @@
 /* Events Near You Section */
 .eventsNearYou {
   margin-bottom: 32px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 24px;
 }
 
 .sectionTitle {
@@ -193,7 +219,7 @@
 
 .mapPlaceholder {
   background: #f8f8f8;
-  border: 1px solid #000000;
+  border: 2px solid #000000;
   width: 300px;
   height: 300px;
   display: flex;
@@ -227,7 +253,7 @@
 
 .nearYouCard {
   background: #ffffff;
-  border: 1px solid #000000;
+  border: 2px solid #000000;
   position: relative;
   cursor: pointer;
   overflow: hidden;
@@ -240,6 +266,7 @@
 
 .nearYouCard:hover {
   transform: translateY(-2px);
+  border: 2px solid #333;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
@@ -247,6 +274,7 @@
   width: 56px;
   height: 56px;
   background: #f8f8f8;
+  border: 2px solid #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -279,6 +307,10 @@
   font-size: 1rem;
   font-weight: 400;
   color: #707070;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 32px 24px;
 }
 
 .error {
@@ -288,7 +320,11 @@
   font-weight: 400;
   color: #000000;
   background: #f8f8f8;
-  border: 1px solid #000000;
+  border: 2px solid #000000;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 24px;
 }
 
 .noEvents {
@@ -297,12 +333,27 @@
   font-size: 1rem;
   font-weight: 400;
   color: #a0a0a0;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 32px 24px;
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .filters, .eventsList, .eventsNearYou, .loading, .error, .noEvents {
+    padding: 0 16px;
+  }
+}
+
 @media (max-width: 767px) {
+  .discoverEvents {
+    padding: 12px;
+  }
+  
   .filters {
     gap: 16px;
+    padding: 0 12px;
   }
   
   .gameFilters {
@@ -319,6 +370,11 @@
   .eventsList {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
+    padding: 0 12px;
+  }
+  
+  .eventsNearYou {
+    padding: 0 12px;
   }
   
   .nearYouContent {
@@ -381,9 +437,21 @@
     font-size: 0.8rem;
     line-height: 1.3;
   }
+  
+  .loading, .error, .noEvents {
+    padding: 24px 12px;
+  }
 }
 
 @media (max-width: 480px) {
+  .discoverEvents {
+    padding: 8px;
+  }
+  
+  .filters, .eventsList, .eventsNearYou {
+    padding: 0 8px;
+  }
+  
   .eventsList {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -444,6 +512,10 @@
     padding: 3px 6px;
     margin-bottom: 6px;
   }
+  
+  .loading, .error, .noEvents {
+    padding: 20px 8px;
+  }
 }
 
 @media (min-width: 768px) {
@@ -486,6 +558,10 @@
 @media (min-width: 1024px) {
   .discoverEvents {
     padding: 32px 24px;
+  }
+  
+  .filters, .eventsList, .eventsNearYou, .loading, .error, .noEvents {
+    padding: 0 32px;
   }
   
   .gameFilters {

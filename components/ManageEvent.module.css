@@ -114,7 +114,7 @@
   margin-top: 16px;
   width: 100%;
   padding: 16px;
-  background: #f8f8f8;
+  background: #fff;
   border: 2px solid #000;
 }
 
@@ -165,7 +165,7 @@
   margin-top: 16px;
   width: 100%;
   padding: 16px;
-  background: #f8f8f8;
+  background: #fff;
   border: 2px solid #000;
 }
 
@@ -175,7 +175,7 @@
   gap: 12px;
   margin-top: 16px;
   padding: 16px;
-  background: #f8f8f8;
+  background: #fff;
   border: 2px solid #000;
 }
 
@@ -184,6 +184,37 @@
   align-items: center;
   gap: 8px;
   padding: 8px 0;
+}
+
+.attendeesActions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.sendInvitesButton {
+  background: #000;
+  color: #fff;
+  border: 2px solid #000;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.sendInvitesButton:hover {
+  background: #333;
+  border-color: #333;
+}
+
+.sendInvitesButton svg {
+  flex-shrink: 0;
 }
 
 .attendeesIcon {
@@ -206,19 +237,26 @@
 
 .attendeesList {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
   max-height: 200px;
-  overflow-y: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   padding: 8px 0;
+  flex-wrap: wrap;
 }
 
 .attendeeItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 0;
-  transition: opacity 0.2s ease;
+  gap: 8px;
+  padding: 6px 8px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  min-width: fit-content;
 }
 
 .attendeeItem:hover {
@@ -226,27 +264,28 @@
 }
 
 .attendeeIcon {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   background: #f0f0f0;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 2px solid #000;
+  border: 1px solid #000;
+  border-radius: 4px;
 }
 
 .attendeeInitial {
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   font-weight: 600;
   color: #333;
 }
 
 .attendeeName {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #000;
   font-weight: 500;
-  flex: 1;
+  white-space: nowrap;
 }
 
 /* Form Layout */
@@ -266,7 +305,7 @@
 .input, .textarea, .titleInput {
   width: 100%;
   border: 2px solid #000;
-  background: #fff;
+  background: #f8f8f8;
   padding: 12px 16px;
   font-size: 1rem;
   color: #000;
@@ -297,9 +336,23 @@
 }
 
 /* Form Sections */
+.whenWhereSection, .eventOptionsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 8px 0;
+  padding: 0;
+}
+
 .dateTimeSection, .gameSection, .descriptionSection, .locationSection, .tournamentSection {
   padding: 20px;
-  background: #f8f8f8;
+  background: #fff;
   border: 2px solid #000;
   display: flex;
   flex-direction: column;
@@ -392,7 +445,356 @@
   padding: 20px;
 }
 
-/* Tournament Section */
+/* Tournament Section - Card Style */
+.tournamentCard {
+  width: 100%;
+  background: #fff;
+  border: 2px solid #000;
+  margin-bottom: 24px;
+  transition: all 0.2s ease;
+}
+
+.tournamentCard:hover {
+  border-color: #333;
+}
+
+.tournamentCardContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+}
+
+.tournamentIcon {
+  width: 48px;
+  height: 48px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid #000;
+}
+
+.tournamentIcon svg {
+  color: #fff;
+  width: 24px;
+  height: 24px;
+}
+
+.tournamentCardText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tournamentCardTitle {
+  font-size: 1.1rem;
+  color: #000;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.tournamentCardDescription {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 400;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tournamentCardActions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.manageTournamentCardButton {
+  background: #000;
+  color: #fff;
+  border: 2px solid #000;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.manageTournamentCardButton:hover {
+  background: #333;
+  border-color: #333;
+}
+
+/* Streaming Section - Card Style */
+.streamingCard {
+  width: 100%;
+  background: #fff;
+  border: 2px solid #000;
+  margin-bottom: 24px;
+  transition: all 0.2s ease;
+}
+
+.streamingCard:hover {
+  border-color: #333;
+}
+
+.streamingCardContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+}
+
+.streamingIcon {
+  width: 48px;
+  height: 48px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid #000;
+}
+
+.streamingIcon svg {
+  color: #fff;
+  width: 24px;
+  height: 24px;
+}
+
+.streamingCardText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.streamingCardTitle {
+  font-size: 1.1rem;
+  color: #000;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.streamingCardDescription {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 400;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.streamingCardActions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.manageStreamingCardButton {
+  background: #000;
+  color: #fff;
+  border: 2px solid #000;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.manageStreamingCardButton:hover {
+  background: #333;
+  border-color: #333;
+}
+
+/* Registration Settings Section - Card Style */
+.registrationCard {
+  width: 100%;
+  background: #fff;
+  border: 2px solid #000;
+  margin-bottom: 24px;
+  transition: all 0.2s ease;
+}
+
+.registrationCard:hover {
+  border-color: #333;
+}
+
+.registrationCardContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+}
+
+.registrationIcon {
+  width: 48px;
+  height: 48px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid #000;
+}
+
+.registrationIcon svg {
+  color: #fff;
+  width: 24px;
+  height: 24px;
+}
+
+.registrationCardText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.registrationCardTitle {
+  font-size: 1.1rem;
+  color: #000;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.registrationCardDescription {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 400;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.registrationCardActions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.manageRegistrationCardButton {
+  background: #000;
+  color: #fff;
+  border: 2px solid #000;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.manageRegistrationCardButton:hover {
+  background: #333;
+  border-color: #333;
+}
+
+/* Game Selection Section - Card Style */
+.gameCard {
+  width: 100%;
+  background: #fff;
+  border: 2px solid #000;
+  margin-bottom: 24px;
+  transition: all 0.2s ease;
+}
+
+.gameCard:hover {
+  border-color: #333;
+}
+
+.gameCardContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+}
+
+.gameCardIcon {
+  width: 48px;
+  height: 48px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid #000;
+}
+
+.gameCardIcon svg {
+  color: #fff;
+  width: 24px;
+  height: 24px;
+}
+
+.gameCardText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gameCardTitle {
+  font-size: 1.1rem;
+  color: #000;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.gameCardDescription {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 400;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gameCardActions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.manageGameCardButton {
+  background: #000;
+  color: #fff;
+  border: 2px solid #000;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.manageGameCardButton:hover {
+  background: #333;
+  border-color: #333;
+}
+
+
+/* Tournament Section - Original (for backward compatibility) */
 .tournamentRow {
   display: flex;
   align-items: center;
@@ -588,9 +990,48 @@
     gap: 12px;
   }
   
-  .dateTimeSection, .gameSection, .descriptionSection, .locationSection, .tournamentSection {
+  .whenWhereSection, .eventOptionsSection {
+    gap: 12px;
+  }
+  
+  .sectionTitle {
+    font-size: 1.1rem;
+  }
+  
+  .dateTimeSection, .gameSection, .descriptionSection, .locationSection, .tournamentSection, .tournamentSectionFullWidth, .tournamentCard, .streamingCard, .registrationCard, .gameCard {
     padding: 16px;
     margin-bottom: 8px;
+  }
+  
+  .tournamentCardContent, .streamingCardContent, .registrationCardContent, .gameCardContent {
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .tournamentIcon, .streamingIcon, .registrationIcon, .gameCardIcon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .tournamentIcon svg, .streamingIcon svg, .registrationIcon svg, .gameCardIcon svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .tournamentCardTitle, .streamingCardTitle, .registrationCardTitle, .gameCardTitle {
+    font-size: 1rem;
+  }
+  
+  .tournamentCardDescription, .streamingCardDescription, .registrationCardDescription, .gameCardDescription {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .manageTournamentCardButton, .manageStreamingCardButton, .manageRegistrationCardButton, .manageGameCardButton {
+    padding: 10px 16px;
+    font-size: 0.85rem;
   }
   
   .bannerImage {
@@ -653,9 +1094,138 @@
     gap: 12px;
   }
   
-  .dateTimeSection, .gameSection, .descriptionSection, .locationSection, .tournamentSection {
+  .whenWhereSection, .eventOptionsSection {
+    gap: 10px;
+  }
+  
+  .sectionTitle {
+    font-size: 1rem;
+  }
+  
+  .dateTimeSection, .gameSection, .descriptionSection, .locationSection, .tournamentSection, .tournamentSectionFullWidth, .tournamentCard, .streamingCard, .registrationCard, .gameCard {
     padding: 12px;
     margin-bottom: 6px;
+  }
+  
+  .tournamentCardContent, .streamingCardContent, .registrationCardContent, .gameCardContent {
+    padding: 12px;
+    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .tournamentIcon, .streamingIcon, .registrationIcon, .gameCardIcon {
+    width: 36px;
+    height: 36px;
+    align-self: flex-start;
+  }
+  
+  .tournamentIcon svg, .streamingIcon svg, .registrationIcon svg, .gameCardIcon svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .tournamentCardText, .streamingCardText, .registrationCardText, .gameCardText {
+    width: 100%;
+  }
+  
+  .tournamentCardTitle, .streamingCardTitle, .registrationCardTitle, .gameCardTitle {
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+  }
+  
+  .tournamentCardDescription, .streamingCardDescription, .registrationCardDescription, .gameCardDescription {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .tournamentCardActions, .streamingCardActions, .registrationCardActions, .gameCardActions {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .manageTournamentCardButton, .manageStreamingCardButton, .manageRegistrationCardButton, .manageGameCardButton {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .sendInvitesButton {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    gap: 4px;
+  }
+  
+  .sendInvitesButton svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .attendeesList {
+    gap: 6px;
+    padding: 6px 0;
+  }
+  
+  .attendeeItem {
+    padding: 4px 6px;
+    gap: 6px;
+  }
+  
+  .attendeeIcon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .attendeeInitial {
+    font-size: 0.55rem;
+  }
+  
+  .attendeeName {
+    font-size: 0.7rem;
+  }
+  
+  
+  .tournamentRowFullWidth {
+    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .tournamentTextFullWidth {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  
+  .tournamentActionsFullWidth {
+    justify-content: center;
+    gap: 16px;
+  }
+  
+  .tournamentLabelFullWidth {
+    font-size: 0.9rem;
+  }
+  
+  .checkboxInputFullWidth {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .checkboxInputFullWidth:checked::after {
+    font-size: 14px;
+  }
+  
+  .manageTournamentButtonFullWidth {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    gap: 6px;
+  }
+  
+  .manageTournamentTextFullWidth {
+    font-size: 0.75rem;
   }
   
   .bannerImage {
@@ -692,6 +1262,45 @@
   
   .gameLabel {
     font-size: 0.75rem;
+  }
+  
+  .tournamentSectionFullWidth {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .tournamentRowFullWidth {
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .tournamentActionsFullWidth {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .tournamentLabelFullWidth {
+    font-size: 1rem;
+  }
+  
+  .checkboxInputFullWidth {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .checkboxInputFullWidth:checked::after {
+    font-size: 16px;
+  }
+  
+  .manageTournamentButtonFullWidth {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    gap: 8px;
+  }
+  
+  .manageTournamentTextFullWidth {
+    font-size: 0.8rem;
   }
   
   .tournamentRow {

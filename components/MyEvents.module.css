@@ -3,13 +3,18 @@
 /* ===== LAYOUT ===== */
 .myEvents {
   width: 100%;
-  padding: 24px 12px;
+  padding: 24px 16px;
   margin: 0;
+  min-height: 100vh;
 }
 
 .section {
   margin-bottom: 32px;
   width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 24px;
 }
 
 .section:last-child {
@@ -21,7 +26,7 @@
 .eventsList {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 20px;
   width: 100%;
   margin: 0;
 }
@@ -30,8 +35,7 @@
 /* ===== EVENT CARDS ===== */
 .eventCard {
   background: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 0px;
+  border: 2px solid #000000;
   height: 160px;
   position: relative;
   cursor: pointer;
@@ -40,12 +44,12 @@
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 16px;
+  padding: 20px;
 }
 
 .eventCard:hover {
   transform: translateY(-2px);
-  border-color: #000000;
+  border: 2px solid #333;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
@@ -53,6 +57,7 @@
   width: 110px;
   height: 110px;
   background: #f8f8f8;
+  border: 2px solid #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,7 +69,6 @@
   width: 100px;
   height: 100px;
   background: #d0d0d0;
-  border-radius: 0px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -103,11 +107,10 @@
 .gameTitle {
   background: #f8f8f8;
   color: #404040;
-  padding: 2px 6px;
+  padding: 4px 8px;
   font-size: 0.65rem;
   font-weight: 500;
-  border: 1px solid #e0e0e0;
-  border-radius: 0px;
+  border: 2px solid #000;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -170,9 +173,8 @@
 .editButton {
   background: transparent;
   color: #666666;
-  border: 1px solid #e0e0e0;
-  padding: 4px 8px;
-  border-radius: 0px;
+  border: 2px solid #000;
+  padding: 6px 12px;
   cursor: pointer;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   font-size: 0.7rem;
@@ -182,9 +184,9 @@
 }
 
 .editButton:hover {
-  background: #f8f8f8;
-  color: #000000;
-  border-color: #d0d0d0;
+  background: #000;
+  color: #fff;
+  border: 2px solid #000;
   transform: none;
   box-shadow: none;
 }
@@ -192,7 +194,8 @@
 .editButton:active {
   transform: none;
   box-shadow: none;
-  background: #f0f0f0;
+  background: #333;
+  border: 2px solid #333;
 }
 
 /* ===== STATE CLASSES ===== */
@@ -210,8 +213,7 @@
 .error {
   color: #000000;
   background: #f8f8f8;
-  border: 1px solid #000000;
-  border-radius: 0px;
+  border: 2px solid #000000;
   padding: 24px;
 }
 
@@ -260,9 +262,8 @@
 .discoverButton, .signInButton {
   background: #000000;
   color: #ffffff;
-  border: none;
+  border: 2px solid #000000;
   padding: 12px 24px;
-  border-radius: 4px;
   font-weight: 500;
   cursor: pointer;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -282,7 +283,8 @@
 }
 
 .discoverButton:hover, .signInButton:hover {
-  background: #404040;
+  background: #333;
+  border: 2px solid #333;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -294,21 +296,34 @@
   font-size: 1rem;
   font-weight: 400;
   background: #f8f8f8;
-  border: 1px solid #000000;
-  border-radius: 0px;
+  border: 2px solid #000000;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1024px) {
+  .section {
+    padding: 0 16px;
+  }
+}
+
 @media (max-width: 767px) {
+  .myEvents {
+    padding: 12px;
+  }
+  
+  .section {
+    padding: 0 12px;
+  }
+  
   .eventsList {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 16px;
     width: 100%;
   }
   
   .eventCard {
     height: 130px;
-    padding: 10px;
+    padding: 16px;
   }
   
   .eventImage {
@@ -338,7 +353,7 @@
   
   .gameTitle {
     font-size: 0.6rem;
-    padding: 2px 4px;
+    padding: 3px 6px;
   }
   
   .editButton {
@@ -348,15 +363,23 @@
 }
 
 @media (max-width: 480px) {
+  .myEvents {
+    padding: 8px;
+  }
+  
+  .section {
+    padding: 0 8px;
+  }
+  
   .eventsList {
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 12px;
     width: 100%;
   }
   
   .eventCard {
     height: 120px;
-    padding: 8px;
+    padding: 12px;
   }
   
   .eventImage {
@@ -386,12 +409,12 @@
   
   .gameTitle {
     font-size: 0.55rem;
-    padding: 1px 3px;
+    padding: 2px 4px;
   }
   
   .editButton {
     font-size: 0.6rem;
-    padding: 3px 6px;
+    padding: 4px 8px;
   }
 }
 
@@ -436,17 +459,18 @@
   
   .section {
     margin-bottom: 40px;
+    padding: 0 32px;
   }
   
   .eventsList {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 24px;
     width: 100%;
   }
   
   .eventCard {
     height: 160px;
-    padding: 16px;
+    padding: 20px;
   }
   
   .eventImage {
@@ -476,12 +500,12 @@
   
   .gameTitle {
     font-size: 0.65rem;
-    padding: 2px 6px;
+    padding: 4px 8px;
   }
   
   .editButton {
     font-size: 0.7rem;
-    padding: 4px 8px;
+    padding: 6px 12px;
   }
 }
 

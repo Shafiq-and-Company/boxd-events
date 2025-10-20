@@ -33,7 +33,6 @@ export default function ManageEvent() {
   const [imageUploading, setImageUploading] = useState(false)
   const [attendees, setAttendees] = useState([])
   const [loadingAttendees, setLoadingAttendees] = useState(false)
-  const [isTournament, setIsTournament] = useState(false)
 
   // Helper functions
   const formatDateForInput = (dateString) => {
@@ -376,6 +375,27 @@ export default function ManageEvent() {
                      `${attendees.length} people attending`}
                   </div>
                 </div>
+                <div className={styles.attendeesActions}>
+                  <button
+                    type="button"
+                    className={styles.sendInvitesButton}
+                    onClick={() => {
+                      // TODO: Add invite functionality
+                      console.log('Send invites clicked')
+                    }}
+                    title="Send invites"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                      <path d="M19 13v-2a3 3 0 0 0-3-3"/>
+                      <path d="M16 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                    </svg>
+                    Send Invites
+                  </button>
+                </div>
               </div>
               
               {!loadingAttendees && attendees.length > 0 && (
@@ -412,6 +432,7 @@ export default function ManageEvent() {
                 />
               </div>
 
+
               {/* Hosted By Section - Mobile */}
               <div className={styles.hostedByMobile}>
                 <div className={styles.hostedByIcon}>
@@ -428,30 +449,72 @@ export default function ManageEvent() {
                 </div>
               </div>
 
-              <div className={styles.dateTimeSection}>
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <input
-                      type="datetime-local"
-                      id="starts_at"
-                      name="starts_at"
-                      value={formData.starts_at}
-                      onChange={handleInputChange}
-                      required
-                      className={styles.input}
-                      placeholder="Start Date & Time"
-                    />
+              <div className={styles.whenWhereSection}>
+                <h3 className={styles.sectionTitle}>When & Where</h3>
+                
+                <div className={styles.dateTimeSection}>
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <input
+                        type="datetime-local"
+                        id="starts_at"
+                        name="starts_at"
+                        value={formData.starts_at}
+                        onChange={handleInputChange}
+                        required
+                        className={styles.input}
+                        placeholder="Start Date & Time"
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <input
+                        type="datetime-local"
+                        id="ends_at"
+                        name="ends_at"
+                        value={formData.ends_at}
+                        onChange={handleInputChange}
+                        className={styles.input}
+                        placeholder="End Date & Time"
+                      />
+                    </div>
                   </div>
-                  <div className={styles.formGroup}>
-                    <input
-                      type="datetime-local"
-                      id="ends_at"
-                      name="ends_at"
-                      value={formData.ends_at}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="End Date & Time"
-                    />
+                </div>
+
+                <div className={styles.locationSection}>
+                  <div className={styles.formRowThree}>
+                    <div className={styles.formGroup}>
+                      <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        className={styles.input}
+                        placeholder="Address"
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleInputChange}
+                        className={styles.input}
+                        placeholder="City"
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <input
+                        type="text"
+                        id="state"
+                        name="state"
+                        value={formData.state}
+                        onChange={handleInputChange}
+                        className={styles.input}
+                        placeholder="State"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -470,108 +533,137 @@ export default function ManageEvent() {
                 </div>
               </div>
 
-              <div className={styles.locationSection}>
-                <div className={styles.formRowThree}>
-                  <div className={styles.formGroup}>
-                    <input
-                      type="text"
-                      id="location"
-                      name="location"
-                      value={formData.location}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="Address"
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <input
-                      type="text"
-                      id="city"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="City"
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <input
-                      type="text"
-                      id="state"
-                      name="state"
-                      value={formData.state}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="State"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className={styles.gameSection}>
-                {gamesLoading ? (
-                  <div className={styles.gameLoading}>Loading games...</div>
-                ) : (
-                  <div className={styles.gameOptions}>
-                    {games.map((game, index) => (
-                      <button
-                        key={index}
-                        type="button"
-                        className={`${styles.gameOption} ${formData.game_title === game.game_title ? styles.gameOptionSelected : ''}`}
-                        onClick={() => setFormData(prev => ({ ...prev, game_title: game.game_title }))}
-                      >
-                        <div className={styles.gameImage}>
-                          <div className={styles.imagePlaceholder}>
-                            {game.game_title.charAt(0).toUpperCase()}
-                          </div>
-                        </div>
-                        <span className={styles.gameLabel}>{game.game_title}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Tournament Section */}
-              <div className={styles.tournamentSection}>
-                <div className={styles.tournamentRow}>
-                  <div className={styles.tournamentText}>
-                    <span className={styles.tournamentLabel}>Make this a tournament</span>
-                  </div>
-                  <div className={styles.tournamentActions}>
-                    {isTournament && (
+              <div className={styles.eventOptionsSection}>
+                <h3 className={styles.sectionTitle}>Event Options</h3>
+                
+                {/* Tournament Section - Card Style */}
+                <div className={styles.tournamentCard}>
+                  <div className={styles.tournamentCardContent}>
+                    <div className={styles.tournamentIcon}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                        <path d="M4 22h16"/>
+                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21l-1.5.5c-.5.17-1.03.17-1.53 0l-1.5-.5C4.47 17.98 4 17.55 4 17v-2.34"/>
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21l1.5.5c.5.17 1.03.17 1.53 0l1.5-.5C19.53 17.98 20 17.55 20 17v-2.34"/>
+                        <path d="M18 2H6l2 7h8l2-7Z"/>
+                        <path d="M12 9v4"/>
+                      </svg>
+                    </div>
+                    <div className={styles.tournamentCardText}>
+                      <div className={styles.tournamentCardTitle}>Tournament Brackets</div>
+                      <div className={styles.tournamentCardDescription}>Manage tournament structure, seed players, and track match results</div>
+                    </div>
+                    <div className={styles.tournamentCardActions}>
                       <button
                         type="button"
-                        className={styles.manageTournamentButton}
+                        className={styles.manageTournamentCardButton}
                         onClick={() => {
                           router.push(`/manage-tournament?eventId=${id}`)
                         }}
                         title="Manage tournament"
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                          <path d="M4 22h16"/>
-                          <path d="M10 14.66V17c0 .55-.47.98-.97 1.21l-1.5.5c-.5.17-1.03.17-1.53 0l-1.5-.5C4.47 17.98 4 17.55 4 17v-2.34"/>
-                          <path d="M14 14.66V17c0 .55.47.98.97 1.21l1.5.5c.5.17 1.03.17 1.53 0l1.5-.5C19.53 17.98 20 17.55 20 17v-2.34"/>
-                          <path d="M18 2H6l2 7h8l2-7Z"/>
-                          <path d="M12 9v4"/>
-                        </svg>
-                        <span className={styles.manageTournamentText}>Manage Tournament</span>
+                        Manage →
                       </button>
-                    )}
-                    <div className={styles.tournamentCheckbox}>
-                      <input
-                        type="checkbox"
-                        id="tournamentCheckbox"
-                        checked={isTournament}
-                        onChange={(e) => setIsTournament(e.target.checked)}
-                        className={styles.checkboxInput}
-                      />
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Streaming Section - Card Style */}
+                <div className={styles.streamingCard}>
+                  <div className={styles.streamingCardContent}>
+                    <div className={styles.streamingIcon}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                      </svg>
+                    </div>
+                    <div className={styles.streamingCardText}>
+                      <div className={styles.streamingCardTitle}>Streaming Setup</div>
+                      <div className={styles.streamingCardDescription}>Configure streaming platforms and broadcast settings</div>
+                    </div>
+                    <div className={styles.streamingCardActions}>
+                      <button
+                        type="button"
+                        className={styles.manageStreamingCardButton}
+                        onClick={() => {
+                          // TODO: Add streaming management functionality
+                          console.log('Streaming management clicked')
+                        }}
+                        title="Manage streaming"
+                      >
+                        Setup →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Registration Settings Section - Card Style */}
+                <div className={styles.registrationCard}>
+                  <div className={styles.registrationCardContent}>
+                    <div className={styles.registrationIcon}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        <path d="M9 11l2 2 4-4"/>
+                      </svg>
+                    </div>
+                    <div className={styles.registrationCardText}>
+                      <div className={styles.registrationCardTitle}>Registration Settings</div>
+                      <div className={styles.registrationCardDescription}>Configure registration requirements, capacity limits, and approval settings</div>
+                    </div>
+                    <div className={styles.registrationCardActions}>
+                      <button
+                        type="button"
+                        className={styles.manageRegistrationCardButton}
+                        onClick={() => {
+                          // TODO: Add registration management functionality
+                          console.log('Registration management clicked')
+                        }}
+                        title="Manage registration"
+                      >
+                        Configure →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Game Selection Section - Card Style */}
+                <div className={styles.gameCard}>
+                  <div className={styles.gameCardContent}>
+                    <div className={styles.gameCardIcon}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                      </svg>
+                    </div>
+                    <div className={styles.gameCardText}>
+                      <div className={styles.gameCardTitle}>Game Selection</div>
+                      <div className={styles.gameCardDescription}>
+                        {gamesLoading ? 'Loading games...' : 
+                         formData.game_title ? `Selected: ${formData.game_title}` : 
+                         'Choose the game for this event'}
+                      </div>
+                    </div>
+                    <div className={styles.gameCardActions}>
+                      <button
+                        type="button"
+                        className={styles.manageGameCardButton}
+                        onClick={() => {
+                          // TODO: Add game selection modal/functionality
+                          console.log('Game selection clicked')
+                        }}
+                        title="Select game"
+                      >
+                        {formData.game_title ? 'Change' : 'Select'} →
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
+
 
               {/* Attendees Section - Mobile */}
               <div className={styles.attendeesSectionMobile}>
@@ -591,6 +683,27 @@ export default function ManageEvent() {
                        attendees.length === 1 ? '1 person attending' :
                        `${attendees.length} people attending`}
                     </div>
+                  </div>
+                  <div className={styles.attendeesActions}>
+                    <button
+                      type="button"
+                      className={styles.sendInvitesButton}
+                      onClick={() => {
+                        // TODO: Add invite functionality
+                        console.log('Send invites clicked')
+                      }}
+                      title="Send invites"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        <path d="M19 13v-2a3 3 0 0 0-3-3"/>
+                        <path d="M16 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                      </svg>
+                      Send Invites
+                    </button>
                   </div>
                 </div>
                 
