@@ -14,14 +14,7 @@ export default function MyEvents({ onTabChange }) {
   const [hostedLoading, setHostedLoading] = useState(true)
   const [error, setError] = useState('')
   const [hostedError, setHostedError] = useState('')
-  const [activeTab, setActiveTab] = useState('attending')
 
-  // Handle tab parameter from URL
-  useEffect(() => {
-    if (router.query.tab === 'hosting') {
-      setActiveTab('hosting')
-    }
-  }, [router.query.tab])
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -148,7 +141,9 @@ export default function MyEvents({ onTabChange }) {
     return (
       <div className={styles.myEvents}>
         <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
-        <div className={styles.loading}>Loading your events...</div>
+        <div className={styles.section}>
+          <div className={styles.loading}>Loading your events...</div>
+        </div>
       </div>
     )
   }
@@ -157,14 +152,16 @@ export default function MyEvents({ onTabChange }) {
     return (
       <div className={styles.myEvents}>
         <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
-        <div className={styles.notLoggedIn}>
-          <p>You need to be signed in to see your registered events.</p>
-          <button 
-            onClick={handleSignIn}
-            className={styles.signInButton}
-          >
-            Sign In
-          </button>
+        <div className={styles.section}>
+          <div className={styles.notLoggedIn}>
+            <p>You need to be signed in to see your registered events.</p>
+            <button 
+              onClick={handleSignIn}
+              className={styles.signInButton}
+            >
+              Sign In
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -174,9 +171,11 @@ export default function MyEvents({ onTabChange }) {
     return (
       <div className={styles.myEvents}>
         <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
-        <div className={styles.error}>
-          {error && `Error loading events: ${error}`}
-          {hostedError && `Error loading hosted events: ${hostedError}`}
+        <div className={styles.section}>
+          <div className={styles.error}>
+            {error && `Error loading events: ${error}`}
+            {hostedError && `Error loading hosted events: ${hostedError}`}
+          </div>
         </div>
       </div>
     )
@@ -188,28 +187,16 @@ export default function MyEvents({ onTabChange }) {
       className={styles.eventCard}
       onClick={() => handleEventClick(event.id)}
     >
-      <div className={styles.eventImage}>
-        {event.banner_image_url ? (
-          <img 
-            src={event.banner_image_url} 
-            alt={event.title}
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              objectFit: 'cover',
-              borderRadius: '4px'
-            }}
-          />
-        ) : (
-          <div className={styles.imagePlaceholder}>
-            {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
-          </div>
-        )}
-      </div>
-      
       <div className={styles.eventContent}>
         <div className={styles.eventHeader}>
           <h3 className={styles.eventTitle}>{event.title}</h3>
+          {event.game_title && (
+            <span className={styles.gameTitle}>
+              {event.game_title.length > 30 
+                ? `${event.game_title.substring(0, 30)}...` 
+                : event.game_title}
+            </span>
+          )}
         </div>
         
         <div className={styles.eventDetails}>
@@ -226,13 +213,24 @@ export default function MyEvents({ onTabChange }) {
         </div>
       </div>
       
-      {event.game_title && (
-        <span className={styles.gameTitle}>
-          {event.game_title.length > 30 
-            ? `${event.game_title.substring(0, 30)}...` 
-            : event.game_title}
-        </span>
-      )}
+      <div className={styles.eventImage}>
+        {event.banner_image_url ? (
+          <img 
+            src={event.banner_image_url} 
+            alt={event.title}
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              objectFit: 'cover',
+              borderRadius: '6px'
+            }}
+          />
+        ) : (
+          <div className={styles.imagePlaceholder}>
+            {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
+          </div>
+        )}
+      </div>
       
       {isHosted && (
         <div className={styles.eventActions}>
@@ -255,58 +253,26 @@ export default function MyEvents({ onTabChange }) {
     </div>
   )
 
+  // Combine all events for display
+  const allEvents = [...events, ...hostedEvents.map(event => ({ ...event, isHosted: true }))]
+
   return (
     <div className={styles.myEvents}>
       <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
       
-      {/* Tab Switcher */}
-      <div className={styles.tabSwitcher}>
-        <button
-          className={`${styles.tabButton} ${activeTab === 'attending' ? styles.tabButtonActive : ''}`}
-          onClick={() => setActiveTab('attending')}
-        >
-          Attending
-        </button>
-        <button
-          className={`${styles.tabButton} ${activeTab === 'hosting' ? styles.tabButtonActive : ''}`}
-          onClick={() => setActiveTab('hosting')}
-        >
-          Hosting
-        </button>
-      </div>
-      
-      {/* Attending Events Section */}
-      {activeTab === 'attending' && (
-        <div className={styles.section}>
-          {events.length === 0 ? (
-            <div className={styles.emptyState}>
-              <div className={styles.emptyStateContent}>
-                <p className={styles.emptyStateText}>You haven't registered for any events yet.</p>
-                <p className={styles.emptyStateSubtext}>Find and join exciting gaming events.</p>
+      <div className={styles.section}>
+        {allEvents.length === 0 ? (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateContent}>
+              <p className={styles.emptyStateText}>You haven't registered for or hosted any events yet.</p>
+              <p className={styles.emptyStateSubtext}>Find and join exciting gaming events or create your own.</p>
+              <div className={styles.emptyStateButtons}>
                 <button 
                   onClick={() => onTabChange ? onTabChange('discoverEvents') : router.push('/')}
                   className={styles.discoverButton}
                 >
                   Discover Events
                 </button>
-              </div>
-            </div>
-          ) : (
-            <div className={styles.eventsList}>
-              {events.map(event => renderEventCard(event, false))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Hosted Events Section */}
-      {activeTab === 'hosting' && (
-        <div className={styles.section}>
-          {hostedEvents.length === 0 ? (
-            <div className={styles.emptyState}>
-              <div className={styles.emptyStateContent}>
-                <p className={styles.emptyStateText}>You haven't hosted any events yet.</p>
-                <p className={styles.emptyStateSubtext}>Create and manage your own events.</p>
                 <button 
                   onClick={() => onTabChange ? onTabChange('createEvent') : router.push('/create-event')}
                   className={styles.discoverButton}
@@ -315,13 +281,13 @@ export default function MyEvents({ onTabChange }) {
                 </button>
               </div>
             </div>
-          ) : (
-            <div className={`${styles.eventsList} ${styles.hosting}`}>
-              {hostedEvents.map(event => renderEventCard(event, true))}
-            </div>
-          )}
-        </div>
-      )}
+          </div>
+        ) : (
+          <div className={styles.eventsList}>
+            {allEvents.map(event => renderEventCard(event, event.isHosted))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

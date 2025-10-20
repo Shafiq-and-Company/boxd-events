@@ -1,9 +1,8 @@
 /* DiscoverEvents Component - Clean Minimal CSS */
 
 .discoverEvents {
-  max-width: 800px;
+  width: 100%;
   padding: 24px 12px;
-  margin: 0 auto;
 }
 
 .filters {
@@ -11,9 +10,6 @@
   flex-direction: column;
   gap: 20px;
   margin-bottom: 24px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .gameFilters {
@@ -77,8 +73,6 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  max-width: 800px;
-  margin: 0 auto;
 }
 
 .eventCard {
@@ -180,9 +174,6 @@
 /* Events Near You Section */
 .eventsNearYou {
   margin-bottom: 32px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .sectionTitle {

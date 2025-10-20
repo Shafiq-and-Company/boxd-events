@@ -2,181 +2,129 @@
 
 /* ===== LAYOUT ===== */
 .myEvents {
-  max-width: 800px;
+  width: 100%;
   padding: 24px 12px;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .section {
   margin-bottom: 32px;
+  width: 100%;
 }
 
 .section:last-child {
   margin-bottom: 0;
 }
 
-/* ===== TAB SWITCHER ===== */
-.tabSwitcher {
-  display: flex;
-  border-bottom: 1px solid #e8e8e8;
-  margin-bottom: 24px;
-  gap: 0;
-}
-
-.tabButton {
-  background: none;
-  border: none;
-  padding: 12px 24px;
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: #707070;
-  cursor: pointer;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border-bottom: 2px solid transparent;
-  position: relative;
-}
-
-.tabButton:hover {
-  color: #404040;
-  background: #f8f8f8;
-}
-
-.tabButtonActive {
-  color: #000000;
-  font-weight: 500;
-  border-bottom-color: #000000;
-}
-
-.tabButtonActive:hover {
-  color: #000000;
-  background: none;
-}
 
 /* ===== EVENTS GRID ===== */
 .eventsList {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr;
   gap: 16px;
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
 }
 
-.eventsList.hosting {
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
 
 /* ===== EVENT CARDS ===== */
 .eventCard {
   background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  aspect-ratio: 1;
+  border: 1px solid #000000;
+  border-radius: 0px;
+  height: 120px;
   position: relative;
   cursor: pointer;
   overflow: hidden;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  width: 100%;
 }
 
 .eventCard:hover {
   transform: translateY(-2px);
-  border-color: #a0a0a0;
+  border-color: #000000;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .eventImage {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 8px;
+  right: 8px;
+  width: 50px;
+  height: 50px;
   background: #f8f8f8;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
+  z-index: 2;
 }
 
 .imagePlaceholder {
   width: 40px;
   height: 40px;
   background: #d0d0d0;
-  border-radius: 6px;
+  border-radius: 0px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 500;
   color: #707070;
 }
 
 .eventContent {
-  position: relative;
-  z-index: 2;
-  padding: 12px;
+  padding: 8px;
+  padding-right: 70px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.8) 100%);
-  color: white;
+  justify-content: center;
+  background: #ffffff;
+  color: #000000;
 }
 
 .eventHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 
 .eventTitle {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000000;
   line-height: 1.2;
-  height: 2.2rem;
+  margin-bottom: 4px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin-bottom: 6px;
 }
 
 .gameTitle {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: #f8f8f8;
   color: #404040;
-  padding: 3px 6px;
-  border-radius: 3px;
+  padding: 2px 6px;
   font-size: 0.65rem;
-  font-weight: 400;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  min-height: 16px;
+  font-weight: 500;
+  border: 1px solid #e0e0e0;
+  border-radius: 0px;
+  display: inline-block;
+  margin-bottom: 4px;
   white-space: nowrap;
-  line-height: 1.1;
-  z-index: 3;
-  max-width: calc(100% - 16px);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.2;
+  max-width: fit-content;
 }
 
 .eventDetails {
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
 .eventDate, .eventLocation {
-  color: #ffffff;
+  color: #666666;
   font-size: 0.75rem;
   font-weight: 400;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
 .eventDate {
@@ -184,13 +132,13 @@
 }
 
 .eventLocation {
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }
 
 /* ===== EVENT ACTIONS ===== */
 .eventActions {
   position: absolute;
-  top: 8px;
+  top: 68px;
   right: 8px;
   z-index: 10;
 }
@@ -199,17 +147,17 @@
   background: rgba(255, 255, 255, 0.95);
   color: #404040;
   border: 1px solid #d0d0d0;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 4px;
+  border-radius: 0px;
   cursor: pointer;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   backdrop-filter: blur(4px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
 }
 
 .editButton:hover {
@@ -240,8 +188,8 @@
 .error {
   color: #000000;
   background: #f8f8f8;
-  border: 1px solid #d0d0d0;
-  border-radius: 0;
+  border: 1px solid #000000;
+  border-radius: 0px;
   padding: 24px;
 }
 
@@ -261,6 +209,7 @@
 .emptyStateContent {
   text-align: center;
   max-width: 400px;
+  margin: 0 auto;
 }
 
 .emptyStateText {
@@ -276,6 +225,13 @@
   color: #707070;
   margin-bottom: 20px;
   line-height: 1.5;
+}
+
+.emptyStateButtons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 /* ===== BUTTONS ===== */
@@ -316,40 +272,57 @@
   font-size: 1rem;
   font-weight: 400;
   background: #f8f8f8;
-  border: 1px solid #d0d0d0;
-  border-radius: 0;
+  border: 1px solid #000000;
+  border-radius: 0px;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 767px) {
   .eventsList {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: 100%;
   }
   
-  .eventsList.hosting {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+  .eventCard {
+    height: 90px;
+  }
+  
+  .eventImage {
+    width: 45px;
+    height: 45px;
+    top: 8px;
+    right: 8px;
+  }
+  
+  .eventActions {
+    top: 63px;
+    right: 8px;
   }
   
   .eventContent {
-    padding: 10px;
+    padding: 6px;
+    padding-right: 65px;
   }
   
   .eventTitle {
     font-size: 0.9rem;
-    height: 2.4rem;
-    line-height: 1.3;
+    line-height: 1.2;
   }
   
   .eventDate, .eventLocation {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+  }
+  
+  .gameTitle {
+    font-size: 0.6rem;
+    padding: 2px 4px;
   }
   
   .editButton {
-    width: 24px;
-    height: 24px;
-    padding: 4px;
+    width: 20px;
+    height: 20px;
+    padding: 3px;
   }
   
   .editButton svg {
@@ -360,39 +333,50 @@
 
 @media (max-width: 480px) {
   .eventsList {
-    gap: 6px;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    width: 100%;
   }
   
-  .eventsList.hosting {
-    gap: 6px;
+  .eventCard {
+    height: 80px;
+  }
+  
+  .eventImage {
+    width: 35px;
+    height: 35px;
+    top: 6px;
+    right: 6px;
+  }
+  
+  .eventActions {
+    top: 51px;
+    right: 6px;
   }
   
   .eventContent {
-    padding: 8px;
+    padding: 5px;
+    padding-right: 50px;
   }
   
   .eventTitle {
-    font-size: 0.85rem;
-    height: 2.2rem;
+    font-size: 0.8rem;
+    line-height: 1.2;
   }
   
   .eventDate, .eventLocation {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
   }
   
   .gameTitle {
-    font-size: 0.6rem;
-    padding: 2px 4px;
-    min-height: 14px;
-    top: 6px;
-    left: 6px;
-    max-width: calc(100% - 12px);
+    font-size: 0.55rem;
+    padding: 1px 3px;
   }
   
   .editButton {
-    width: 20px;
-    height: 20px;
-    padding: 3px;
+    width: 18px;
+    height: 18px;
+    padding: 2px;
   }
   
   .editButton svg {
@@ -403,27 +387,41 @@
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .eventsList {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    width: 100%;
   }
   
-  .eventsList.hosting {
-    gap: 20px;
+  .eventCard {
+    height: 110px;
+  }
+  
+  .eventImage {
+    width: 55px;
+    height: 55px;
+    top: 8px;
+    right: 8px;
+  }
+  
+  .eventActions {
+    top: 73px;
+    right: 8px;
   }
   
   .eventContent {
-    padding: 14px;
+    padding: 7px;
+    padding-right: 75px;
   }
   
   .editButton {
-    width: 30px;
-    height: 30px;
-    padding: 7px;
+    width: 22px;
+    height: 22px;
+    padding: 4px;
   }
   
   .editButton svg {
-    width: 13px;
-    height: 13px;
+    width: 12px;
+    height: 12px;
   }
 }
 
@@ -437,40 +435,55 @@
   }
   
   .eventsList {
-    gap: 18px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100%;
   }
   
-  .eventsList.hosting {
-    gap: 18px;
+  .eventCard {
+    height: 120px;
+  }
+  
+  .eventImage {
+    width: 50px;
+    height: 50px;
+    top: 8px;
+    right: 8px;
+  }
+  
+  .eventActions {
+    top: 68px;
+    right: 8px;
   }
   
   .eventContent {
-    padding: 14px;
+    padding: 8px;
+    padding-right: 70px;
   }
   
   .eventTitle { 
-    font-size: 0.85rem; 
-    height: 2rem;
+    font-size: 1rem; 
+    line-height: 1.2;
   }
   
   .eventDate, .eventLocation { 
-    font-size: 0.7rem; 
+    font-size: 0.75rem; 
   }
   
   .gameTitle {
-    font-size: 0.6rem;
-    min-height: 14px;
+    font-size: 0.65rem;
+    padding: 2px 6px;
   }
   
   .editButton {
-    width: 32px;
-    height: 32px;
-    padding: 8px;
+    width: 24px;
+    height: 24px;
+    padding: 4px;
   }
   
   .editButton svg {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
   }
 }
 
