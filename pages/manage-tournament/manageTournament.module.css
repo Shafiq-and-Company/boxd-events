@@ -21,7 +21,6 @@
 /* Main Content Area */
 .mainContent {
   flex: 1;
-  margin-left: 100px;
   padding: 20px;
   background: transparent;
   overflow-y: auto;
@@ -30,7 +29,6 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .mainContent {
-    margin-left: 80px;
     padding: 10px;
   }
 }
