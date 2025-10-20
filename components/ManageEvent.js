@@ -20,7 +20,8 @@ export default function ManageEvent() {
     game_title: '',
     city: '',
     cost: '',
-    state: ''
+    state: '',
+    theme: 'default'
   })
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
@@ -33,6 +34,8 @@ export default function ManageEvent() {
   const [imageUploading, setImageUploading] = useState(false)
   const [attendees, setAttendees] = useState([])
   const [loadingAttendees, setLoadingAttendees] = useState(false)
+  const [selectedTheme, setSelectedTheme] = useState('default')
+  const [isThemeCardExpanded, setIsThemeCardExpanded] = useState(false)
 
   // Helper functions
   const formatDateForInput = (dateString) => {
@@ -72,6 +75,15 @@ export default function ManageEvent() {
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleThemeChange = (theme) => {
+    setSelectedTheme(theme)
+    setFormData(prev => ({ ...prev, theme }))
+  }
+
+  const toggleThemeCard = () => {
+    setIsThemeCardExpanded(!isThemeCardExpanded)
   }
 
   const handleImageChange = (e) => {
@@ -124,7 +136,8 @@ export default function ManageEvent() {
         city: formData.city,
         state: formData.state,
         cost: formData.cost || 0,
-        banner_image_url: bannerImageUrl
+        banner_image_url: bannerImageUrl,
+        theme: formData.theme
       }
 
       const { data, error } = await supabase
@@ -178,8 +191,11 @@ export default function ManageEvent() {
         game_title: event.game_title || '',
         city: event.city || '',
         cost: event.cost || '',
-        state: event.state || ''
+        state: event.state || '',
+        theme: event.theme || 'default'
       })
+
+      setSelectedTheme(event.theme || 'default')
 
       setBannerImageUrl(event.banner_image_url || null)
     } catch (err) {
@@ -338,6 +354,78 @@ export default function ManageEvent() {
                   Remove Image
                 </button>
               )}
+            </div>
+
+            {/* Theme Selection Card */}
+            <div className={styles.themeCard} style={{ marginTop: '24px' }}>
+              <div className={styles.themeCardContent}>
+                <div className={styles.themeCardHeader} onClick={toggleThemeCard}>
+                  <div className={styles.themeCardText}>
+                    <div className={styles.themeCardTitle}>Event Theme</div>
+                    <div className={styles.themeCardDescription}>
+                      {selectedTheme === 'default' ? 'Default' : 
+                       selectedTheme === 'gaming' ? 'Gaming' :
+                       selectedTheme === 'corporate' ? 'Corporate' :
+                       selectedTheme === 'party' ? 'Party' : 'Default'} theme selected
+                    </div>
+                  </div>
+                  <div className={styles.themeCardToggle}>
+                    <svg 
+                      width="16" 
+                      height="16" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2"
+                      className={`${styles.toggleIcon} ${isThemeCardExpanded ? styles.toggleIconExpanded : ''}`}
+                    >
+                      <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                  </div>
+                </div>
+                {isThemeCardExpanded && (
+                  <div className={styles.themeCardActions}>
+                    <div className={styles.themeOptions}>
+                      <button
+                        type="button"
+                        className={`${styles.themeOption} ${selectedTheme === 'default' ? styles.themeOptionSelected : ''}`}
+                        onClick={() => handleThemeChange('default')}
+                        title="Default theme"
+                      >
+                        <div className={styles.themePreview} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}></div>
+                        <span>Default</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.themeOption} ${selectedTheme === 'gaming' ? styles.themeOptionSelected : ''}`}
+                        onClick={() => handleThemeChange('gaming')}
+                        title="Gaming theme"
+                      >
+                        <div className={styles.themePreview} style={{ background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)' }}></div>
+                        <span>Gaming</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.themeOption} ${selectedTheme === 'corporate' ? styles.themeOptionSelected : ''}`}
+                        onClick={() => handleThemeChange('corporate')}
+                        title="Corporate theme"
+                      >
+                        <div className={styles.themePreview} style={{ background: 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)' }}></div>
+                        <span>Corporate</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.themeOption} ${selectedTheme === 'party' ? styles.themeOptionSelected : ''}`}
+                        onClick={() => handleThemeChange('party')}
+                        title="Party theme"
+                      >
+                        <div className={styles.themePreview} style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}></div>
+                        <span>Party</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Desktop Hosted By Section */}

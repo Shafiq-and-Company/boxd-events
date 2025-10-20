@@ -113,33 +113,34 @@
 
 .eventImage {
   position: absolute;
-  top: 10px;
+  top: 50%;
   left: 10px;
-  width: 60px;
-  height: 60px;
+  width: 100px;
+  height: 100px;
   background: #f8f8f8;
   border: 2px solid #000;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2;
+  transform: translateY(-50%);
 }
 
 .imagePlaceholder {
-  width: 50px;
-  height: 50px;
+  width: 90px;
+  height: 90px;
   background: #d0d0d0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1.75rem;
   font-weight: 500;
   color: #707070;
 }
 
 .eventContent {
   padding: 12px;
-  padding-left: 80px;
+  padding-left: 120px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -220,8 +221,8 @@
 .mapPlaceholder {
   background: #f8f8f8;
   border: 2px solid #000000;
-  width: 300px;
-  height: 300px;
+  width: 450px;
+  height: 450px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -384,7 +385,7 @@
   
   .mapPlaceholder {
     width: 100%;
-    height: 200px;
+    height: 300px;
   }
   
   .nearYouGrid {
@@ -396,14 +397,15 @@
   
   .eventContent {
     padding: 12px;
-    padding-left: 80px;
+    padding-left: 120px;
   }
   
   .eventImage {
-    width: 60px;
-    height: 60px;
-    top: 10px;
+    width: 100px;
+    height: 100px;
+    top: 50%;
     left: 10px;
+    transform: translateY(-50%);
   }
   
   .gameTitle {
@@ -462,15 +464,16 @@
   }
   
   .eventImage {
-    width: 40px;
-    height: 40px;
-    top: 8px;
+    width: 80px;
+    height: 80px;
+    top: 50%;
     left: 8px;
+    transform: translateY(-50%);
   }
   
   .eventContent {
     padding: 10px;
-    padding-left: 60px;
+    padding-left: 100px;
   }
   
   .nearYouGrid {
@@ -481,7 +484,7 @@
   }
   
   .mapPlaceholder {
-    height: 150px;
+    height: 225px;
   }
   
   .mapIcon {
@@ -538,15 +541,16 @@
   }
   
   .eventImage {
-    width: 70px;
-    height: 70px;
-    top: 12px;
+    width: 110px;
+    height: 110px;
+    top: 50%;
     left: 12px;
+    transform: translateY(-50%);
   }
   
   .eventContent {
     padding: 14px;
-    padding-left: 100px;
+    padding-left: 140px;
   }
   
   .gameTitle {
@@ -583,15 +587,16 @@
   }
   
   .eventImage {
-    width: 80px;
-    height: 80px;
-    top: 14px;
+    width: 120px;
+    height: 120px;
+    top: 50%;
     left: 14px;
+    transform: translateY(-50%);
   }
   
   .eventContent {
     padding: 16px;
-    padding-left: 110px;
+    padding-left: 150px;
   }
   
   .gameTitle {

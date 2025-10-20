@@ -212,7 +212,6 @@ export default function DiscoverEvents() {
                     
                     <div className={styles.eventContent}>
                       <div className={styles.eventHeader}>
-                        <h3 className={styles.eventTitle}>{event.title}</h3>
                         {event.game_title && (
                           <span className={styles.gameTitle}>
                             {event.game_title.length > 30 
@@ -220,6 +219,7 @@ export default function DiscoverEvents() {
                               : event.game_title}
                           </span>
                         )}
+                        <h3 className={styles.eventTitle}>{event.title}</h3>
                       </div>
                     
                     <div className={styles.eventDetails}>
