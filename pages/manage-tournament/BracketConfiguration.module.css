@@ -1,0 +1,99 @@
+/* Configuration Card */
+.configCard {
+  background: #ffffff;
+  border-radius: 0;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 2px solid #000;
+  box-shadow: none;
+}
+
+.configHeader {
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #000;
+}
+
+.configTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.configContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.configRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.configLabel {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.configSelect {
+  padding: 8px 12px;
+  border: 2px solid #000;
+  border-radius: 0;
+  font-size: 0.875rem;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.configSelect:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.buttonRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.configButton {
+  flex: 1;
+  padding: 10px 16px;
+  border: 2px solid #000;
+  border-radius: 0;
+  background: #ffffff;
+  color: #000;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.configButton:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.configButton:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .configCard {
+    padding: 16px;
+  }
+  
+  .buttonRow {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .configButton {
+    padding: 12px 16px;
+  }
+}
