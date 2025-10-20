@@ -25,15 +25,12 @@ export default function CreateEvent() {
     location: '',
     starts_at: getTodayDateTime(),
     ends_at: getTodayDateTime(),
-    game_title: '',
     city: '',
     state: '',
     zip_code: ''
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [games, setGames] = useState([])
-  const [gamesLoading, setGamesLoading] = useState(true)
   const [bannerFile, setBannerFile] = useState(null)
   const [bannerPreview, setBannerPreview] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -46,30 +43,6 @@ export default function CreateEvent() {
     }))
   }
 
-  // Fetch games from the games table
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('games')
-          .select('game_title')
-          .order('game_title')
-
-        if (error) {
-          throw error
-        }
-
-        setGames(data || [])
-      } catch (err) {
-        console.error('Error fetching games:', err.message)
-        setError('Failed to load games')
-      } finally {
-        setGamesLoading(false)
-      }
-    }
-
-    fetchGames()
-  }, [])
 
 
   const handleFileChange = (e) => {
@@ -154,7 +127,6 @@ export default function CreateEvent() {
         location: formData.location,
         starts_at: formData.starts_at ? new Date(formData.starts_at).toISOString() : null,
         ends_at: formData.ends_at ? new Date(formData.ends_at).toISOString() : null,
-        game_title: formData.game_title,
         city: formData.city,
         state: formData.state,
         zip_code: formData.zip_code,
@@ -361,32 +333,6 @@ export default function CreateEvent() {
           </div>
         </div>
 
-        <div className={styles.gameSection}>
-          {gamesLoading ? (
-            <div className={styles.gameLoading}>Loading games...</div>
-          ) : (
-            <>
-              <div className={styles.gameOptions}>
-                {games.map((game, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    className={`${styles.gameOption} ${formData.game_title === game.game_title ? styles.gameOptionSelected : ''}`}
-                    onClick={() => setFormData(prev => ({ ...prev, game_title: game.game_title }))}
-                  >
-                    <div className={styles.gameImage}>
-                      <div className={styles.imagePlaceholder}>
-                        {game.game_title.charAt(0).toUpperCase()}
-                      </div>
-                    </div>
-                    <span className={styles.gameLabel}>{game.game_title}</span>
-                  </button>
-                ))}
-              </div>
-
-            </>
-          )}
-        </div>
 
 
             <button 

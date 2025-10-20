@@ -344,8 +344,8 @@ export default function EventDetail() {
       <NavBar activeTab="" onTabChange={handleTabChange} />
       <div className={styles.container}>
         <div className={styles.eventDetail}>
-
           <div className={styles.pageLayout}>
+            {/* Left Column: Image, Hosting, Hosted By, Participants */}
             <div className={styles.leftColumn}>
               <div className={styles.eventImage}>
                 {event.banner_image_url ? (
@@ -355,8 +355,7 @@ export default function EventDetail() {
                     style={{ 
                       width: '100%', 
                       height: '100%', 
-                      objectFit: 'cover',
-                      borderRadius: '4px'
+                      objectFit: 'cover'
                     }}
                   />
                 ) : (
@@ -404,6 +403,7 @@ export default function EventDetail() {
               {renderAttendeesSection()}
             </div>
 
+            {/* Right Column: Title, Time, Location, Registration, About */}
             <div className={styles.rightColumn}>
               <h1 className={styles.eventTitle}>{event.title}</h1>
               
@@ -454,111 +454,111 @@ export default function EventDetail() {
                 )}
 
                 <div className={styles.rsvpCard}>
-                    <div className={styles.rsvpHeader}>
-                      <h3>Registration</h3>
-                      {isAlreadyRegistered && (
-                        <button 
-                          onClick={() => setShowUnregisterConfirm(true)}
-                          style={{
-                            background: 'transparent',
-                            color: '#999',
-                            border: 'none',
-                            fontSize: '0.8rem',
-                            cursor: 'pointer',
-                            textDecoration: 'underline',
-                            padding: '4px 8px',
-                            borderRadius: '4px',
-                            transition: 'all 0.2s ease'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.color = '#666';
-                            e.target.style.background = '#f5f5f5';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.color = '#999';
-                            e.target.style.background = 'transparent';
-                          }}
-                          disabled={isProcessingRSVP}
-                        >
-                          I can't make it anymore
-                        </button>
-                      )}
+                  <div className={styles.rsvpHeader}>
+                    <h3>Registration</h3>
+                    {isAlreadyRegistered && (
+                      <button 
+                        onClick={() => setShowUnregisterConfirm(true)}
+                        style={{
+                          background: 'transparent',
+                          color: '#999',
+                          border: 'none',
+                          fontSize: '0.8rem',
+                          cursor: 'pointer',
+                          textDecoration: 'underline',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.color = '#666';
+                          e.target.style.background = '#f5f5f5';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.color = '#999';
+                          e.target.style.background = 'transparent';
+                        }}
+                        disabled={isProcessingRSVP}
+                      >
+                        I can't make it anymore
+                      </button>
+                    )}
+                  </div>
+                  <div className={styles.rsvpContent}>
+                    <div className={styles.welcomeMessage}>
+                      {isAlreadyRegistered ? 'You\'re registered for this event!' : 'Welcome! Register below to join this event.'}
                     </div>
-                    <div className={styles.rsvpContent}>
-                      <div className={styles.welcomeMessage}>
-                        {isAlreadyRegistered ? 'You\'re registered for this event!' : 'Welcome! Register below to join this event.'}
-                      </div>
-                      {user && (
-                        <div className={styles.userInfo}>
-                          <div className={styles.userIcon}>
-                            {user.user_metadata?.avatar_url ? (
-                              <img 
-                                src={user.user_metadata.avatar_url} 
-                                alt="Profile" 
-                                className={styles.userAvatar}
-                              />
-                            ) : (
-                              <div className={styles.userInitial}>
-                                {user.user_metadata?.first_name?.charAt(0) || user.email?.charAt(0) || 'U'}
-                              </div>
-                            )}
+                    {user && (
+                      <div className={styles.userInfo}>
+                        <div className={styles.userIcon}>
+                          {user.user_metadata?.avatar_url ? (
+                            <img 
+                              src={user.user_metadata.avatar_url} 
+                              alt="Profile" 
+                              className={styles.userAvatar}
+                            />
+                          ) : (
+                            <div className={styles.userInitial}>
+                              {user.user_metadata?.first_name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles.userDetails}>
+                          <div className={styles.userName}>
+                            {user.user_metadata?.first_name || user.email?.split('@')[0] || 'User'}
                           </div>
-                          <div className={styles.userDetails}>
-                            <div className={styles.userName}>
-                              {user.user_metadata?.first_name || user.email?.split('@')[0] || 'User'}
-                            </div>
-                            <div className={styles.userEmail}>
-                              {user.email}
-                            </div>
+                          <div className={styles.userEmail}>
+                            {user.email}
                           </div>
                         </div>
-                      )}
-                      <div className={styles.buttonContainer}>
-                        {!isAlreadyRegistered ? (
+                      </div>
+                    )}
+                    <div className={styles.buttonContainer}>
+                      {!isAlreadyRegistered ? (
+                        <button 
+                          className={styles.rsvpButton}
+                          onClick={handleRSVP}
+                          disabled={isProcessingRSVP || checkingRegistration}
+                        >
+                          {isProcessingRSVP ? 'Processing...' : 
+                           checkingRegistration ? 'Checking...' : 
+                           'One-Click RSVP'}
+                        </button>
+                      ) : (
+                        <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
                           <button 
                             className={styles.rsvpButton}
-                            onClick={handleRSVP}
-                            disabled={isProcessingRSVP || checkingRegistration}
+                            style={{ 
+                              background: '#e8e8e8', 
+                              color: '#666',
+                              flex: 1
+                            }}
+                            disabled
                           >
-                            {isProcessingRSVP ? 'Processing...' : 
-                             checkingRegistration ? 'Checking...' : 
-                             'One-Click RSVP'}
+                            Registered
                           </button>
-                        ) : (
-                          <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
-                            <button 
-                              className={styles.rsvpButton}
-                              style={{ 
-                                background: '#e8e8e8', 
-                                color: '#666',
-                                flex: 1
-                              }}
-                              disabled
-                            >
-                              Registered
-                            </button>
-                            <button 
-                              className={styles.inviteButton}
-                              onClick={copyEventLink}
-                              title="Invite a friend to this event"
-                            >
-                              {copySuccess ? (
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d="M20 6L9 17l-5-5"/>
-                                </svg>
-                              ) : (
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-                                </svg>
-                              )}
-                              {copySuccess ? 'Copied!' : 'Invite'}
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                          <button 
+                            className={styles.inviteButton}
+                            onClick={copyEventLink}
+                            title="Invite a friend to this event"
+                          >
+                            {copySuccess ? (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M20 6L9 17l-5-5"/>
+                              </svg>
+                            ) : (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                              </svg>
+                            )}
+                            {copySuccess ? 'Copied!' : 'Invite'}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
+                </div>
 
                 {event.description && (
                   <div className={styles.aboutSection}>
@@ -573,12 +573,9 @@ export default function EventDetail() {
 
                 {/* Mobile Attendees Section - only visible on mobile */}
                 {renderAttendeesSection()}
-
               </div>
             </div>
           </div>
-
-
         </div>
       </div>
       

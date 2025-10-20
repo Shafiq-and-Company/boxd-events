@@ -32,12 +32,15 @@
   background: #ffffff;
   border: 1px solid #000000;
   border-radius: 0px;
-  height: 120px;
+  height: 160px;
   position: relative;
   cursor: pointer;
   overflow: hidden;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 16px;
 }
 
 .eventCard:hover {
@@ -47,40 +50,37 @@
 }
 
 .eventImage {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 50px;
-  height: 50px;
+  width: 110px;
+  height: 110px;
   background: #f8f8f8;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
+  margin-right: 20px;
+  flex-shrink: 0;
 }
 
 .imagePlaceholder {
-  width: 40px;
-  height: 40px;
+  width: 100px;
+  height: 100px;
   background: #d0d0d0;
   border-radius: 0px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 500;
   color: #707070;
 }
 
 .eventContent {
-  padding: 8px;
-  padding-right: 70px;
-  height: 100%;
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background: #ffffff;
   color: #000000;
+  height: 100%;
 }
 
 .eventHeader {
@@ -88,11 +88,11 @@
 }
 
 .eventTitle {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: #000000;
-  line-height: 1.2;
-  margin-bottom: 4px;
+  line-height: 1.3;
+  margin-bottom: 6px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -108,11 +108,18 @@
   font-weight: 500;
   border: 1px solid #e0e0e0;
   border-radius: 0px;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   margin-bottom: 4px;
   white-space: nowrap;
   line-height: 1.2;
   max-width: fit-content;
+}
+
+.gameIcon {
+  color: #999999;
+  flex-shrink: 0;
 }
 
 .eventDetails {
@@ -128,49 +135,64 @@
 }
 
 .eventDate {
-  margin-bottom: 2px;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dateIcon {
+  color: #999999;
+  flex-shrink: 0;
 }
 
 .eventLocation {
   margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.locationIcon {
+  color: #999999;
+  flex-shrink: 0;
 }
 
 /* ===== EVENT ACTIONS ===== */
 .eventActions {
-  position: absolute;
-  top: 68px;
-  right: 8px;
-  z-index: 10;
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .editButton {
-  background: rgba(255, 255, 255, 0.95);
-  color: #404040;
-  border: 1px solid #d0d0d0;
-  padding: 4px;
+  background: transparent;
+  color: #666666;
+  border: 1px solid #e0e0e0;
+  padding: 4px 8px;
   border-radius: 0px;
   cursor: pointer;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .editButton:hover {
-  background: #000000;
-  color: #ffffff;
-  border-color: #000000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: #f8f8f8;
+  color: #000000;
+  border-color: #d0d0d0;
+  transform: none;
+  box-shadow: none;
 }
 
 .editButton:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: none;
+  box-shadow: none;
+  background: #f0f0f0;
 }
 
 /* ===== STATE CLASSES ===== */
@@ -285,29 +307,29 @@
   }
   
   .eventCard {
-    height: 90px;
+    height: 130px;
+    padding: 10px;
   }
   
   .eventImage {
-    width: 45px;
-    height: 45px;
-    top: 8px;
-    right: 8px;
+    width: 85px;
+    height: 85px;
+    margin-right: 16px;
   }
   
-  .eventActions {
-    top: 63px;
-    right: 8px;
+  .imagePlaceholder {
+    width: 75px;
+    height: 75px;
+    font-size: 1.3rem;
   }
   
   .eventContent {
-    padding: 6px;
-    padding-right: 65px;
+    padding: 0;
   }
   
   .eventTitle {
-    font-size: 0.9rem;
-    line-height: 1.2;
+    font-size: 1.1rem;
+    line-height: 1.3;
   }
   
   .eventDate, .eventLocation {
@@ -320,14 +342,8 @@
   }
   
   .editButton {
-    width: 20px;
-    height: 20px;
-    padding: 3px;
-  }
-  
-  .editButton svg {
-    width: 10px;
-    height: 10px;
+    font-size: 0.65rem;
+    padding: 4px 8px;
   }
 }
 
@@ -339,29 +355,29 @@
   }
   
   .eventCard {
-    height: 80px;
+    height: 120px;
+    padding: 8px;
   }
   
   .eventImage {
-    width: 35px;
-    height: 35px;
-    top: 6px;
-    right: 6px;
+    width: 75px;
+    height: 75px;
+    margin-right: 14px;
   }
   
-  .eventActions {
-    top: 51px;
-    right: 6px;
+  .imagePlaceholder {
+    width: 65px;
+    height: 65px;
+    font-size: 1.2rem;
   }
   
   .eventContent {
-    padding: 5px;
-    padding-right: 50px;
+    padding: 0;
   }
   
   .eventTitle {
-    font-size: 0.8rem;
-    line-height: 1.2;
+    font-size: 1rem;
+    line-height: 1.3;
   }
   
   .eventDate, .eventLocation {
@@ -374,14 +390,8 @@
   }
   
   .editButton {
-    width: 18px;
-    height: 18px;
-    padding: 2px;
-  }
-  
-  .editButton svg {
-    width: 8px;
-    height: 8px;
+    font-size: 0.6rem;
+    padding: 3px 6px;
   }
 }
 
@@ -393,35 +403,29 @@
   }
   
   .eventCard {
-    height: 110px;
+    height: 150px;
+    padding: 12px;
   }
   
   .eventImage {
-    width: 55px;
-    height: 55px;
-    top: 8px;
-    right: 8px;
+    width: 100px;
+    height: 100px;
+    margin-right: 18px;
   }
   
-  .eventActions {
-    top: 73px;
-    right: 8px;
+  .imagePlaceholder {
+    width: 90px;
+    height: 90px;
+    font-size: 1.4rem;
   }
   
   .eventContent {
-    padding: 7px;
-    padding-right: 75px;
+    padding: 0;
   }
   
   .editButton {
-    width: 22px;
-    height: 22px;
-    padding: 4px;
-  }
-  
-  .editButton svg {
-    width: 12px;
-    height: 12px;
+    font-size: 0.7rem;
+    padding: 4px 8px;
   }
 }
 
@@ -441,29 +445,29 @@
   }
   
   .eventCard {
-    height: 120px;
+    height: 160px;
+    padding: 16px;
   }
   
   .eventImage {
-    width: 50px;
-    height: 50px;
-    top: 8px;
-    right: 8px;
+    width: 110px;
+    height: 110px;
+    margin-right: 20px;
   }
   
-  .eventActions {
-    top: 68px;
-    right: 8px;
+  .imagePlaceholder {
+    width: 100px;
+    height: 100px;
+    font-size: 1.5rem;
   }
   
   .eventContent {
-    padding: 8px;
-    padding-right: 70px;
+    padding: 0;
   }
   
   .eventTitle { 
-    font-size: 1rem; 
-    line-height: 1.2;
+    font-size: 1.2rem; 
+    line-height: 1.3;
   }
   
   .eventDate, .eventLocation { 
@@ -476,14 +480,8 @@
   }
   
   .editButton {
-    width: 24px;
-    height: 24px;
-    padding: 4px;
-  }
-  
-  .editButton svg {
-    width: 12px;
-    height: 12px;
+    font-size: 0.7rem;
+    padding: 4px 8px;
   }
 }
 
