@@ -14,6 +14,7 @@ const ManageTournament = () => {
   const { eventId } = router.query;
   
   const [eventData, setEventData] = useState(null);
+  const [bracketFormat, setBracketFormat] = useState('single-elimination');
 
   const fetchEventData = async () => {
     if (!eventId || !user) return;
@@ -45,11 +46,14 @@ const ManageTournament = () => {
         <TitleCard title="Tournament Management" eventData={eventData} />
         <div className={styles.contentLayout}>
           <div className={styles.leftColumn}>
-            <BracketConfiguration />
+            <BracketConfiguration 
+              format={bracketFormat} 
+              onFormatChange={setBracketFormat} 
+            />
             <PlayerPanel eventId={eventId} />
           </div>
           <div className={styles.rightColumn}>
-            <BracketVisualization />
+            <BracketVisualization format={bracketFormat} />
           </div>
         </div>
       </div>

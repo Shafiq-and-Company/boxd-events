@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import styles from './BracketConfiguration.module.css';
 
-const BracketConfiguration = () => {
-  const [format, setFormat] = useState('single-elimination');
+const BracketConfiguration = ({ format, onFormatChange }) => {
 
   return (
     <div className={styles.configCard}>
@@ -16,7 +15,7 @@ const BracketConfiguration = () => {
           <select 
             className={styles.configSelect}
             value={format}
-            onChange={(e) => setFormat(e.target.value)}
+            onChange={(e) => onFormatChange(e.target.value)}
           >
             <option value="single-elimination">Single Elimination</option>
             <option value="double-elimination">Double Elimination</option>
