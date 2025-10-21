@@ -218,49 +218,77 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
               key={match.id} 
               className={`${styles.matchItem} ${match.status === 'in_progress' ? styles.inProgress : ''} ${(!match.player1_id || !match.player2_id) ? styles.disabled : ''}`}
             >
+              {/* Status Icons */}
+              <div className={styles.statusIcons}>
+                {(!match.player1_id || !match.player2_id) ? (
+                  <div className={styles.statusIcon} title="Waiting for players">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12,6 12,12 16,14"></polyline>
+                    </svg>
+                  </div>
+                ) : match.status === 'scheduled' ? (
+                  <button 
+                    className={styles.statusIcon}
+                    onClick={() => startMatch(match.id)}
+                    disabled={isUpdating}
+                    title="Start Match"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="5,3 19,12 5,21"></polygon>
+                    </svg>
+                  </button>
+                ) : match.status === 'in_progress' ? (
+                  <div className={styles.statusIcon} title="Match in progress">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12,6 12,12 16,14"></polyline>
+                    </svg>
+                  </div>
+                ) : match.status === 'completed' ? (
+                  <div className={styles.statusIcon} title="Match completed">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22,4 12,14.01 9,11.01"></polyline>
+                    </svg>
+                  </div>
+                ) : null}
+              </div>
+              
               <div className={styles.matchPlayers}>
                 <div className={styles.player}>
-                  <div className={styles.playerName}>{getPlayerName(match.player1)}</div>
-                  {match.status === 'in_progress' && match.player1_id && match.player2_id && (
-                    <button 
-                      className={styles.winnerButton}
-                      onClick={() => handleWinnerSelect(match.id, match.player1_id)}
-                      disabled={isUpdating}
-                    >
-                      Winner
-                    </button>
+                  {match.status === 'in_progress' ? (
+                    <div className={styles.playerContainer}>
+                      <button 
+                        className={styles.playerName}
+                        onClick={() => handleWinnerSelect(match.id, match.player1_id)}
+                        disabled={isUpdating}
+                      >
+                        {getPlayerName(match.player1)}
+                      </button>
+                      <div className={styles.floatingTooltip}>Declare winner</div>
+                    </div>
+                  ) : (
+                    <div className={styles.playerName}>{getPlayerName(match.player1)}</div>
                   )}
                 </div>
                 <div className={styles.vs}>VS</div>
                 <div className={styles.player}>
-                  <div className={styles.playerName}>{getPlayerName(match.player2)}</div>
-                  {match.status === 'in_progress' && match.player1_id && match.player2_id && (
-                    <button 
-                      className={styles.winnerButton}
-                      onClick={() => handleWinnerSelect(match.id, match.player2_id)}
-                      disabled={isUpdating}
-                    >
-                      Winner
-                    </button>
+                  {match.status === 'in_progress' ? (
+                    <div className={styles.playerContainer}>
+                      <button 
+                        className={styles.playerName}
+                        onClick={() => handleWinnerSelect(match.id, match.player2_id)}
+                        disabled={isUpdating}
+                      >
+                        {getPlayerName(match.player2)}
+                      </button>
+                      <div className={styles.floatingTooltip}>Declare winner</div>
+                    </div>
+                  ) : (
+                    <div className={styles.playerName}>{getPlayerName(match.player2)}</div>
                   )}
                 </div>
-              </div>
-              <div className={styles.matchActions}>
-                {(!match.player1_id || !match.player2_id) ? (
-                  <div className={styles.waitingMessage}>Waiting for players</div>
-                ) : match.status === 'scheduled' ? (
-                  <button 
-                    className={styles.startButton}
-                    onClick={() => startMatch(match.id)}
-                    disabled={isUpdating}
-                  >
-                    {isUpdating ? 'Starting...' : 'Start Match'}
-                  </button>
-                ) : (
-                  <div className={styles.matchStatus}>
-                    {getMatchStatus(match.status)}
-                  </div>
-                )}
               </div>
             </div>
           ))}
