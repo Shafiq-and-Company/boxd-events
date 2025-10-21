@@ -8,7 +8,7 @@
   margin-bottom: 0;
   height: calc((100vh - 72px - 40px - 20px - 10px) / 2);
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
 }
@@ -131,6 +131,14 @@
 .numberInput::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* Button Group */
+.buttonGroup {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: flex-end;
 }
 
 /* Message Styling */

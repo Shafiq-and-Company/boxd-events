@@ -24,11 +24,10 @@
 }
 
 .bracketTitle {
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: #374151;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
   margin: 0;
-  letter-spacing: -0.025em;
 }
 
 .bracketInfo {

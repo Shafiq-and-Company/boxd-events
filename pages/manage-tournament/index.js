@@ -106,7 +106,9 @@ const ManageTournament = () => {
                   <TournamentPanel eventData={eventData} onSettingsUpdate={handleTournamentUpdate} />
                   <UpNextCard eventData={eventData} refreshTrigger={refreshTrigger} onMatchUpdate={handleMatchUpdate} />
                 </div>
-                <BracketVisualization eventData={eventData} refreshTrigger={refreshTrigger} />
+                <div className={styles.bracketVisualization}>
+                  <BracketVisualization eventData={eventData} refreshTrigger={refreshTrigger} />
+                </div>
               </div>
             )}
             {activeSection === 'standings' && (

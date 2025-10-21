@@ -181,15 +181,6 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
     <div className={styles.tournamentPanel}>
       <div className={styles.panelHeader}>
         <h3 className={styles.panelTitle}>Tournament Settings</h3>
-        <div className={styles.panelActions}>
-          <button 
-            className={styles.saveButton}
-            onClick={handleSave}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Updating...' : 'Update'}
-          </button>
-        </div>
       </div>
 
       <div className={styles.panelContent}>
@@ -233,6 +224,16 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
             </select>
+          </div>
+
+          <div className={styles.buttonGroup}>
+            <button 
+              className={styles.saveButton}
+              onClick={handleSave}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Updating...' : 'Update'}
+            </button>
           </div>
         </div>
 
