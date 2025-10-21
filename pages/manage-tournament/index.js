@@ -7,6 +7,7 @@ import TournamentSidebar from './TournamentSidebar';
 import BracketVisualization from './BracketVisualization';
 import TournamentPanel from './TournamentPanel';
 import UpNextCard from './UpNextCard';
+import Participants from './Participants';
 import styles from './manageTournament.module.css';
 
 const ManageTournament = () => {
@@ -67,10 +68,7 @@ const ManageTournament = () => {
               </div>
             )}
             {activeSection === 'participants' && (
-              <div className={styles.placeholder}>
-                <h3>Participants</h3>
-                <p>Participant management will be displayed here.</p>
-              </div>
+              <Participants eventId={eventId} />
             )}
             {activeSection === 'details' && (
               <div className={styles.placeholder}>

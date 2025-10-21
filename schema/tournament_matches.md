@@ -45,23 +45,7 @@ CREATE POLICY "Public can view tournament matches" ON tournament_matches
 ```
 **Purpose**: Enables public viewing of tournament matches and results
 
-### Policy 2: Tournament Creators Can Manage Matches
-```sql
--- Allow tournament creators to manage matches for their tournaments
-CREATE POLICY "Creators can manage matches" ON tournament_matches
-    FOR ALL
-    TO authenticated
-    USING (
-        EXISTS (
-            SELECT 1 FROM tournaments 
-            WHERE tournaments.id = tournament_matches.tournament_id 
-            AND tournaments.created_by = auth.uid()
-        )
-    );
-```
-**Purpose**: Tournament creators can manage all matches within their tournaments
-
-### Policy 3: Event Hosts Can Manage Matches
+### Policy 2: Event Hosts Can Manage Matches
 ```sql
 -- Allow event hosts to manage matches for tournaments in their events
 CREATE POLICY "Event hosts can manage matches" ON tournament_matches
@@ -76,9 +60,9 @@ CREATE POLICY "Event hosts can manage matches" ON tournament_matches
         )
     );
 ```
-**Purpose**: Event hosts can manage matches for tournaments within their events
+**Purpose**: Event hosts can manage all matches within tournaments in their events
 
-### Policy 4: Service Role Access
+### Policy 3: Service Role Access
 ```sql
 -- Allow service role to manage all matches (for admin operations)
 CREATE POLICY "Service role can manage all matches" ON tournament_matches
@@ -93,23 +77,22 @@ CREATE POLICY "Service role can manage all matches" ON tournament_matches
 
 ### Security Model
 - **Public Read**: Anyone can view matches for active/completed tournaments
-- **Creator Management**: Tournament creators can manage all matches in their tournaments
 - **Event Host Management**: Event hosts can manage matches for tournaments in their events
 - **Authentication Required**: All write operations require authentication
-- **Tournament Association**: Matches are managed through tournament ownership
+- **Tournament Association**: Matches are managed through event host ownership
 
 ### Key Operations
-- **Read**: Public access for active tournament matches + Creator/Host access to own tournament matches
-- **Create**: Creator/Host-only access to matches in their tournaments
-- **Update**: Creator/Host-only access to matches in their tournaments
-- **Delete**: Creator/Host-only access to matches in their tournaments
+- **Read**: Public access for active tournament matches + Event host access to their tournament matches
+- **Create**: Event host-only access to matches in their tournaments
+- **Update**: Event host-only access to matches in their tournaments
+- **Delete**: Event host-only access to matches in their tournaments
 - **System**: Service role for administrative operations
 
 ### Policy Enforcement
-- **INSERT**: Users can only create matches for tournaments they own
-- **SELECT**: Public read for active tournament matches + Creator/Host read of own tournament matches
-- **UPDATE**: Creators/Hosts can only update matches in their tournaments
-- **DELETE**: Creators/Hosts can only delete matches in their tournaments
+- **INSERT**: Users can only create matches for tournaments in events they host
+- **SELECT**: Public read for active tournament matches + Event host read of their tournament matches
+- **UPDATE**: Event hosts can only update matches in their tournaments
+- **DELETE**: Event hosts can only delete matches in their tournaments
 
 ### Match ID Naming Convention
 Frontend-generated match identifiers follow these patterns:

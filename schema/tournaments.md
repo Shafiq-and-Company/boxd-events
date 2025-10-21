@@ -9,11 +9,11 @@ The `tournaments` table stores information about gaming tournaments linked to ev
 | `id` | uuid | NO | gen_random_uuid() | Primary key |
 | `event_id` | uuid | NO | null | Foreign key to events table |
 | `max_participants` | integer | NO | 16 | Maximum number of participants |
+| `min_participants` | integer | NO | 2 | Minimum number of participants required |
 | `status` | text | NO | 'registration'::text | Tournament status (registration, seeding, active, completed, cancelled) |
 | `tournament_type` | text | NO | 'single_elimination'::text | Tournament format (single_elimination, double_elimination, round_robin, swiss) |
 | `created_at` | timestamp with time zone | YES | now() | Record creation time |
 | `updated_at` | timestamp with time zone | YES | now() | Record update time |
-| `created_by` | uuid | NO | null | Tournament creator user ID (foreign key to users) |
 | `rules` | text | YES | null | Tournament rules and regulations |
 | `bracket_data` | jsonb | YES | null | Complete bracket state stored as JSON |
 
@@ -33,18 +33,7 @@ CREATE POLICY "Public can view active tournaments" ON tournaments
 ```
 **Purpose**: Enables public tournament discovery and viewing
 
-### Policy 2: Tournament Creators Can Manage Their Tournaments
-```sql
--- Allow tournament creators to manage their own tournaments
-CREATE POLICY "Creators can manage their tournaments" ON tournaments
-    FOR ALL
-    TO authenticated
-    USING (auth.uid() = created_by)
-    WITH CHECK (auth.uid() = created_by);
-```
-**Purpose**: Tournament creators have full control over their tournaments
-
-### Policy 3: Event Hosts Can Manage Tournaments for Their Events
+### Policy 2: Event Hosts Can Manage Tournaments for Their Events
 ```sql
 -- Allow event hosts to manage tournaments for their events
 CREATE POLICY "Event hosts can manage tournaments" ON tournaments
@@ -58,9 +47,9 @@ CREATE POLICY "Event hosts can manage tournaments" ON tournaments
         )
     );
 ```
-**Purpose**: Event hosts can manage tournaments within their events
+**Purpose**: Event hosts have full control over tournaments within their events
 
-### Policy 4: Service Role Access
+### Policy 3: Service Role Access
 ```sql
 -- Allow service role to manage all tournaments (for admin operations)
 CREATE POLICY "Service role can manage all tournaments" ON tournaments
@@ -75,23 +64,22 @@ CREATE POLICY "Service role can manage all tournaments" ON tournaments
 
 ### Security Model
 - **Public Read**: Anyone can view active tournaments
-- **Creator Management**: Tournament creators can manage their own tournaments
 - **Event Host Management**: Event hosts can manage tournaments within their events
 - **Authentication Required**: All write operations require authentication
-- **Creator ID Validation**: Ensures users can only create tournaments where they are the creator
+- **Host ID Validation**: Ensures users can only manage tournaments for events they host
 
 ### Key Operations
-- **Read**: Public access for active tournaments + Creator/Host access to own tournaments
-- **Create**: Authenticated users only (must be creator)
-- **Update**: Creator/Host-only access to own tournaments
-- **Delete**: Creator/Host-only access to own tournaments
+- **Read**: Public access for active tournaments + Event host access to their tournaments
+- **Create**: Event hosts only (must be host of the linked event)
+- **Update**: Event host-only access to their event tournaments
+- **Delete**: Event host-only access to their event tournaments
 - **System**: Service role for administrative operations
 
 ### Policy Enforcement
-- **INSERT**: Users can only create tournaments where `auth.uid() = created_by`
-- **SELECT**: Public read for active tournaments + Creator/Host read of own tournaments
-- **UPDATE**: Creators/Hosts can only update tournaments they own
-- **DELETE**: Creators/Hosts can only delete tournaments they own
+- **INSERT**: Users can only create tournaments for events they host
+- **SELECT**: Public read for active tournaments + Event host read of their tournaments
+- **UPDATE**: Event hosts can only update tournaments for their events
+- **DELETE**: Event hosts can only delete tournaments for their events
 
 ### Tournament Types Supported
 - **Single Elimination**: Traditional knockout tournament
@@ -128,14 +116,13 @@ The `bracket_data` column stores complete tournament state as JSON:
 ```
 
 ### Security Benefits
-- Prevents users from creating tournaments with incorrect creator_id
-- Ensures creators can manage their tournaments even if public access is restricted
-- Maintains data integrity by enforcing creator ownership
+- Prevents users from creating tournaments for events they don't host
+- Ensures event hosts can manage their tournaments even if public access is restricted
+- Maintains data integrity by enforcing event host ownership
 - Allows for future admin features while maintaining security
 - Supports multiple tournament formats with flexible JSON storage
 
 ### Database Relationships
-- **Events Table**: `event_id` field references `events.id`
-- **Users Table**: `created_by` field references `users.id`
+- **Events Table**: `event_id` field references `events.id` (tournament creator is the event host)
 - **Tournament Matches Table**: One-to-many relationship with `tournament_matches`
 - **RSVPs Table**: Tournament participants derived from `rsvps` where `event_id` matches

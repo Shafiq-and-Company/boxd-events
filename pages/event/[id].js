@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../../lib/AuthContext'
 import NavBar from '../../components/NavBar'
+import Participants from '../manage-tournament/Participants'
 import styles from './EventDetail.module.css'
 
 export default function EventDetail() {
@@ -401,6 +402,9 @@ export default function EventDetail() {
 
               {/* Attendees Section */}
               {renderAttendeesSection()}
+              
+              {/* Participants Section */}
+              <Participants eventId={id} />
             </div>
 
             {/* Right Column: Title, Time, Location, Registration, About */}
@@ -573,6 +577,9 @@ export default function EventDetail() {
 
                 {/* Mobile Attendees Section - only visible on mobile */}
                 {renderAttendeesSection()}
+                
+                {/* Mobile Participants Section - only visible on mobile */}
+                <Participants eventId={id} />
               </div>
             </div>
           </div>

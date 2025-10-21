@@ -143,9 +143,29 @@ export default function CreateEvent() {
         throw error
       }
 
+      // Create tournament for the event
+      const tournamentData = {
+        event_id: data[0].id,
+        max_participants: 64,
+        min_participants: 2,
+        status: 'registration',
+        tournament_type: 'single_elimination',
+        rules: 'Standard tournament rules apply. Check with event host for specific details.'
+      }
+
+      const { data: tournamentResult, error: tournamentError } = await supabase
+        .from('tournaments')
+        .insert([tournamentData])
+        .select()
+
+      if (tournamentError) {
+        console.error('Error creating tournament:', tournamentError)
+        // Don't throw error here - event was created successfully
+      }
+
       // Show success popup and navigate to manage event page
       setTimeout(() => {
-        alert('Event created successfully!')
+        alert('Event and tournament created successfully!')
         router.push(`/manage-event/${data[0].id}`)
       }, 1000)
 
