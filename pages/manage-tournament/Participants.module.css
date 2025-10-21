@@ -3,8 +3,8 @@
   border: 1px solid #000000;
   box-shadow: 2px 2px 0px 0px #000000;
   border-radius: 0;
-  padding: 24px;
-  margin-bottom: 20px;
+  padding: 16px;
+  margin-bottom: 0;
   width: 100%;
   max-width: 400px;
   display: flex;
@@ -20,8 +20,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -57,19 +57,49 @@
 .participantsList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .participantItem {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
+  gap: 10px;
+  padding: 8px;
   border: 1px solid #d1d5db;
   border-radius: 0;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   background: #ffffff;
+  cursor: move;
+}
+
+.participantItem.dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: #9ca3af;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.participantNumber {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #9ca3af;
+  min-width: 20px;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .participantItem:hover {
@@ -78,9 +108,9 @@
 }
 
 .participantAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border-radius: 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
@@ -91,7 +121,7 @@
 .participantInitial {
   color: white;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .participantInfo {
@@ -101,7 +131,7 @@
 
 .participantName {
   font-weight: 500;
-  color: #374151;
+  color: #000000;
   font-size: 0.875rem;
   margin-bottom: 2px;
   white-space: nowrap;
@@ -109,10 +139,6 @@
   text-overflow: ellipsis;
 }
 
-.participantJoined {
-  font-size: 0.75rem;
-  color: #6b7280;
-}
 
 .hostBadge {
   background: #16a34a;
@@ -128,12 +154,12 @@
 
 .noParticipants {
   text-align: center;
-  padding: 40px 20px;
+  padding: 24px 16px;
   color: #6b7280;
 }
 
 .noParticipantsIcon {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   color: #9ca3af;
 }
 

@@ -4,7 +4,7 @@
   border: 1px solid #000000;
   box-shadow: 2px 2px 0px 0px #000000;
   border-radius: 0;
-  padding: 16px;
+  padding: 12px;
   margin-bottom: 0;
   height: calc(100vh - 72px - 40px - 20px);
   flex: 1;
@@ -18,8 +18,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -51,9 +51,9 @@
 /* Bracket Content */
 .bracketContent {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   overflow-x: auto;
-  padding-bottom: 16px;
+  padding-bottom: 12px;
   justify-content: flex-start;
   align-items: flex-start;
   flex: 1;
@@ -82,7 +82,7 @@
 .matches {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 /* Match */
@@ -90,7 +90,7 @@
   background: #ffffff;
   border: 1px solid #d1d5db;
   border-radius: 0;
-  padding: 12px;
+  padding: 8px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
@@ -101,7 +101,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .matchNumber {
@@ -126,14 +126,14 @@
 .players {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .player {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 10px;
+  padding: 4px 8px;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 0;

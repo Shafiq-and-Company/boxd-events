@@ -6,6 +6,7 @@ export default function Participants({ eventId, maxParticipants = null }) {
   const [participants, setParticipants] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [draggedIndex, setDraggedIndex] = useState(null)
 
   useEffect(() => {
     if (eventId) {
@@ -72,6 +73,43 @@ export default function Participants({ eventId, maxParticipants = null }) {
     return 'U'
   }
 
+  const handleDragStart = (e, index) => {
+    setDraggedIndex(index)
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/html', e.target.outerHTML)
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+  }
+
+  const handleDrop = (e, dropIndex) => {
+    e.preventDefault()
+    
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null)
+      return
+    }
+
+    const newParticipants = [...participants]
+    const draggedParticipant = newParticipants[draggedIndex]
+    
+    // Remove the dragged participant
+    newParticipants.splice(draggedIndex, 1)
+    
+    // Insert at new position
+    const insertIndex = draggedIndex < dropIndex ? dropIndex - 1 : dropIndex
+    newParticipants.splice(insertIndex, 0, draggedParticipant)
+    
+    setParticipants(newParticipants)
+    setDraggedIndex(null)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null)
+  }
+
   if (loading) {
     return (
       <div className={styles.participantsCard}>
@@ -116,7 +154,28 @@ export default function Participants({ eventId, maxParticipants = null }) {
       {participants.length > 0 ? (
         <div className={styles.participantsList}>
           {participants.map((participant, index) => (
-            <div key={participant.user_id} className={styles.participantItem}>
+            <div 
+              key={participant.user_id} 
+              className={`${styles.participantItem} ${draggedIndex === index ? styles.dragging : ''}`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, index)}
+              onDragEnd={handleDragEnd}
+            >
+              <div className={styles.dragHandle}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="9" cy="12" r="1"/>
+                  <circle cx="9" cy="5" r="1"/>
+                  <circle cx="9" cy="19" r="1"/>
+                  <circle cx="20" cy="12" r="1"/>
+                  <circle cx="20" cy="5" r="1"/>
+                  <circle cx="20" cy="19" r="1"/>
+                </svg>
+              </div>
+              <div className={styles.participantNumber}>
+                {index + 1}
+              </div>
               <div className={styles.participantAvatar}>
                 <div className={styles.participantInitial}>
                   {getParticipantInitials(participant)}
@@ -125,9 +184,6 @@ export default function Participants({ eventId, maxParticipants = null }) {
               <div className={styles.participantInfo}>
                 <div className={styles.participantName}>
                   {getParticipantName(participant)}
-                </div>
-                <div className={styles.participantJoined}>
-                  Joined {new Date(participant.created_at).toLocaleDateString()}
                 </div>
               </div>
               {index === 0 && (

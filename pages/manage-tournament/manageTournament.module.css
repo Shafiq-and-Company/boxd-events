@@ -50,11 +50,12 @@
   width: 100%;
 }
 
-.leftPanel {
+/* Participants Layout */
+.participantsLayout {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  min-width: 400px;
+  gap: 10px;
+  width: 100%;
 }
 
 @media (max-width: 1024px) {

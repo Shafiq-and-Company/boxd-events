@@ -7,6 +7,7 @@ import TournamentSidebar from './TournamentSidebar';
 import BracketVisualization from './BracketVisualization';
 import TournamentPanel from './TournamentPanel';
 import UpNextCard from './UpNextCard';
+import SeedingPanel from './SeedingPanel';
 import Participants from './Participants';
 import styles from './manageTournament.module.css';
 
@@ -18,6 +19,7 @@ const ManageTournament = () => {
   const [eventData, setEventData] = useState(null);
   const [activeSection, setActiveSection] = useState('bracket');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [participants, setParticipants] = useState([]);
 
   const fetchEventData = async () => {
     if (!eventId || !user) return;
@@ -40,6 +42,7 @@ const ManageTournament = () => {
   useEffect(() => {
     if (eventId && user) {
       fetchEventData();
+      fetchParticipants();
     }
   }, [eventId, user]);
 
@@ -51,6 +54,40 @@ const ManageTournament = () => {
   const handleMatchUpdate = () => {
     // Trigger refresh of both bracket visualization and upcoming matches
     setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleSeedingUpdate = (action, method) => {
+    // Handle seeding actions
+    console.log('Seeding action:', action, method);
+    // Trigger refresh of bracket visualization
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const fetchParticipants = async () => {
+    if (!eventId) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('rsvps')
+        .select(`
+          user_id,
+          created_at,
+          users:user_id (
+            username,
+            first_name,
+            last_name
+          )
+        `)
+        .eq('event_id', eventId)
+        .eq('status', 'going')
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      setParticipants(data || []);
+    } catch (err) {
+      console.error('Error fetching participants:', err);
+      setParticipants([]);
+    }
   };
 
   return (
@@ -79,7 +116,10 @@ const ManageTournament = () => {
               </div>
             )}
             {activeSection === 'participants' && (
-              <Participants eventId={eventId} />
+              <div className={styles.participantsLayout}>
+                <Participants eventId={eventId} />
+                <SeedingPanel eventData={eventData} participants={participants} onSeedingUpdate={handleSeedingUpdate} />
+              </div>
             )}
             {activeSection === 'details' && (
               <div className={styles.placeholder}>

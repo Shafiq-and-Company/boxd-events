@@ -13,7 +13,6 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
     tournament_type: 'single_elimination'
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState('');
   const [originalTournamentType, setOriginalTournamentType] = useState('single_elimination');
 
   const handleInputChange = (field, value) => {
@@ -53,12 +52,10 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
 
   const handleSave = async () => {
     if (!eventData?.id) {
-      setMessage('No event data available');
       return;
     }
 
     setIsLoading(true);
-    setMessage('');
 
     try {
       // Check if tournament already exists
@@ -82,7 +79,6 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
 
       if (tournamentTypeChanged || isNewTournament) {
         console.log('Tournament type changed or new tournament, regenerating bracket data...');
-        setMessage('Tournament type changed. Clearing existing matches and generating new bracket...');
         
         // Get the appropriate functions based on tournament type
         let fetchParticipants, generateBracket, updateMatches, clearMatches;
@@ -120,7 +116,6 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
         const participants = await fetchParticipants(eventData.id, supabase);
         
         if (participants.length < tournamentSettings.min_participants) {
-          setMessage(`Need at least ${tournamentSettings.min_participants} participants. Currently have ${participants.length}.`);
           setIsLoading(false);
           return;
         }
@@ -169,19 +164,14 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
       setOriginalTournamentType(tournamentSettings.tournament_type);
 
       console.log('Tournament updated successfully:', result.data);
-      setMessage('Tournament settings updated successfully!');
       
       // Call parent callback if provided
       if (onSettingsUpdate) {
         onSettingsUpdate(tournamentSettings);
       }
 
-      // Clear message after 3 seconds
-      setTimeout(() => setMessage(''), 3000);
-
     } catch (error) {
       console.error('Error updating tournament:', error);
-      setMessage('Failed to update tournament settings');
     } finally {
       setIsLoading(false);
     }
@@ -245,12 +235,6 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
             </select>
           </div>
         </div>
-
-        {message && (
-          <div className={styles.message}>
-            {message}
-          </div>
-        )}
 
       </div>
     </div>
