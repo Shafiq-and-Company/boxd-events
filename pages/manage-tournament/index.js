@@ -17,6 +17,7 @@ const ManageTournament = () => {
   
   const [eventData, setEventData] = useState(null);
   const [activeSection, setActiveSection] = useState('bracket');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const fetchEventData = async () => {
     if (!eventId || !user) return;
@@ -42,6 +43,16 @@ const ManageTournament = () => {
     }
   }, [eventId, user]);
 
+  const handleTournamentUpdate = () => {
+    // Trigger refresh of bracket visualization
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleMatchUpdate = () => {
+    // Trigger refresh of both bracket visualization and upcoming matches
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   return (
     <div className={styles.dashboard}>
       <TournamentSidebar 
@@ -55,10 +66,10 @@ const ManageTournament = () => {
             {activeSection === 'bracket' && (
               <div className={styles.bracketLayout}>
                 <div className={styles.leftPanel}>
-                  <TournamentPanel eventData={eventData} />
-                  <UpNextCard tournamentData={eventData} />
+                  <TournamentPanel eventData={eventData} onSettingsUpdate={handleTournamentUpdate} />
+                  <UpNextCard eventData={eventData} refreshTrigger={refreshTrigger} onMatchUpdate={handleMatchUpdate} />
                 </div>
-                <BracketVisualization eventData={eventData} />
+                <BracketVisualization eventData={eventData} refreshTrigger={refreshTrigger} />
               </div>
             )}
             {activeSection === 'standings' && (

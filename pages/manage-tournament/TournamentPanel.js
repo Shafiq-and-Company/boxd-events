@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { generateBracketData, updateTournamentMatches, fetchTournamentParticipants, clearTournamentMatches } from '../../lib/tournamentUtils';
 import styles from './TournamentPanel.module.css';
 
 const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
@@ -10,6 +11,7 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [originalTournamentType, setOriginalTournamentType] = useState('single_elimination');
 
   const handleInputChange = (field, value) => {
     setTournamentSettings(prev => ({
@@ -39,6 +41,7 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
           status: data.status,
           tournament_type: data.tournament_type
         });
+        setOriginalTournamentType(data.tournament_type);
       }
     } catch (err) {
       console.error('Error fetching tournament data:', err);
@@ -58,21 +61,59 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
       // Check if tournament already exists
       const { data: existingTournament, error: fetchError } = await supabase
         .from('tournaments')
-        .select('id')
+        .select('id, tournament_type, bracket_data')
         .eq('event_id', eventData.id)
         .single();
+
+      // Prepare update data
+      const updateData = {
+        min_participants: tournamentSettings.min_participants,
+        status: tournamentSettings.status,
+        tournament_type: tournamentSettings.tournament_type,
+        updated_at: new Date().toISOString()
+      };
+
+      // Check if tournament type changed or if this is a new tournament
+      const tournamentTypeChanged = originalTournamentType !== tournamentSettings.tournament_type;
+      const isNewTournament = !existingTournament || fetchError;
+
+      if (tournamentTypeChanged || isNewTournament) {
+        console.log('Tournament type changed or new tournament, regenerating bracket data...');
+        setMessage('Tournament type changed. Clearing existing matches and generating new bracket...');
+        
+        // Fetch current participants
+        const participants = await fetchTournamentParticipants(eventData.id, supabase);
+        
+        if (participants.length < tournamentSettings.min_participants) {
+          setMessage(`Need at least ${tournamentSettings.min_participants} participants. Currently have ${participants.length}.`);
+          setIsLoading(false);
+          return;
+        }
+
+        // Generate new bracket data
+        const newBracketData = generateBracketData(
+          tournamentSettings.tournament_type,
+          participants,
+          tournamentSettings.min_participants
+        );
+        
+        updateData.bracket_data = newBracketData;
+
+        // Update tournament matches if tournament exists
+        if (existingTournament && !fetchError) {
+          // Clear existing matches when tournament type changes
+          await clearTournamentMatches(existingTournament.id, supabase);
+          // Create new matches for the new tournament type
+          await updateTournamentMatches(existingTournament.id, newBracketData, supabase);
+        }
+      }
 
       let result;
       if (existingTournament && !fetchError) {
         // Update existing tournament
         result = await supabase
           .from('tournaments')
-          .update({
-            min_participants: tournamentSettings.min_participants,
-            status: tournamentSettings.status,
-            tournament_type: tournamentSettings.tournament_type,
-            updated_at: new Date().toISOString()
-          })
+          .update(updateData)
           .eq('event_id', eventData.id);
       } else {
         // Create new tournament
@@ -80,9 +121,7 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
           .from('tournaments')
           .insert({
             event_id: eventData.id,
-            min_participants: tournamentSettings.min_participants,
-            status: tournamentSettings.status,
-            tournament_type: tournamentSettings.tournament_type
+            ...updateData
           });
       }
 
@@ -90,6 +129,9 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
         console.error('Database error:', result.error);
         throw result.error;
       }
+
+      // Update original tournament type to current value
+      setOriginalTournamentType(tournamentSettings.tournament_type);
 
       console.log('Tournament updated successfully:', result.data);
       setMessage('Tournament settings updated successfully!');

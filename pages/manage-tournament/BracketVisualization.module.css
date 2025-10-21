@@ -87,21 +87,11 @@
   border: 1px solid #d1d5db;
   border-radius: 0;
   padding: 16px;
-  cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 
-.match:hover {
-  border-color: #000000;
-  box-shadow: 2px 2px 0px 0px #000000;
-}
-
-.match.selected {
-  border-color: #000000;
-  box-shadow: 2px 2px 0px 0px #000000;
-  background: #f8fafc;
-}
+/* Match styling - read-only visualization only */
 
 .matchHeader {
   display: flex;
@@ -180,105 +170,7 @@
   margin: 4px 0;
 }
 
-/* Match Modal */
-.matchModal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modalContent {
-  background: #ffffff;
-  border: 1px solid #000000;
-  box-shadow: 4px 4px 0px 0px #000000;
-  border-radius: 0;
-  padding: 24px;
-  min-width: 400px;
-  max-width: 500px;
-}
-
-.modalContent h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 20px 0;
-}
-
-.scoreInputs {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.scoreInput {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.scoreInput label {
-  font-weight: 500;
-  color: #374151;
-  font-size: 0.875rem;
-}
-
-.scoreInput input {
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 0;
-  font-size: 1rem;
-  transition: border-color 0.2s ease;
-}
-
-.scoreInput input:focus {
-  outline: none;
-  border-color: #000000;
-  box-shadow: 0 0 0 1px #000000;
-}
-
-.modalActions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-}
-
-.cancelButton,
-.saveButton {
-  padding: 8px 16px;
-  border: 1px solid #000000;
-  border-radius: 0;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.cancelButton {
-  background: transparent;
-  color: #374151;
-}
-
-.cancelButton:hover {
-  background: #f3f4f6;
-  box-shadow: 2px 2px 0px 0px #000000;
-}
-
-.saveButton {
-  background: #000000;
-  color: #ffffff;
-}
-
-.saveButton:hover {
-  background: #374151;
-  box-shadow: 2px 2px 0px 0px #000000;
-}
+/* Modal styles removed - bracket visualization is read-only */
 
 /* Empty State */
 .emptyState {
@@ -343,10 +235,7 @@
     padding: 12px;
   }
   
-  .modalContent {
-    min-width: 320px;
-    margin: 16px;
-  }
+  /* Modal styles removed */
 }
 
 @media (max-width: 480px) {

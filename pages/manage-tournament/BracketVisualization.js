@@ -1,30 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabaseClient';
 import styles from './BracketVisualization.module.css';
 
-const BracketVisualization = ({ eventData }) => {
-  const [selectedMatch, setSelectedMatch] = useState(null);
+const BracketVisualization = ({ eventData, refreshTrigger }) => {
+  const [bracketData, setBracketData] = useState({ rounds: [] });
+  const [tournamentInfo, setTournamentInfo] = useState({
+    participantCount: 0,
+    tournamentFormat: 'Single Elimination'
+  });
 
-  // Bracket data - will be populated from API or props
-  const bracketData = {
-    rounds: []
+  // Fetch tournament data when eventData changes or refresh is triggered
+  useEffect(() => {
+    if (eventData?.id) {
+      fetchTournamentData();
+    }
+  }, [eventData?.id, refreshTrigger]);
+
+  const fetchTournamentData = async () => {
+    try {
+      const { data: tournament, error } = await supabase
+        .from('tournaments')
+        .select('*')
+        .eq('event_id', eventData.id)
+        .single();
+
+      if (tournament && !error) {
+        setBracketData(tournament.bracket_data || { rounds: [] });
+        setTournamentInfo({
+          participantCount: tournament.bracket_data?.participants?.length || 0,
+          tournamentFormat: getTournamentFormatName(tournament.tournament_type)
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching tournament data:', err);
+    }
   };
 
-  const handleMatchClick = (match) => {
-    setSelectedMatch(match);
+  const getTournamentFormatName = (type) => {
+    const formats = {
+      'single_elimination': 'Single Elimination',
+      'double_elimination': 'Double Elimination',
+      'round_robin': 'Round Robin',
+      'swiss': 'Swiss'
+    };
+    return formats[type] || 'Single Elimination';
   };
 
-  const handleScoreUpdate = (matchId, player, score) => {
-    // In a real app, this would update the database
-    console.log(`Updating match ${matchId}, ${player} score to ${score}`);
-  };
+  // Bracket visualization is read-only - no editing functionality
 
   return (
     <div className={styles.bracketContainer}>
       <div className={styles.bracketHeader}>
         <h2 className={styles.bracketTitle}>Bracket Visualization</h2>
         <div className={styles.bracketInfo}>
-          <span className={styles.participantCount}>8 Participants</span>
-          <span className={styles.tournamentFormat}>Single Elimination</span>
+          <span className={styles.participantCount}>{tournamentInfo.participantCount} Participants</span>
+          <span className={styles.tournamentFormat}>{tournamentInfo.tournamentFormat}</span>
         </div>
       </div>
 
@@ -36,26 +66,25 @@ const BracketVisualization = ({ eventData }) => {
               <div className={styles.matches}>
                 {round.matches.map((match) => (
                   <div 
-                    key={match.id} 
-                    className={`${styles.match} ${selectedMatch?.id === match.id ? styles.selected : ''}`}
-                    onClick={() => handleMatchClick(match)}
+                    key={match.matchId} 
+                    className={styles.match}
                   >
                     <div className={styles.matchHeader}>
-                      <span className={styles.matchNumber}>Match {match.id}</span>
+                      <span className={styles.matchNumber}>{match.matchId}</span>
                       <span className={styles.matchStatus}>
-                        {match.winner ? 'Completed' : 'Pending'}
+                        {match.winner ? 'Completed' : match.status === 'in_progress' ? 'In Progress' : 'Pending'}
                       </span>
                     </div>
                     
                     <div className={styles.players}>
-                      <div className={`${styles.player} ${match.winner === 1 ? styles.winner : ''}`}>
-                        <span className={styles.playerName}>{match.player1}</span>
-                        <span className={styles.playerScore}>{match.score1 || '-'}</span>
+                      <div className={`${styles.player} ${match.winner === match.player1?.id ? styles.winner : ''}`}>
+                        <span className={styles.playerName}>{match.player1?.name || 'TBD'}</span>
+                        <span className={styles.playerScore}>{match.player1Score || '-'}</span>
                       </div>
                       <div className={styles.vs}>VS</div>
-                      <div className={`${styles.player} ${match.winner === 2 ? styles.winner : ''}`}>
-                        <span className={styles.playerName}>{match.player2}</span>
-                        <span className={styles.playerScore}>{match.score2 || '-'}</span>
+                      <div className={`${styles.player} ${match.winner === match.player2?.id ? styles.winner : ''}`}>
+                        <span className={styles.playerName}>{match.player2?.name || 'TBD'}</span>
+                        <span className={styles.playerScore}>{match.player2Score || '-'}</span>
                       </div>
                     </div>
                   </div>
@@ -87,42 +116,6 @@ const BracketVisualization = ({ eventData }) => {
         )}
       </div>
 
-      {selectedMatch && (
-        <div className={styles.matchModal}>
-          <div className={styles.modalContent}>
-            <h3>Match {selectedMatch.id}</h3>
-            <div className={styles.scoreInputs}>
-              <div className={styles.scoreInput}>
-                <label>{selectedMatch.player1}</label>
-                <input 
-                  type="number" 
-                  placeholder="Score"
-                  onChange={(e) => handleScoreUpdate(selectedMatch.id, 'player1', e.target.value)}
-                />
-              </div>
-              <div className={styles.scoreInput}>
-                <label>{selectedMatch.player2}</label>
-                <input 
-                  type="number" 
-                  placeholder="Score"
-                  onChange={(e) => handleScoreUpdate(selectedMatch.id, 'player2', e.target.value)}
-                />
-              </div>
-            </div>
-            <div className={styles.modalActions}>
-              <button 
-                className={styles.cancelButton}
-                onClick={() => setSelectedMatch(null)}
-              >
-                Cancel
-              </button>
-              <button className={styles.saveButton}>
-                Save Scores
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

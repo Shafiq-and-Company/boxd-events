@@ -73,6 +73,17 @@
 .matchItem:hover {
   border-color: #000000;
   box-shadow: 1px 1px 0px 0px #000000;
+  cursor: pointer;
+}
+
+.matchItem.inProgress {
+  border-color: #f59e0b;
+  background: #fef3c7;
+}
+
+.matchItem.inProgress:hover {
+  border-color: #d97706;
+  box-shadow: 1px 1px 0px 0px #d97706;
 }
 
 
@@ -97,6 +108,16 @@
   text-align: center;
 }
 
+.playerScore {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #059669;
+  background: #d1fae5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
 .vs {
   font-size: 0.75rem;
   font-weight: 600;
@@ -105,6 +126,18 @@
   padding: 4px 8px;
   border-radius: 4px;
   border: 1px solid #d1d5db;
+}
+
+.matchStatus {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-align: center;
+  margin-top: 8px;
+  padding: 2px 8px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  display: inline-block;
 }
 
 /* Empty State */
@@ -136,6 +169,156 @@
   margin: 0;
   max-width: 300px;
   line-height: 1.5;
+}
+
+/* Loading State */
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid #000000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Match Modal */
+.matchModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: #ffffff;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  border-radius: 0;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modalHeader h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  color: #374151;
+}
+
+.matchInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.playerInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  gap: 8px;
+}
+
+.scoreInput {
+  width: 80px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.scoreInput:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.scoreInput:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.startButton,
+.updateButton {
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+  padding: 12px 24px;
+  border-radius: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.startButton:hover,
+.updateButton:hover {
+  background: #374151;
+  border-color: #374151;
+}
+
+.startButton:disabled,
+.updateButton:disabled {
+  background: #9ca3af;
+  border-color: #9ca3af;
+  cursor: not-allowed;
 }
 
 /* Scrollbar Styling */
