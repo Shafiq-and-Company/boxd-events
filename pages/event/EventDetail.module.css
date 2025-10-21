@@ -18,10 +18,10 @@
 }
 
 .eventImage {
-  width: 100%;
+  width: 400px;
   height: 400px;
   background: #fafafa;
-  border: 2px solid #000;
+  border: 1px solid #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,7 +45,7 @@
   margin-top: 8px;
   padding: 12px 16px;
   background: #fafafa;
-  border: 2px solid #000;
+  border: 1px solid #000;
   width: 100%;
 }
 
@@ -55,18 +55,18 @@
 }
 
 .manageButton {
-  background: #000000;
+  background: #666666;
   color: #ffffff;
-  border: 2px solid #000;
+  border: 1px solid #666666;
   padding: 8px 16px;
   font-size: 0.8rem;
   font-weight: 400;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .manageButton:hover {
-  background: #333333;
+  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .hostedBy {
@@ -77,7 +77,7 @@
   width: 100%;
   padding: 16px;
   background: #f8f8f8;
-  border: 2px solid #000;
+  border: 1px solid #000;
 }
 
 .hostedByMobile {
@@ -96,7 +96,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 2px solid #000;
+  border: 1px solid #000;
   color: #666;
 }
 
@@ -126,7 +126,7 @@
   width: 100%;
   padding: 16px;
   background: #f8f8f8;
-  border: 2px solid #000;
+  border: 1px solid #000;
 }
 
 /* Hide attendees in right column on desktop */
@@ -149,7 +149,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 2px solid #000;
+  border: 1px solid #000;
   color: #666;
 }
 
@@ -188,7 +188,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 2px solid #000;
+  border: 1px solid #000;
 }
 
 .attendeeInitial {
@@ -230,14 +230,14 @@
 
 .rsvpCard {
   background: #ffffff;
-  border: 2px solid #000;
+  border: 1px solid #000;
   overflow: hidden;
 }
 
 .rsvpHeader {
   background: #f8f8f8;
   padding: 16px 20px;
-  border-bottom: 2px solid #000;
+  border-bottom: 1px solid #000;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -279,7 +279,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 2px solid #000;
+  border: 1px solid #000;
 }
 
 .userAvatar {
@@ -321,13 +321,13 @@
 .loginButton, .rsvpButton {
   background: #000000;
   color: #ffffff;
-  border: 2px solid #000;
+  border: 1px solid #000;
   padding: 16px 24px;
   font-size: 0.9rem;
   font-weight: 400;
   cursor: pointer;
   width: 100%;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   letter-spacing: -0.25px;
 }
 
@@ -338,7 +338,7 @@
 }
 
 .loginButton:hover, .rsvpButton:hover:not(:disabled) {
-  background: #333333;
+  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .rsvpButton:disabled {
@@ -359,19 +359,19 @@
   gap: 6px;
   background: #000000;
   color: #ffffff;
-  border: 2px solid #000;
+  border: 1px solid #000;
   padding: 16px 24px;
   font-size: 0.9rem;
   font-weight: 400;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
   height: 100%;
   letter-spacing: -0.25px;
 }
 
 .inviteButton:hover {
-  background: #333333;
+  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .inviteButton:active {
@@ -407,7 +407,7 @@
   font-size: 0.8rem;
   color: #000;
   line-height: 1.5;
-  border-top: 2px solid #000;
+  border-top: 1px solid #000;
   padding-top: 8px;
   margin-top: 4px;
 }
@@ -426,7 +426,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 2px solid #000;
+  border: 1px solid #000;
   color: #666;
 }
 
@@ -514,6 +514,7 @@
   }
   
   .eventImage {
+    width: 300px;
     height: 300px;
   }
   

@@ -46,12 +46,6 @@ export default function Footer() {
             </a>
           </div>
         </div>
-        
-        <div className={styles.bottom}>
-          <div className={styles.copyright}>
-            © 2025 BOXD
-          </div>
-        </div>
       </div>
     </footer>
   )

@@ -25,7 +25,7 @@
 
 .gameFilterCard {
   background: #ffffff;
-  border: 2px solid #000000;
+  border: 1px solid #000000;
   padding: 0;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
@@ -37,23 +37,11 @@
 }
 
 .gameFilterCard:hover {
-  transform: translateY(-2px);
-  border: 2px solid #333;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .gameFilterCard.active {
-  border: 2px solid #000;
-  background: #000;
-  color: #fff;
-}
-
-.gameFilterCard.active .filterBackground {
-  background: #000;
-}
-
-.gameFilterCard.active .filterTitle {
-  color: #fff;
+  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .filterBackground {
@@ -97,7 +85,7 @@
 
 .eventCard {
   background: #ffffff;
-  border: 2px solid #000000;
+  border: 1px solid #000000;
   height: 140px;
   position: relative;
   cursor: pointer;
@@ -106,9 +94,7 @@
 }
 
 .eventCard:hover {
-  transform: translateY(-2px);
-  border: 2px solid #333;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .eventImage {
@@ -118,7 +104,7 @@
   width: 100px;
   height: 100px;
   background: #f8f8f8;
-  border: 2px solid #000;
+  border: 1px solid #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -172,7 +158,7 @@
   padding: 4px 8px;
   font-size: 0.7rem;
   font-weight: 500;
-  border: 2px solid #000;
+  border: 1px solid #000;
   display: inline-block;
   margin-bottom: 8px;
   white-space: nowrap;
@@ -220,7 +206,7 @@
 
 .mapPlaceholder {
   background: #f8f8f8;
-  border: 2px solid #000000;
+  border: 1px solid #000000;
   width: 450px;
   height: 450px;
   display: flex;
@@ -254,7 +240,7 @@
 
 .nearYouCard {
   background: #ffffff;
-  border: 2px solid #000000;
+  border: 1px solid #000000;
   position: relative;
   cursor: pointer;
   overflow: hidden;
@@ -266,16 +252,14 @@
 }
 
 .nearYouCard:hover {
-  transform: translateY(-2px);
-  border: 2px solid #333;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .nearYouBanner {
   width: 56px;
   height: 56px;
   background: #f8f8f8;
-  border: 2px solid #000;
+  border: 1px solid #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,7 +305,7 @@
   font-weight: 400;
   color: #000000;
   background: #f8f8f8;
-  border: 2px solid #000000;
+  border: 1px solid #000000;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;

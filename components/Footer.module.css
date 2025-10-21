@@ -1,13 +1,12 @@
 .footer {
-  background: #FFFFFF;
-  margin: 0;
+  background: transparent;
+  margin: 0 200px;
   padding: 32px;
   color: #707070;
   font-size: 14px;
   line-height: 1.5;
   position: relative;
-  width: 100%;
-  border: 1px solid #E8E8E8;
+  width: calc(100% - 400px);
 }
 
 .footer::before {
@@ -100,7 +99,7 @@
 
 .bottom {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   padding-top: 20px;
 }
@@ -114,8 +113,9 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .footer {
-    margin: 0;
+    margin: 0 120px;
     padding: 24px;
+    width: calc(100% - 240px);
   }
   
   .container {
@@ -158,8 +158,9 @@
 
 @media (max-width: 480px) {
   .footer {
-    margin: 0;
+    margin: 0 60px;
     padding: 20px;
+    width: calc(100% - 120px);
   }
   
   .container {
