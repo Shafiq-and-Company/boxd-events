@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { generateBracketData, updateTournamentMatches, fetchTournamentParticipants, clearTournamentMatches } from '../../lib/tournamentUtils';
+import { generateBracketData, updateTournamentMatches, fetchTournamentParticipants, clearTournamentMatches } from '../../lib/singleElimination';
+import { generateBracketData as generateDoubleEliminationBracket, updateTournamentMatches as updateDoubleEliminationMatches, fetchTournamentParticipants as fetchDoubleEliminationParticipants, clearTournamentMatches as clearDoubleEliminationMatches } from '../../lib/doubleElimination';
+import { generateBracketData as generateRoundRobinBracket, updateTournamentMatches as updateRoundRobinMatches, fetchTournamentParticipants as fetchRoundRobinParticipants, clearTournamentMatches as clearRoundRobinMatches } from '../../lib/roundRobin';
+import { generateBracketData as generateSwissBracket, updateTournamentMatches as updateSwissMatches, fetchTournamentParticipants as fetchSwissParticipants, clearTournamentMatches as clearSwissMatches } from '../../lib/swiss';
 import styles from './TournamentPanel.module.css';
 
 const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
@@ -81,8 +84,40 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
         console.log('Tournament type changed or new tournament, regenerating bracket data...');
         setMessage('Tournament type changed. Clearing existing matches and generating new bracket...');
         
+        // Get the appropriate functions based on tournament type
+        let fetchParticipants, generateBracket, updateMatches, clearMatches;
+        
+        switch (tournamentSettings.tournament_type) {
+          case 'single_elimination':
+            fetchParticipants = fetchTournamentParticipants;
+            generateBracket = generateBracketData;
+            updateMatches = updateTournamentMatches;
+            clearMatches = clearTournamentMatches;
+            break;
+          case 'double_elimination':
+            fetchParticipants = fetchDoubleEliminationParticipants;
+            generateBracket = generateDoubleEliminationBracket;
+            updateMatches = updateDoubleEliminationMatches;
+            clearMatches = clearDoubleEliminationMatches;
+            break;
+          case 'round_robin':
+            fetchParticipants = fetchRoundRobinParticipants;
+            generateBracket = generateRoundRobinBracket;
+            updateMatches = updateRoundRobinMatches;
+            clearMatches = clearRoundRobinMatches;
+            break;
+          case 'swiss':
+            fetchParticipants = fetchSwissParticipants;
+            generateBracket = generateSwissBracket;
+            updateMatches = updateSwissMatches;
+            clearMatches = clearSwissMatches;
+            break;
+          default:
+            throw new Error(`Unsupported tournament type: ${tournamentSettings.tournament_type}`);
+        }
+
         // Fetch current participants
-        const participants = await fetchTournamentParticipants(eventData.id, supabase);
+        const participants = await fetchParticipants(eventData.id, supabase);
         
         if (participants.length < tournamentSettings.min_participants) {
           setMessage(`Need at least ${tournamentSettings.min_participants} participants. Currently have ${participants.length}.`);
@@ -91,7 +126,7 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
         }
 
         // Generate new bracket data
-        const newBracketData = generateBracketData(
+        const newBracketData = generateBracket(
           tournamentSettings.tournament_type,
           participants,
           tournamentSettings.min_participants
@@ -102,9 +137,9 @@ const TournamentPanel = ({ eventData, onSettingsUpdate }) => {
         // Update tournament matches if tournament exists
         if (existingTournament && !fetchError) {
           // Clear existing matches when tournament type changes
-          await clearTournamentMatches(existingTournament.id, supabase);
+          await clearMatches(existingTournament.id, supabase);
           // Create new matches for the new tournament type
-          await updateTournamentMatches(existingTournament.id, newBracketData, supabase);
+          await updateMatches(existingTournament.id, newBracketData, supabase);
         }
       }
 

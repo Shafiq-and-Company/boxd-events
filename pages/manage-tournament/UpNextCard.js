@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { handleMatchCompletion } from '../../lib/tournamentUtils';
+import { handleMatchCompletion } from '../../lib/singleElimination';
+import { handleMatchCompletion as handleDoubleEliminationMatchCompletion } from '../../lib/doubleElimination';
+import { handleMatchCompletion as handleRoundRobinMatchCompletion } from '../../lib/roundRobin';
+import { handleMatchCompletion as handleSwissMatchCompletion } from '../../lib/swiss';
 import styles from './UpNextCard.module.css';
 
 const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
@@ -120,8 +123,27 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
 
       if (tournamentError) throw tournamentError;
 
+      // Get the appropriate match completion handler based on tournament type
+      let matchCompletionHandler;
+      switch (tournament.tournament_type) {
+        case 'single_elimination':
+          matchCompletionHandler = handleMatchCompletion;
+          break;
+        case 'double_elimination':
+          matchCompletionHandler = handleDoubleEliminationMatchCompletion;
+          break;
+        case 'round_robin':
+          matchCompletionHandler = handleRoundRobinMatchCompletion;
+          break;
+        case 'swiss':
+          matchCompletionHandler = handleSwissMatchCompletion;
+          break;
+        default:
+          throw new Error(`Unsupported tournament type: ${tournament.tournament_type}`);
+      }
+
       // Update bracket data with the match result
-      const updatedBracketData = handleMatchCompletion(
+      const updatedBracketData = matchCompletionHandler(
         tournament.bracket_data, 
         match, 
         winnerId, 
