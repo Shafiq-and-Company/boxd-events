@@ -13,12 +13,12 @@ The `events` table stores information about gaming events and tournaments.
 | `starts_at` | timestamp with time zone | NO | null | Event start time |
 | `ends_at` | timestamp with time zone | YES | null | Event end time |
 | `created_at` | timestamp with time zone | YES | now() | Record creation time |
-| `game_title` | text | NO | 'Unknown' | Game being played |
+| `game_title` | text | NO | 'Unknown'::text | Game being played |
 | `city` | text | YES | null | Event city |
 | `cost` | text | YES | null | Event cost (free or paid) |
 | `state` | text | YES | null | Event state |
-| `host` | text | YES | null | Event host (user ID) |
 | `host_id` | uuid | YES | null | Event host user ID (foreign key to users) |
+| `zip_code` | integer | YES | null | Event zip code |
 | `banner_image_url` | text | YES | null | URL to banner image stored in Supabase |
 
 ## Row Level Security (RLS) Policies
