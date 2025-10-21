@@ -51,9 +51,9 @@ const BracketVisualization = ({ eventData, refreshTrigger }) => {
   return (
     <div className={styles.bracketContainer}>
       <div className={styles.bracketHeader}>
-        <h2 className={styles.bracketTitle}>Tournament Bracket</h2>
+        <h2 className={styles.bracketTitle}>Bracket</h2>
         <div className={styles.bracketInfo}>
-          <span className={styles.participantCount}>{tournamentInfo.participantCount} Players</span>
+          <span className={styles.participantCount}>{tournamentInfo.participantCount} players</span>
           <span className={styles.tournamentFormat}>{tournamentInfo.tournamentFormat}</span>
         </div>
       </div>
@@ -72,7 +72,7 @@ const BracketVisualization = ({ eventData, refreshTrigger }) => {
                     <div className={styles.matchHeader}>
                       <span className={styles.matchNumber}>{match.matchId}</span>
                       <span className={styles.matchStatus}>
-                        {match.winner ? 'Completed' : match.status === 'in_progress' ? 'In Progress' : 'Pending'}
+                        {match.winner ? 'Done' : match.status === 'in_progress' ? 'Live' : 'Up next'}
                       </span>
                     </div>
                     
@@ -107,9 +107,9 @@ const BracketVisualization = ({ eventData, refreshTrigger }) => {
                 <path d="M16 18h.01"/>
               </svg>
             </div>
-            <h3 className={styles.emptyTitle}>No Bracket Yet</h3>
+            <h3 className={styles.emptyTitle}>No bracket yet</h3>
             <p className={styles.emptyDescription}>
-              Tournament bracket will appear here once players are added.
+              Bracket will appear here once players are added.
             </p>
           </div>
         )}

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { handleMatchCompletion } from '../../lib/tournamentUtils';
 import styles from './UpNextCard.module.css';
 
 const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
   const [upcomingMatches, setUpcomingMatches] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedMatch, setSelectedMatch] = useState(null);
-  const [selectedWinner, setSelectedWinner] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Fetch upcoming matches when eventData changes or refresh is triggered
@@ -60,13 +59,8 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
     }
   };
 
-  const handleMatchClick = (match) => {
-    setSelectedMatch(match);
-    setSelectedWinner(null);
-  };
-
-  const handleWinnerSelect = (winnerId) => {
-    setSelectedWinner(winnerId);
+  const handleWinnerSelect = (matchId, winnerId) => {
+    completeMatch(matchId, winnerId);
   };
 
   const startMatch = async (matchId) => {
@@ -84,7 +78,6 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
 
       // Refresh matches
       await fetchUpcomingMatches();
-      setSelectedMatch(null);
       
       // Trigger bracket visualization refresh
       if (onMatchUpdate) {
@@ -97,26 +90,57 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
     }
   };
 
-  const completeMatch = async () => {
-    if (!selectedMatch || !selectedWinner) return;
+  const completeMatch = async (matchId, winnerId) => {
+    if (!matchId || !winnerId) return;
 
     setIsUpdating(true);
     try {
-      const { error } = await supabase
+      // Find the match data
+      const match = upcomingMatches.find(m => m.id === matchId);
+      if (!match) return;
+
+      // Update the match
+      const { error: matchError } = await supabase
         .from('tournament_matches')
         .update({
-          winner_id: selectedWinner,
+          winner_id: winnerId,
           status: 'completed',
           completed_at: new Date().toISOString()
         })
-        .eq('id', selectedMatch.id);
+        .eq('id', matchId);
 
-      if (error) throw error;
+      if (matchError) throw matchError;
+
+      // Get tournament data to update bracket
+      const { data: tournament, error: tournamentError } = await supabase
+        .from('tournaments')
+        .select('*')
+        .eq('event_id', eventData.id)
+        .single();
+
+      if (tournamentError) throw tournamentError;
+
+      // Update bracket data with the match result
+      const updatedBracketData = handleMatchCompletion(
+        tournament.bracket_data, 
+        match, 
+        winnerId, 
+        tournament.tournament_type
+      );
+      
+      // Update tournament bracket_data
+      const { error: bracketError } = await supabase
+        .from('tournaments')
+        .update({
+          bracket_data: updatedBracketData,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', tournament.id);
+
+      if (bracketError) throw bracketError;
 
       // Refresh matches
       await fetchUpcomingMatches();
-      setSelectedMatch(null);
-      setSelectedWinner(null);
       
       // Trigger bracket visualization refresh
       if (onMatchUpdate) {
@@ -142,6 +166,7 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
       default: return 'Unknown';
     }
   };
+
 
   return (
     <div className={styles.upNextCard}>
@@ -169,20 +194,51 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
           {upcomingMatches.map((match) => (
             <div 
               key={match.id} 
-              className={`${styles.matchItem} ${match.status === 'in_progress' ? styles.inProgress : ''}`}
-              onClick={() => handleMatchClick(match)}
+              className={`${styles.matchItem} ${match.status === 'in_progress' ? styles.inProgress : ''} ${(!match.player1_id || !match.player2_id) ? styles.disabled : ''}`}
             >
               <div className={styles.matchPlayers}>
                 <div className={styles.player}>
                   <div className={styles.playerName}>{getPlayerName(match.player1)}</div>
+                  {match.status === 'in_progress' && match.player1_id && match.player2_id && (
+                    <button 
+                      className={styles.winnerButton}
+                      onClick={() => handleWinnerSelect(match.id, match.player1_id)}
+                      disabled={isUpdating}
+                    >
+                      Winner
+                    </button>
+                  )}
                 </div>
                 <div className={styles.vs}>VS</div>
                 <div className={styles.player}>
                   <div className={styles.playerName}>{getPlayerName(match.player2)}</div>
+                  {match.status === 'in_progress' && match.player1_id && match.player2_id && (
+                    <button 
+                      className={styles.winnerButton}
+                      onClick={() => handleWinnerSelect(match.id, match.player2_id)}
+                      disabled={isUpdating}
+                    >
+                      Winner
+                    </button>
+                  )}
                 </div>
               </div>
-              <div className={styles.matchStatus}>
-                {getMatchStatus(match.status)}
+              <div className={styles.matchActions}>
+                {(!match.player1_id || !match.player2_id) ? (
+                  <div className={styles.waitingMessage}>Waiting for players</div>
+                ) : match.status === 'scheduled' ? (
+                  <button 
+                    className={styles.startButton}
+                    onClick={() => startMatch(match.id)}
+                    disabled={isUpdating}
+                  >
+                    {isUpdating ? 'Starting...' : 'Start Match'}
+                  </button>
+                ) : (
+                  <div className={styles.matchStatus}>
+                    {getMatchStatus(match.status)}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -210,66 +266,6 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
         </div>
       )}
 
-      {/* Match Management Modal */}
-      {selectedMatch && (
-        <div className={styles.matchModal}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h3>{selectedMatch.match_id}</h3>
-              <button 
-                className={styles.closeButton}
-                onClick={() => setSelectedMatch(null)}
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className={styles.matchInfo}>
-              <div className={styles.playerInfo}>
-                <div className={styles.playerName}>{getPlayerName(selectedMatch.player1)}</div>
-                <button 
-                  className={`${styles.winnerButton} ${selectedWinner === selectedMatch.player1_id ? styles.selected : ''}`}
-                  onClick={() => handleWinnerSelect(selectedMatch.player1_id)}
-                  disabled={selectedMatch.status === 'scheduled'}
-                >
-                  Winner
-                </button>
-              </div>
-              <div className={styles.vs}>VS</div>
-              <div className={styles.playerInfo}>
-                <div className={styles.playerName}>{getPlayerName(selectedMatch.player2)}</div>
-                <button 
-                  className={`${styles.winnerButton} ${selectedWinner === selectedMatch.player2_id ? styles.selected : ''}`}
-                  onClick={() => handleWinnerSelect(selectedMatch.player2_id)}
-                  disabled={selectedMatch.status === 'scheduled'}
-                >
-                  Winner
-                </button>
-              </div>
-            </div>
-
-            <div className={styles.modalActions}>
-              {selectedMatch.status === 'scheduled' ? (
-                <button 
-                  className={styles.startButton}
-                  onClick={() => startMatch(selectedMatch.id)}
-                  disabled={isUpdating}
-                >
-                  {isUpdating ? 'Starting...' : 'Start Match'}
-                </button>
-              ) : (
-                <button 
-                  className={styles.completeButton}
-                  onClick={completeMatch}
-                  disabled={isUpdating || !selectedWinner}
-                >
-                  {isUpdating ? 'Completing...' : 'Complete Match'}
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

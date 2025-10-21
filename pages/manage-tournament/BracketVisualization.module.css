@@ -24,10 +24,11 @@
 }
 
 .bracketTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1f2937;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #374151;
   margin: 0;
+  letter-spacing: -0.025em;
 }
 
 .bracketInfo {
@@ -38,12 +39,13 @@
 
 .participantCount,
 .tournamentFormat {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: #6b7280;
-  background: #f3f4f6;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid #d1d5db;
+  background: #f8fafc;
+  padding: 3px 6px;
+  border-radius: 3px;
+  border: 1px solid #e2e8f0;
+  font-weight: 400;
 }
 
 /* Bracket Content */
@@ -64,15 +66,17 @@
 }
 
 .roundTitle {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #374151;
-  margin: 0 0 12px 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748b;
+  margin: 0 0 10px 0;
   text-align: left;
-  padding: 6px 12px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  padding: 4px 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 0;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
 }
 
 .matches {
@@ -101,20 +105,21 @@
 }
 
 .matchNumber {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #6b7280;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .matchStatus {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #059669;
   font-weight: 500;
-  background: #d1fae5;
-  padding: 2px 6px;
-  border-radius: 4px;
+  background: #dcfce7;
+  padding: 2px 5px;
+  border-radius: 3px;
+  letter-spacing: 0.025em;
 }
 
 /* Players */
@@ -143,7 +148,9 @@
 
 .playerName {
   font-weight: 500;
-  color: #374151;
+  color: #1e293b;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .player.winner .playerName {
@@ -152,10 +159,11 @@
 }
 
 .playerScore {
-  font-weight: 600;
-  color: #6b7280;
-  min-width: 20px;
+  font-weight: 500;
+  color: #64748b;
+  min-width: 16px;
   text-align: center;
+  font-size: 0.8rem;
 }
 
 .player.winner .playerScore {
@@ -164,10 +172,11 @@
 
 .vs {
   text-align: center;
-  font-size: 0.625rem;
-  font-weight: 600;
-  color: #9ca3af;
+  font-size: 0.6rem;
+  font-weight: 500;
+  color: #cbd5e1;
   margin: 2px 0;
+  letter-spacing: 0.05em;
 }
 
 /* Modal styles removed - bracket visualization is read-only */
@@ -189,18 +198,20 @@
 }
 
 .emptyTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #374151;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #475569;
   margin: 0 0 8px 0;
+  line-height: 1.4;
 }
 
 .emptyDescription {
-  font-size: 1rem;
-  color: #6b7280;
+  font-size: 0.9rem;
+  color: #64748b;
   margin: 0;
   max-width: 400px;
   line-height: 1.5;
+  font-weight: 400;
 }
 
 

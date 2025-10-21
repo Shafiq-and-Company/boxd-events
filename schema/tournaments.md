@@ -84,6 +84,9 @@ CREATE POLICY "Service role can manage all tournaments" ON tournaments
 ### Tournament Types Supported
 - **Single Elimination**: Traditional knockout tournament
 - **Double Elimination**: Players must lose twice to be eliminated
+  - Winners bracket: Players advance until they lose once
+  - Losers bracket: Players who lose in winners bracket get a second chance
+  - Grand Finals: Winner of winners bracket vs winner of losers bracket
 - **Round Robin**: Everyone plays everyone else
 - **Swiss**: Pairing-based tournament with standings
 
@@ -106,7 +109,7 @@ The `bracket_data` column stores complete tournament state as JSON:
     }
   ],
   "participants": [
-    { "id": "uuid", "name": "Player 1", "seed": 1, "eliminated": false }
+    { "id": "uuid", "name": "Player 1", "seed": 1, "eliminated": false, "losses": 0, "inLosersBracket": false }
   ],
   "currentRound": 1,
   "totalRounds": 4
