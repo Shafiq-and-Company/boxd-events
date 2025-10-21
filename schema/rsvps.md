@@ -8,10 +8,10 @@ The `rsvps` table manages user event registrations and payment status.
 |--------|------|----------|---------|-------------|
 | `user_id` | uuid | NO | null | Foreign key to users table |
 | `event_id` | uuid | NO | null | Foreign key to events table |
-| `status` | text | NO | 'going' | RSVP status (going, maybe, not_going) |
-| `payment_status` | text | YES | 'pending' | Payment status (pending, paid, failed, refunded) |
-| `created_at` | timestamptz | YES | now() | Record creation time |
-| `updated_at` | timestamptz | YES | now() | Record update time |
+| `status` | text | NO | 'going'::text | RSVP status (going, maybe, not_going) |
+| `created_at` | timestamp with time zone | YES | now() | Record creation time |
+| `payment_status` | text | YES | 'pending'::text | Payment status (pending, paid, failed, refunded) |
+| `updated_at` | timestamp with time zone | YES | now() | Record update time |
 
 ## Row Level Security (RLS) Policies
 
