@@ -43,9 +43,15 @@
   font-weight: 400;
   color: #000000;
   text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
 
 .navLink:hover {
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.navLink:active {
   box-shadow: 2px 2px 0px 0px #000000;
 }
 
@@ -124,9 +130,15 @@
   background: #ffffff;
   border: 1px solid #000000;
   padding: 8px 16px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
 
 .loginButton:hover {
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.loginButton:active {
   box-shadow: 2px 2px 0px 0px #000000;
 }
 
@@ -137,9 +149,15 @@
   background: #ffffff;
   border: 1px solid #000000;
   padding: 8px 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
 
 .createEventButton:hover {
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.createEventButton:active {
   box-shadow: 2px 2px 0px 0px #000000;
 }
 
@@ -240,10 +258,17 @@
   font-size: 14px;
   font-weight: 400;
   color: #000000;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
 
 .profileSettingsButton:hover,
 .profileLogoutButton:hover {
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.profileSettingsButton:active,
+.profileLogoutButton:active {
   box-shadow: 2px 2px 0px 0px #000000;
 }
 

@@ -1,0 +1,259 @@
+/* Tournament Sidebar Component - Floating Icon Sidebar */
+.sidebar {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  height: calc(100vh - 40px);
+  width: 60px;
+  background: #ffffff;
+  border: 1px solid #000000;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+/* Sidebar Header - Hidden for icon-only */
+.sidebarHeader {
+  display: none;
+}
+
+.sidebarTitle {
+  display: none;
+}
+
+.collapseButton {
+  display: none;
+}
+
+.collapseIcon {
+  display: none;
+}
+
+/* Navigation - Icon Only */
+.sidebarNav {
+  flex: 1;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  width: 100%;
+  height: 48px;
+}
+
+.navItem:hover {
+  background: transparent;
+}
+
+.navItem:hover::before {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #000000;
+}
+
+.navItem:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 12px;
+  padding: 8px 12px;
+  background: #000000;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.navItem.active {
+  background: transparent;
+}
+
+.navItem.active::before {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #000000;
+}
+
+.navIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.navIcon svg {
+  width: 20px;
+  height: 20px;
+  color: #000000;
+}
+
+.navLabel {
+  display: none;
+}
+
+/* Sidebar Footer */
+.sidebarFooter {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  width: 100%;
+  height: 48px;
+}
+
+.backButton:hover {
+  background: transparent;
+}
+
+.backButton:hover::before {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #000000;
+}
+
+.backButton:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 12px;
+  padding: 8px 12px;
+  background: #000000;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* Collapsed State - Not needed for icon-only */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    left: 12px;
+    width: 56px;
+  }
+  
+  .navItem {
+    height: 44px;
+    padding: 10px;
+  }
+  
+  .navIcon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .navIcon svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    left: 8px;
+    width: 52px;
+  }
+  
+  .navItem {
+    height: 40px;
+    padding: 8px;
+  }
+  
+  .navIcon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .navIcon svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Accessibility */
+.navItem:focus,
+.collapseButton:focus {
+  outline: none;
+}
+
+.navItem:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+.collapseButton:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+/* Animation for smooth transitions */
+.sidebar * {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .sidebar {
+    border-right-color: #000000;
+  }
+  
+  .navItem:hover,
+  .navItem.active {
+    background: transparent;
+  }
+}

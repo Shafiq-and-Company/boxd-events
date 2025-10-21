@@ -4,10 +4,10 @@
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
-| id | uuid | PRIMARY KEY, DEFAULT gen_random_uuid() | Unique identifier for the game |
-| game_title | text | NOT NULL, UNIQUE | Game title/name |
-| created_at | timestamptz | DEFAULT now() | When the game was added |
-| updated_at | timestamptz | DEFAULT now() | When the game was last updated |
+| id | bigint | PRIMARY KEY | Unique identifier for the game |
+| created_at | timestamp with time zone | NOT NULL, DEFAULT now() | When the game was added |
+| game_title | text | NULL | Game title/name |
+| game_logo_url | text | NULL | URL to game logo image |
 
 ## Indexes
 - `idx_games_game_title` on `game_title` for fast lookups

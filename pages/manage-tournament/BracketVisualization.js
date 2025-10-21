@@ -1,250 +1,128 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './BracketVisualization.module.css';
 
-const BracketVisualization = ({ format }) => {
-  // Generate 16 participants for the bracket
-  const participants = Array.from({ length: 16 }, (_, i) => ({
-    id: i + 1,
-    name: `Player ${i + 1}`,
-    seed: i + 1
-  }));
+const BracketVisualization = ({ eventData }) => {
+  const [selectedMatch, setSelectedMatch] = useState(null);
 
-  // Generate bracket structure based on format
-  const generateBracket = (players, format) => {
-    switch (format) {
-      case 'single-elimination':
-        return generateSingleElimination(players);
-      case 'double-elimination':
-        return generateDoubleElimination(players);
-      case 'round-robin':
-        return generateRoundRobin(players);
-      case 'swiss':
-        return generateSwiss(players);
-      default:
-        return generateSingleElimination(players);
-    }
+  // Bracket data - will be populated from API or props
+  const bracketData = {
+    rounds: []
   };
 
-  const generateSingleElimination = (players) => {
-    const rounds = [];
-    let currentRound = players.map((player, index) => ({
-      id: `r1-${index}`,
-      players: [player, players[index + 1] || null],
-      winner: null,
-      round: 1,
-      match: Math.floor(index / 2)
-    })).filter((_, index) => index % 2 === 0);
-
-    rounds.push(currentRound);
-
-    // Generate subsequent rounds
-    let roundNumber = 2;
-    while (currentRound.length > 1) {
-      const nextRound = [];
-      for (let i = 0; i < currentRound.length; i += 2) {
-        nextRound.push({
-          id: `r${roundNumber}-${i/2}`,
-          players: [null, null], // Winners will be filled in
-          winner: null,
-          round: roundNumber,
-          match: i / 2
-        });
-      }
-      rounds.push(nextRound);
-      currentRound = nextRound;
-      roundNumber++;
-    }
-
-    return rounds;
+  const handleMatchClick = (match) => {
+    setSelectedMatch(match);
   };
 
-  const generateDoubleElimination = (players) => {
-    // Simplified double elimination - shows winners and losers brackets
-    const winnersRounds = generateSingleElimination(players);
-    const losersRounds = generateSingleElimination(players.slice(8)); // Simplified losers bracket
-    
-    return {
-      winners: winnersRounds,
-      losers: losersRounds,
-      isDoubleElimination: true
-    };
+  const handleScoreUpdate = (matchId, player, score) => {
+    // In a real app, this would update the database
+    console.log(`Updating match ${matchId}, ${player} score to ${score}`);
   };
-
-  const generateRoundRobin = (players) => {
-    // Generate round-robin matches
-    const matches = [];
-    for (let i = 0; i < players.length; i++) {
-      for (let j = i + 1; j < players.length; j++) {
-        matches.push({
-          id: `rr-${i}-${j}`,
-          players: [players[i], players[j]],
-          winner: null,
-          round: Math.floor(matches.length / 4) + 1, // Group matches into rounds
-          match: matches.length % 4
-        });
-      }
-    }
-    
-    // Group matches by round
-    const rounds = [];
-    const matchesPerRound = Math.ceil(players.length / 2);
-    for (let i = 0; i < matches.length; i += matchesPerRound) {
-      rounds.push(matches.slice(i, i + matchesPerRound));
-    }
-    
-    return rounds;
-  };
-
-  const generateSwiss = (players) => {
-    // Simplified Swiss system - shows multiple rounds
-    const rounds = [];
-    for (let round = 1; round <= 5; round++) {
-      const roundMatches = [];
-      for (let i = 0; i < players.length; i += 2) {
-        roundMatches.push({
-          id: `swiss-r${round}-${i/2}`,
-          players: [players[i], players[i + 1] || null],
-          winner: null,
-          round: round,
-          match: i / 2
-        });
-      }
-      rounds.push(roundMatches);
-    }
-    return rounds;
-  };
-
-  const bracketData = generateBracket(participants, format);
 
   return (
-    <div className={styles.bracketCard}>
+    <div className={styles.bracketContainer}>
       <div className={styles.bracketHeader}>
-        <h3 className={styles.bracketTitle}>Bracket Visualization</h3>
+        <h2 className={styles.bracketTitle}>Bracket Visualization</h2>
         <div className={styles.bracketInfo}>
-          <span className={styles.participantCount}>16 Participants</span>
-          <span className={styles.bracketType}>
-            {format === 'single-elimination' && 'Single Elimination'}
-            {format === 'double-elimination' && 'Double Elimination'}
-            {format === 'round-robin' && 'Round Robin'}
-            {format === 'swiss' && 'Swiss System'}
-          </span>
+          <span className={styles.participantCount}>8 Participants</span>
+          <span className={styles.tournamentFormat}>Single Elimination</span>
         </div>
       </div>
-      
-      <div className={styles.bracketContainer}>
-        <div className={styles.bracket}>
-          {format === 'double-elimination' && bracketData.isDoubleElimination ? (
-            // Double elimination layout
-            <>
-              <div className={styles.bracketSection}>
-                <h4 className={styles.sectionTitle}>Winners Bracket</h4>
-                {bracketData.winners.map((round, roundIndex) => (
-                  <div key={`w-${roundIndex}`} className={styles.bracketRound}>
-                    <div className={styles.roundLabel}>
-                      {roundIndex === 0 ? 'Round 1' : 
-                       roundIndex === 1 ? 'Quarterfinals' :
-                       roundIndex === 2 ? 'Semifinals' : 'Final'}
+
+      <div className={styles.bracketContent}>
+        {bracketData.rounds.length > 0 ? (
+          bracketData.rounds.map((round, roundIndex) => (
+            <div key={roundIndex} className={styles.round}>
+              <h3 className={styles.roundTitle}>{round.name}</h3>
+              <div className={styles.matches}>
+                {round.matches.map((match) => (
+                  <div 
+                    key={match.id} 
+                    className={`${styles.match} ${selectedMatch?.id === match.id ? styles.selected : ''}`}
+                    onClick={() => handleMatchClick(match)}
+                  >
+                    <div className={styles.matchHeader}>
+                      <span className={styles.matchNumber}>Match {match.id}</span>
+                      <span className={styles.matchStatus}>
+                        {match.winner ? 'Completed' : 'Pending'}
+                      </span>
                     </div>
-                    <div className={styles.roundMatches}>
-                      {round.map((match, matchIndex) => (
-                        <div key={match.id} className={styles.match}>
-                          <div className={styles.matchParticipants}>
-                            {match.players.map((player, playerIndex) => (
-                              <div 
-                                key={playerIndex} 
-                                className={`${styles.matchPlayer} ${playerIndex === 0 ? styles.player1 : styles.player2}`}
-                              >
-                                {player ? (
-                                  <div className={styles.playerInfo}>
-                                    <span className={styles.playerSeed}>{player.seed}</span>
-                                    <span className={styles.playerName}>{player.name}</span>
-                                  </div>
-                                ) : (
-                                  <div className={styles.placeholder}>TBD</div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className={styles.bracketSection}>
-                <h4 className={styles.sectionTitle}>Losers Bracket</h4>
-                {bracketData.losers.map((round, roundIndex) => (
-                  <div key={`l-${roundIndex}`} className={styles.bracketRound}>
-                    <div className={styles.roundLabel}>Losers Round {roundIndex + 1}</div>
-                    <div className={styles.roundMatches}>
-                      {round.map((match, matchIndex) => (
-                        <div key={match.id} className={styles.match}>
-                          <div className={styles.matchParticipants}>
-                            {match.players.map((player, playerIndex) => (
-                              <div 
-                                key={playerIndex} 
-                                className={`${styles.matchPlayer} ${playerIndex === 0 ? styles.player1 : styles.player2}`}
-                              >
-                                {player ? (
-                                  <div className={styles.playerInfo}>
-                                    <span className={styles.playerSeed}>{player.seed}</span>
-                                    <span className={styles.playerName}>{player.name}</span>
-                                  </div>
-                                ) : (
-                                  <div className={styles.placeholder}>TBD</div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : (
-            // Single elimination, round robin, and Swiss layouts
-            Array.isArray(bracketData) ? bracketData.map((round, roundIndex) => (
-              <div key={roundIndex} className={styles.bracketRound}>
-                <div className={styles.roundLabel}>
-                  {format === 'round-robin' ? `Round ${roundIndex + 1}` :
-                   format === 'swiss' ? `Swiss Round ${roundIndex + 1}` :
-                   roundIndex === 0 ? 'Round 1' : 
-                   roundIndex === 1 ? 'Quarterfinals' :
-                   roundIndex === 2 ? 'Semifinals' : 'Final'}
-                </div>
-                <div className={styles.roundMatches}>
-                  {round.map((match, matchIndex) => (
-                    <div key={match.id} className={styles.match}>
-                      <div className={styles.matchParticipants}>
-                        {match.players.map((player, playerIndex) => (
-                          <div 
-                            key={playerIndex} 
-                            className={`${styles.matchPlayer} ${playerIndex === 0 ? styles.player1 : styles.player2}`}
-                          >
-                            {player ? (
-                              <div className={styles.playerInfo}>
-                                <span className={styles.playerSeed}>{player.seed}</span>
-                                <span className={styles.playerName}>{player.name}</span>
-                              </div>
-                            ) : (
-                              <div className={styles.placeholder}>TBD</div>
-                            )}
-                          </div>
-                        ))}
+                    
+                    <div className={styles.players}>
+                      <div className={`${styles.player} ${match.winner === 1 ? styles.winner : ''}`}>
+                        <span className={styles.playerName}>{match.player1}</span>
+                        <span className={styles.playerScore}>{match.score1 || '-'}</span>
                       </div>
-                      {format === 'single-elimination' && roundIndex < bracketData.length - 1 && (
-                        <div className={styles.matchConnector}></div>
-                      )}
+                      <div className={styles.vs}>VS</div>
+                      <div className={`${styles.player} ${match.winner === 2 ? styles.winner : ''}`}>
+                        <span className={styles.playerName}>{match.player2}</span>
+                        <span className={styles.playerScore}>{match.score2 || '-'}</span>
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            )) : null
-          )}
-        </div>
+            </div>
+          ))
+        ) : (
+          <div className={styles.emptyState}>
+            <div className={styles.emptyIcon}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 2v4"/>
+                <path d="M16 2v4"/>
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <path d="M3 10h18"/>
+                <path d="M8 14h.01"/>
+                <path d="M12 14h.01"/>
+                <path d="M16 14h.01"/>
+                <path d="M8 18h.01"/>
+                <path d="M12 18h.01"/>
+                <path d="M16 18h.01"/>
+              </svg>
+            </div>
+            <h3 className={styles.emptyTitle}>No Bracket Available</h3>
+            <p className={styles.emptyDescription}>
+              The tournament bracket will appear here once participants are added and the tournament begins.
+            </p>
+          </div>
+        )}
       </div>
+
+      {selectedMatch && (
+        <div className={styles.matchModal}>
+          <div className={styles.modalContent}>
+            <h3>Match {selectedMatch.id}</h3>
+            <div className={styles.scoreInputs}>
+              <div className={styles.scoreInput}>
+                <label>{selectedMatch.player1}</label>
+                <input 
+                  type="number" 
+                  placeholder="Score"
+                  onChange={(e) => handleScoreUpdate(selectedMatch.id, 'player1', e.target.value)}
+                />
+              </div>
+              <div className={styles.scoreInput}>
+                <label>{selectedMatch.player2}</label>
+                <input 
+                  type="number" 
+                  placeholder="Score"
+                  onChange={(e) => handleScoreUpdate(selectedMatch.id, 'player2', e.target.value)}
+                />
+              </div>
+            </div>
+            <div className={styles.modalActions}>
+              <button 
+                className={styles.cancelButton}
+                onClick={() => setSelectedMatch(null)}
+              >
+                Cancel
+              </button>
+              <button className={styles.saveButton}>
+                Save Scores
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

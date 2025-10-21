@@ -3,9 +3,10 @@ import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
 import TitleCard from './TitleCard';
-import BracketConfiguration from './BracketConfiguration';
-import PlayerPanel from './PlayerPanel';
+import TournamentSidebar from './TournamentSidebar';
 import BracketVisualization from './BracketVisualization';
+import TournamentPanel from './TournamentPanel';
+import UpNextCard from './UpNextCard';
 import styles from './manageTournament.module.css';
 
 const ManageTournament = () => {
@@ -14,7 +15,7 @@ const ManageTournament = () => {
   const { eventId } = router.query;
   
   const [eventData, setEventData] = useState(null);
-  const [bracketFormat, setBracketFormat] = useState('single-elimination');
+  const [activeSection, setActiveSection] = useState('bracket');
 
   const fetchEventData = async () => {
     if (!eventId || !user) return;
@@ -42,18 +43,41 @@ const ManageTournament = () => {
 
   return (
     <div className={styles.dashboard}>
+      <TournamentSidebar 
+        activeSection={activeSection} 
+        onSectionChange={setActiveSection} 
+      />
       <div className={styles.mainContent}>
         <TitleCard title="Tournament Management" eventData={eventData} />
         <div className={styles.contentLayout}>
-          <div className={styles.leftColumn}>
-            <BracketConfiguration 
-              format={bracketFormat} 
-              onFormatChange={setBracketFormat} 
-            />
-            <PlayerPanel eventId={eventId} />
-          </div>
-          <div className={styles.rightColumn}>
-            <BracketVisualization format={bracketFormat} />
+          <div className={styles.sectionContent}>
+            {activeSection === 'bracket' && (
+              <div className={styles.bracketLayout}>
+                <div className={styles.leftPanel}>
+                  <TournamentPanel eventData={eventData} />
+                  <UpNextCard tournamentData={eventData} />
+                </div>
+                <BracketVisualization eventData={eventData} />
+              </div>
+            )}
+            {activeSection === 'standings' && (
+              <div className={styles.placeholder}>
+                <h3>Standings</h3>
+                <p>Tournament standings will be displayed here.</p>
+              </div>
+            )}
+            {activeSection === 'participants' && (
+              <div className={styles.placeholder}>
+                <h3>Participants</h3>
+                <p>Participant management will be displayed here.</p>
+              </div>
+            )}
+            {activeSection === 'details' && (
+              <div className={styles.placeholder}>
+                <h3>Tournament Details</h3>
+                <p>Tournament details and information will be displayed here.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -62,3 +86,4 @@ const ManageTournament = () => {
 };
 
 export default ManageTournament;
+ 
