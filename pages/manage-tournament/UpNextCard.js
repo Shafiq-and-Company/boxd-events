@@ -6,7 +6,7 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
   const [upcomingMatches, setUpcomingMatches] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState(null);
-  const [matchScores, setMatchScores] = useState({ player1: '', player2: '' });
+  const [selectedWinner, setSelectedWinner] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Fetch upcoming matches when eventData changes or refresh is triggered
@@ -62,17 +62,11 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
 
   const handleMatchClick = (match) => {
     setSelectedMatch(match);
-    setMatchScores({
-      player1: match.player1_score || '',
-      player2: match.player2_score || ''
-    });
+    setSelectedWinner(null);
   };
 
-  const handleScoreChange = (player, value) => {
-    setMatchScores(prev => ({
-      ...prev,
-      [player]: value
-    }));
+  const handleWinnerSelect = (winnerId) => {
+    setSelectedWinner(winnerId);
   };
 
   const startMatch = async (matchId) => {
@@ -103,30 +97,17 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
     }
   };
 
-  const updateMatchScores = async () => {
-    if (!selectedMatch) return;
+  const completeMatch = async () => {
+    if (!selectedMatch || !selectedWinner) return;
 
     setIsUpdating(true);
     try {
-      const player1Score = parseInt(matchScores.player1) || 0;
-      const player2Score = parseInt(matchScores.player2) || 0;
-      
-      // Determine winner
-      let winnerId = null;
-      if (player1Score > player2Score) {
-        winnerId = selectedMatch.player1_id;
-      } else if (player2Score > player1Score) {
-        winnerId = selectedMatch.player2_id;
-      }
-
       const { error } = await supabase
         .from('tournament_matches')
         .update({
-          player1_score: player1Score,
-          player2_score: player2Score,
-          winner_id: winnerId,
-          status: winnerId ? 'completed' : 'in_progress',
-          completed_at: winnerId ? new Date().toISOString() : null
+          winner_id: selectedWinner,
+          status: 'completed',
+          completed_at: new Date().toISOString()
         })
         .eq('id', selectedMatch.id);
 
@@ -135,14 +116,14 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
       // Refresh matches
       await fetchUpcomingMatches();
       setSelectedMatch(null);
-      setMatchScores({ player1: '', player2: '' });
+      setSelectedWinner(null);
       
       // Trigger bracket visualization refresh
       if (onMatchUpdate) {
         onMatchUpdate();
       }
     } catch (error) {
-      console.error('Error updating match scores:', error);
+      console.error('Error completing match:', error);
     } finally {
       setIsUpdating(false);
     }
@@ -194,16 +175,10 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
               <div className={styles.matchPlayers}>
                 <div className={styles.player}>
                   <div className={styles.playerName}>{getPlayerName(match.player1)}</div>
-                  {match.status === 'in_progress' && (
-                    <div className={styles.playerScore}>{match.player1_score || 0}</div>
-                  )}
                 </div>
                 <div className={styles.vs}>VS</div>
                 <div className={styles.player}>
                   <div className={styles.playerName}>{getPlayerName(match.player2)}</div>
-                  {match.status === 'in_progress' && (
-                    <div className={styles.playerScore}>{match.player2_score || 0}</div>
-                  )}
                 </div>
               </div>
               <div className={styles.matchStatus}>
@@ -252,26 +227,24 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
             <div className={styles.matchInfo}>
               <div className={styles.playerInfo}>
                 <div className={styles.playerName}>{getPlayerName(selectedMatch.player1)}</div>
-                <input 
-                  type="number" 
-                  className={styles.scoreInput}
-                  value={matchScores.player1}
-                  onChange={(e) => handleScoreChange('player1', e.target.value)}
-                  placeholder="Score"
+                <button 
+                  className={`${styles.winnerButton} ${selectedWinner === selectedMatch.player1_id ? styles.selected : ''}`}
+                  onClick={() => handleWinnerSelect(selectedMatch.player1_id)}
                   disabled={selectedMatch.status === 'scheduled'}
-                />
+                >
+                  Winner
+                </button>
               </div>
               <div className={styles.vs}>VS</div>
               <div className={styles.playerInfo}>
                 <div className={styles.playerName}>{getPlayerName(selectedMatch.player2)}</div>
-                <input 
-                  type="number" 
-                  className={styles.scoreInput}
-                  value={matchScores.player2}
-                  onChange={(e) => handleScoreChange('player2', e.target.value)}
-                  placeholder="Score"
+                <button 
+                  className={`${styles.winnerButton} ${selectedWinner === selectedMatch.player2_id ? styles.selected : ''}`}
+                  onClick={() => handleWinnerSelect(selectedMatch.player2_id)}
                   disabled={selectedMatch.status === 'scheduled'}
-                />
+                >
+                  Winner
+                </button>
               </div>
             </div>
 
@@ -286,11 +259,11 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
                 </button>
               ) : (
                 <button 
-                  className={styles.updateButton}
-                  onClick={updateMatchScores}
-                  disabled={isUpdating}
+                  className={styles.completeButton}
+                  onClick={completeMatch}
+                  disabled={isUpdating || !selectedWinner}
                 >
-                  {isUpdating ? 'Updating...' : 'Update Scores'}
+                  {isUpdating ? 'Completing...' : 'Complete Match'}
                 </button>
               )}
             </div>

@@ -12,11 +12,8 @@ The `tournament_matches` table stores individual match information for tournamen
 | `round_number` | integer | NO | null | Round number within tournament |
 | `player1_id` | uuid | YES | null | First player user ID (foreign key to users) |
 | `player2_id` | uuid | YES | null | Second player user ID (foreign key to users) |
-| `player1_score` | integer | YES | 0 | First player's score |
-| `player2_score` | integer | YES | 0 | Second player's score |
 | `winner_id` | uuid | YES | null | Winner's user ID (foreign key to users) |
 | `status` | text | NO | 'scheduled'::text | Match status (scheduled, in_progress, completed, forfeit, bye) |
-| `scheduled_time` | timestamp with time zone | YES | null | Scheduled match time |
 | `started_at` | timestamp with time zone | YES | null | Match start time |
 | `completed_at` | timestamp with time zone | YES | null | Match completion time |
 | `match_data` | jsonb | YES | null | Additional match-specific data |
@@ -150,7 +147,7 @@ The `match_data` column can store additional match-specific information:
 #### Match Management Flow
 1. **Schedule Match**: Match created with `scheduled` status
 2. **Start Match**: Status updated to `in_progress`
-3. **Complete Match**: Scores and winner recorded, status updated to `completed`
+3. **Complete Match**: Winner recorded, status updated to `completed`
 4. **Advance Winner**: Frontend logic advances winner to next round
 
 #### System Operations

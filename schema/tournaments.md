@@ -99,8 +99,6 @@ The `bracket_data` column stores complete tournament state as JSON:
           "matchId": "round1_match1",
           "player1": { "id": "uuid", "name": "Player 1", "seed": 1 },
           "player2": { "id": "uuid", "name": "Player 2", "seed": 2 },
-          "player1Score": 2,
-          "player2Score": 1,
           "winner": "uuid",
           "status": "completed"
         }

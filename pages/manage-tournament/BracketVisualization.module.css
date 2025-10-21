@@ -4,7 +4,7 @@
   border: 1px solid #000000;
   box-shadow: 2px 2px 0px 0px #000000;
   border-radius: 0;
-  padding: 24px;
+  padding: 16px;
   margin-bottom: 0;
   height: calc(100vh - 72px - 40px - 20px);
   flex: 1;
@@ -18,13 +18,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
-  padding-bottom: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .bracketTitle {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: #1f2937;
   margin: 0;
@@ -49,27 +49,27 @@
 /* Bracket Content */
 .bracketContent {
   display: flex;
-  gap: 32px;
+  gap: 24px;
   overflow-x: auto;
   padding-bottom: 16px;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
   flex: 1;
 }
 
 /* Round */
 .round {
-  min-width: 200px;
+  min-width: 180px;
   flex-shrink: 0;
 }
 
 .roundTitle {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #374151;
-  margin: 0 0 16px 0;
-  text-align: center;
-  padding: 8px 16px;
+  margin: 0 0 12px 0;
+  text-align: left;
+  padding: 6px 12px;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 0;
@@ -78,7 +78,7 @@
 .matches {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 /* Match */
@@ -86,7 +86,7 @@
   background: #ffffff;
   border: 1px solid #d1d5db;
   border-radius: 0;
-  padding: 16px;
+  padding: 12px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
@@ -97,7 +97,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .matchNumber {
@@ -128,7 +128,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 6px 10px;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 0;
@@ -164,10 +164,10 @@
 
 .vs {
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   font-weight: 600;
   color: #9ca3af;
-  margin: 4px 0;
+  margin: 2px 0;
 }
 
 /* Modal styles removed - bracket visualization is read-only */
@@ -207,44 +207,24 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .bracketContainer {
-    padding: 16px;
+    padding: 12px;
     margin-bottom: 16px;
   }
   
   .bracketHeader {
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     align-items: flex-start;
   }
   
   .bracketInfo {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: flex-start;
   }
   
   .bracketContent {
-    gap: 20px;
-  }
-  
-  .round {
-    min-width: 160px;
-  }
-  
-  .match {
-    padding: 12px;
-  }
-  
-  /* Modal styles removed */
-}
-
-@media (max-width: 480px) {
-  .bracketContainer {
-    padding: 12px;
-  }
-  
-  .bracketTitle {
-    font-size: 1.25rem;
+    gap: 16px;
   }
   
   .round {
@@ -255,7 +235,27 @@
     padding: 10px;
   }
   
+  /* Modal styles removed */
+}
+
+@media (max-width: 480px) {
+  .bracketContainer {
+    padding: 8px;
+  }
+  
+  .bracketTitle {
+    font-size: 1.125rem;
+  }
+  
+  .round {
+    min-width: 120px;
+  }
+  
+  .match {
+    padding: 8px;
+  }
+  
   .player {
-    padding: 6px 8px;
+    padding: 4px 6px;
   }
 }
