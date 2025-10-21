@@ -1,11 +1,13 @@
 .footer {
   background: #FFFFFF;
-  margin-top: auto;
-  padding: 24px 0 20px;
+  margin: 0;
+  padding: 32px;
   color: #707070;
   font-size: 14px;
   line-height: 1.5;
   position: relative;
+  width: 100%;
+  border: 1px solid #E8E8E8;
 }
 
 .footer::before {
@@ -20,9 +22,9 @@
 }
 
 .container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 20px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .content {
@@ -112,11 +114,12 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .footer {
-    padding: 20px 0 16px;
+    margin: 0;
+    padding: 24px;
   }
   
   .container {
-    padding: 0 16px;
+    padding: 0;
   }
   
   .content {
@@ -155,11 +158,12 @@
 
 @media (max-width: 480px) {
   .footer {
-    padding: 16px 0;
+    margin: 0;
+    padding: 20px;
   }
   
   .container {
-    padding: 0 16px;
+    padding: 0;
   }
   
   .content {
