@@ -25,6 +25,7 @@ export default function SplashNav() {
             alt="BOXD" 
             className={styles.logoImage}
           />
+          <span className={styles.logoText}>LOCALS.GG</span>
         </div>
         
         <button 

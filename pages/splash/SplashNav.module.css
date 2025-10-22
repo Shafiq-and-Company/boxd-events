@@ -48,6 +48,19 @@
   opacity: 0.8;
 }
 
+.logoText {
+  font-size: 18px;
+  font-weight: 700;
+  color: #000000;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  letter-spacing: -0.5px;
+  transition: opacity 200ms ease;
+}
+
+.logo:hover .logoText {
+  opacity: 0.8;
+}
+
 .getStartedButton {
   background: #000000;
   border: 1px solid #000000;
@@ -103,6 +116,10 @@
     height: 28px;
   }
   
+  .logoText {
+    font-size: 16px;
+  }
+  
   .getStartedButton {
     padding: 12px 24px;
     font-size: 15px;
@@ -124,6 +141,10 @@
   
   .logoImage {
     height: 24px;
+  }
+  
+  .logoText {
+    font-size: 14px;
   }
   
   .getStartedButton {
