@@ -22,9 +22,9 @@ export default function SplashPage() {
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
             <h1 className={styles.heroTitle}>
-              <span>This is where</span>
+              <span>Local Gaming</span>
               <br />
-              <span>Gaming starts</span>
+              <span>Starts Here</span>
             </h1>
             
             <div className={styles.divider}></div>
@@ -34,7 +34,7 @@ export default function SplashPage() {
             </p>
             
             <button className={styles.ctaButton} onClick={handleGetStarted}>
-              Get Started
+              Get Early Access
             </button>
           </div>
           <div className={styles.heroImage}>
@@ -46,31 +46,80 @@ export default function SplashPage() {
       {/* Value Props Section */}
       <section className={styles.valuePropsSection}>
         <div className={styles.sectionContent}>
-          <div className={styles.valuePropsText}>
-            <div className={styles.valuePropText}>
-              <h3>For Participants</h3>
-              <p>Find gaming events near you, search for tournaments and meetups, and join local gaming communities to discover new players.</p>
-            </div>
-            
-            <div className={styles.valuePropText}>
-              <h3>For Organizers</h3>
-              <p>Make and run gaming events using our simple tools to set up tournaments and manage brackets while creating community events.</p>
-            </div>
-          </div>
-          
           <div className={styles.valuePropsGrid}>
             <div className={styles.valueProp}>
+              <h3>For Participants</h3>
+              <p>Find gaming events near you, search for tournaments and meetups, and join local gaming communities to discover new players.</p>
               <img src="/view-cal.gif" alt="View Calendar Demo" className={styles.demoImage} />
             </div>
             
             <div className={styles.valueProp}>
+              <h3>For Organizers</h3>
+              <p>Make and run gaming events using our simple tools to set up tournaments and manage brackets while creating community events.</p>
               <img src="/for-org.gif" alt="For Organizers Demo" className={styles.demoImage} />
             </div>
           </div>
         </div>
       </section>
 
-      
+      {/* Discover Section */}
+      <section className={styles.discoverSection}>
+        <div className={styles.sectionContent}>
+          <div className={styles.discoverContent}>
+            <div className={styles.discoverText}>
+              <h2 className={styles.sectionTitle}>Discover</h2>
+              <p className={styles.sectionSubtitle}>Find gaming events happening near you. See what tournaments and meetups are going on in your area right now.</p>
+            </div>
+            <div className={styles.discoverImage}>
+              <img src="/discover.png" alt="Discover Events Interface" className={styles.discoverImagePlaceholder} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Calendar Section */}
+      <section className={styles.calendarSection}>
+        <div className={styles.sectionContent}>
+          <div className={styles.calendarContent}>
+            <div className={styles.calendarImage}>
+              <img src="/calendar.png" alt="Calendar Interface" className={styles.calendarImagePlaceholder} />
+            </div>
+            <div className={styles.calendarText}>
+              <h2 className={styles.sectionTitle}>Calendars</h2>
+              <p className={styles.sectionSubtitle}>Never miss a tournament again. Follow your favorite gaming groups and get automatic updates when new events are added.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Link Profiles Section */}
+      <section className={styles.linkProfilesSection}>
+        <div className={styles.sectionContent}>
+          <div className={styles.linkProfilesContent}>
+            <div className={styles.linkProfilesText}>
+              <h2 className={styles.sectionTitle}>Link Online Profiles</h2>
+              <p className={styles.sectionSubtitle}>Connect your gaming accounts to show your tournament history and rankings across all platforms</p>
+            </div>
+            <div className={styles.linkProfilesIcons}>
+              <div className={styles.profileIcon}>
+                <div className={styles.iconContainer}>
+                  <img src="/start-logo.png" alt="start.gg" className={styles.platformLogo} />
+                </div>
+              </div>
+              <div className={styles.profileIcon}>
+                <div className={styles.iconContainer}>
+                  <img src="/challonge-logo.svg" alt="Challonge" className={styles.platformLogo} />
+                </div>
+              </div>
+              <div className={styles.profileIcon}>
+                <div className={styles.iconContainer}>
+                  <img src="/supermajor-logo.png" alt="Supermajor" className={styles.platformLogo} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Video Demo Section */}
       <section className={styles.videoDemoSection}>
@@ -81,22 +130,15 @@ export default function SplashPage() {
           <div className={styles.videoDemoGrid}>
             <div className={styles.videoDemo}>
               <div className={styles.videoContainer}>
-                <img src="/create-event.gif" alt="Event Creation Demo" className={styles.demoGif} />
+                <img src="/create-event-image.png" alt="Event Creation Demo" className={styles.demoGif} />
               </div>
               <h3>Create Events in Seconds</h3>
-              <p>See how quickly you can set up a tournament with all the details your community needs.</p>
+              <p>See how quickly you can set up an event with all the details your community needs.</p>
             </div>
             
             <div className={styles.videoDemo}>
               <div className={styles.videoContainer}>
-                <div className={styles.videoPlaceholder}>
-                  <div className={styles.playButton}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                  </div>
-                  <div className={styles.videoLabel}>Tournament Management</div>
-                </div>
+                <img src="/bracket.png" alt="Tournament Bracket Visualization" className={styles.demoGif} />
               </div>
               <h3>Manage Tournaments</h3>
               <p>Watch how automated brackets and live results keep your tournaments running smoothly.</p>
@@ -104,14 +146,7 @@ export default function SplashPage() {
             
             <div className={styles.videoDemo}>
               <div className={styles.videoContainer}>
-                <div className={styles.videoPlaceholder}>
-                  <div className={styles.playButton}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                  </div>
-                  <div className={styles.videoLabel}>Community Features</div>
-                </div>
+                <img src="/conflict.png" alt="Conflict Resolver Assistant" className={styles.demoGif} />
               </div>
               <h3>Never Get Lost</h3>
               <p>Powerful event management engine with useful hints at every step</p>
@@ -195,7 +230,7 @@ export default function SplashPage() {
               </div>
               {openFaq === 0 && (
                 <div className={styles.faqContent}>
-                  <p>Yes! Locals is completely free to use. Create unlimited events, invite unlimited guests, and use all features without any paywalls or hidden costs.</p>
+                  <p>Yes! Locals is free to start using. For Paid events, we charge a 5% platform fee. We will also be offering a Premium tier for power users.</p>
                 </div>
               )}
             </div>
@@ -243,7 +278,7 @@ export default function SplashPage() {
               </div>
               {openFaq === 3 && (
                 <div className={styles.faqContent}>
-                  <p>No setup required! Locals works on any browser, iPhone, and Android. Just visit the website and start creating events immediately.</p>
+                  <p>We have a mobile app in the works. For now, you can use our website on any browser, iPhone, and Android.</p>
                 </div>
               )}
             </div>
@@ -275,7 +310,7 @@ export default function SplashPage() {
               </div>
               {openFaq === 5 && (
                 <div className={styles.faqContent}>
-                  <p>Yes! Connect your Start.gg, Challonge, and Supermajor accounts for seamless tournament integration and cross-platform results.</p>
+                  <p>Yes! Connect your Start.gg, Challonge, and Supermajor accounts for seamless profile integration and cross-platform results.</p>
                 </div>
               )}
             </div>
@@ -287,9 +322,9 @@ export default function SplashPage() {
       <section className={styles.finalCtaSection}>
         <div className={styles.finalCtaContent}>
           <h2 className={styles.finalCtaTitle}>Let's get the gaming started</h2>
-          <p className={styles.finalCtaSubtitle}>Find us at LOCALS.GG. Mobile Experience coming soon</p>
+          <p className={styles.finalCtaSubtitle}></p>
           <button className={styles.primaryButton} onClick={handleGetStarted}>
-            <span>Create event</span>
+            <span>Get Early Access</span>
           </button>
         </div>
       </section>

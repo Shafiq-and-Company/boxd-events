@@ -79,13 +79,15 @@
 }
 
 .heroImagePlaceholder {
-  width: 95%;
+  width: 100%;
   max-width: 1200px;
   height: 600px;
   border: 2px solid #000000;
   box-shadow: 8px 8px 0px #000000;
   border-radius: 0;
   object-fit: cover;
+  object-position: center top;
+  transform: scale(1.2);
   animation: fadeInRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s both;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
@@ -93,7 +95,7 @@
 }
 
 .heroImagePlaceholder:hover {
-  transform: translateY(-2px);
+  transform: scale(1.2) translateY(-2px);
   box-shadow: 10px 10px 0px #000000;
 }
 
@@ -125,7 +127,12 @@
 }
 
 .heroTitle span:nth-child(1) { animation-delay: 0.6s; }
-.heroTitle span:nth-child(3) { animation-delay: 0.8s; }
+.heroTitle span:nth-child(3) { 
+  animation-delay: 0.8s; 
+  font-size: 72px;
+  font-weight: 800;
+  color: #000000;
+}
 
 .divider {
   width: 60px;
@@ -265,18 +272,18 @@
 }
 
 .valueProp {
-  padding: 0;
+  padding: 32px;
   background: #FFFFFF;
   border: 2px solid #000000;
   box-shadow: 8px 8px 0px #000000;
   border-radius: 0;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  text-align: center;
-  aspect-ratio: 16/9;
+  text-align: left;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  min-height: 400px;
 }
 
 .valueProp:hover {
@@ -285,20 +292,20 @@
 
 
 .valueProp h3 {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 600;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   color: #000000;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .valueProp p {
-  font-size: 20px;
+  font-size: 16px;
   color: #404040;
-  line-height: 1.6;
-  margin: 0;
+  line-height: 1.5;
+  margin-bottom: 24px;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  max-width: 400px;
+  flex: 1;
 }
 
 .demoPlaceholder {
@@ -317,9 +324,181 @@
 
 .demoImage {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: 300px;
+  object-fit: cover;
   border-radius: 0;
+  border: 1px solid #E0E0E0;
+  transform: scale(1.1);
+  transform-origin: center;
+}
+
+/* Discover Section */
+.discoverSection {
+  padding: 120px 24px;
+  background: #F8F8F8;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 0;
+}
+
+.discoverContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.discoverText {
+  text-align: left;
+}
+
+.discoverImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.discoverImagePlaceholder {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border: 2px solid #000000;
+  box-shadow: 8px 8px 0px #000000;
+  border-radius: 0;
+  object-fit: cover;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.discoverImagePlaceholder:hover {
+  transform: translateY(-2px);
+  box-shadow: 10px 10px 0px #000000;
+}
+
+/* Calendar Section */
+.calendarSection {
+  padding: 120px 24px;
+  background: #FFFFFF;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 0;
+}
+
+.calendarContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.calendarImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  order: 1;
+}
+
+.calendarText {
+  text-align: left;
+  order: 2;
+}
+
+.calendarImagePlaceholder {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border: 2px solid #000000;
+  box-shadow: 8px 8px 0px #000000;
+  border-radius: 0;
+  object-fit: cover;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.calendarImagePlaceholder:hover {
+  transform: translateY(-2px);
+  box-shadow: 10px 10px 0px #000000;
+}
+
+/* Link Profiles Section */
+.linkProfilesSection {
+  padding: 120px 24px;
+  background: #F8F8F8;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 0;
+}
+
+.linkProfilesContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 48px;
+}
+
+.linkProfilesText {
+  text-align: center;
+  max-width: 600px;
+}
+
+.linkProfilesIcons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.profileIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background: #FFFFFF;
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  border-radius: 0;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  min-width: 120px;
+}
+
+.profileIcon:hover {
+  background: #F8F8F8;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #404040;
+}
+
+.iconLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.platformLogo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  object-position: center;
 }
 
 /* Social Proof Section */
@@ -545,7 +724,7 @@
 
 /* Video Demo Section */
 .videoDemoSection {
-  padding: 120px 24px;
+  padding: 60px 24px;
   background: #FFFFFF;
   background-image: 
     linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
@@ -627,6 +806,8 @@
   height: 100%;
   object-fit: cover;
   border-radius: 0;
+  transform: scale(1.2);
+  transform-origin: center;
 }
 
 .videoDemo h3 {
@@ -1033,6 +1214,46 @@
 
   .advancedFeaturesGrid {
     grid-template-columns: 1fr;
+  }
+
+  .discoverContent {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .discoverText {
+    text-align: center;
+  }
+
+  .discoverImagePlaceholder {
+    max-width: 100%;
+  }
+
+  .calendarContent {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .calendarImage {
+    order: 1;
+  }
+
+  .calendarText {
+    text-align: center;
+    order: 2;
+  }
+
+  .calendarImagePlaceholder {
+    max-width: 100%;
+  }
+
+  .linkProfilesIcons {
+    gap: 24px;
+  }
+
+  .profileIcon {
+    min-width: 100px;
+    padding: 20px;
   }
 
   .finalCtaTitle {

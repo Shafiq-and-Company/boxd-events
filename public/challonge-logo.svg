@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="77.535942mm"
+   height="84.504372mm"
+   viewBox="0 0 77.53594 84.504372"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   sodipodi:docname="ChallongeIcon.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.64052329"
+     inkscape:cx="337.22427"
+     inkscape:cy="227.93863"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g861" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-15.823149,-87.866034)">
+    <g
+       style="overflow:visible"
+       id="g861"
+       transform="matrix(0.26458333,0,0,0.26458333,15.823147,87.866034)">
+      <g
+         transform="matrix(3.8911325,0,0,3.8911325,-843.68405,0)"
+         id="g3250">
+        <g
+           id="g3254">
+          <path
+             style="fill:#ff7324;fill-opacity:1;fill-rule:evenodd"
+             id="path3256"
+             d="m 291.496,17.625 c -21.852,5.605 -41.235,15.521 -56.801,32.248 3.926,4.251 8.416,5.555 13.744,6.55 11.443,-11.805 25.47,-19.303 41.265,-23.855 3.881,-1.12 1.923,-11.453 1.792,-14.943 z"
+             clip-rule="evenodd" />
+          <path
+             style="fill:#ff7324;fill-opacity:1;fill-rule:evenodd"
+             id="path3258"
+             d="m 233.925,18.311 c -16.354,9.442 -21.958,30.361 -12.517,46.714 4.875,8.443 12.81,14.021 21.594,16.141 26.505,6.385 48.655,-21.885 47.718,-46.69 -15.059,4.472 -28.147,11.792 -38.855,22.549 31.46,5.422 3.104,27.607 -17.051,13.984 -14.457,-9.772 -16.144,-28.107 -7.929,-41.825 5.047,-8.429 12.112,-11.646 20.633,-15.281 -4.652,0.476 -9.282,1.918 -13.593,4.408 z"
+             clip-rule="evenodd" />
+          <path
+             style="fill:#ff7324;fill-opacity:1;fill-rule:evenodd"
+             id="path3260"
+             d="m 291.387,0 c -29.036,8.964 -60.413,17.076 -62.222,35.94 -0.402,2.803 0.189,5.862 2.14,9.24 0.625,1.081 1.263,2.048 1.917,2.919 14.912,-16.892 33.967,-26.92 56.605,-32.691 3.915,-0.998 1.692,-11.919 1.56,-15.408 z"
+             clip-rule="evenodd" />
+        </g>
+      </g>
+      <g
+         id="text2995"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none" />
+    </g>
+  </g>
+</svg>

@@ -6,7 +6,7 @@ export default function SplashNav() {
   const router = useRouter();
 
   const handleGetStarted = () => {
-    router.push('/login');
+    window.open('https://ravel-bell-55722578.figma.site/', '_blank');
   };
 
   const handleLogoClick = () => {
@@ -20,11 +20,6 @@ export default function SplashNav() {
           className={styles.logo}
           onClick={handleLogoClick}
         >
-          <img 
-            src="/logo.png" 
-            alt="BOXD" 
-            className={styles.logoImage}
-          />
           <span className={styles.logoText}>LOCALS.GG</span>
         </div>
         
@@ -32,7 +27,7 @@ export default function SplashNav() {
           onClick={handleGetStarted}
           className={styles.getStartedButton}
         >
-          <span className={styles.buttonText}>Get Started</span>
+          <span className={styles.buttonText}>Try Demo</span>
         </button>
       </div>
     </nav>
