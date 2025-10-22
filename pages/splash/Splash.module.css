@@ -78,15 +78,6 @@
   background: #F8F8F8;
 }
 
-.valuePropIcon {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  color: #404040;
-  margin: 0 0 16px 0;
-}
 
 .valueProp h3 {
   font-size: 24px;
