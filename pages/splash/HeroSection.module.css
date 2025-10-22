@@ -4,13 +4,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 24px;
+  padding: 80px 24px 0 24px;
   margin: 0;
   background: #FFFFFF;
   position: relative;
   overflow: hidden;
   margin-top: -64px;
-  padding-top: 64px;
+  padding-top: 144px;
   background-image: 
     linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
@@ -21,9 +21,12 @@
 .heroContent {
   display: flex;
   flex-direction: column;
-  gap: 64px;
+  gap: 32px;
   align-items: center;
+  justify-content: center;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   animation: slideInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -40,6 +43,10 @@
 
 .heroText {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 
@@ -48,11 +55,13 @@
   justify-content: center;
   align-items: center;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .heroImagePlaceholder {
-  width: 90%;
-  max-width: 1000px;
+  width: 95%;
+  max-width: 1200px;
   height: 600px;
   background: #FFFFFF;
   border: 2px solid #000000;
@@ -108,7 +117,7 @@
   width: 60px;
   height: 2px;
   background-color: #000000;
-  margin: 24px auto 32px auto;
+  margin: 16px auto;
   animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.0s both;
 }
 
@@ -128,7 +137,7 @@
   font-size: 18px;
   color: #707070;
   line-height: 1.5;
-  margin-bottom: 64px;
+  margin-bottom: 24px;
   margin-top: 0;
   font-weight: 300;
   max-width: 600px;
@@ -143,11 +152,39 @@
   transform: translateY(-2px);
 }
 
+.ctaButton {
+  background: #FFFFFF;
+  color: #000000;
+  border: 2px solid #000000;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.4s both;
+  box-shadow: 4px 4px 0px #000000;
+  margin-top: 16px;
+}
+
+.ctaButton:hover {
+  background: #F5F5F5;
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.ctaButton:active {
+  transform: translateY(0);
+  box-shadow: 2px 2px 0px #000000;
+}
+
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .heroContent {
-    gap: 32px;
+    gap: 24px;
   }
 
   .heroText {
@@ -165,6 +202,11 @@
   .heroImagePlaceholder {
     width: 95%;
     height: 400px;
+  }
+
+  .ctaButton {
+    padding: 14px 28px;
+    font-size: 16px;
   }
 
 }

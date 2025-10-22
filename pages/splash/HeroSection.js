@@ -13,7 +13,7 @@ export default function HeroSection() {
           <h1 className={styles.heroTitle}>
             <span>This is where</span>
             <br />
-            <span>gaming starts</span>
+            <span>Gaming starts</span>
           </h1>
           
           <div className={styles.divider}></div>
@@ -21,6 +21,10 @@ export default function HeroSection() {
           <p className={styles.heroSubtitle}>
             Find gaming events near you or make your own to build the gaming community you want. Connect with local gamers and join fun tournaments.
           </p>
+          
+          <button className={styles.ctaButton} onClick={handleGetStarted}>
+            Get Started
+          </button>
         </div>
         <div className={styles.heroImage}>
           <div className={styles.heroImagePlaceholder}>
