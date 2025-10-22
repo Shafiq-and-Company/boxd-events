@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import SplashNav from './SplashNav';
-import HeroSection from './HeroSection';
 import styles from './Splash.module.css';
 
 export default function SplashPage() {
@@ -17,7 +16,34 @@ export default function SplashPage() {
   return (
     <div className={styles.pageContainer}>
       <SplashNav />
-      <HeroSection />
+      
+      {/* Hero Section */}
+      <section className={styles.heroSection}>
+        <div className={styles.heroContent}>
+          <div className={styles.heroText}>
+            <h1 className={styles.heroTitle}>
+              <span>This is where</span>
+              <br />
+              <span>Gaming starts</span>
+            </h1>
+            
+            <div className={styles.divider}></div>
+            
+            <p className={styles.heroSubtitle}>
+              Find gaming events near you or make your own to build the gaming community you want. Connect with local gamers and join fun tournaments.
+            </p>
+            
+            <button className={styles.ctaButton} onClick={handleGetStarted}>
+              Get Started
+            </button>
+          </div>
+          <div className={styles.heroImage}>
+            <div className={styles.heroImagePlaceholder}>
+              Hero Image Placeholder
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Value Props Section */}
       <section className={styles.valuePropsSection}>
