@@ -109,7 +109,8 @@
   width: 100%;
   height: 400px;
   background: #FFFFFF;
-  border: 4px solid #000000;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   display: flex;
   align-items: center;
@@ -198,7 +199,8 @@
 .primaryButton {
   background: #000000;
   color: #FFFFFF;
-  border: 4px solid #000000;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
   padding: 20px 40px;
   font-size: 18px;
   font-weight: 500;
@@ -271,7 +273,8 @@
 .valueProp {
   padding: 48px;
   background: #FFFFFF;
-  border: 4px solid #000000;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   text-align: center;
@@ -310,13 +313,8 @@
 /* Social Proof Section */
 .socialProofSection {
   padding: 48px 0;
-  background: #F8F8F8;
+  background: transparent;
   overflow: hidden;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
 }
 
 .testimonialsSlider {
@@ -335,7 +333,8 @@
 .testimonial {
   padding: 24px 32px;
   background: #FFFFFF;
-  border: 4px solid #000000;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   text-align: left;
   white-space: nowrap;
@@ -438,7 +437,8 @@
   padding: 12px 16px;
   background: #000000;
   color: #FFFFFF;
-  border: 4px solid #000000;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   cursor: pointer;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -473,7 +473,8 @@
   background: #000000;
   border-radius: 0;
   padding: 12px;
-  border: 4px solid #000000;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
 }
 
 .phoneScreen {
@@ -550,7 +551,8 @@
 
 .videoDemo {
   background: #FFFFFF;
-  border: 4px solid #000000;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   overflow: hidden;
@@ -645,7 +647,8 @@
 .feature {
   padding: 64px;
   background: #FFFFFF;
-  border: 4px solid #000000;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -701,7 +704,8 @@
 .advancedFeature {
   padding: 32px;
   background: #FFFFFF;
-  border: 4px solid #000000;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -752,6 +756,95 @@
 }
 
 
+
+/* FAQs Section */
+.faqsSection {
+  padding: 80px 24px;
+  background: #F8F8F8;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 0;
+}
+
+.faqsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  text-align: left;
+  width: 100%;
+}
+
+.faq {
+  padding: 20px;
+  background: #FFFFFF;
+  border: 1px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  border-radius: 0;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  cursor: pointer;
+}
+
+.faq:hover {
+  background: #F8F8F8;
+}
+
+.faqHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.faq h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  color: #000000;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  flex: 1;
+}
+
+.faqIcon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #404040;
+  transition: transform 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.faqIconOpen {
+  transform: rotate(180deg);
+}
+
+.faqContent {
+  margin-top: 12px;
+  animation: fadeIn 200ms ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.faqContent p {
+  font-size: 14px;
+  color: #404040;
+  line-height: 1.4;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
 
 /* Final CTA Section */
 .finalCtaSection {
