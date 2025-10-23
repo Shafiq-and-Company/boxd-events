@@ -3,11 +3,12 @@ import { supabase } from '../../lib/supabaseClient';
 import styles from './BracketVisualization.module.css';
 
 const BracketVisualization = ({ eventData, refreshTrigger }) => {
-  const [bracketData, setBracketData] = useState({ rounds: [] });
+  const [bracketData, setBracketData] = useState(null);
   const [tournamentInfo, setTournamentInfo] = useState({
     participantCount: 0,
     tournamentFormat: 'Single Elimination'
   });
+  const [expandedSections, setExpandedSections] = useState({});
 
   // Fetch tournament data when eventData changes or refresh is triggered
   useEffect(() => {
@@ -25,7 +26,7 @@ const BracketVisualization = ({ eventData, refreshTrigger }) => {
         .single();
 
       if (tournament && !error) {
-        setBracketData(tournament.bracket_data || { rounds: [] });
+        setBracketData(tournament.bracket_data);
         setTournamentInfo({
           participantCount: tournament.bracket_data?.participants?.length || 0,
           tournamentFormat: getTournamentFormatName(tournament.tournament_type)
@@ -46,12 +47,187 @@ const BracketVisualization = ({ eventData, refreshTrigger }) => {
     return formats[type] || 'Single Elimination';
   };
 
-  // Bracket visualization is read-only - no editing functionality
+  const toggleSection = (sectionKey) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionKey]: !prev[sectionKey]
+    }));
+  };
+
+  const renderJsonValue = (value, key = '', depth = 0) => {
+    if (value === null) return <span className={styles.nullValue}>null</span>;
+    if (value === undefined) return <span className={styles.undefinedValue}>undefined</span>;
+    
+    if (typeof value === 'boolean') {
+      return <span className={styles.booleanValue}>{value.toString()}</span>;
+    }
+    
+    if (typeof value === 'number') {
+      return <span className={styles.numberValue}>{value}</span>;
+    }
+    
+    if (typeof value === 'string') {
+      return <span className={styles.stringValue}>"{value}"</span>;
+    }
+    
+    if (Array.isArray(value)) {
+      const arrayKey = key || 'array';
+      const isExpanded = expandedSections[arrayKey];
+      
+      return (
+        <div className={styles.arrayContainer}>
+          <button 
+            className={styles.expandButton}
+            onClick={() => toggleSection(arrayKey)}
+          >
+            <span className={styles.expandIcon}>{isExpanded ? '▼' : '▶'}</span>
+            <span className={styles.arrayBracket}>[</span>
+            <span className={styles.arrayLength}>{value.length} items</span>
+            <span className={styles.arrayBracket}>]</span>
+          </button>
+          {isExpanded && (
+            <div className={styles.arrayContent}>
+              {value.map((item, index) => (
+                <div key={index} className={styles.arrayItem}>
+                  <span className={styles.arrayIndex}>{index}:</span>
+                  {renderJsonValue(item, `${arrayKey}[${index}]`, depth + 1)}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    if (typeof value === 'object') {
+      const objectKey = key || 'object';
+      const isExpanded = expandedSections[objectKey];
+      const entries = Object.entries(value);
+      
+      return (
+        <div className={styles.objectContainer}>
+          <button 
+            className={styles.expandButton}
+            onClick={() => toggleSection(objectKey)}
+          >
+            <span className={styles.expandIcon}>{isExpanded ? '▼' : '▶'}</span>
+            <span className={styles.objectBracket}>{'{'}</span>
+            <span className={styles.objectLength}>{entries.length} properties</span>
+            <span className={styles.objectBracket}>{'}'}</span>
+          </button>
+          {isExpanded && (
+            <div className={styles.objectContent}>
+              {entries.map(([objKey, objValue]) => (
+                <div key={objKey} className={styles.objectItem}>
+                  <span className={styles.objectKey}>"{objKey}":</span>
+                  {renderJsonValue(objValue, `${objectKey}.${objKey}`, depth + 1)}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    return <span className={styles.unknownValue}>{String(value)}</span>;
+  };
+
+  const renderTournamentSpecificData = () => {
+    if (!bracketData) return null;
+
+    const getTournamentTypeIcon = (type) => {
+      switch (type) {
+        case 'single_elimination':
+          return '🏆';
+        case 'double_elimination':
+          return '🥇';
+        case 'round_robin':
+          return '🔄';
+        case 'swiss':
+          return '♟️';
+        default:
+          return '🏅';
+      }
+    };
+
+    const getTournamentTypeDescription = (type) => {
+      switch (type) {
+        case 'single_elimination':
+          return 'Single elimination tournament where players are eliminated after one loss';
+        case 'double_elimination':
+          return 'Double elimination tournament where players need two losses to be eliminated';
+        case 'round_robin':
+          return 'Round robin tournament where every player plays every other player';
+        case 'swiss':
+          return 'Swiss tournament with multiple rounds and pairings based on performance';
+        default:
+          return 'Tournament format';
+      }
+    };
+
+    const sections = [
+      {
+        key: 'tournamentInfo',
+        title: `Tournament Info ${getTournamentTypeIcon(bracketData.tournamentType)}`,
+        data: {
+          tournamentType: bracketData.tournamentType,
+          currentRound: bracketData.currentRound,
+          totalRounds: bracketData.totalRounds,
+          participantCount: bracketData.participants?.length || 0,
+          description: getTournamentTypeDescription(bracketData.tournamentType)
+        }
+      },
+      {
+        key: 'participants',
+        title: `Participants (${bracketData.participants?.length || 0})`,
+        data: bracketData.participants || []
+      },
+      {
+        key: 'rounds',
+        title: `Rounds (${bracketData.rounds?.length || 0})`,
+        data: bracketData.rounds || []
+      }
+    ];
+
+    // Add tournament-specific sections based on type
+    if (bracketData.tournamentType === 'double_elimination') {
+      const winnersRounds = bracketData.rounds?.filter(round => round.bracket === 'winners') || [];
+      const losersRounds = bracketData.rounds?.filter(round => round.bracket === 'losers') || [];
+      const grandFinals = bracketData.rounds?.filter(round => round.bracket === 'grand_finals') || [];
+
+      sections.push(
+        {
+          key: 'winnersBracket',
+          title: `Winners Bracket (${winnersRounds.length} rounds)`,
+          data: winnersRounds
+        },
+        {
+          key: 'losersBracket',
+          title: `Losers Bracket (${losersRounds.length} rounds)`,
+          data: losersRounds
+        },
+        {
+          key: 'grandFinals',
+          title: `Grand Finals (${grandFinals.length} rounds)`,
+          data: grandFinals
+        }
+      );
+    }
+
+    return sections.map(section => (
+      <div key={section.key} className={styles.section}>
+        <h3 className={styles.sectionTitle}>{section.title}</h3>
+        <div className={styles.sectionContent}>
+          {renderJsonValue(section.data, section.key)}
+        </div>
+      </div>
+    ));
+  };
 
   return (
     <div className={styles.bracketContainer}>
       <div className={styles.bracketHeader}>
-        <h2 className={styles.bracketTitle}>Bracket</h2>
+        <h2 className={styles.bracketTitle}>Tournament Data</h2>
         <div className={styles.bracketInfo}>
           <span className={styles.participantCount}>{tournamentInfo.participantCount} players</span>
           <span className={styles.tournamentFormat}>{tournamentInfo.tournamentFormat}</span>
@@ -59,38 +235,16 @@ const BracketVisualization = ({ eventData, refreshTrigger }) => {
       </div>
 
       <div className={styles.bracketContent}>
-        {bracketData.rounds.length > 0 ? (
-          bracketData.rounds.map((round, roundIndex) => (
-            <div key={roundIndex} className={styles.round}>
-              <h3 className={styles.roundTitle}>{round.name}</h3>
-              <div className={styles.matches}>
-                {round.matches.map((match) => (
-                  <div 
-                    key={match.matchId} 
-                    className={styles.match}
-                  >
-                    <div className={styles.matchHeader}>
-                      <span className={styles.matchNumber}>{match.matchId}</span>
-                      <span className={styles.matchStatus}>
-                        {match.winner ? 'Done' : match.status === 'in_progress' ? 'Live' : 'Up next'}
-                      </span>
-                    </div>
-                    
-                    <div className={styles.players}>
-                      <div className={`${styles.player} ${match.winner === match.player1?.id ? styles.winner : ''}`}>
-                        <span className={styles.playerName}>{match.player1?.name || 'TBD'}</span>
-                        <span className={styles.playerScore}>{match.player1Score || '-'}</span>
-                      </div>
-                      <div className={`${styles.player} ${match.winner === match.player2?.id ? styles.winner : ''}`}>
-                        <span className={styles.playerName}>{match.player2?.name || 'TBD'}</span>
-                        <span className={styles.playerScore}>{match.player2Score || '-'}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+        {bracketData ? (
+          <div className={styles.jsonViewer}>
+            <div className={styles.jsonHeader}>
+              <span className={styles.jsonTitle}>Bracket Data (JSON)</span>
+              <span className={styles.jsonType}>{tournamentInfo.tournamentFormat}</span>
             </div>
-          ))
+            <div className={styles.jsonContent}>
+              {renderTournamentSpecificData()}
+            </div>
+          </div>
         ) : (
           <div className={styles.emptyState}>
             <div className={styles.emptyIcon}>
@@ -107,14 +261,13 @@ const BracketVisualization = ({ eventData, refreshTrigger }) => {
                 <path d="M16 18h.01"/>
               </svg>
             </div>
-            <h3 className={styles.emptyTitle}>No bracket yet</h3>
+            <h3 className={styles.emptyTitle}>No tournament data</h3>
             <p className={styles.emptyDescription}>
-              Bracket will appear here once players are added.
+              Tournament data will appear here once a tournament is created.
             </p>
           </div>
         )}
       </div>
-
     </div>
   );
 };

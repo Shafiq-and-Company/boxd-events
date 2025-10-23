@@ -1,4 +1,4 @@
-/* Bracket Visualization Container */
+/* JSON Viewer Container */
 .bracketContainer {
   background: #ffffff;
   border: 1px solid #000000;
@@ -13,7 +13,7 @@
   flex-direction: column;
 }
 
-/* Bracket Header */
+/* Header */
 .bracketHeader {
   display: flex;
   justify-content: space-between;
@@ -47,138 +47,196 @@
   font-weight: 400;
 }
 
-/* Bracket Content */
+/* Content */
 .bracketContent {
   display: flex;
-  gap: 16px;
-  overflow-x: auto;
+  flex-direction: column;
+  overflow-y: auto;
   padding-bottom: 12px;
-  justify-content: flex-start;
-  align-items: flex-start;
   flex: 1;
 }
 
-/* Round */
-.round {
-  min-width: 180px;
-  flex-shrink: 0;
+/* JSON Viewer */
+.jsonViewer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
 }
 
-.roundTitle {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #64748b;
-  margin: 0 0 10px 0;
-  text-align: left;
-  padding: 4px 8px;
+.jsonHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 0;
-  letter-spacing: 0.025em;
-  text-transform: uppercase;
 }
 
-.matches {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.jsonTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
 }
 
-/* Match */
-.match {
+.jsonType {
+  font-size: 0.8rem;
+  color: #6b7280;
   background: #ffffff;
+  padding: 4px 8px;
   border: 1px solid #d1d5db;
-  border-radius: 0;
-  padding: 8px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
-
-/* Match styling - read-only visualization only */
-
-.matchHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.matchNumber {
-  font-size: 0.7rem;
-  font-weight: 400;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.matchStatus {
-  font-size: 0.7rem;
-  color: #059669;
-  font-weight: 500;
-  background: #dcfce7;
-  padding: 2px 5px;
   border-radius: 3px;
-  letter-spacing: 0.025em;
+  font-weight: 500;
 }
 
-/* Players */
-.players {
+.jsonContent {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
+  flex: 1;
 }
 
-.player {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 8px;
-  background: #f9fafb;
+/* Sections */
+.section {
+  background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 0;
+  overflow: hidden;
   transition: all 0.2s ease;
 }
 
-.player.winner {
-  background: #dcfce7;
-  border-color: #16a34a;
-  color: #166534;
+.section:hover {
+  border-color: #000000;
+  box-shadow: 1px 1px 0px 0px #000000;
 }
 
-.playerName {
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionContent {
+  padding: 16px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* JSON Value Types */
+.stringValue {
+  color: #059669;
   font-weight: 500;
-  color: #1e293b;
-  font-size: 0.9rem;
-  line-height: 1.4;
 }
 
-.player.winner .playerName {
-  color: #166534;
+.numberValue {
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.booleanValue {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.nullValue {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.undefinedValue {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.unknownValue {
+  color: #7c3aed;
+  font-weight: 500;
+}
+
+/* Expandable Containers */
+.arrayContainer,
+.objectContainer {
+  margin: 4px 0;
+}
+
+.expandButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  transition: background-color 0.2s ease;
+  border-radius: 3px;
+  width: 100%;
+  text-align: left;
+}
+
+.expandButton:hover {
+  background: #f3f4f6;
+}
+
+.expandIcon {
+  font-size: 0.75rem;
+  color: #6b7280;
+  min-width: 12px;
+}
+
+.arrayBracket,
+.objectBracket {
+  color: #374151;
   font-weight: 600;
 }
 
-.playerScore {
-  font-weight: 500;
-  color: #64748b;
-  min-width: 16px;
-  text-align: center;
+.arrayLength,
+.objectLength {
+  color: #6b7280;
   font-size: 0.8rem;
+  font-style: italic;
 }
 
-.player.winner .playerScore {
-  color: #166534;
+.arrayContent,
+.objectContent {
+  margin-left: 20px;
+  margin-top: 4px;
+  border-left: 2px solid #e5e7eb;
+  padding-left: 12px;
 }
 
-.vs {
-  text-align: center;
-  font-size: 0.6rem;
+.arrayItem,
+.objectItem {
+  margin: 4px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.arrayIndex {
+  color: #6b7280;
   font-weight: 500;
-  color: #cbd5e1;
-  margin: 2px 0;
-  letter-spacing: 0.05em;
+  min-width: 40px;
+  flex-shrink: 0;
 }
 
-/* Modal styles removed - bracket visualization is read-only */
+.objectKey {
+  color: #7c3aed;
+  font-weight: 500;
+  min-width: 120px;
+  flex-shrink: 0;
+}
 
 /* Empty State */
 .emptyState {
@@ -189,6 +247,7 @@
   padding: 40px 20px;
   text-align: center;
   width: 100%;
+  flex: 1;
 }
 
 .emptyIcon {
@@ -214,6 +273,24 @@
 }
 
 
+/* Scrollbar Styling */
+.bracketContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bracketContent::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.bracketContent::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.bracketContent::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .bracketContainer {
@@ -233,19 +310,18 @@
     align-items: flex-start;
   }
   
-  .bracketContent {
-    gap: 16px;
+  .jsonContent {
+    gap: 8px;
   }
   
-  .round {
-    min-width: 140px;
+  .sectionContent {
+    padding: 12px;
+    font-size: 0.8rem;
   }
   
-  .match {
-    padding: 10px;
+  .objectKey {
+    min-width: 100px;
   }
-  
-  /* Modal styles removed */
 }
 
 @media (max-width: 480px) {
@@ -257,15 +333,18 @@
     font-size: 1.125rem;
   }
   
-  .round {
-    min-width: 120px;
-  }
-  
-  .match {
+  .sectionContent {
     padding: 8px;
+    font-size: 0.75rem;
   }
   
-  .player {
-    padding: 4px 6px;
+  .objectKey {
+    min-width: 80px;
+  }
+  
+  .arrayContent,
+  .objectContent {
+    margin-left: 16px;
+    padding-left: 8px;
   }
 }
