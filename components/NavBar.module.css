@@ -10,13 +10,13 @@
   z-index: 1000;
   padding: 16px 24px;
   height: 72px;
-  background: #ffffff;
+  background: white;
   border-bottom: 1px solid #000000;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .navbar.scrolled {
-  background: #ffffff;
+  background: white;
   border-bottom: 1px solid #000000;
 }
 

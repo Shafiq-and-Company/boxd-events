@@ -19,6 +19,7 @@ export default function EventDetail() {
   const [showUnregisterConfirm, setShowUnregisterConfirm] = useState(false)
   const [attendees, setAttendees] = useState([])
   const [loadingAttendees, setLoadingAttendees] = useState(false)
+  const [currentTheme, setCurrentTheme] = useState(null)
 
   const handleTabChange = (tab) => {
     if (tab === 'upcoming') {
@@ -67,6 +68,13 @@ export default function EventDetail() {
       }
 
       setEvent(data)
+      
+      // Extract and set theme
+      if (data.theme && typeof data.theme === 'object' && data.theme.name) {
+        setCurrentTheme(data.theme)
+      } else {
+        setCurrentTheme(null)
+      }
     } catch (err) {
       setError(err.message)
     } finally {
@@ -315,9 +323,15 @@ export default function EventDetail() {
     }
   }
 
+  // Apply theme background
+  const pageStyle = currentTheme ? {
+    background: currentTheme.colors.background,
+    minHeight: '100vh'
+  } : {}
+
   if (loading) {
     return (
-      <div className={styles.pageWrapper}>
+      <div className={styles.pageWrapper} style={pageStyle}>
         <NavBar activeTab="" onTabChange={handleTabChange} />
         <div className={styles.container}>
           <div className={styles.loading}>Loading event...</div>

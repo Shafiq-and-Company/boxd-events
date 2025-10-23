@@ -1,24 +1,15 @@
 .footer {
-  background: transparent;
-  margin: 0 200px;
+  background: white;
+  margin: 0;
   padding: 32px;
   color: #707070;
   font-size: 14px;
   line-height: 1.5;
   position: relative;
-  width: calc(100% - 400px);
+  width: 100%;
+  backdrop-filter: none;
 }
 
-.footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 1px;
-  background: #F0F0F0;
-}
 
 .container {
   max-width: 100%;
@@ -29,6 +20,7 @@
 .content {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 48px;
   margin-bottom: 24px;
 }
@@ -72,7 +64,6 @@
   display: flex;
   gap: 16px;
   align-items: center;
-  margin-left: auto;
 }
 
 .socialLink {
@@ -99,7 +90,7 @@
 
 .bottom {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   padding-top: 20px;
 }
@@ -113,9 +104,9 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .footer {
-    margin: 0 120px;
+    margin: 0;
     padding: 24px;
-    width: calc(100% - 240px);
+    width: 100%;
   }
   
   .container {
@@ -158,9 +149,9 @@
 
 @media (max-width: 480px) {
   .footer {
-    margin: 0 60px;
+    margin: 0;
     padding: 20px;
-    width: calc(100% - 120px);
+    width: 100%;
   }
   
   .container {
