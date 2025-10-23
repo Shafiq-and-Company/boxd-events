@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from './SplashNav.module.css';
 
 export default function SplashNav() {
   const router = useRouter();
+
+  // Hidden login shortcut: Cmd+Shift+L (Mac) or Ctrl+Shift+L (Windows/Linux)
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'L') {
+        e.preventDefault();
+        router.push('/login');
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [router]);
 
   const handleGetStarted = () => {
     window.open('https://ravel-bell-55722578.figma.site/', '_blank');
