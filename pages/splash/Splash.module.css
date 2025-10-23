@@ -6,8 +6,7 @@
   min-height: 100vh;
   position: relative;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: 0 0, 0 0;
 }
@@ -32,8 +31,7 @@
   margin-top: -64px;
   padding-top: 144px;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: 0 0, 0 0;
   animation: backgroundShift 20s ease-in-out infinite;
@@ -316,8 +314,7 @@
   padding: 120px 24px;
   background: #FFFFFF;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: 0 0, 0 0;
   animation: backgroundShift 20s ease-in-out infinite;
@@ -459,8 +456,7 @@
   padding: 120px 24px;
   background: #F8F8F8;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: 0 0, 0 0;
 }
@@ -517,8 +513,7 @@
   padding: 120px 24px;
   background: #FFFFFF;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: 0 0, 0 0;
 }
@@ -577,8 +572,7 @@
   padding: 120px 24px;
   background: #F8F8F8;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: 0 0, 0 0;
 }
@@ -669,8 +663,7 @@
   padding: 60px 24px;
   background: #FFFFFF;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: 0 0, 0 0;
 }
@@ -819,8 +812,7 @@
   padding: 120px 24px;
   background: #FFFFFF;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: 0 0, 0 0;
 }
@@ -945,8 +937,7 @@
   padding: 80px 24px;
   background: #F8F8F8;
   background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: 0 0, 0 0;
 }
@@ -1048,8 +1039,7 @@
   color: #FFFFFF;
   text-align: center;
   background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: 0 0, 0 0;
 }
