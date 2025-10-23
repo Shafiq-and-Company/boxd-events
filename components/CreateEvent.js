@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
-import PageTitle from './PageTitle'
 import styles from './CreateEvent.module.css'
 
 export default function CreateEvent() {
@@ -179,7 +178,6 @@ export default function CreateEvent() {
   if (!user) {
     return (
       <div className={styles.createEvent}>
-        <PageTitle title="Create Event" subtitle="Host your own gaming event" />
         <div className={styles.authRequired}>
           Please log in to create an event.
         </div>
@@ -189,9 +187,6 @@ export default function CreateEvent() {
 
   return (
     <div className={styles.createEvent}>
-      <PageTitle title="Create Event" subtitle="Host your own gaming event" />
-      
-
       {error && (
         <div className={styles.errorMessage}>
           {error}

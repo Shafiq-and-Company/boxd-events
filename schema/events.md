@@ -20,6 +20,50 @@ The `events` table stores information about gaming events and tournaments.
 | `host_id` | uuid | YES | null | Event host user ID (foreign key to users) |
 | `zip_code` | integer | YES | null | Event zip code |
 | `banner_image_url` | text | YES | null | URL to banner image stored in Supabase |
+| `theme` | jsonb | YES | null | Event theme configuration stored as JSON |
+
+## Theme Column Structure
+
+The `theme` column stores event-specific theme configuration as JSONB. This allows each event to have its own visual styling and branding.
+
+### Theme JSON Structure
+```json
+{
+  "name": "default",
+  "colors": {
+    "background": "#ffffff",
+    "primary": "#000000",
+    "secondary": "#f8f8f8",
+    "accent": "#333333",
+    "text": "#000000",
+    "textSecondary": "#666666",
+    "border": "#000000"
+  }
+}
+```
+
+### Predefined Theme Options
+- **default**: Standard black and white theme
+- **dark**: Dark mode with white text on dark backgrounds
+- **colorful**: Blue accent theme with light backgrounds
+
+### Theme Usage
+- **Event Creation**: Users can select a theme when creating events
+- **Event Display**: Event detail pages render using the stored theme
+- **CSS Variables**: Themes are applied via CSS custom properties
+- **Real-time Preview**: Theme changes are visible during event creation
+
+### Database Queries
+```sql
+-- Query events with theme data
+SELECT id, title, theme FROM events WHERE theme IS NOT NULL;
+
+-- Filter by specific theme
+SELECT * FROM events WHERE theme->>'name' = 'dark';
+
+-- Update event theme
+UPDATE events SET theme = '{"name": "colorful", "colors": {...}}' WHERE id = 'event-uuid';
+```
 
 ## Row Level Security (RLS) Policies
 
