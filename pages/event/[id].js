@@ -342,7 +342,7 @@ export default function EventDetail() {
 
   if (error || !event) {
     return (
-      <div className={styles.pageWrapper}>
+      <div className={styles.pageWrapper} style={pageStyle}>
         <NavBar activeTab="" onTabChange={handleTabChange} />
         <div className={styles.container}>
           <div className={styles.error}>
@@ -354,7 +354,7 @@ export default function EventDetail() {
   }
 
   return (
-    <div className={styles.pageWrapper}>
+    <div className={styles.pageWrapper} style={pageStyle}>
       <NavBar activeTab="" onTabChange={handleTabChange} />
       <div className={styles.container}>
         <div className={styles.eventDetail}>
