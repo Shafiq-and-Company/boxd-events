@@ -32,6 +32,7 @@ export default function ManageEvent() {
   const [imageUploading, setImageUploading] = useState(false)
   const [attendees, setAttendees] = useState([])
   const [loadingAttendees, setLoadingAttendees] = useState(false)
+  const [currentTheme, setCurrentTheme] = useState(null)
   const [activeTab, setActiveTab] = useState('overview')
 
   // Helper functions
@@ -72,6 +73,125 @@ export default function ManageEvent() {
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleThemeChange = async (e) => {
+    const { value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      theme: value
+    }))
+
+    // Create theme object based on selected theme
+    let themeObject = null
+    if (value === 'blue') {
+      themeObject = {
+        name: 'blue',
+        colors: {
+          background: '#f0f8ff',
+          primary: '#000000',
+          secondary: '#e6f3ff',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'red') {
+      themeObject = {
+        name: 'red',
+        colors: {
+          background: '#fff0f0',
+          primary: '#000000',
+          secondary: '#ffe6e6',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'green') {
+      themeObject = {
+        name: 'green',
+        colors: {
+          background: '#f0fff0',
+          primary: '#000000',
+          secondary: '#e6ffe6',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'yellow') {
+      themeObject = {
+        name: 'yellow',
+        colors: {
+          background: '#fffef0',
+          primary: '#000000',
+          secondary: '#fffce6',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'purple') {
+      themeObject = {
+        name: 'purple',
+        colors: {
+          background: '#f8f0ff',
+          primary: '#000000',
+          secondary: '#f0e6ff',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'orange') {
+      themeObject = {
+        name: 'orange',
+        colors: {
+          background: '#fff8f0',
+          primary: '#000000',
+          secondary: '#ffe6cc',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'pink') {
+      themeObject = {
+        name: 'pink',
+        colors: {
+          background: '#fff0f8',
+          primary: '#000000',
+          secondary: '#ffe6f3',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    }
+
+    // Update current theme state immediately
+    setCurrentTheme(themeObject)
+
+    // Save to Supabase
+    try {
+      const { error } = await supabase
+        .from('events')
+        .update({ theme: themeObject })
+        .eq('id', id)
+
+      if (error) throw error
+    } catch (err) {
+      console.error('Error updating theme:', err)
+      setError('Failed to update theme')
+    }
   }
 
 
@@ -115,6 +235,7 @@ export default function ManageEvent() {
         setImageUploading(false)
       }
 
+      // Theme is now handled separately in handleThemeChange
       const eventData = {
         title: formData.title,
         description: formData.description,
@@ -126,7 +247,6 @@ export default function ManageEvent() {
         state: formData.state,
         zip_code: formData.zip_code,
         cost: formData.cost || 0,
-        theme: formData.theme,
         banner_image_url: bannerImageUrl
       }
 
@@ -172,6 +292,18 @@ export default function ManageEvent() {
       if (error) throw error
       if (!event) throw new Error('Event not found or you do not have permission to edit it')
 
+      // Extract theme name from theme object
+      let themeName = ''
+      if (event.theme && typeof event.theme === 'object' && event.theme.name) {
+        themeName = event.theme.name
+        setCurrentTheme(event.theme) // Store full theme object
+      } else if (typeof event.theme === 'string') {
+        themeName = event.theme
+        setCurrentTheme(null) // No theme object available
+      } else {
+        setCurrentTheme(null)
+      }
+
       setFormData({
         title: event.title || '',
         description: event.description || '',
@@ -183,7 +315,7 @@ export default function ManageEvent() {
         cost: event.cost || '',
         state: event.state || '',
         zip_code: event.zip_code || '',
-        theme: event.theme || ''
+        theme: themeName
       })
 
       setBannerImageUrl(event.banner_image_url || null)
@@ -272,8 +404,14 @@ export default function ManageEvent() {
     )
   }
 
+  // Apply theme background
+  const pageStyle = currentTheme ? {
+    background: currentTheme.colors.background,
+    minHeight: '100vh'
+  } : {}
+
   return (
-    <div className={styles.manageEvent}>
+    <div className={styles.manageEvent} style={pageStyle}>
       
       {error && (
         <div className={styles.errorMessage}>{error}</div>
@@ -386,26 +524,81 @@ export default function ManageEvent() {
                 )}
               </div>
               
-              <div className={styles.themeDropdown}>
-                <select
-                  id="theme"
-                  name="theme"
-                  value={formData.theme}
-                  onChange={handleInputChange}
-                  className={styles.themeSelect}
-                >
-                  <option value="">Select Theme</option>
-                  <option value="gaming">Gaming</option>
-                  <option value="sports">Sports</option>
-                  <option value="tech">Tech</option>
-                  <option value="music">Music</option>
-                  <option value="art">Art</option>
-                  <option value="food">Food</option>
-                  <option value="business">Business</option>
-                  <option value="education">Education</option>
-                  <option value="health">Health</option>
-                  <option value="other">Other</option>
-                </select>
+              <div className={styles.themeSelector}>
+                <div className={styles.themeLabel}>Choose Theme</div>
+                <div className={styles.themeOptions}>
+                  <button
+                    className={`${styles.themeOption} ${formData.theme === '' ? styles.themeOptionActive : ''}`}
+                    onClick={() => handleThemeChange({ target: { value: '' } })}
+                    style={{ background: '#ffffff', border: '2px solid #000' }}
+                    title="Default"
+                  >
+                    <div className={styles.themeOptionName}>Default</div>
+                  </button>
+                  
+                  <button
+                    className={`${styles.themeOption} ${formData.theme === 'blue' ? styles.themeOptionActive : ''}`}
+                    onClick={() => handleThemeChange({ target: { value: 'blue' } })}
+                    style={{ background: '#f0f8ff', border: '2px solid #000' }}
+                    title="Blue"
+                  >
+                    <div className={styles.themeOptionName}>Blue</div>
+                  </button>
+                  
+                  <button
+                    className={`${styles.themeOption} ${formData.theme === 'red' ? styles.themeOptionActive : ''}`}
+                    onClick={() => handleThemeChange({ target: { value: 'red' } })}
+                    style={{ background: '#fff0f0', border: '2px solid #000' }}
+                    title="Red"
+                  >
+                    <div className={styles.themeOptionName}>Red</div>
+                  </button>
+                  
+                  <button
+                    className={`${styles.themeOption} ${formData.theme === 'green' ? styles.themeOptionActive : ''}`}
+                    onClick={() => handleThemeChange({ target: { value: 'green' } })}
+                    style={{ background: '#f0fff0', border: '2px solid #000' }}
+                    title="Green"
+                  >
+                    <div className={styles.themeOptionName}>Green</div>
+                  </button>
+                  
+                  <button
+                    className={`${styles.themeOption} ${formData.theme === 'yellow' ? styles.themeOptionActive : ''}`}
+                    onClick={() => handleThemeChange({ target: { value: 'yellow' } })}
+                    style={{ background: '#fffef0', border: '2px solid #000' }}
+                    title="Yellow"
+                  >
+                    <div className={styles.themeOptionName}>Yellow</div>
+                  </button>
+                  
+                  <button
+                    className={`${styles.themeOption} ${formData.theme === 'purple' ? styles.themeOptionActive : ''}`}
+                    onClick={() => handleThemeChange({ target: { value: 'purple' } })}
+                    style={{ background: '#f8f0ff', border: '2px solid #000' }}
+                    title="Purple"
+                  >
+                    <div className={styles.themeOptionName}>Purple</div>
+                  </button>
+                  
+                  <button
+                    className={`${styles.themeOption} ${formData.theme === 'orange' ? styles.themeOptionActive : ''}`}
+                    onClick={() => handleThemeChange({ target: { value: 'orange' } })}
+                    style={{ background: '#fff8f0', border: '2px solid #000' }}
+                    title="Orange"
+                  >
+                    <div className={styles.themeOptionName}>Orange</div>
+                  </button>
+                  
+                  <button
+                    className={`${styles.themeOption} ${formData.theme === 'pink' ? styles.themeOptionActive : ''}`}
+                    onClick={() => handleThemeChange({ target: { value: 'pink' } })}
+                    style={{ background: '#fff0f8', border: '2px solid #000' }}
+                    title="Pink"
+                  >
+                    <div className={styles.themeOptionName}>Pink</div>
+                  </button>
+                </div>
               </div>
             </div>
 
