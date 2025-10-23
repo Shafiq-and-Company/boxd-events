@@ -174,7 +174,9 @@ const BracketVisualization = ({ eventData, refreshTrigger }) => {
           currentRound: bracketData.currentRound,
           totalRounds: bracketData.totalRounds,
           participantCount: bracketData.participants?.length || 0,
-          description: getTournamentTypeDescription(bracketData.tournamentType)
+          description: getTournamentTypeDescription(bracketData.tournamentType),
+          tournamentComplete: bracketData.tournamentComplete || false,
+          winner: bracketData.winner || null
         }
       },
       {
@@ -188,6 +190,19 @@ const BracketVisualization = ({ eventData, refreshTrigger }) => {
         data: bracketData.rounds || []
       }
     ];
+
+    // Add tournament completion status if tournament is complete
+    if (bracketData.tournamentComplete && bracketData.winner) {
+      sections.push({
+        key: 'tournamentResults',
+        title: `🏆 Tournament Complete - Winner: ${bracketData.winner.username || 'Unknown'}`,
+        data: {
+          status: 'COMPLETED',
+          winner: bracketData.winner,
+          completedAt: new Date().toISOString()
+        }
+      });
+    }
 
     // Add tournament-specific sections based on type
     if (bracketData.tournamentType === 'double_elimination') {

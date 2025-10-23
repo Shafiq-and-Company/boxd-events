@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { handleMatchCompletion } from '../../lib/singleElimination';
+import { handleMatchCompletion, updateDatabaseMatches } from '../../lib/singleElimination';
 import { handleMatchCompletion as handleDoubleEliminationMatchCompletion } from '../../lib/doubleElimination';
 import { handleMatchCompletion as handleRoundRobinMatchCompletion } from '../../lib/roundRobin';
 import { handleMatchCompletion as handleSwissMatchCompletion } from '../../lib/swiss';
@@ -52,6 +52,26 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
       if (matchesError) {
         console.error('Error fetching matches:', matchesError);
         return;
+      }
+
+      console.log('Upcoming matches found:', matches?.length || 0);
+      console.log('Matches data:', matches);
+
+      // Debug: Also fetch all matches to see what's in the database
+      const { data: allMatches, error: allMatchesError } = await supabase
+        .from('tournament_matches')
+        .select(`
+          *,
+          player1:users!tournament_matches_player1_id_fkey(id, first_name, last_name, username),
+          player2:users!tournament_matches_player2_id_fkey(id, first_name, last_name, username)
+        `)
+        .eq('tournament_id', tournament.id)
+        .order('round_number', { ascending: true })
+        .order('match_id', { ascending: true });
+
+      if (!allMatchesError) {
+        console.log('All matches in database:', allMatches?.length || 0);
+        console.log('All matches data:', allMatches);
       }
 
       setUpcomingMatches(matches || []);
@@ -160,6 +180,9 @@ const UpNextCard = ({ eventData, refreshTrigger, onMatchUpdate }) => {
         .eq('id', tournament.id);
 
       if (bracketError) throw bracketError;
+
+      // Update database matches with new player assignments
+      await updateDatabaseMatches(tournament.id, updatedBracketData, supabase);
 
       // Refresh matches
       await fetchUpcomingMatches();
