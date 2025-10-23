@@ -7,6 +7,273 @@
   min-height: 100vh;
 }
 
+/* Tournament Section at Top */
+.tournamentSectionTop {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 32px auto;
+  padding: 0 24px;
+}
+
+/* Tab Section */
+.tabSection {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 24px auto;
+  padding: 0 24px;
+}
+
+.tabNavigation {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tabButton {
+  background: none;
+  border: none;
+  padding: 16px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.tabButton:hover {
+  color: #333;
+  background: #f8f8f8;
+}
+
+.tabButtonActive {
+  color: #000;
+  border-bottom-color: #000;
+  background: #fff;
+}
+
+.tabButtonActive:hover {
+  color: #000;
+  background: #fff;
+}
+
+/* Guests Tab Content */
+.guestsTabContent {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.guestsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.guestsActions {
+  display: flex;
+  align-items: center;
+}
+
+.guestsStats {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.guestStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 24px;
+  background: #f8f8f8;
+  border: 1px solid #000;
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.guestStatNumber {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #000;
+  line-height: 1;
+}
+
+.guestStatLabel {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.shareLinkStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 24px;
+  background: #f8f8f8;
+  border: 1px solid #000;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.shareLinkStat:hover {
+  background: #000;
+  border-color: #000;
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.shareLinkStat:hover .shareLinkIcon {
+  color: #fff;
+}
+
+.shareLinkStat:hover .shareLinkLabel {
+  color: #fff;
+}
+
+.shareLinkIcon {
+  color: #666;
+  margin-bottom: 8px;
+  transition: color 0.2s ease;
+}
+
+.shareLinkLabel {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.guestsLoading {
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.guestsEmpty {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.guestsEmptyIcon {
+  color: #ccc;
+  margin-bottom: 16px;
+}
+
+.guestsEmptyTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.guestsEmptyDescription {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.guestsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.guestItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #000;
+  transition: all 0.2s ease;
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.guestItem:hover {
+  border-color: #333;
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.guestAvatar {
+  width: 40px;
+  height: 40px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.guestInitial {
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.guestInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.guestName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 2px;
+}
+
+.guestJoined {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Registration Tab Content */
+.registrationTabContent {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.costInputRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.updateCostButton {
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  height: fit-content;
+}
+
+.updateCostButton:hover:not(:disabled) {
+  background: #333;
+  border-color: #333;
+}
+
+.updateCostButton:disabled {
+  background: #999;
+  border-color: #999;
+  cursor: not-allowed;
+}
+
 .formContainer {
   width: 100%;
   max-width: 1200px;
@@ -33,6 +300,10 @@
 .formColumn {
   width: 100%;
   max-width: 600px;
+  background: transparent;
+  border: 1px solid #000;
+  box-shadow: 2px 2px 0px 0px #000000;
+  padding: 24px;
 }
 
 .form {
@@ -44,19 +315,58 @@
 /* Banner Section */
 .bannerImage {
   width: 100%;
-  height: 400px;
   border: 1px solid #000;
-  background: #fafafa;
+  background: transparent;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  flex-direction: column;
   position: relative;
-  overflow: hidden;
   transition: border-color 200ms ease;
+  box-shadow: 2px 2px 0px 0px #000000;
+  padding: 20px;
 }
 
 .bannerImage:hover {
+  border-color: #333;
+}
+
+.imageContainer {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.imageControls {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.themeDropdown {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.themeSelect {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #000;
+  background: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 200ms ease;
+}
+
+.themeSelect:hover {
+  border-color: #333;
+}
+
+.themeSelect:focus {
+  outline: none;
   border-color: #333;
 }
 
@@ -65,16 +375,13 @@
 }
 
 .fileInputLabel {
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
   background: #000;
   color: #fff;
   padding: 6px 12px;
   border: 1px solid #000;
   font-size: 0.75rem;
   cursor: pointer;
+  text-align: center;
 }
 
 .uploadText {
@@ -89,9 +396,6 @@
 }
 
 .removeImageButton {
-  position: absolute;
-  top: 4px;
-  right: 4px;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
   border: 1px solid #000;
@@ -106,187 +410,6 @@
   object-fit: cover;
 }
 
-/* Hosted By Section */
-.hostedBy {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 16px;
-  width: 100%;
-  padding: 16px;
-  background: #fff;
-  border: 1px solid #000;
-}
-
-.hostedByMobile {
-  display: none;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-  margin-bottom: 16px;
-  padding: 8px 0;
-}
-
-.hostedByIcon {
-  width: 32px;
-  height: 32px;
-  background: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid #000;
-  color: #666;
-}
-
-.hostedByText {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.hostedByLabel {
-  font-size: 0.8rem;
-  color: #666;
-  font-weight: 600;
-}
-
-.hostName {
-  font-size: 0.9rem;
-  color: #000;
-  font-weight: 600;
-}
-
-/* Attendees Section */
-.attendeesSection {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
-  width: 100%;
-  padding: 16px;
-  background: #fff;
-  border: 1px solid #000;
-}
-
-.attendeesSectionMobile {
-  display: none;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
-  padding: 16px;
-  background: #fff;
-  border: 1px solid #000;
-}
-
-.attendeesHeader {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 0;
-}
-
-.attendeesActions {
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-}
-
-.sendInvitesButton {
-  background: #000;
-  color: #fff;
-  border: 1px solid #000;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-
-.sendInvitesButton:hover {
-  background: #333;
-  border-color: #333;
-}
-
-.sendInvitesButton svg {
-  flex-shrink: 0;
-}
-
-.attendeesIcon {
-  width: 32px;
-  height: 32px;
-  background: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid #000;
-  color: #666;
-}
-
-.attendeesLabel {
-  font-size: 0.8rem;
-  color: #666;
-  font-weight: 600;
-}
-
-.attendeesList {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  max-height: 200px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 8px 0;
-  flex-wrap: wrap;
-}
-
-.attendeeItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  min-width: fit-content;
-}
-
-.attendeeItem:hover {
-  opacity: 0.7;
-}
-
-.attendeeIcon {
-  width: 24px;
-  height: 24px;
-  background: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid #000;
-  border-radius: 4px;
-}
-
-.attendeeInitial {
-  font-size: 0.6rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.attendeeName {
-  font-size: 0.75rem;
-  color: #000;
-  font-weight: 500;
-  white-space: nowrap;
-}
 
 /* Form Layout */
 .formRow {
@@ -298,6 +421,12 @@
 .formRowThree {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+}
+
+.formRowFour {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 16px;
 }
 
@@ -336,7 +465,7 @@
 }
 
 /* Form Sections */
-.whenWhereSection, .eventOptionsSection {
+.costSection, .eventDetailsSection {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -350,99 +479,12 @@
   padding: 0;
 }
 
-.dateTimeSection, .gameSection, .descriptionSection, .locationSection, .tournamentSection {
+.descriptionSection {
   padding: 20px;
   background: #fff;
-  border: 1px solid #000;
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-/* Game Options */
-.gameOptions {
-  display: flex;
-  flex-direction: column;
-  max-height: 120px;
-  overflow-y: auto;
-  border: 1px solid #000;
-  background: #fff;
-}
-
-.gameOption {
-  background: #fff;
-  border: none;
-  border-bottom: 2px solid #000;
-  padding: 12px 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-align: left;
-  transition: background-color 150ms ease;
-}
-
-.gameOption:last-child {
-  border-bottom: none;
-}
-
-.gameOption:hover {
-  background: #f5f5f5;
-}
-
-.gameOptionSelected {
-  background: #000;
-  color: #fff;
-}
-
-.gameOptionSelected:hover {
-  background: #333;
-}
-
-.gameImage {
-  width: 24px;
-  height: 24px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid #000;
-}
-
-.imagePlaceholder {
-  width: 100%;
-  height: 100%;
-  background: #f5f5f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.6rem;
-  font-weight: 600;
-  color: #666;
-}
-
-.gameOptionSelected .imagePlaceholder {
-  background: #333;
-  color: #fff;
-}
-
-.gameLabel {
-  font-size: 0.875rem;
-  font-weight: 400;
-  color: #000;
-  flex: 1;
-}
-
-.gameOptionSelected .gameLabel {
-  color: #fff;
-}
-
-.gameLoading {
-  color: #999;
-  font-size: 0.875rem;
-  text-align: center;
-  padding: 20px;
 }
 
 /* Tournament Section - Card Style */
@@ -452,10 +494,12 @@
   border: 1px solid #000;
   margin-bottom: 24px;
   transition: all 0.2s ease;
+  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .tournamentCard:hover {
   border-color: #333;
+  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .tournamentCardContent {
@@ -532,504 +576,6 @@
   border-color: #333;
 }
 
-/* Streaming Section - Card Style */
-.streamingCard {
-  width: 100%;
-  background: #fff;
-  border: 1px solid #000;
-  margin-bottom: 24px;
-  transition: all 0.2s ease;
-}
-
-.streamingCard:hover {
-  border-color: #333;
-}
-
-.streamingCardContent {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px;
-  width: 100%;
-}
-
-.streamingIcon {
-  width: 48px;
-  height: 48px;
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid #000;
-}
-
-.streamingIcon svg {
-  color: #fff;
-  width: 24px;
-  height: 24px;
-}
-
-.streamingCardText {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.streamingCardTitle {
-  font-size: 1.1rem;
-  color: #000;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.streamingCardDescription {
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: 400;
-  line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.streamingCardActions {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.manageStreamingCardButton {
-  background: #000;
-  color: #fff;
-  border: 1px solid #000;
-  padding: 12px 20px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.manageStreamingCardButton:hover {
-  background: #333;
-  border-color: #333;
-}
-
-/* Registration Settings Section - Card Style */
-.registrationCard {
-  width: 100%;
-  background: #fff;
-  border: 1px solid #000;
-  margin-bottom: 24px;
-  transition: all 0.2s ease;
-}
-
-.registrationCard:hover {
-  border-color: #333;
-}
-
-.registrationCardContent {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px;
-  width: 100%;
-}
-
-.registrationIcon {
-  width: 48px;
-  height: 48px;
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid #000;
-}
-
-.registrationIcon svg {
-  color: #fff;
-  width: 24px;
-  height: 24px;
-}
-
-.registrationCardText {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.registrationCardTitle {
-  font-size: 1.1rem;
-  color: #000;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.registrationCardDescription {
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: 400;
-  line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.registrationCardActions {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.manageRegistrationCardButton {
-  background: #000;
-  color: #fff;
-  border: 1px solid #000;
-  padding: 12px 20px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.manageRegistrationCardButton:hover {
-  background: #333;
-  border-color: #333;
-}
-
-/* Theme Selection Section - Card Style */
-.themeCard {
-  width: 100%;
-  background: #fff;
-  border: 1px solid #000;
-  margin-bottom: 16px;
-  transition: all 0.2s ease;
-}
-
-.themeCard:hover {
-  border-color: #333;
-}
-
-.themeCardContent {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  width: 100%;
-}
-
-.themeCardHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  user-select: none;
-}
-
-.themeCardToggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: #f5f5f5;
-  border: 1px solid #000;
-  transition: all 0.2s ease;
-}
-
-.themeCardToggle:hover {
-  background: #e0e0e0;
-}
-
-.toggleIcon {
-  transition: transform 0.2s ease;
-}
-
-.toggleIconExpanded {
-  transform: rotate(180deg);
-}
-
-.themeIcon {
-  width: 48px;
-  height: 48px;
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid #000;
-  align-self: flex-start;
-}
-
-.themeIcon svg {
-  color: #fff;
-  width: 24px;
-  height: 24px;
-}
-
-.themeCardText {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.themeCardTitle {
-  font-size: 1.1rem;
-  color: #000;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.themeCardDescription {
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: 400;
-  line-height: 1.3;
-}
-
-.themeCardActions {
-  width: 100%;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.themeOptions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  width: 100%;
-}
-
-.themeOption {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 12px;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #333;
-}
-
-.themeOption:hover {
-  border-color: #333;
-  background: #f8f8f8;
-}
-
-.themeOptionSelected {
-  border-color: #000;
-  background: #000;
-  color: #fff;
-}
-
-.themeOptionSelected:hover {
-  border-color: #333;
-  background: #333;
-}
-
-.themePreview {
-  width: 40px;
-  height: 24px;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-}
-
-.themeOptionSelected .themePreview {
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-/* Game Selection Section - Card Style */
-.gameCard {
-  width: 100%;
-  background: #fff;
-  border: 1px solid #000;
-  margin-bottom: 24px;
-  transition: all 0.2s ease;
-}
-
-.gameCard:hover {
-  border-color: #333;
-}
-
-.gameCardContent {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px;
-  width: 100%;
-}
-
-.gameCardIcon {
-  width: 48px;
-  height: 48px;
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 1px solid #000;
-}
-
-.gameCardIcon svg {
-  color: #fff;
-  width: 24px;
-  height: 24px;
-}
-
-.gameCardText {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.gameCardTitle {
-  font-size: 1.1rem;
-  color: #000;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.gameCardDescription {
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: 400;
-  line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.gameCardActions {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.manageGameCardButton {
-  background: #000;
-  color: #fff;
-  border: 1px solid #000;
-  padding: 12px 20px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.manageGameCardButton:hover {
-  background: #333;
-  border-color: #333;
-}
-
-
-/* Tournament Section - Original (for backward compatibility) */
-.tournamentRow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-}
-
-.tournamentText {
-  flex: 1;
-  min-width: 0;
-}
-
-.tournamentLabel {
-  font-size: 0.9rem;
-  color: #000;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.tournamentActions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.tournamentCheckbox {
-  flex-shrink: 0;
-}
-
-.checkboxInput {
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-  appearance: none;
-  border: 1px solid #000;
-  background: #f5f5f5;
-  transition: all 0.2s ease;
-}
-
-.checkboxInput:hover {
-  border-color: #333;
-}
-
-.checkboxInput:checked {
-  background: #000;
-  border-color: #000;
-}
-
-.checkboxInput:checked::after {
-  content: '✓';
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-.manageTournamentButton {
-  background: #f5f5f5;
-  border: 1px solid #000;
-  padding: 8px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #666;
-  flex-shrink: 0;
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-.manageTournamentButton:hover {
-  background: #000;
-  color: #fff;
-  border: 1px solid #000;
-}
-
-.manageTournamentText {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: inherit;
-}
-
 /* Buttons */
 .submitButton {
   background: #000;
@@ -1039,7 +585,7 @@
   font-size: 1rem;
   font-weight: 400;
   cursor: pointer;
-  margin-top: 24px;
+  margin-top: 8px;
   width: 100%;
   transition: background-color 0.2s ease;
   letter-spacing: -0.25px;
@@ -1077,463 +623,3 @@
   padding: 40px 0;
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .twoColumnLayout {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    padding: 0 16px;
-  }
-  
-  .bannerColumn, .formColumn {
-    max-width: none;
-  }
-  
-  .bannerColumn {
-    position: static;
-  }
-  
-  .hostedByMobile {
-    display: flex;
-  }
-  
-  .attendeesSectionMobile {
-    display: flex;
-  }
-  
-  .hostedBy {
-    display: none;
-  }
-  
-  .attendeesSection {
-    display: none;
-  }
-  
-  .bannerImage {
-    height: 300px;
-  }
-}
-
-@media (max-width: 767px) {
-  .manageEvent {
-    padding: 12px;
-  }
-  
-  .formContainer {
-    padding: 0 12px;
-  }
-  
-  .twoColumnLayout {
-    padding: 0 12px;
-  }
-  
-  .form {
-    gap: 16px;
-  }
-  
-  .formRow, .formRowThree {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  
-  .whenWhereSection, .eventOptionsSection {
-    gap: 12px;
-  }
-  
-  .sectionTitle {
-    font-size: 1.1rem;
-  }
-  
-  .dateTimeSection, .gameSection, .descriptionSection, .locationSection, .tournamentSection, .tournamentSectionFullWidth, .tournamentCard, .streamingCard, .registrationCard, .gameCard, .themeCard {
-    padding: 16px;
-    margin-bottom: 8px;
-  }
-  
-  .tournamentCardContent, .streamingCardContent, .registrationCardContent, .gameCardContent, .themeCardContent {
-    padding: 16px;
-    gap: 12px;
-  }
-  
-  .tournamentIcon, .streamingIcon, .registrationIcon, .gameCardIcon, .themeIcon {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .tournamentIcon svg, .streamingIcon svg, .registrationIcon svg, .gameCardIcon svg, .themeIcon svg {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .tournamentCardTitle, .streamingCardTitle, .registrationCardTitle, .gameCardTitle, .themeCardTitle {
-    font-size: 1rem;
-  }
-  
-  .tournamentCardDescription, .streamingCardDescription, .registrationCardDescription, .gameCardDescription, .themeCardDescription {
-    font-size: 0.85rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .manageTournamentCardButton, .manageStreamingCardButton, .manageRegistrationCardButton, .manageGameCardButton {
-    padding: 10px 16px;
-    font-size: 0.85rem;
-  }
-  
-  .bannerImage {
-    height: 250px;
-  }
-  
-  .titleInput {
-    font-size: 2rem;
-    padding: 12px 16px;
-  }
-  
-  .input, .textarea {
-    padding: 10px 12px;
-    font-size: 0.9rem;
-  }
-  
-  .textarea {
-    min-height: 80px;
-  }
-  
-  .gameOptions {
-    max-height: 100px;
-  }
-  
-  .gameOption {
-    padding: 10px 12px;
-    gap: 10px;
-  }
-  
-  .gameImage {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .gameLabel {
-    font-size: 0.8rem;
-  }
-  
-  .submitButton {
-    padding: 14px 20px;
-    font-size: 0.9rem;
-    margin-top: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .manageEvent {
-    padding: 8px;
-  }
-  
-  .formContainer {
-    padding: 0 8px;
-  }
-  
-  .twoColumnLayout {
-    padding: 0 8px;
-  }
-  
-  .form {
-    gap: 12px;
-  }
-  
-  .whenWhereSection, .eventOptionsSection {
-    gap: 10px;
-  }
-  
-  .sectionTitle {
-    font-size: 1rem;
-  }
-  
-  .dateTimeSection, .gameSection, .descriptionSection, .locationSection, .tournamentSection, .tournamentSectionFullWidth, .tournamentCard, .streamingCard, .registrationCard, .gameCard, .themeCard {
-    padding: 12px;
-    margin-bottom: 6px;
-  }
-  
-  .tournamentCardContent, .streamingCardContent, .registrationCardContent, .gameCardContent, .themeCardContent {
-    padding: 12px;
-    gap: 10px;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .tournamentIcon, .streamingIcon, .registrationIcon, .gameCardIcon, .themeIcon {
-    width: 36px;
-    height: 36px;
-    align-self: flex-start;
-  }
-  
-  .tournamentIcon svg, .streamingIcon svg, .registrationIcon svg, .gameCardIcon svg, .themeIcon svg {
-    width: 18px;
-    height: 18px;
-  }
-  
-  .tournamentCardText, .streamingCardText, .registrationCardText, .gameCardText, .themeCardText {
-    width: 100%;
-  }
-  
-  .tournamentCardTitle, .streamingCardTitle, .registrationCardTitle, .gameCardTitle, .themeCardTitle {
-    font-size: 0.95rem;
-    margin-bottom: 2px;
-  }
-  
-  .tournamentCardDescription, .streamingCardDescription, .registrationCardDescription, .gameCardDescription, .themeCardDescription {
-    font-size: 0.8rem;
-    line-height: 1.4;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .tournamentCardActions, .streamingCardActions, .registrationCardActions, .gameCardActions, .themeCardActions {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .themeOptions {
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
-
-  .themeOption {
-    padding: 8px;
-    font-size: 0.75rem;
-    gap: 6px;
-  }
-
-  .themePreview {
-    width: 32px;
-    height: 20px;
-  }
-
-  .themeCardToggle {
-    width: 28px;
-    height: 28px;
-  }
-
-  .toggleIcon {
-    width: 14px;
-    height: 14px;
-  }
-  
-  .manageTournamentCardButton, .manageStreamingCardButton, .manageRegistrationCardButton, .manageGameCardButton {
-    padding: 8px 14px;
-    font-size: 0.8rem;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .sendInvitesButton {
-    padding: 6px 10px;
-    font-size: 0.7rem;
-    gap: 4px;
-  }
-  
-  .sendInvitesButton svg {
-    width: 12px;
-    height: 12px;
-  }
-  
-  .attendeesList {
-    gap: 6px;
-    padding: 6px 0;
-  }
-  
-  .attendeeItem {
-    padding: 4px 6px;
-    gap: 6px;
-  }
-  
-  .attendeeIcon {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .attendeeInitial {
-    font-size: 0.55rem;
-  }
-  
-  .attendeeName {
-    font-size: 0.7rem;
-  }
-  
-  
-  .tournamentRowFullWidth {
-    gap: 8px;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .tournamentTextFullWidth {
-    text-align: center;
-    margin-bottom: 8px;
-  }
-  
-  .tournamentActionsFullWidth {
-    justify-content: center;
-    gap: 16px;
-  }
-  
-  .tournamentLabelFullWidth {
-    font-size: 0.9rem;
-  }
-  
-  .checkboxInputFullWidth {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .checkboxInputFullWidth:checked::after {
-    font-size: 14px;
-  }
-  
-  .manageTournamentButtonFullWidth {
-    padding: 6px 10px;
-    font-size: 0.75rem;
-    gap: 6px;
-  }
-  
-  .manageTournamentTextFullWidth {
-    font-size: 0.75rem;
-  }
-  
-  .bannerImage {
-    height: 200px;
-  }
-  
-  .titleInput {
-    font-size: 1.5rem;
-    padding: 10px 12px;
-  }
-  
-  .input, .textarea {
-    padding: 8px 10px;
-    font-size: 0.85rem;
-  }
-  
-  .textarea {
-    min-height: 60px;
-  }
-  
-  .gameOptions {
-    max-height: 80px;
-  }
-  
-  .gameOption {
-    padding: 8px 10px;
-    gap: 8px;
-  }
-  
-  .gameImage {
-    width: 18px;
-    height: 18px;
-  }
-  
-  .gameLabel {
-    font-size: 0.75rem;
-  }
-  
-  .tournamentSectionFullWidth {
-    padding: 16px;
-    margin-bottom: 16px;
-  }
-  
-  .tournamentRowFullWidth {
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  
-  .tournamentActionsFullWidth {
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  
-  .tournamentLabelFullWidth {
-    font-size: 1rem;
-  }
-  
-  .checkboxInputFullWidth {
-    width: 32px;
-    height: 32px;
-  }
-  
-  .checkboxInputFullWidth:checked::after {
-    font-size: 16px;
-  }
-  
-  .manageTournamentButtonFullWidth {
-    padding: 8px 12px;
-    font-size: 0.8rem;
-    gap: 8px;
-  }
-  
-  .manageTournamentTextFullWidth {
-    font-size: 0.8rem;
-  }
-  
-  .tournamentRow {
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  
-  .tournamentActions {
-    gap: 8px;
-  }
-  
-  .tournamentLabel {
-    font-size: 0.8rem;
-  }
-  
-  .checkboxInput {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .checkboxInput:checked::after {
-    font-size: 14px;
-  }
-  
-  .manageTournamentButton {
-    padding: 6px 10px;
-    font-size: 0.75rem;
-    gap: 6px;
-  }
-  
-  .manageTournamentText {
-    font-size: 0.75rem;
-  }
-  
-  .submitButton {
-    padding: 12px 16px;
-    font-size: 0.8rem;
-    margin-top: 12px;
-  }
-  
-  .fileInputLabel {
-    padding: 4px 8px;
-    font-size: 0.65rem;
-  }
-  
-  .removeImageButton {
-    padding: 2px 4px;
-    font-size: 0.6rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .manageEvent {
-    padding: 32px 24px;
-  }
-  
-  .formContainer {
-    padding: 0 32px;
-  }
-  
-  .twoColumnLayout {
-    padding: 0 32px;
-  }
-}
