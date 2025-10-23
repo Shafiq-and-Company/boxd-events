@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
-import PageTitle from './PageTitle'
 import styles from './ManageEvent.module.css'
 
 export default function ManageEvent() {
@@ -26,8 +25,6 @@ export default function ManageEvent() {
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [games, setGames] = useState([])
-  const [gamesLoading, setGamesLoading] = useState(true)
   const [bannerImageUrl, setBannerImageUrl] = useState(null)
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
@@ -206,22 +203,6 @@ export default function ManageEvent() {
     }
   }
 
-  const fetchGames = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('games')
-        .select('game_title')
-        .order('game_title')
-
-      if (error) throw error
-      setGames(data || [])
-    } catch (err) {
-      console.error('Error fetching games:', err.message)
-      setError('Failed to load games')
-    } finally {
-      setGamesLoading(false)
-    }
-  }
 
   const fetchAttendees = async () => {
     if (!id) return
@@ -267,9 +248,6 @@ export default function ManageEvent() {
     if (id && user) fetchEventData()
   }, [id, user])
 
-  useEffect(() => {
-    fetchGames()
-  }, [])
 
   useEffect(() => {
     if (id) {
@@ -281,7 +259,6 @@ export default function ManageEvent() {
   if (!user) {
     return (
       <div className={styles.manageEvent}>
-        <PageTitle title="Manage Event" subtitle="Update your event details" />
         <div className={styles.authRequired}>Please log in to edit an event.</div>
       </div>
     )
@@ -290,7 +267,6 @@ export default function ManageEvent() {
   if (fetchLoading) {
     return (
       <div className={styles.manageEvent}>
-        <PageTitle title="Manage Event" subtitle="Update your event details" />
         <div className={styles.loading}>Loading event details...</div>
       </div>
     )
@@ -299,7 +275,6 @@ export default function ManageEvent() {
   if (error && !fetchLoading) {
     return (
       <div className={styles.manageEvent}>
-        <PageTitle title="Manage Event" subtitle="Update your event details" />
         <div className={styles.errorMessage}>{error}</div>
       </div>
     )
@@ -307,7 +282,6 @@ export default function ManageEvent() {
 
   return (
     <div className={styles.manageEvent}>
-      <PageTitle title="Manage Event" subtitle="Update your event details" />
       
       {error && (
         <div className={styles.errorMessage}>{error}</div>
@@ -657,99 +631,6 @@ export default function ManageEvent() {
                   </div>
                 </div>
                 
-                {/* Streaming Section - Card Style */}
-                <div className={styles.streamingCard}>
-                  <div className={styles.streamingCardContent}>
-                    <div className={styles.streamingIcon}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                      </svg>
-                    </div>
-                    <div className={styles.streamingCardText}>
-                      <div className={styles.streamingCardTitle}>Streaming Setup</div>
-                      <div className={styles.streamingCardDescription}>Configure streaming platforms and broadcast settings</div>
-                    </div>
-                    <div className={styles.streamingCardActions}>
-                      <button
-                        type="button"
-                        className={styles.manageStreamingCardButton}
-                        onClick={() => {
-                          // TODO: Add streaming management functionality
-                          console.log('Streaming management clicked')
-                        }}
-                        title="Manage streaming"
-                      >
-                        Setup →
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Registration Settings Section - Card Style */}
-                <div className={styles.registrationCard}>
-                  <div className={styles.registrationCardContent}>
-                    <div className={styles.registrationIcon}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                        <path d="M9 11l2 2 4-4"/>
-                      </svg>
-                    </div>
-                    <div className={styles.registrationCardText}>
-                      <div className={styles.registrationCardTitle}>Registration Settings</div>
-                      <div className={styles.registrationCardDescription}>Configure registration requirements, capacity limits, and approval settings</div>
-                    </div>
-                    <div className={styles.registrationCardActions}>
-                      <button
-                        type="button"
-                        className={styles.manageRegistrationCardButton}
-                        onClick={() => {
-                          // TODO: Add registration management functionality
-                          console.log('Registration management clicked')
-                        }}
-                        title="Manage registration"
-                      >
-                        Configure →
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Game Selection Section - Card Style */}
-                <div className={styles.gameCard}>
-                  <div className={styles.gameCardContent}>
-                    <div className={styles.gameCardIcon}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                        <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
-                        <line x1="12" y1="22.08" x2="12" y2="12"/>
-                      </svg>
-                    </div>
-                    <div className={styles.gameCardText}>
-                      <div className={styles.gameCardTitle}>Game Selection</div>
-                      <div className={styles.gameCardDescription}>
-                        {gamesLoading ? 'Loading games...' : 
-                         formData.game_title ? `Selected: ${formData.game_title}` : 
-                         'Choose the game for this event'}
-                      </div>
-                    </div>
-                    <div className={styles.gameCardActions}>
-                      <button
-                        type="button"
-                        className={styles.manageGameCardButton}
-                        onClick={() => {
-                          // TODO: Add game selection modal/functionality
-                          console.log('Game selection clicked')
-                        }}
-                        title="Select game"
-                      >
-                        {formData.game_title ? 'Change' : 'Select'} →
-                      </button>
-                    </div>
-                  </div>
-                </div>
               </div>
 
 
