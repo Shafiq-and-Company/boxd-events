@@ -102,9 +102,6 @@
     padding: 6px 10px;
   }
   
-  .logoImage {
-    height: 28px;
-  }
   
   .logoText {
     font-size: 16px;
@@ -129,9 +126,6 @@
     padding: 4px 8px;
   }
   
-  .logoImage {
-    height: 24px;
-  }
   
   .logoText {
     font-size: 14px;
@@ -153,7 +147,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .logo,
-  .logoImage,
   .getStartedButton,
   .getStartedButton::before {
     transition: none;

@@ -751,85 +751,6 @@
   margin: 0 24px 24px;
 }
 
-/* Features Section */
-.featuresSection {
-  padding: 120px 24px;
-  background: #F8F8F8;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
-}
-
-.featuresGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-  gap: 64px;
-  text-align: left;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.feature {
-  padding: 64px;
-  background: #FFFFFF;
-  border: 1px solid #000000;
-  box-shadow: 4px 4px 0px #000000;
-  border-radius: 0;
-  transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  opacity: 0;
-  transform: translateY(30px);
-  animation: slideInFromBottom 0.8s ease-out forwards;
-}
-
-.feature:nth-child(1) { animation-delay: 0.1s; }
-.feature:nth-child(2) { animation-delay: 0.2s; }
-.feature:nth-child(3) { animation-delay: 0.3s; }
-
-.feature:hover {
-  background: #F8F8F8;
-  transform: translateY(-4px);
-  box-shadow: 8px 8px 0px #000000;
-}
-
-.featureIcon {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #404040;
-  margin-bottom: 24px;
-  transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  animation: iconFloat 2s ease-in-out infinite;
-}
-
-.feature:hover .featureIcon {
-  transform: scale(1.1);
-  color: #000000;
-}
-
-@keyframes iconFloat {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-2px); }
-}
-
-.feature h3 {
-  font-size: 28px;
-  font-weight: 500;
-  margin-bottom: 20px;
-  color: #000000;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-.feature p {
-  font-size: 18px;
-  color: #404040;
-  line-height: 1.5;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
 
 .heavyTextSection {
   text-align: left;
@@ -1270,10 +1191,6 @@
     grid-template-columns: 1fr;
   }
 
-  .featuresGrid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
 
   .advancedFeaturesGrid {
     grid-template-columns: 1fr;
@@ -1298,12 +1215,12 @@
   }
 
   .calendarImage {
-    order: 1;
+    order: 2;
   }
 
   .calendarText {
     text-align: center;
-    order: 2;
+    order: 1;
   }
 
   .calendarImagePlaceholder {
@@ -1348,14 +1265,12 @@
   
   .heroContent,
   .valueProp,
-  .feature,
   .advancedFeature,
   .videoDemo,
   .faq,
   .profileIcon,
   .demoImage,
-  .demoGif,
-  .featureIcon {
+  .demoGif {
     animation: none !important;
     transition: none !important;
   }
@@ -1364,14 +1279,12 @@
 /* GPU Acceleration for smooth animations */
 .heroContent,
 .valueProp,
-.feature,
 .advancedFeature,
 .videoDemo,
 .faq,
 .profileIcon,
 .demoImage,
-.demoGif,
-.featureIcon {
+.demoGif {
   will-change: transform;
   transform: translateZ(0);
 }
