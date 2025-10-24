@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import SplashNav from './SplashNav';
+import SplashFooter from './SplashFooter';
 import styles from './Splash.module.css';
 
 export default function SplashPage() {
@@ -540,6 +541,8 @@ export default function SplashPage() {
           </button>
         </div>
       </section>
+      
+      <SplashFooter />
       </div>
     </>
   );
