@@ -114,6 +114,231 @@
   font-style: italic;
 }
 
+.formatSection {
+  margin-bottom: 1.5rem;
+}
+
+.formatLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.formatText {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.formatDropdown {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0;
+  background-color: #ffffff;
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.formatDropdown:focus {
+  outline: none;
+  border-color: #6b7280;
+}
+
+.seedingSection {
+  margin-bottom: 1.5rem;
+}
+
+.seedingLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.seedingText {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.seedingSelector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.seedingOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+  flex: 1;
+  justify-content: center;
+  position: relative;
+}
+
+.seedingOption:hover {
+  background-color: #f9fafb;
+  border-color: #6b7280;
+}
+
+.seedingInput {
+  display: none;
+}
+
+.seedingInput:checked + .seedingOptionText {
+  color: #374151;
+  font-weight: 600;
+}
+
+.seedingOption:has(.seedingInput:checked) {
+  background-color: #10b981;
+  border-color: #059669;
+  color: #ffffff;
+}
+
+.seedingOption:has(.seedingInput:checked) .seedingOptionText {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.seedingOptionText {
+  font-size: 0.875rem;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.randomizeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.randomizeButton:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.randomizeButton svg {
+  color: #ffffff;
+  transition: color 0.2s ease;
+}
+
+.randomizeButton:hover svg {
+  color: #ffffff;
+}
+
+.resetSeedsSection {
+  margin-top: 1rem;
+}
+
+.resetSeedsButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 0;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  height: 40px;
+}
+
+.resetSeedsButton:hover {
+  background-color: #f9fafb;
+  border-color: #6b7280;
+  transform: translateY(-1px);
+}
+
+.participantsSection {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #d1d5db;
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 1rem 0;
+}
+
+.participantsList {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.participantItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 0;
+  font-size: 0.875rem;
+}
+
+.participantNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: #000000;
+  color: #ffffff;
+  border-radius: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.participantName {
+  color: #000000;
+  font-weight: 500;
+  flex: 1;
+}
+
+.noParticipants {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  color: #000000;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
 .collapsedContent {
   display: flex;
   flex-direction: column;
