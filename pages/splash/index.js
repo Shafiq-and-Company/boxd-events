@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import SplashNav from './SplashNav';
 import styles from './Splash.module.css';
 
@@ -38,7 +39,15 @@ export default function SplashPage() {
             </button>
           </div>
           <div className={styles.heroImage}>
-            <img src="/for-par.gif" alt="Hero Demo" className={styles.heroImagePlaceholder} />
+            <Image 
+              src="/for-par.gif" 
+              alt="Hero Demo" 
+              className={styles.heroImagePlaceholder}
+              width={1200}
+              height={600}
+              priority
+              quality={85}
+            />
           </div>
         </div>
       </section>
@@ -50,13 +59,27 @@ export default function SplashPage() {
             <div className={styles.valueProp}>
               <h3>For Participants</h3>
               <p>Find gaming events near you, search for tournaments and meetups, and join local gaming communities to discover new players.</p>
-              <img src="/view-cal.gif" alt="View Calendar Demo" className={styles.demoImage} />
+              <Image 
+                src="/view-cal.gif" 
+                alt="View Calendar Demo" 
+                className={styles.demoImage}
+                width={400}
+                height={300}
+                quality={80}
+              />
             </div>
             
             <div className={styles.valueProp}>
               <h3>For Organizers</h3>
               <p>Make and run gaming events using our simple tools to set up tournaments and manage brackets while creating community events.</p>
-              <img src="/for-org.gif" alt="For Organizers Demo" className={styles.demoImage} />
+              <Image 
+                src="/for-org.gif" 
+                alt="For Organizers Demo" 
+                className={styles.demoImage}
+                width={400}
+                height={300}
+                quality={80}
+              />
             </div>
           </div>
         </div>
@@ -71,7 +94,14 @@ export default function SplashPage() {
               <p className={styles.sectionSubtitle}>Find gaming events happening near you. See what tournaments and meetups are going on in your area right now.</p>
             </div>
             <div className={styles.discoverImage}>
-              <img src="/discover.png" alt="Discover Events Interface" className={styles.discoverImagePlaceholder} />
+              <Image 
+                src="/discover.png" 
+                alt="Discover Events Interface" 
+                className={styles.discoverImagePlaceholder}
+                width={600}
+                height={400}
+                quality={85}
+              />
             </div>
           </div>
         </div>
@@ -82,7 +112,14 @@ export default function SplashPage() {
         <div className={styles.sectionContent}>
           <div className={styles.calendarContent}>
             <div className={styles.calendarImage}>
-              <img src="/calendar.png" alt="Calendar Interface" className={styles.calendarImagePlaceholder} />
+              <Image 
+                src="/calendar.png" 
+                alt="Calendar Interface" 
+                className={styles.calendarImagePlaceholder}
+                width={600}
+                height={400}
+                quality={85}
+              />
             </div>
             <div className={styles.calendarText}>
               <h2 className={styles.sectionTitle}>Calendars</h2>
@@ -103,17 +140,38 @@ export default function SplashPage() {
             <div className={styles.linkProfilesIcons}>
               <div className={styles.profileIcon}>
                 <div className={styles.iconContainer}>
-                  <img src="/start-logo.png" alt="start.gg" className={styles.platformLogo} />
+                  <Image 
+                    src="/start-logo.png" 
+                    alt="start.gg" 
+                    className={styles.platformLogo}
+                    width={48}
+                    height={48}
+                    quality={90}
+                  />
                 </div>
               </div>
               <div className={styles.profileIcon}>
                 <div className={styles.iconContainer}>
-                  <img src="/challonge-logo.svg" alt="Challonge" className={styles.platformLogo} />
+                  <Image 
+                    src="/challonge-logo.svg" 
+                    alt="Challonge" 
+                    className={styles.platformLogo}
+                    width={48}
+                    height={48}
+                    quality={90}
+                  />
                 </div>
               </div>
               <div className={styles.profileIcon}>
                 <div className={styles.iconContainer}>
-                  <img src="/supermajor-logo.png" alt="Supermajor" className={styles.platformLogo} />
+                  <Image 
+                    src="/supermajor-logo.png" 
+                    alt="Supermajor" 
+                    className={styles.platformLogo}
+                    width={48}
+                    height={48}
+                    quality={90}
+                  />
                 </div>
               </div>
             </div>
@@ -130,7 +188,14 @@ export default function SplashPage() {
           <div className={styles.videoDemoGrid}>
             <div className={styles.videoDemo}>
               <div className={styles.videoContainer}>
-                <img src="/create-event-image.png" alt="Event Creation Demo" className={styles.demoGif} />
+                <Image 
+                  src="/create-event-image.png" 
+                  alt="Event Creation Demo" 
+                  className={styles.demoGif}
+                  width={400}
+                  height={200}
+                  quality={80}
+                />
               </div>
               <h3>Create Events in Seconds</h3>
               <p>See how quickly you can set up an event with all the details your community needs.</p>
@@ -138,7 +203,14 @@ export default function SplashPage() {
             
             <div className={styles.videoDemo}>
               <div className={styles.videoContainer}>
-                <img src="/bracket.png" alt="Tournament Bracket Visualization" className={styles.demoGif} />
+                <Image 
+                  src="/bracket.png" 
+                  alt="Tournament Bracket Visualization" 
+                  className={styles.demoGif}
+                  width={400}
+                  height={200}
+                  quality={80}
+                />
               </div>
               <h3>Manage Tournaments</h3>
               <p>Watch how automated brackets and live results keep your tournaments running smoothly.</p>
@@ -146,7 +218,14 @@ export default function SplashPage() {
             
             <div className={styles.videoDemo}>
               <div className={styles.videoContainer}>
-                <img src="/conflict.png" alt="Conflict Resolver Assistant" className={styles.demoGif} />
+                <Image 
+                  src="/conflict.png" 
+                  alt="Conflict Resolver Assistant" 
+                  className={styles.demoGif}
+                  width={400}
+                  height={200}
+                  quality={80}
+                />
               </div>
               <h3>Never Get Lost</h3>
               <p>Powerful event management engine with useful hints at every step</p>
