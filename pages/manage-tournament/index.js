@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
 import TitleCard from './TitleCard';
-import TournamentSidebar from './TournamentSidebar';
 import BracketVisualization from './BracketVisualization';
 import TournamentPanel from './TournamentPanel';
 import UpNextCard from './UpNextCard';
@@ -92,43 +91,19 @@ const ManageTournament = () => {
 
   return (
     <div className={styles.dashboard}>
-      <TournamentSidebar 
-        activeSection={activeSection} 
-        onSectionChange={setActiveSection} 
-      />
       <div className={styles.mainContent}>
         <TitleCard title="Tournament Management" eventData={eventData} />
         <div className={styles.contentLayout}>
           <div className={styles.sectionContent}>
-            {activeSection === 'bracket' && (
-              <div className={styles.bracketLayout}>
-                <div className={styles.leftPanel}>
-                  <TournamentPanel eventData={eventData} onSettingsUpdate={handleTournamentUpdate} />
-                  <UpNextCard eventData={eventData} refreshTrigger={refreshTrigger} onMatchUpdate={handleMatchUpdate} />
-                </div>
-                <div className={styles.bracketVisualization}>
-                  <BracketVisualization eventData={eventData} refreshTrigger={refreshTrigger} />
-                </div>
+            <div className={styles.bracketLayout}>
+              <div className={styles.leftPanel}>
+                <TournamentPanel eventData={eventData} onSettingsUpdate={handleTournamentUpdate} />
+                <UpNextCard eventData={eventData} refreshTrigger={refreshTrigger} onMatchUpdate={handleMatchUpdate} />
               </div>
-            )}
-            {activeSection === 'standings' && (
-              <div className={styles.placeholder}>
-                <h3>Standings</h3>
-                <p>Tournament standings will be displayed here.</p>
+              <div className={styles.bracketVisualization}>
+                <BracketVisualization eventData={eventData} refreshTrigger={refreshTrigger} />
               </div>
-            )}
-            {activeSection === 'participants' && (
-              <div className={styles.participantsLayout}>
-                <Participants eventId={eventId} />
-                <SeedingPanel eventData={eventData} participants={participants} onSeedingUpdate={handleSeedingUpdate} />
-              </div>
-            )}
-            {activeSection === 'details' && (
-              <div className={styles.placeholder}>
-                <h3>Tournament Details</h3>
-                <p>Tournament details and information will be displayed here.</p>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

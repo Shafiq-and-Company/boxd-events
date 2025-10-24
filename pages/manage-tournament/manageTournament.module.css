@@ -21,9 +21,9 @@
 .mainContent {
   flex: 1;
   padding: 8px;
-  padding-left: 88px;
+  padding-left: 20px;
   padding-right: 20px;
-  padding-top: 80px;
+  padding-top: 88px; /* Increased to account for 72px header + 16px spacing */
   background: transparent;
   overflow-y: auto;
   display: flex;
@@ -113,7 +113,8 @@
 @media (max-width: 768px) {
   .mainContent {
     padding: 10px;
-    padding-left: 80px;
+    padding-left: 20px;
+    padding-top: 76px; /* Adjusted for smaller header on mobile */
   }
   
   .contentLayout {
@@ -131,6 +132,12 @@
   
   .placeholder p {
     font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainContent {
+    padding-top: 72px; /* Adjusted for smallest header on mobile */
   }
 }
 
