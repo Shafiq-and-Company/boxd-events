@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
-import TitleCard from './TitleCard';
+import TitlePanel from './TitlePanel';
 import ConfigurationPanel from './ConfigurationPanel';
 import VisualizationPanel from './VisualizationPanel';
 import ScorekeepingPanel from './ScorekeepingPanel';
@@ -88,7 +88,7 @@ const ManageTournament = () => {
 
   return (
     <div>
-      <TitleCard title="Tournament Management" eventData={eventData} />
+      <TitlePanel title="Tournament Management" eventData={eventData} />
         <div style={{ 
           paddingTop: '30px',
           padding: '1rem',

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import styles from './TitleCard.module.css';
+import styles from './TitlePanel.module.css';
 
-const TitleCard = ({ title, eventData }) => {
+const TitlePanel = ({ title, eventData }) => {
   const router = useRouter();
 
   const handleBackClick = () => {
@@ -75,4 +75,4 @@ const TitleCard = ({ title, eventData }) => {
   );
 };
 
-export default TitleCard;
+export default TitlePanel;

@@ -14,16 +14,4 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  position: relative;
-}
-
-.panelContent::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 1px;
-  background-color: #000000;
-  transform: translateX(-50%);
 }
