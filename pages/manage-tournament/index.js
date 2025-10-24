@@ -174,6 +174,9 @@ const ManageTournament = () => {
       
       // Refresh tournament data to get updated format and bracket
       fetchTournamentData();
+      
+      // Trigger refresh of bracket visualization
+      setRefreshTrigger(prev => prev + 1);
     } catch (err) {
       console.error('Error updating tournament format:', err);
     }
