@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
@@ -13,6 +13,7 @@ const ManageTournament = () => {
   const { eventId } = router.query;
   
   const [eventData, setEventData] = useState(null);
+  const [tournamentData, setTournamentData] = useState(null);
   const [activeSection, setActiveSection] = useState('bracket');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [participants, setParticipants] = useState([]);
@@ -36,21 +37,69 @@ const ManageTournament = () => {
     }
   };
 
+  const fetchTournamentData = async () => {
+    if (!eventId) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('tournaments')
+        .select('*')
+        .eq('event_id', eventId)
+        .single();
+
+      if (error) throw error;
+      setTournamentData(data);
+    } catch (err) {
+      console.error('Error fetching tournament data:', err);
+    }
+  };
+
+  const updateTournamentStatus = useCallback(async (status) => {
+    if (!eventId || !tournamentData) return;
+    
+    try {
+      const { error } = await supabase
+        .from('tournaments')
+        .update({ status })
+        .eq('event_id', eventId);
+
+      if (error) throw error;
+      
+      // Refresh tournament data to get updated status
+      fetchTournamentData();
+    } catch (err) {
+      console.error('Error updating tournament status:', err);
+    }
+  }, [eventId, tournamentData]);
+
   useEffect(() => {
     if (eventId && user) {
       fetchEventData();
+      fetchTournamentData();
       fetchParticipants();
     }
   }, [eventId, user]);
 
+  // Update tournament status when configuration panel state changes
+  useEffect(() => {
+    if (tournamentData && !isTournamentLive) {
+      // Configuration panel is open - ensure status is seeding
+      if (tournamentData.status !== 'seeding') {
+        updateTournamentStatus('seeding');
+      }
+    }
+  }, [isTournamentLive, tournamentData, updateTournamentStatus]);
+
   const handleTournamentUpdate = () => {
-    // Trigger refresh of bracket visualization
+    // Trigger refresh of bracket visualization and tournament data
     setRefreshTrigger(prev => prev + 1);
+    fetchTournamentData();
   };
 
   const handleMatchUpdate = () => {
     // Trigger refresh of both bracket visualization and upcoming matches
     setRefreshTrigger(prev => prev + 1);
+    fetchTournamentData();
   };
 
   const handleSeedingUpdate = (action, method) => {
@@ -58,10 +107,20 @@ const ManageTournament = () => {
     console.log('Seeding action:', action, method);
     // Trigger refresh of bracket visualization
     setRefreshTrigger(prev => prev + 1);
+    fetchTournamentData();
   };
 
-  const handleTournamentLiveChange = (isLive) => {
+  const handleTournamentLiveChange = async (isLive) => {
     setIsTournamentLive(isLive);
+    
+    // Update tournament status based on configuration panel state
+    if (!isLive && tournamentData) {
+      // Configuration panel is open - set status to seeding
+      await updateTournamentStatus('seeding');
+    } else if (isLive && tournamentData) {
+      // Configuration panel is closed - set status to active
+      await updateTournamentStatus('active');
+    }
   };
 
   const fetchParticipants = async () => {
@@ -93,7 +152,7 @@ const ManageTournament = () => {
 
   return (
     <div>
-      <TitlePanel title="Tournament Management" eventData={eventData} />
+      <TitlePanel title="Tournament Management" eventData={eventData} tournamentData={tournamentData} />
         <div style={{ 
           paddingTop: '50px',
           padding: '1rem',

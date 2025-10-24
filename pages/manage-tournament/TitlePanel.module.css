@@ -119,11 +119,14 @@
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 3px 3px 0px 0px #000000;
+  min-width: 120px;
+  justify-content: center;
 }
 
 .actionButton:hover {
   background: #f9fafb;
-  box-shadow: 3px 3px 0px 0px #000000;
+  box-shadow: 2px 2px 0px 0px #000000;
+  transform: translateY(-1px);
 }
 
 .autosaveIcon {

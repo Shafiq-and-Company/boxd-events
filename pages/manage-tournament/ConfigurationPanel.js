@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import styles from './ConfigurationPanel.module.css';
 
-const ConfigurationPanel = ({ eventData, participants, onTournamentUpdate, onSeedingUpdate, onTournamentLiveChange }) => {
+const ConfigurationPanel = ({ eventData, participants, onTournamentUpdate, onSeedingUpdate, onTournamentLiveChange, onFormatChange }) => {
   const [isTournamentLive, setIsTournamentLive] = useState(false);
   const [seedingMethod, setSeedingMethod] = useState('random');
+  const [tournamentFormat, setTournamentFormat] = useState('single-elimination');
 
   const handleToggleChange = () => {
     const newState = !isTournamentLive;
@@ -38,7 +39,7 @@ const ConfigurationPanel = ({ eventData, participants, onTournamentUpdate, onSee
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                       <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
                     </svg>
-                    <span>Tournament Live</span>
+                    <span>Toggle to go Live</span>
                   </div>
                   <div className={styles.toggleWrapper}>
                     <input

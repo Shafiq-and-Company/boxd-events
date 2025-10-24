@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import styles from './TitlePanel.module.css';
 
-const TitlePanel = ({ title, eventData }) => {
+const TitlePanel = ({ title, eventData, tournamentData }) => {
   const router = useRouter();
 
   const handleBackClick = () => {
@@ -12,6 +12,17 @@ const TitlePanel = ({ title, eventData }) => {
   const handleExpandClick = () => {
     // Open current page in a new tab
     window.open(window.location.href, '_blank');
+  };
+
+  const getTournamentStatus = () => {
+    if (!tournamentData?.status) return 'Not Started';
+    
+    return tournamentData.status.charAt(0).toUpperCase() + tournamentData.status.slice(1);
+  };
+
+  const getAllStatuses = () => {
+    const statuses = ['registration', 'seeding', 'active', 'completed', 'cancelled'];
+    return statuses.map(status => status.charAt(0).toUpperCase() + status.slice(1));
   };
 
   return (
@@ -50,9 +61,12 @@ const TitlePanel = ({ title, eventData }) => {
             </svg>
             <span>Online</span>
           </button>
-          <button className={styles.actionButton}>
+          <button 
+            className={styles.actionButton}
+            title={`Available statuses: ${getAllStatuses().join(', ')}`}
+          >
             <div className={styles.autosaveIcon}></div>
-            <span>Autosaving</span>
+            <span>{getTournamentStatus()}</span>
           </button>
           <button className={styles.actionButton} onClick={handleExpandClick}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
