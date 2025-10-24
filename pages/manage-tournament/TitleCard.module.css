@@ -26,7 +26,6 @@
 .navigationSection {
   display: flex;
   align-items: center;
-  gap: 12px;
   flex: 1;
 }
 
@@ -57,22 +56,6 @@
   font-size: 0.875rem;
 }
 
-.separator {
-  width: 1px;
-  height: 20px;
-  background: #d1d5db;
-}
-
-.tournamentIcon {
-  width: 24px;
-  height: 24px;
-  background: #000000;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0;
-}
 
 /* Tournament Info */
 .tournamentInfo {
@@ -209,8 +192,5 @@
     display: none;
   }
   
-  .navigationSection {
-    gap: 8px;
-  }
 }
 

@@ -6,9 +6,6 @@
   margin: 0;
   padding: 0;
   background-color: transparent;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
   position: fixed;
   top: 0;
   left: 0;
@@ -46,28 +43,16 @@
   width: 100%;
 }
 
-/* Bracket Layout */
-.bracketLayout {
-  display: flex;
-  gap: 4px;
-  align-items: flex-start;
-  width: 100%;
-  flex: 1;
-}
-
-/* Left Panel with spacing */
-.leftPanel {
+/* Content Placeholder */
+.contentPlaceholder {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  width: 30%;
-  flex-shrink: 0;
-}
-
-/* Bracket Visualization */
-.bracketVisualization {
-  width: 70%;
-  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 1;
+  min-height: 400px;
+  text-align: center;
 }
 
 /* Participants Layout */
@@ -79,12 +64,8 @@
 }
 
 @media (max-width: 1024px) {
-  .bracketLayout {
-    flex-direction: column;
-  }
-  
-  .leftPanel {
-    min-width: 100%;
+  .contentPlaceholder {
+    min-height: 300px;
   }
 }
 

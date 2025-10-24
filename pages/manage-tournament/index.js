@@ -3,12 +3,7 @@ import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
 import TitleCard from './TitleCard';
-import BracketVisualization from './BracketVisualization';
-import TournamentPanel from './TournamentPanel';
-import UpNextCard from './UpNextCard';
-import SeedingPanel from './SeedingPanel';
-import Participants from './Participants';
-import styles from './manageTournament.module.css';
+import styles from './indexTournament.module.css';
 
 const ManageTournament = () => {
   const router = useRouter();
@@ -95,14 +90,7 @@ const ManageTournament = () => {
         <TitleCard title="Tournament Management" eventData={eventData} />
         <div className={styles.contentLayout}>
           <div className={styles.sectionContent}>
-            <div className={styles.bracketLayout}>
-              <div className={styles.leftPanel}>
-                <TournamentPanel eventData={eventData} onSettingsUpdate={handleTournamentUpdate} />
-                <UpNextCard eventData={eventData} refreshTrigger={refreshTrigger} onMatchUpdate={handleMatchUpdate} />
-              </div>
-              <div className={styles.bracketVisualization}>
-                <BracketVisualization eventData={eventData} refreshTrigger={refreshTrigger} />
-              </div>
+            <div className={styles.contentPlaceholder}>
             </div>
           </div>
         </div>

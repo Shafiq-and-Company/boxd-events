@@ -22,17 +22,6 @@ const TitleCard = ({ title, eventData }) => {
             <span className={styles.backArrow}>←</span>
             <span className={styles.backText}>Back to Event Settings</span>
           </button>
-          <div className={styles.separator}></div>
-          <div className={styles.tournamentIcon}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-              <path d="M4 22h16"/>
-              <path d="M10 14.66V17c0 .55-.47.98-.97 1.21l-2.99 1.42A2 2 0 0 1 4 17.66V14.66"/>
-              <path d="M14 14.66V17c0 .55.47.98.97 1.21l2.99 1.42A2 2 0 0 0 20 17.66V14.66"/>
-              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
-            </svg>
-          </div>
         </div>
 
         {/* Center - Tournament Info */}
