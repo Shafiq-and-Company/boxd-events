@@ -95,7 +95,7 @@ const ManageTournament = () => {
     <div>
       <TitlePanel title="Tournament Management" eventData={eventData} />
         <div style={{ 
-          paddingTop: '30px',
+          paddingTop: '50px',
           padding: '1rem',
           margin: '0 auto',
           maxWidth: 'calc(100vw - 4rem)',
@@ -106,7 +106,8 @@ const ManageTournament = () => {
           gridTemplateColumns: isTournamentLive ? '60px 1fr 20%' : '20% 1fr',
           height: 'calc(100vh - 72px - 2rem)',
           gap: '1rem',
-          maxWidth: '100%'
+          maxWidth: '100%',
+          transition: 'grid-template-columns 0.3s ease-in-out'
         }}>
         {/* Left Column - Configuration */}
         <ConfigurationPanel 
