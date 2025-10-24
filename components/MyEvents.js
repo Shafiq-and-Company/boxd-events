@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabaseClient'
-import PageTitle from './PageTitle'
 import styles from './MyEvents.module.css'
 
 export default function MyEvents({ onTabChange }) {
@@ -14,7 +13,6 @@ export default function MyEvents({ onTabChange }) {
   const [hostedLoading, setHostedLoading] = useState(true)
   const [error, setError] = useState('')
   const [hostedError, setHostedError] = useState('')
-
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -140,7 +138,6 @@ export default function MyEvents({ onTabChange }) {
   if (authLoading || loading || hostedLoading) {
     return (
       <div className={styles.myEvents}>
-        <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
         <div className={styles.section}>
           <div className={styles.loading}>Loading your events...</div>
         </div>
@@ -151,7 +148,6 @@ export default function MyEvents({ onTabChange }) {
   if (!user) {
     return (
       <div className={styles.myEvents}>
-        <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
         <div className={styles.section}>
           <div className={styles.notLoggedIn}>
             <p>You need to be signed in to see your registered events.</p>
@@ -170,7 +166,6 @@ export default function MyEvents({ onTabChange }) {
   if (error || hostedError) {
     return (
       <div className={styles.myEvents}>
-        <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
         <div className={styles.section}>
           <div className={styles.error}>
             {error && `Error loading events: ${error}`}
@@ -273,8 +268,6 @@ export default function MyEvents({ onTabChange }) {
 
   return (
     <div className={styles.myEvents}>
-      <PageTitle title="My Events" subtitle="Manage your event registrations and hosted events" />
-      
       <div className={styles.section}>
         {allEvents.length === 0 ? (
           <div className={styles.emptyState}>

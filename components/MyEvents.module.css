@@ -21,7 +21,6 @@
   margin-bottom: 0;
 }
 
-
 /* ===== EVENTS GRID ===== */
 .eventsList {
   display: grid;
@@ -30,7 +29,6 @@
   width: 100%;
   margin: 0;
 }
-
 
 /* ===== EVENT CARDS ===== */
 .eventCard {
@@ -231,28 +229,23 @@
   }
 }
 
-
 /* ===== STATE CLASSES ===== */
-.loading, .error, .noEvents {
+.loading {
   text-align: left;
   padding: 32px;
   font-size: 1rem;
   font-weight: 400;
-}
-
-.loading, .noEvents {
   color: #707070;
 }
 
 .error {
+  text-align: left;
+  padding: 24px;
+  font-size: 1rem;
+  font-weight: 400;
   color: #000000;
   background: #f8f8f8;
   border: 1px solid #000000;
-  padding: 24px;
-}
-
-.noEvents {
-  color: #a0a0a0;
 }
 
 /* ===== EMPTY STATE ===== */
@@ -369,9 +362,6 @@
     font-size: 1.3rem;
   }
   
-  .eventContent {
-    padding: 0;
-  }
   
   .eventTitle {
     font-size: 1.1rem;
@@ -425,9 +415,6 @@
     font-size: 1.2rem;
   }
   
-  .eventContent {
-    padding: 0;
-  }
   
   .eventTitle {
     font-size: 1rem;
@@ -473,9 +460,6 @@
     font-size: 1.4rem;
   }
   
-  .eventContent {
-    padding: 0;
-  }
   
   .manageButton, .goingButton {
     font-size: 0.7rem;
@@ -516,9 +500,6 @@
     font-size: 1.5rem;
   }
   
-  .eventContent {
-    padding: 0;
-  }
   
   .eventTitle { 
     font-size: 1.2rem; 
