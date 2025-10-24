@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
-import PageTitle from './PageTitle'
 import styles from './DiscoverEvents.module.css'
 
 export default function DiscoverEvents() {
@@ -55,10 +54,7 @@ export default function DiscoverEvents() {
   }
 
   const fetchUserRsvps = async () => {
-    if (!user) {
-      setUserRsvps(new Set())
-      return
-    }
+    if (!user) return setUserRsvps(new Set())
     
     try {
       const { data, error } = await supabase
@@ -67,11 +63,7 @@ export default function DiscoverEvents() {
         .eq('user_id', user.id)
         .eq('status', 'going')
 
-      if (error) {
-        console.error('Error fetching user RSVPs:', error)
-        setUserRsvps(new Set())
-        return
-      }
+      if (error) throw error
 
       const rsvpEventIds = new Set(data?.map(rsvp => rsvp.event_id) || [])
       setUserRsvps(rsvpEventIds)
@@ -101,23 +93,12 @@ export default function DiscoverEvents() {
     setSelectedGame(gameTitle)
   }
 
-  // Function to refresh RSVPs (can be called from parent components)
-  const refreshRsvps = () => {
-    if (user) {
-      fetchUserRsvps()
-    }
-  }
-
-  const filteredEvents = events.filter(event => {
-    const matchesGame = selectedGame === 'all' || event.game_title === selectedGame
-    
-    return matchesGame
-  })
+  const filteredEvents = events.filter(event => 
+    selectedGame === 'all' || event.game_title === selectedGame
+  )
 
   return (
     <div className={styles.discoverEvents}>
-      <PageTitle title="Discover Events" subtitle="Explore gaming events and tournaments" />
-      
       {loading && (
         <div className={styles.loading}>Loading events...</div>
       )}
@@ -128,29 +109,6 @@ export default function DiscoverEvents() {
 
       {!loading && !error && (
         <>
-          {/* Events Near You Section */}
-          <div className={styles.eventsNearYou}>
-            <h2 className={styles.sectionTitle}>Events Near You</h2>
-            <div className={styles.nearYouContent}>
-              <div className={styles.mapPlaceholder}>
-                <div className={styles.mapIcon}>🗺️</div>
-                <span className={styles.mapText}>Map View</span>
-              </div>
-              <div className={styles.nearYouGrid}>
-                {Array.from({ length: 6 }, (_, index) => (
-                  <div key={index} className={styles.nearYouCard}>
-                    <div className={styles.nearYouBanner}>
-                      <span className={styles.placeholderText}>E{index + 1}</span>
-                    </div>
-                    <div className={styles.nearYouCardContent}>
-                      <span className={styles.placeholderText}>Event {index + 1}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
           <div className={styles.filters}>
             <h2 className={styles.sectionTitle}>Browse By Category</h2>
             <div className={styles.gameFilters}>
@@ -184,44 +142,42 @@ export default function DiscoverEvents() {
             </div>
           ) : (
             <div className={styles.eventsList}>
-              {filteredEvents.map((event) => {
-                const isRegistered = userRsvps.has(event.id)
-                return (
-                  <div 
-                    key={event.id} 
-                    className={styles.eventCard}
-                    onClick={() => handleEventClick(event.id)}
-                  >
-                    <div className={styles.eventImage}>
-                      {event.banner_image_url ? (
-                        <img 
-                          src={event.banner_image_url} 
-                          alt={event.title}
-                          style={{ 
-                            width: '100%', 
-                            height: '100%', 
-                            objectFit: 'cover'
-                          }}
-                        />
-                      ) : (
-                        <div className={styles.imagePlaceholder}>
-                          {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className={styles.eventContent}>
-                      <div className={styles.eventHeader}>
-                        {event.game_title && (
-                          <span className={styles.gameTitle}>
-                            {event.game_title.length > 30 
-                              ? `${event.game_title.substring(0, 30)}...` 
-                              : event.game_title}
-                          </span>
-                        )}
-                        <h3 className={styles.eventTitle}>{event.title}</h3>
+              {filteredEvents.map((event) => (
+                <div 
+                  key={event.id} 
+                  className={styles.eventCard}
+                  onClick={() => handleEventClick(event.id)}
+                >
+                  <div className={styles.eventImage}>
+                    {event.banner_image_url ? (
+                      <img 
+                        src={event.banner_image_url} 
+                        alt={event.title}
+                        style={{ 
+                          width: '100%', 
+                          height: '100%', 
+                          objectFit: 'cover'
+                        }}
+                      />
+                    ) : (
+                      <div className={styles.imagePlaceholder}>
+                        {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
                       </div>
-                    
+                    )}
+                  </div>
+                  
+                  <div className={styles.eventContent}>
+                    <div className={styles.eventHeader}>
+                      {event.game_title && (
+                        <span className={styles.gameTitle}>
+                          {event.game_title.length > 30 
+                            ? `${event.game_title.substring(0, 30)}...` 
+                            : event.game_title}
+                        </span>
+                      )}
+                      <h3 className={styles.eventTitle}>{event.title}</h3>
+                    </div>
+                  
                     <div className={styles.eventDetails}>
                       <div className={styles.eventDate}>
                         {formatDate(event.starts_at)}
@@ -233,12 +189,10 @@ export default function DiscoverEvents() {
                           {event.city && `, ${event.city}`}
                         </div>
                       )}
-                      
                     </div>
                   </div>
                 </div>
-                )
-              })}
+              ))}
             </div>
           )}
         </>
