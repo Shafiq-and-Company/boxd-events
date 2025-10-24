@@ -6,10 +6,163 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  box-shadow: 3px 3px 0px 0px #000000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, width 0.3s ease, height 0.3s ease;
+  width: 100%;
+}
+
+.configurationPanel.collapsed {
+  width: 60px;
+  min-width: 60px;
+  height: 50%;
+}
+
+.configurationPanel:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 5px 0px 0px #000000;
 }
 
 .panelContent {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+.panelTitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin: 0 0 1rem 0;
+}
+
+.tournamentStatusSection {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.toggleContainer {
+  margin-bottom: 0.5rem;
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  width: 100%;
+}
+
+.labelContent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.unlockIcon {
+  color: #6b7280;
+}
+
+.toggleWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.toggleInput {
+  display: none;
+}
+
+.toggleSlider {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background-color: #10b981;
+  border-radius: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.toggleSlider::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggleInput:checked + .toggleSlider {
+  background-color: #ef4444;
+}
+
+
+.toggleInput:checked + .toggleSlider::before {
+  transform: translateX(20px);
+}
+
+.statusText {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+  font-style: italic;
+}
+
+.collapsedContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  padding-top: 1rem;
+}
+
+.collapsedToggleLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+}
+
+.collapsedToggleSlider {
+  width: 24px;
+  height: 44px;
+}
+
+.collapsedToggleSlider::before {
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+}
+
+.toggleInput:checked + .collapsedToggleSlider::before {
+  transform: translateY(20px);
+}
+
+.collapsedText {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 200px;
+  word-wrap: break-word;
+  transform: rotate(90deg);
+  white-space: nowrap;
+  position: absolute;
+  bottom: -10rem;
+  left: 50%;
+  transform: translateX(-50%) rotate(270deg);
+  text-transform: uppercase;
 }

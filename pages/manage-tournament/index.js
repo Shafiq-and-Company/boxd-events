@@ -16,6 +16,7 @@ const ManageTournament = () => {
   const [activeSection, setActiveSection] = useState('bracket');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [participants, setParticipants] = useState([]);
+  const [isTournamentLive, setIsTournamentLive] = useState(false);
 
   const fetchEventData = async () => {
     if (!eventId || !user) return;
@@ -59,6 +60,10 @@ const ManageTournament = () => {
     setRefreshTrigger(prev => prev + 1);
   };
 
+  const handleTournamentLiveChange = (isLive) => {
+    setIsTournamentLive(isLive);
+  };
+
   const fetchParticipants = async () => {
     if (!eventId) return;
     
@@ -98,7 +103,7 @@ const ManageTournament = () => {
         }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 64% 1fr',
+          gridTemplateColumns: isTournamentLive ? '60px 1fr 20%' : '20% 1fr',
           height: 'calc(100vh - 72px - 2rem)',
           gap: '1rem',
           maxWidth: '100%'
@@ -109,6 +114,7 @@ const ManageTournament = () => {
           participants={participants}
           onTournamentUpdate={handleTournamentUpdate}
           onSeedingUpdate={handleSeedingUpdate}
+          onTournamentLiveChange={handleTournamentLiveChange}
         />
 
         {/* Center Column - Bracket Visualization */}
@@ -119,11 +125,13 @@ const ManageTournament = () => {
         />
 
         {/* Right Column - Scorekeeping */}
-        <ScorekeepingPanel 
-          eventData={eventData}
-          participants={participants}
-          onMatchUpdate={handleMatchUpdate}
-        />
+        {isTournamentLive && (
+          <ScorekeepingPanel 
+            eventData={eventData}
+            participants={participants}
+            onMatchUpdate={handleMatchUpdate}
+          />
+        )}
         </div>
       </div>
     </div>
