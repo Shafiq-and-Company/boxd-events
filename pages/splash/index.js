@@ -39,15 +39,17 @@ export default function SplashPage() {
             </button>
           </div>
           <div className={styles.heroImage}>
-            <Image 
-              src="/for-par.gif" 
-              alt="Hero Demo" 
+            <video 
               className={styles.heroImagePlaceholder}
               width={1200}
               height={600}
-              priority
-              quality={85}
-            />
+              autoPlay
+              loop
+              muted
+              playsInline
+            >
+              <source src="/for-par.webm" type="video/webm" />
+            </video>
           </div>
         </div>
       </section>
@@ -59,27 +61,33 @@ export default function SplashPage() {
             <div className={styles.valueProp}>
               <h3>For Participants</h3>
               <p>Find gaming events near you, search for tournaments and meetups, and join local gaming communities to discover new players.</p>
-              <Image 
-                src="/view-cal.gif" 
-                alt="View Calendar Demo" 
+              <video 
                 className={styles.demoImage}
                 width={400}
                 height={300}
-                quality={80}
-              />
+                autoPlay
+                loop
+                muted
+                playsInline
+              >
+                <source src="/view-cal.webm" type="video/webm" />
+              </video>
             </div>
             
             <div className={styles.valueProp}>
               <h3>For Organizers</h3>
               <p>Make and run gaming events using our simple tools to set up tournaments and manage brackets while creating community events.</p>
-              <Image 
-                src="/for-org.gif" 
-                alt="For Organizers Demo" 
+              <video 
                 className={styles.demoImage}
                 width={400}
                 height={300}
-                quality={80}
-              />
+                autoPlay
+                loop
+                muted
+                playsInline
+              >
+                <source src="/for-org.webm" type="video/webm" />
+              </video>
             </div>
           </div>
         </div>
