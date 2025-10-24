@@ -1,0 +1,15 @@
+.scorekeepingPanel {
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 0px;
+  padding: 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.panelContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

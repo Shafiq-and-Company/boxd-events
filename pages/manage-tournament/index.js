@@ -3,6 +3,9 @@ import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
 import TitleCard from './TitleCard';
+import ConfigurationPanel from './ConfigurationPanel';
+import VisualizationPanel from './VisualizationPanel';
+import ScorekeepingPanel from './ScorekeepingPanel';
 
 const ManageTournament = () => {
   const router = useRouter();
@@ -101,42 +104,26 @@ const ManageTournament = () => {
           maxWidth: '100%'
         }}>
         {/* Left Column - Configuration */}
-        <div style={{
-          backgroundColor: '#ffffff',
-          border: '1px solid #000000',
-          borderRadius: '0px',
-          padding: '1rem'
-        }}>
-        </div>
+        <ConfigurationPanel 
+          eventData={eventData}
+          participants={participants}
+          onTournamentUpdate={handleTournamentUpdate}
+          onSeedingUpdate={handleSeedingUpdate}
+        />
 
         {/* Center Column - Bracket Visualization */}
-        <div style={{
-          backgroundColor: '#ffffff',
-          border: '1px solid #000000',
-          borderRadius: '0px',
-          padding: '1rem',
-          minHeight: '400px',
-          position: 'relative'
-        }}>
-          <div style={{
-            position: 'absolute',
-            top: '1rem',
-            bottom: '1rem',
-            left: '50%',
-            width: '1px',
-            backgroundColor: '#000000',
-            transform: 'translateX(-50%)'
-          }}></div>
-        </div>
+        <VisualizationPanel 
+          eventData={eventData}
+          participants={participants}
+          refreshTrigger={refreshTrigger}
+        />
 
         {/* Right Column - Scorekeeping */}
-        <div style={{
-          backgroundColor: '#ffffff',
-          border: '1px solid #000000',
-          borderRadius: '0px',
-          padding: '1rem'
-        }}>
-        </div>
+        <ScorekeepingPanel 
+          eventData={eventData}
+          participants={participants}
+          onMatchUpdate={handleMatchUpdate}
+        />
         </div>
       </div>
     </div>
