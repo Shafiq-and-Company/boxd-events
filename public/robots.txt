@@ -1,6 +1,19 @@
 User-agent: *
 Allow: /
 
+# AI Bot Access
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
 # Sitemap
 Sitemap: https://locals.gg/sitemap.xml
 
