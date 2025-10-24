@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import styles from './ConfigurationPanel.module.css';
 
-const ConfigurationPanel = ({ eventData, participants, onTournamentUpdate, onSeedingUpdate, onTournamentLiveChange, onFormatChange }) => {
+const ConfigurationPanel = ({ eventData, participants, onTournamentUpdate, onSeedingUpdate, onTournamentLiveChange }) => {
   const [isTournamentLive, setIsTournamentLive] = useState(false);
   const [seedingMethod, setSeedingMethod] = useState('random');
-  const [tournamentFormat, setTournamentFormat] = useState('single-elimination');
 
   const handleToggleChange = () => {
     const newState = !isTournamentLive;
