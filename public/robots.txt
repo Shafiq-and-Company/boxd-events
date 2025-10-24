@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://locals.gg/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Disallow admin and private areas
+Disallow: /api/
+Disallow: /manage-tournament/
+Disallow: /manage-event/
+Disallow: /_next/
+Disallow: /admin/
+
+# Allow important pages
+Allow: /splash

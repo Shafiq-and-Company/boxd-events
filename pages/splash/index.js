@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Head from 'next/head';
 import Image from 'next/image';
 import SplashNav from './SplashNav';
 import styles from './Splash.module.css';
@@ -15,11 +16,95 @@ export default function SplashPage() {
   };
 
   return (
-    <div className={styles.pageContainer}>
-      <SplashNav />
+    <>
+      <Head>
+        {/* Primary Meta Tags */}
+        <title>LOCALS.GG - Local Gaming Tournaments & Events Platform</title>
+        <meta name="title" content="LOCALS.GG - Local Gaming Tournaments & Events Platform" />
+        <meta name="description" content="Find and create local gaming tournaments, events, and meetups. Connect with gamers in your area, manage brackets, and build your gaming community. Free tournament management platform." />
+        <meta name="keywords" content="gaming tournaments, local gaming events, tournament brackets, gaming community, esports events, fighting game tournaments, gaming meetups, tournament management" />
+        <meta name="robots" content="index, follow" />
+        <meta name="language" content="English" />
+        <meta name="author" content="LOCALS.GG" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://locals.gg/splash" />
+        <meta property="og:title" content="LOCALS.GG - Local Gaming Tournaments & Events Platform" />
+        <meta property="og:description" content="Find and create local gaming tournaments, events, and meetups. Connect with gamers in your area, manage brackets, and build your gaming community." />
+        <meta property="og:image" content="https://locals.gg/for-par.webm" />
+        <meta property="og:site_name" content="LOCALS.GG" />
+        <meta property="og:locale" content="en_US" />
+        
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://locals.gg/splash" />
+        <meta property="twitter:title" content="LOCALS.GG - Local Gaming Tournaments & Events Platform" />
+        <meta property="twitter:description" content="Find and create local gaming tournaments, events, and meetups. Connect with gamers in your area, manage brackets, and build your gaming community." />
+        <meta property="twitter:image" content="https://locals.gg/for-par.webm" />
+        
+        {/* Additional SEO */}
+        <meta name="theme-color" content="#000000" />
+        <meta name="msapplication-TileColor" content="#000000" />
+        <link rel="canonical" href="https://locals.gg/splash" />
+        
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "LOCALS.GG",
+              "description": "Local gaming tournaments and events platform",
+              "url": "https://locals.gg",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://locals.gg/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              },
+              "publisher": {
+                "@type": "Organization",
+                "name": "LOCALS.GG",
+                "url": "https://locals.gg"
+              }
+            })
+          }}
+        />
+        
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "LOCALS.GG",
+              "description": "Platform for local gaming tournaments and events",
+              "applicationCategory": "GameApplication",
+              "operatingSystem": "Web Browser",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+              },
+              "featureList": [
+                "Tournament Management",
+                "Bracket Generation",
+                "Event Discovery",
+                "Community Building",
+                "Profile Integration"
+              ]
+            })
+          }}
+        />
+      </Head>
+      
+      <div className={styles.pageContainer}>
+        <SplashNav />
       
       {/* Hero Section */}
-      <section className={styles.heroSection}>
+      <main className={styles.heroSection}>
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
             <h1 className={styles.heroTitle}>
@@ -47,19 +132,20 @@ export default function SplashPage() {
               loop
               muted
               playsInline
+              preload="metadata"
             >
               <source src="/for-par.webm" type="video/webm" />
             </video>
           </div>
         </div>
-      </section>
+      </main>
 
       {/* Value Props Section */}
       <section className={styles.valuePropsSection}>
         <div className={styles.sectionContent}>
           <div className={styles.valuePropsGrid}>
-            <div className={styles.valueProp}>
-              <h3>For Participants</h3>
+            <article className={styles.valueProp}>
+              <h2>For Participants</h2>
               <p>Find gaming events near you, search for tournaments and meetups, and join local gaming communities to discover new players.</p>
               <video 
                 className={styles.demoImage}
@@ -69,13 +155,14 @@ export default function SplashPage() {
                 loop
                 muted
                 playsInline
+                preload="metadata"
               >
                 <source src="/view-cal.webm" type="video/webm" />
               </video>
-            </div>
+            </article>
             
-            <div className={styles.valueProp}>
-              <h3>For Organizers</h3>
+            <article className={styles.valueProp}>
+              <h2>For Organizers</h2>
               <p>Make and run gaming events using our simple tools to set up tournaments and manage brackets while creating community events.</p>
               <video 
                 className={styles.demoImage}
@@ -85,10 +172,11 @@ export default function SplashPage() {
                 loop
                 muted
                 playsInline
+                preload="metadata"
               >
                 <source src="/for-org.webm" type="video/webm" />
               </video>
-            </div>
+            </article>
           </div>
         </div>
       </section>
@@ -415,6 +503,7 @@ export default function SplashPage() {
           </button>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }
