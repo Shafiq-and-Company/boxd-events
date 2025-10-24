@@ -87,7 +87,7 @@ const ManageTournament = () => {
     <div>
       <TitleCard title="Tournament Management" eventData={eventData} />
         <div style={{ 
-          paddingTop: 'calc(72px + 1rem)',
+          paddingTop: '30px',
           padding: '1rem',
           margin: '0 auto',
           maxWidth: 'calc(100vw - 4rem)',
