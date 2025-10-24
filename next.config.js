@@ -12,8 +12,9 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   
-  // Compression
+  // Compression and minification
   compress: true,
+  swcMinify: true,
   
   // Experimental features for better performance
   experimental: {
