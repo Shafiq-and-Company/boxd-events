@@ -2,6 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
+import { generateBracketData as generateSingleEliminationBracket } from '../../lib/singleElimination';
+import { generateBracketData as generateDoubleEliminationBracket } from '../../lib/doubleElimination';
+import { generateBracketData as generateRoundRobinBracket } from '../../lib/roundRobin';
+import { generateBracketData as generateSwissBracket } from '../../lib/swiss';
 import TitlePanel from './TitlePanel';
 import ConfigurationPanel from './ConfigurationPanel';
 import VisualizationPanel from './VisualizationPanel';
@@ -123,6 +127,58 @@ const ManageTournament = () => {
     }
   };
 
+  const handleFormatChange = async (newFormat) => {
+    if (!eventId || !tournamentData) return;
+    
+    try {
+      // Generate new bracket data based on the new format
+      let newBracketData = null;
+      
+      if (participants.length >= 2) {
+        try {
+          switch (newFormat) {
+            case 'single_elimination':
+              newBracketData = generateSingleEliminationBracket(newFormat, participants);
+              break;
+            case 'double_elimination':
+              newBracketData = generateDoubleEliminationBracket(newFormat, participants);
+              break;
+            case 'round_robin':
+              newBracketData = generateRoundRobinBracket(newFormat, participants);
+              break;
+            case 'swiss':
+              newBracketData = generateSwissBracket(newFormat, participants);
+              break;
+            default:
+              console.error('Unsupported tournament format:', newFormat);
+              return;
+          }
+        } catch (bracketError) {
+          console.error('Error generating bracket data:', bracketError);
+          // Continue with format update even if bracket generation fails
+        }
+      }
+
+      // Update tournament type and bracket data
+      const updateData = { tournament_type: newFormat };
+      if (newBracketData) {
+        updateData.bracket_data = newBracketData;
+      }
+
+      const { error } = await supabase
+        .from('tournaments')
+        .update(updateData)
+        .eq('event_id', eventId);
+
+      if (error) throw error;
+      
+      // Refresh tournament data to get updated format and bracket
+      fetchTournamentData();
+    } catch (err) {
+      console.error('Error updating tournament format:', err);
+    }
+  };
+
   const fetchParticipants = async () => {
     if (!eventId) return;
     
@@ -171,10 +227,12 @@ const ManageTournament = () => {
         {/* Left Column - Configuration */}
         <ConfigurationPanel 
           eventData={eventData}
+          tournamentData={tournamentData}
           participants={participants}
           onTournamentUpdate={handleTournamentUpdate}
           onSeedingUpdate={handleSeedingUpdate}
           onTournamentLiveChange={handleTournamentLiveChange}
+          onFormatChange={handleFormatChange}
         />
 
         {/* Center Column - Bracket Visualization */}

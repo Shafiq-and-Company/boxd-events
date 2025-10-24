@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './ConfigurationPanel.module.css';
 
-const ConfigurationPanel = ({ eventData, participants, onTournamentUpdate, onSeedingUpdate, onTournamentLiveChange }) => {
+const ConfigurationPanel = ({ eventData, tournamentData, participants, onTournamentUpdate, onSeedingUpdate, onTournamentLiveChange, onFormatChange }) => {
   const [isTournamentLive, setIsTournamentLive] = useState(false);
   const [seedingMethod, setSeedingMethod] = useState('random');
+  const [currentFormat, setCurrentFormat] = useState(tournamentData?.tournament_type || 'single_elimination');
+
+  // Update current format when tournament data changes
+  useEffect(() => {
+    if (tournamentData?.tournament_type) {
+      setCurrentFormat(tournamentData.tournament_type);
+    }
+  }, [tournamentData?.tournament_type]);
 
   const handleToggleChange = () => {
     const newState = !isTournamentLive;
@@ -21,6 +29,12 @@ const ConfigurationPanel = ({ eventData, participants, onTournamentUpdate, onSee
 
   const handleResetSeeds = () => {
     onSeedingUpdate('reset', seedingMethod);
+  };
+
+  const handleFormatChange = (event) => {
+    const newFormat = event.target.value;
+    setCurrentFormat(newFormat);
+    onFormatChange(newFormat);
   };
 
   return (
@@ -67,10 +81,14 @@ const ConfigurationPanel = ({ eventData, participants, onTournamentUpdate, onSee
                   </svg>
                   <span className={styles.formatText}>Format</span>
                 </div>
-                <select className={styles.formatDropdown}>
-                  <option value="single-elimination">Single Elimination</option>
-                  <option value="double-elimination">Double Elimination</option>
-                  <option value="round-robin">Round Robin</option>
+                <select 
+                  className={styles.formatDropdown}
+                  value={currentFormat}
+                  onChange={handleFormatChange}
+                >
+                  <option value="single_elimination">Single Elimination</option>
+                  <option value="double_elimination">Double Elimination</option>
+                  <option value="round_robin">Round Robin</option>
                   <option value="swiss">Swiss</option>
                 </select>
               </label>
