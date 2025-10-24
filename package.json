@@ -9,7 +9,6 @@
     "export": "next build && next export"
   },
   "dependencies": {
-    "@netlify/plugin-minify-html": "^1.0.0",
     "@netlify/plugin-nextjs": "^5.13.5",
     "@supabase/supabase-js": "^2.74.0",
     "critters": "^0.0.23",

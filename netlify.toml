@@ -6,7 +6,7 @@
   node_bundler = "esbuild"
 
 [[plugins]]
-  package = "@netlify/plugin-minify-html"
+  package = "netlify-plugin-minify-html"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
