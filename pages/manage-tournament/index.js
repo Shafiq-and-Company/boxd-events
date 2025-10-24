@@ -95,9 +95,10 @@ const ManageTournament = () => {
         }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 2fr 1fr',
-          minHeight: 'calc(100vh - 72px)',
-          gap: '1rem'
+          gridTemplateColumns: '1fr 64% 1fr',
+          height: 'calc(100vh - 72px - 2rem)',
+          gap: '1rem',
+          maxWidth: '100%'
         }}>
         {/* Left Column - Configuration */}
         <div style={{
@@ -114,8 +115,18 @@ const ManageTournament = () => {
           border: '1px solid #000000',
           borderRadius: '0px',
           padding: '1rem',
-          minHeight: '400px'
+          minHeight: '400px',
+          position: 'relative'
         }}>
+          <div style={{
+            position: 'absolute',
+            top: '1rem',
+            bottom: '1rem',
+            left: '50%',
+            width: '1px',
+            backgroundColor: '#000000',
+            transform: 'translateX(-50%)'
+          }}></div>
         </div>
 
         {/* Right Column - Scorekeeping */}
