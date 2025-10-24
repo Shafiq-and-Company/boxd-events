@@ -118,11 +118,12 @@
   color: #374151;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 3px 3px 0px 0px #000000;
 }
 
 .actionButton:hover {
   background: #f9fafb;
-  box-shadow: 1px 1px 0px 0px #000000;
+  box-shadow: 3px 3px 0px 0px #000000;
 }
 
 .autosaveIcon {
@@ -132,65 +133,15 @@
   border-radius: 0;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .headerContent {
-    padding: 0 16px;
-    height: 60px;
-  }
-  
-  .sectionHeader {
-    min-height: 60px;
-  }
-  
-  .tournamentTitle {
-    font-size: 1.125rem;
-  }
-  
-  .actionButtons {
-    gap: 6px;
-  }
-  
-  .actionButton {
-    padding: 6px 8px;
-    font-size: 0.8rem;
-  }
-  
-  .backText {
-    display: none;
-  }
+.onlineButton {
+  background: #10b981 !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
 }
 
-@media (max-width: 480px) {
-  .headerContent {
-    padding: 0 12px;
-    height: 56px;
-  }
-  
-  .sectionHeader {
-    min-height: 56px;
-  }
-  
-  .tournamentTitle {
-    font-size: 1rem;
-  }
-  
-  .tournamentStatus {
-    font-size: 0.7rem;
-  }
-  
-  .actionButtons {
-    gap: 4px;
-  }
-  
-  .actionButton {
-    padding: 4px 6px;
-    font-size: 0.75rem;
-  }
-  
-  .actionButton span {
-    display: none;
-  }
-  
+.onlineButton:hover {
+  background: #059669 !important;
+  color: #ffffff !important;
 }
+
 

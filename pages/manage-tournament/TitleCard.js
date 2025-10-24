@@ -9,8 +9,9 @@ const TitleCard = ({ title, eventData }) => {
     router.push(`/manage-event/${eventData?.id}`);
   };
 
-  const handleExitClick = () => {
-    router.push('/');
+  const handleExpandClick = () => {
+    // Open current page in a new tab
+    window.open(window.location.href, '_blank');
   };
 
   return (
@@ -40,7 +41,7 @@ const TitleCard = ({ title, eventData }) => {
 
         {/* Right side - Action Buttons */}
         <div className={styles.actionButtons}>
-          <button className={styles.actionButton}>
+          <button className={`${styles.actionButton} ${styles.onlineButton}`}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
               <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
@@ -53,7 +54,7 @@ const TitleCard = ({ title, eventData }) => {
             <div className={styles.autosaveIcon}></div>
             <span>Autosaving</span>
           </button>
-          <button className={styles.actionButton} onClick={handleExitClick}>
+          <button className={styles.actionButton} onClick={handleExpandClick}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-3"/>
               <path d="M8 3v4"/>
@@ -61,8 +62,12 @@ const TitleCard = ({ title, eventData }) => {
               <path d="M8 11h8"/>
               <path d="M8 15h8"/>
               <path d="M8 19h8"/>
+              <path d="M21 3h-6"/>
+              <path d="M21 9v-6"/>
+              <path d="M21 15v6"/>
+              <path d="M15 21h6"/>
             </svg>
-            <span>Exit</span>
+            <span>Expand</span>
           </button>
         </div>
       </div>
