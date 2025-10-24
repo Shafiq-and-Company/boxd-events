@@ -21,8 +21,8 @@ export default function SplashPage() {
         {/* Primary Meta Tags */}
         <title>LOCALS.GG - Local Gaming Tournaments & Events Platform</title>
         <meta name="title" content="LOCALS.GG - Local Gaming Tournaments & Events Platform" />
-        <meta name="description" content="Find and create local gaming tournaments, events, and meetups. Connect with gamers in your area, manage brackets, and build your gaming community. Free tournament management platform." />
-        <meta name="keywords" content="gaming tournaments, local gaming events, tournament brackets, gaming community, esports events, fighting game tournaments, gaming meetups, tournament management" />
+        <meta name="description" content="Find and create local gaming tournaments, events, and meetups. Connect with gamers in your area, manage brackets, and build your gaming community. Free tournament management platform. Start.gg and Challonge alternative for local gaming events." />
+        <meta name="keywords" content="gaming tournaments, local gaming events, tournament brackets, gaming community, esports events, fighting game tournaments, gaming meetups, tournament management, start.gg alternative, start.gg replacement, challonge alternative, challonge replacement, local gaming platform, tournament bracket generator, fighting game tournaments, smash bros tournaments, local esports, bracket management, tournament organizer" />
         <meta name="robots" content="index, follow" />
         <meta name="language" content="English" />
         <meta name="author" content="LOCALS.GG" />
@@ -32,7 +32,7 @@ export default function SplashPage() {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://locals.gg/splash" />
         <meta property="og:title" content="LOCALS.GG - Local Gaming Tournaments & Events Platform" />
-        <meta property="og:description" content="Find and create local gaming tournaments, events, and meetups. Connect with gamers in your area, manage brackets, and build your gaming community." />
+        <meta property="og:description" content="Find and create local gaming tournaments, events, and meetups. Connect with gamers in your area, manage brackets, and build your gaming community. Start.gg and Challonge alternative for local gaming events." />
         <meta property="og:image" content="https://locals.gg/for-par.webm" />
         <meta property="og:site_name" content="LOCALS.GG" />
         <meta property="og:locale" content="en_US" />
@@ -41,7 +41,7 @@ export default function SplashPage() {
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://locals.gg/splash" />
         <meta property="twitter:title" content="LOCALS.GG - Local Gaming Tournaments & Events Platform" />
-        <meta property="twitter:description" content="Find and create local gaming tournaments, events, and meetups. Connect with gamers in your area, manage brackets, and build your gaming community." />
+        <meta property="twitter:description" content="Find and create local gaming tournaments, events, and meetups. Connect with gamers in your area, manage brackets, and build your gaming community. Start.gg and Challonge alternative for local gaming events." />
         <meta property="twitter:image" content="https://locals.gg/for-par.webm" />
         
         {/* Additional SEO */}
@@ -93,7 +93,12 @@ export default function SplashPage() {
                 "Bracket Generation",
                 "Event Discovery",
                 "Community Building",
-                "Profile Integration"
+                "Profile Integration",
+                "Start.gg Integration",
+                "Challonge Integration",
+                "Local Gaming Events",
+                "Tournament Brackets",
+                "Bracket Management"
               ]
             })
           }}
@@ -116,7 +121,7 @@ export default function SplashPage() {
             <div className={styles.divider}></div>
             
             <p className={styles.heroSubtitle}>
-              Find gaming events near you or make your own to build the gaming community you want. Connect with local gamers and join fun tournaments.
+              Find gaming events near you or make your own to build the gaming community you want. Connect with local gamers and join fun tournaments. The best start.gg and Challonge alternative for local gaming events.
             </p>
             
             <button className={styles.ctaButton} onClick={handleGetStarted}>
@@ -231,7 +236,7 @@ export default function SplashPage() {
           <div className={styles.linkProfilesContent}>
             <div className={styles.linkProfilesText}>
               <h2 className={styles.sectionTitle}>Link Online Profiles</h2>
-              <p className={styles.sectionSubtitle}>Connect your gaming accounts to show your tournament history and rankings across all platforms</p>
+              <p className={styles.sectionSubtitle}>Connect your gaming accounts to show your tournament history and rankings across all platforms. Import your start.gg and Challonge profiles and tournament history seamlessly.</p>
             </div>
             <div className={styles.linkProfilesIcons}>
               <div className={styles.profileIcon}>
@@ -309,7 +314,7 @@ export default function SplashPage() {
                 />
               </div>
               <h3>Manage Tournaments</h3>
-              <p>Watch how automated brackets and live results keep your tournaments running smoothly.</p>
+              <p>Watch how automated brackets and live results keep your tournaments running smoothly. Better bracket management than Challonge.</p>
             </div>
             
             <div className={styles.videoDemo}>
@@ -369,7 +374,7 @@ export default function SplashPage() {
                 </svg>
               </div>
               <h4>Add a Bracket</h4>
-              <p>Create tournament brackets automatically with seeding, elimination rounds, and live results</p>
+              <p>Create tournament brackets automatically with seeding, elimination rounds, and live results. Better than Challonge for local tournaments.</p>
               <button className={styles.tryButton} onClick={handleGetStarted}>Try it ↗</button>
             </div>
             
@@ -381,7 +386,7 @@ export default function SplashPage() {
                 </svg>
               </div>
               <h4>Link Online Profiles</h4>
-              <p>Connect to Start.gg, Challonge, and Supermajor for seamless tournament integration</p>
+              <p>Connect to Start.gg, Challonge, and Supermajor for seamless tournament integration. Import your start.gg and Challonge tournament history and rankings.</p>
               <button className={styles.tryButton} onClick={handleGetStarted}>Try it ↗</button>
             </div>
           </div>
@@ -486,6 +491,38 @@ export default function SplashPage() {
               {openFaq === 5 && (
                 <div className={styles.faqContent}>
                   <p>Yes! Connect your Start.gg, Challonge, and Supermajor accounts for seamless profile integration and cross-platform results.</p>
+                </div>
+              )}
+            </div>
+            
+            <div className={styles.faq} onClick={() => toggleFaq(6)}>
+              <div className={styles.faqHeader}>
+                <h3>Is this a start.gg alternative?</h3>
+                <div className={`${styles.faqIcon} ${openFaq === 6 ? styles.faqIconOpen : ''}`}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6,9 12,15 18,9"/>
+                  </svg>
+                </div>
+              </div>
+              {openFaq === 6 && (
+                <div className={styles.faqContent}>
+                  <p>Yes! LOCALS.GG is designed as a start.gg alternative focused on local gaming communities. We offer similar tournament management features with a focus on local events and community building.</p>
+                </div>
+              )}
+            </div>
+            
+            <div className={styles.faq} onClick={() => toggleFaq(7)}>
+              <div className={styles.faqHeader}>
+                <h3>Is this a Challonge alternative?</h3>
+                <div className={`${styles.faqIcon} ${openFaq === 7 ? styles.faqIconOpen : ''}`}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6,9 12,15 18,9"/>
+                  </svg>
+                </div>
+              </div>
+              {openFaq === 7 && (
+                <div className={styles.faqContent}>
+                  <p>Yes! LOCALS.GG is also a Challonge alternative that focuses on local gaming tournaments. We offer better bracket management, local event discovery, and community features compared to Challonge.</p>
                 </div>
               )}
             </div>
