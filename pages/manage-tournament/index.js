@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
 import TitleCard from './TitleCard';
-import styles from './indexTournament.module.css';
 
 const ManageTournament = () => {
   const router = useRouter();
@@ -85,12 +84,12 @@ const ManageTournament = () => {
   };
 
   return (
-    <div className={styles.dashboard}>
-      <div className={styles.mainContent}>
-        <TitleCard title="Tournament Management" eventData={eventData} />
-        <div className={styles.contentLayout}>
-          <div className={styles.sectionContent}>
-            <div className={styles.contentPlaceholder}>
+    <div>
+      <TitleCard title="Tournament Management" eventData={eventData} />
+      <div style={{ paddingTop: '72px' }}>
+        <div>
+          <div>
+            <div>
             </div>
           </div>
         </div>
