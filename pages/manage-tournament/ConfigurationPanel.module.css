@@ -37,8 +37,8 @@
 }
 
 .tournamentStatusSection {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
   border-bottom: 1px solid #d1d5db;
 }
 
@@ -81,7 +81,7 @@
   width: 44px;
   height: 24px;
   background-color: #10b981;
-  border-radius: 12px;
+  border-radius: 0;
   transition: background-color 0.2s ease;
 }
 
@@ -93,7 +93,7 @@
   width: 20px;
   height: 20px;
   background-color: #ffffff;
-  border-radius: 50%;
+  border-radius: 0;
   transition: transform 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -101,7 +101,6 @@
 .toggleInput:checked + .toggleSlider {
   background-color: #ef4444;
 }
-
 
 .toggleInput:checked + .toggleSlider::before {
   transform: translateX(20px);
@@ -115,7 +114,7 @@
 }
 
 .formatSection {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .formatLabel {
@@ -125,6 +124,16 @@
   font-size: 0.875rem;
   font-weight: 500;
   color: #374151;
+}
+
+.formatHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.formatIcon {
+  color: #6b7280;
 }
 
 .formatText {
@@ -151,7 +160,7 @@
 }
 
 .seedingSection {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .seedingLabel {
@@ -161,6 +170,16 @@
   font-size: 0.875rem;
   font-weight: 500;
   color: #374151;
+}
+
+.seedingHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.seedingIcon {
+  color: #6b7280;
 }
 
 .seedingText {
@@ -196,11 +215,6 @@
 
 .seedingInput {
   display: none;
-}
-
-.seedingInput:checked + .seedingOptionText {
-  color: #374151;
-  font-weight: 600;
 }
 
 .seedingOption:has(.seedingInput:checked) {
@@ -246,14 +260,6 @@
   transition: color 0.2s ease;
 }
 
-.randomizeButton:hover svg {
-  color: #ffffff;
-}
-
-.resetSeedsSection {
-  margin-top: 1rem;
-}
-
 .resetSeedsButton {
   display: flex;
   align-items: center;
@@ -267,7 +273,7 @@
   color: #374151;
   cursor: pointer;
   transition: all 0.2s ease;
-  width: 100%;
+  width: 40px;
   height: 40px;
 }
 
@@ -278,20 +284,35 @@
 }
 
 .participantsSection {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #d1d5db;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.875rem;
   font-weight: 600;
   color: #374151;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.25rem 0;
+}
+
+.sectionIcon {
+  color: #6b7280;
+}
+
+.seedingSubtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0 0 0.75rem 0;
+  font-style: italic;
 }
 
 .participantsList {
-  max-height: 200px;
+  flex: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -315,7 +336,6 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  background-color: #000000;
   color: #ffffff;
   border-radius: 0;
   font-size: 0.75rem;
@@ -323,10 +343,46 @@
   flex-shrink: 0;
 }
 
+.participantInfo {
+  display: flex;
+  flex: 1;
+}
+
 .participantName {
   color: #000000;
   font-weight: 500;
-  flex: 1;
+  font-size: 0.875rem;
+}
+
+.nameSeparator {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.participantFullName {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.grabHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #9ca3af;
+  cursor: grab;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.grabHandle:hover {
+  color: #6b7280;
+}
+
+.grabHandle:active {
+  cursor: grabbing;
 }
 
 .noParticipants {
@@ -384,7 +440,6 @@
   line-height: 1.2;
   max-width: 200px;
   word-wrap: break-word;
-  transform: rotate(90deg);
   white-space: nowrap;
   position: absolute;
   bottom: -10rem;
