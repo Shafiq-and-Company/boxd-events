@@ -86,12 +86,46 @@ const ManageTournament = () => {
   return (
     <div>
       <TitleCard title="Tournament Management" eventData={eventData} />
-      <div style={{ paddingTop: '72px' }}>
-        <div>
-          <div>
-            <div>
-            </div>
-          </div>
+        <div style={{ 
+          paddingTop: 'calc(72px + 1rem)',
+          padding: '1rem',
+          margin: '0 auto',
+          maxWidth: 'calc(100vw - 4rem)',
+          boxSizing: 'border-box'
+        }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 2fr 1fr',
+          minHeight: 'calc(100vh - 72px)',
+          gap: '1rem'
+        }}>
+        {/* Left Column - Configuration */}
+        <div style={{
+          backgroundColor: '#ffffff',
+          border: '1px solid #000000',
+          borderRadius: '0px',
+          padding: '1rem'
+        }}>
+        </div>
+
+        {/* Center Column - Bracket Visualization */}
+        <div style={{
+          backgroundColor: '#ffffff',
+          border: '1px solid #000000',
+          borderRadius: '0px',
+          padding: '1rem',
+          minHeight: '400px'
+        }}>
+        </div>
+
+        {/* Right Column - Scorekeeping */}
+        <div style={{
+          backgroundColor: '#ffffff',
+          border: '1px solid #000000',
+          borderRadius: '0px',
+          padding: '1rem'
+        }}>
+        </div>
         </div>
       </div>
     </div>
