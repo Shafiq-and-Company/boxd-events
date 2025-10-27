@@ -6,7 +6,6 @@ const ConfigurationPanel = ({ eventData, tournamentData, participants, onTournam
   const [seedingMethod, setSeedingMethod] = useState('random');
   const [currentFormat, setCurrentFormat] = useState(tournamentData?.tournament_type || 'single_elimination');
 
-  // Update current format when tournament data changes
   useEffect(() => {
     if (tournamentData?.tournament_type) {
       setCurrentFormat(tournamentData.tournament_type);
@@ -24,11 +23,13 @@ const ConfigurationPanel = ({ eventData, tournamentData, participants, onTournam
   };
 
   const handleRandomize = () => {
-    onSeedingUpdate('randomize', 'random');
+    console.log('Randomize seeds - awaiting brackets-manager integration');
+    // TODO: Implement with brackets-manager.js
   };
 
   const handleResetSeeds = () => {
-    onSeedingUpdate('reset', seedingMethod);
+    console.log('Reset seeds - awaiting brackets-manager integration');
+    // TODO: Implement with brackets-manager.js
   };
 
   const handleFormatChange = (event) => {

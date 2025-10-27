@@ -2,10 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
-import { generateSingleEliminationBracket, updateTournamentMatches as updateSingleEliminationMatches } from '../../lib/singleElimination';
-import { generateDoubleEliminationBracket, updateTournamentMatches as updateDoubleEliminationMatches } from '../../lib/doubleElimination';
-import { generateRoundRobinBracket, updateTournamentMatches as updateRoundRobinMatches } from '../../lib/roundRobin';
-import { generateSwissBracket, updateTournamentMatches as updateSwissMatches } from '../../lib/swiss';
 import TitlePanel from './TitlePanel';
 import ConfigurationPanel from './ConfigurationPanel';
 import VisualizationPanel from './VisualizationPanel';
@@ -95,111 +91,14 @@ const ManageTournament = () => {
 
 
   const resetTournamentData = async () => {
-    if (!eventId || !tournamentData) return;
-    
-    try {
-      // Prepare participants data for bracket generation
-      const formattedParticipants = participants.map(p => ({
-        id: p.user_id,
-        name: p.users?.username || 'Unknown',
-        username: p.users?.username,
-        first_name: p.users?.first_name,
-        last_name: p.users?.last_name
-      }));
-
-      // Generate new bracket data from participants
-      let newBracketData = null;
-      
-      if (formattedParticipants.length >= 2) {
-        try {
-          switch (tournamentData.tournament_type) {
-            case 'single_elimination':
-              newBracketData = generateSingleEliminationBracket(formattedParticipants);
-              break;
-            case 'double_elimination':
-              newBracketData = generateDoubleEliminationBracket(formattedParticipants);
-              break;
-            case 'round_robin':
-              newBracketData = generateRoundRobinBracket(formattedParticipants);
-              break;
-            case 'swiss':
-              newBracketData = generateSwissBracket(formattedParticipants);
-              break;
-            default:
-              console.error('Unsupported tournament format:', tournamentData.tournament_type);
-          }
-        } catch (bracketError) {
-          console.error('Error generating bracket data:', bracketError);
-        }
-      }
-
-      // Update tournament data with new bracket
-      const resetData = {
-        bracket_data: newBracketData,
-        updated_at: new Date().toISOString()
-      };
-
-      const { error: tournamentError } = await supabase
-        .from('tournaments')
-        .update(resetData)
-        .eq('event_id', eventId);
-
-      if (tournamentError) throw tournamentError;
-
-      // Delete all tournament matches for this tournament
-      const { error: matchesError } = await supabase
-        .from('tournament_matches')
-        .delete()
-        .eq('tournament_id', tournamentData.id);
-
-      if (matchesError) throw matchesError;
-
-      // Insert new tournament_matches rows
-      if (newBracketData && tournamentData.id) {
-        try {
-          switch (tournamentData.tournament_type) {
-            case 'single_elimination':
-              await updateSingleEliminationMatches(tournamentData.id, newBracketData, supabase);
-              break;
-            case 'double_elimination':
-              await updateDoubleEliminationMatches(tournamentData.id, newBracketData, supabase);
-              break;
-            case 'round_robin':
-              await updateRoundRobinMatches(tournamentData.id, newBracketData, supabase);
-              break;
-            case 'swiss':
-              await updateSwissMatches(tournamentData.id, newBracketData, supabase);
-              break;
-          }
-        } catch (updateError) {
-          console.error('Error inserting tournament matches:', updateError);
-        }
-      }
-
-      // Refresh tournament data to reflect changes
-      await fetchTournamentData();
-      
-      // Trigger refresh of bracket visualization
-      setRefreshTrigger(prev => prev + 1);
-      
-      console.log('Tournament bracket generated and matches reset successfully');
-    } catch (err) {
-      console.error('Error resetting tournament data:', err);
-    }
+    console.log('resetTournamentData - functionality removed, awaiting brackets-manager integration');
+    // TODO: Implement with brackets-manager.js
   };
 
   const handleTournamentLiveChange = async (isLive) => {
     setIsTournamentLive(isLive);
-    
-    // Update tournament status based on configuration panel state
-    if (!isLive && tournamentData) {
-      // Configuration panel is open - set status to seeding
-      await updateTournamentStatus('seeding');
-    } else if (isLive && tournamentData) {
-      // Configuration panel is closed - reset tournament data and set status to active
-      await resetTournamentData();
-      await updateTournamentStatus('active');
-    }
+    console.log('Tournament live state changed:', isLive);
+    // TODO: Implement tournament live logic with brackets-manager.js
   };
 
   const handleTournamentUpdate = () => {
@@ -218,67 +117,8 @@ const ManageTournament = () => {
   };
 
   const handleFormatChange = async (newFormat) => {
-    if (!eventId || !tournamentData) return;
-    
-    try {
-      // Prepare participants data for bracket generation
-      const formattedParticipants = participants.map(p => ({
-        id: p.user_id,
-        name: p.users?.username || 'Unknown',
-        username: p.users?.username,
-        first_name: p.users?.first_name,
-        last_name: p.users?.last_name
-      }));
-
-      // Generate new bracket data based on the new format
-      let newBracketData = null;
-      
-      if (formattedParticipants.length >= 2) {
-        try {
-          switch (newFormat) {
-            case 'single_elimination':
-              newBracketData = generateSingleEliminationBracket(formattedParticipants);
-              break;
-            case 'double_elimination':
-              newBracketData = generateDoubleEliminationBracket(formattedParticipants);
-              break;
-            case 'round_robin':
-              newBracketData = generateRoundRobinBracket(formattedParticipants);
-              break;
-            case 'swiss':
-              newBracketData = generateSwissBracket(formattedParticipants);
-              break;
-            default:
-              console.error('Unsupported tournament format:', newFormat);
-              return;
-          }
-        } catch (bracketError) {
-          console.error('Error generating bracket data:', bracketError);
-          // Continue with format update even if bracket generation fails
-        }
-      }
-
-      // Update tournament type and bracket data
-      const updateData = { tournament_type: newFormat };
-      if (newBracketData) {
-        updateData.bracket_data = newBracketData;
-      }
-
-      const { error } = await supabase
-        .from('tournaments')
-        .update(updateData)
-        .eq('event_id', eventId);
-
-      if (error) throw error;
-      
-      // Refresh tournament data to get updated format and bracket
-      fetchTournamentData();
-      
-      // Trigger refresh of bracket visualization
-      setRefreshTrigger(prev => prev + 1);
-    } catch (err) {
-      console.error('Error updating tournament format:', err);
-    }
+    console.log('Format change requested:', newFormat);
+    // TODO: Implement with brackets-manager.js
   };
 
   const fetchParticipants = async () => {

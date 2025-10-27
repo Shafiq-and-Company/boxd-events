@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import { handleMatchCompletion } from '../../lib/singleElimination';
-import { handleMatchCompletion as handleDoubleElimination } from '../../lib/doubleElimination';
-import { handleMatchCompletion as handleRoundRobin } from '../../lib/roundRobin';
-import { handleMatchCompletion as handleSwiss } from '../../lib/swiss';
 import styles from './ScorekeepingPanel.module.css';
 
 const ScorekeepingPanel = ({ eventData, participants, onMatchUpdate, isCollapsed }) => {
@@ -17,50 +13,19 @@ const ScorekeepingPanel = ({ eventData, participants, onMatchUpdate, isCollapsed
     
     setLoading(true);
     try {
-      // Fetch tournament data with bracket_data
-      const { data: tournament, error: tournamentError } = await supabase
+      const { data: tournament, error } = await supabase
         .from('tournaments')
         .select('*')
         .eq('event_id', eventData.id)
         .single();
 
-      if (tournamentError) throw tournamentError;
+      if (error) throw error;
       setTournamentData(tournament);
-
-      // Extract matches from bracket_data instead of tournament_matches table
-      const matchesFromBracket = [];
-      if (tournament?.bracket_data?.rounds) {
-        tournament.bracket_data.rounds.forEach(round => {
-          if (round.matches) {
-            round.matches.forEach(match => {
-              matchesFromBracket.push({
-                id: match.matchId, // Use matchId as unique identifier
-                match_id: match.matchId,
-                round_number: round.roundNumber,
-                player1_id: match.player1?.id || null,
-                player2_id: match.player2?.id || null,
-                winner_id: match.winner || null,
-                status: match.status || 'scheduled',
-                bracket: round.bracket || 'main',
-                round_name: round.name
-              });
-            });
-          }
-        });
-      }
-
-      setMatches(matchesFromBracket);
-
-      // Set selected winners from bracket data
-      const winners = {};
-      matchesFromBracket.forEach(match => {
-        if (match.winner_id) {
-          winners[match.id] = match.winner_id;
-        }
-      });
-      setSelectedWinners(winners);
+      
+      // Initialize with empty matches for now
+      setMatches([]);
     } catch (err) {
-      console.error('Error fetching matches:', err);
+      console.error('Error fetching tournament:', err);
     } finally {
       setLoading(false);
     }
@@ -70,7 +35,7 @@ const ScorekeepingPanel = ({ eventData, participants, onMatchUpdate, isCollapsed
     if (!isCollapsed && eventData) {
       fetchMatches();
     }
-  }, [eventData, isCollapsed, onMatchUpdate]);
+  }, [eventData, isCollapsed]);
 
   const getParticipantInfo = (playerId) => {
     if (!playerId) return null;
@@ -98,142 +63,13 @@ const ScorekeepingPanel = ({ eventData, participants, onMatchUpdate, isCollapsed
       return;
     }
 
-    try {
-      setLoading(true);
-      const winnerId = selectedWinners[match.id];
-      
-      // Update bracket_data in tournaments table
-      await updateBracketData(tournamentData, match, winnerId);
-
-      // Fetch updated matches from bracket_data
-      await fetchMatches();
-      
-      // Trigger visualization refresh - this should happen after database update completes
-      if (onMatchUpdate) {
-        onMatchUpdate();
-      }
-      
-      alert('Match result locked in successfully!');
-    } catch (err) {
-      console.error('Error locking in match result:', err);
-      alert('Failed to lock in match result. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateBracketData = async (tournament, match, winnerId) => {
-    if (!tournament?.bracket_data) return;
-
-    const bracketData = { ...tournament.bracket_data };
-    const tournamentType = tournament.tournament_type;
-
-    // Update the match in bracket_data
-    bracketData.rounds.forEach(round => {
-      if (round.matches) {
-        round.matches.forEach(bracketMatch => {
-          if (bracketMatch.matchId === match.match_id) {
-            bracketMatch.winner = winnerId;
-            bracketMatch.status = 'completed';
-          }
-        });
-      }
-    });
-
-    // Use tournament-specific handler to advance winner to next round
-    let updatedBracketData = bracketData;
-    try {
-      if (tournamentType === 'single_elimination') {
-        updatedBracketData = handleMatchCompletion(bracketData, match, winnerId, tournamentType);
-      } else if (tournamentType === 'double_elimination') {
-        updatedBracketData = handleDoubleElimination(bracketData, match, winnerId, tournamentType);
-      } else if (tournamentType === 'round_robin') {
-        updatedBracketData = handleRoundRobin(bracketData, match, winnerId, tournamentType);
-      } else if (tournamentType === 'swiss') {
-        updatedBracketData = handleSwiss(bracketData, match, winnerId, tournamentType);
-      }
-    } catch (err) {
-      console.error('Error updating bracket data:', err);
-    }
-
-    // Save updated bracket_data to database
-    const { error } = await supabase
-      .from('tournaments')
-      .update({ bracket_data: updatedBracketData })
-      .eq('event_id', eventData.id);
-
-    if (error) throw error;
-
-    // Update tournament_matches table
-    const { error: matchError } = await supabase
-      .from('tournament_matches')
-      .update({
-        winner_id: winnerId,
-        status: 'completed',
-        completed_at: new Date().toISOString()
-      })
-      .eq('match_id', match.match_id)
-      .eq('tournament_id', tournament.id);
-
-    if (matchError) {
-      console.error('Error updating tournament_matches:', matchError);
-      // Don't throw error for tournament_matches updates as bracket_data is the source of truth
-    }
-  };
-
-  const updateBracketDataToUnlock = async (tournament, match) => {
-    if (!tournament?.bracket_data) return;
-
-    const bracketData = { ...tournament.bracket_data };
-
-    // Remove winner from the match in bracket_data
-    bracketData.rounds.forEach(round => {
-      if (round.matches) {
-        round.matches.forEach(bracketMatch => {
-          if (bracketMatch.matchId === match.match_id) {
-            bracketMatch.winner = null;
-            bracketMatch.status = 'scheduled';
-          }
-        });
-      }
-    });
-
-    // Save updated bracket_data to database
-    const { error } = await supabase
-      .from('tournaments')
-      .update({ bracket_data: bracketData })
-      .eq('event_id', eventData.id);
-
-    if (error) throw error;
+    console.log('Lock in match result - awaiting brackets-manager integration');
+    // TODO: Implement with brackets-manager.js
   };
 
   const unlockMatch = async (match) => {
-    try {
-      setLoading(true);
-      
-      // Update bracket_data to remove winner
-      await updateBracketDataToUnlock(tournamentData, match);
-
-      // Remove winner from selectedWinners
-      setSelectedWinners(prev => {
-        const updated = { ...prev };
-        delete updated[match.id];
-        return updated;
-      });
-
-      // Fetch updated matches from bracket_data
-      await fetchMatches();
-      
-      // Trigger visualization refresh
-      onMatchUpdate();
-      
-      alert('Match unlocked. You can now change the result.');
-    } catch (err) {
-      console.error('Error unlocking match:', err);
-      alert('Failed to unlock match. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    console.log('Unlock match - awaiting brackets-manager integration');
+    // TODO: Implement with brackets-manager.js
   };
 
   const renderMatch = (match) => {
@@ -328,7 +164,6 @@ const ScorekeepingPanel = ({ eventData, participants, onMatchUpdate, isCollapsed
   const groupedMatches = matches.reduce((acc, match) => {
     let roundKey;
     if (match.bracket && match.bracket !== 'main') {
-      // For double elimination, include bracket type in the key
       roundKey = `${match.bracket.replace('_', ' ').toUpperCase()} - ${match.round_name || `Round ${match.round_number}`}`;
     } else {
       roundKey = match.round_name || `Round ${match.round_number}`;
