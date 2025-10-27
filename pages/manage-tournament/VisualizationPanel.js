@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import styles from './VisualizationPanel.module.css';
 
@@ -41,20 +41,81 @@ const VisualizationPanel = ({ eventData, participants, refreshTrigger }) => {
     fetchBracketData();
   }, [eventData?.id]);
 
+  // Create a mapping of user_id to username
+  const participantsMap = useMemo(() => {
+    const map = {};
+    participants.forEach(participant => {
+      map[participant.user_id] = participant.users?.username || 'Unknown';
+    });
+    return map;
+  }, [participants]);
+
+  // Get player username
+  const getPlayerName = (player) => {
+    if (!player || !player.id) return '-';
+    return participantsMap[player.id] || 'Unknown';
+  };
+
+  // Render a match
+  const renderMatch = (match, matchIndex, roundIndex, isLastRound) => {
+    const isCompleted = match.status === 'completed';
+    const hasWinner = match.winner && isCompleted;
+    
+    return (
+      <div key={match.matchId} className={styles.matchContainer}>
+        <div className={`${styles.match} ${isCompleted ? styles.completed : ''}`}>
+          <div 
+            className={`${styles.playerSlot} ${match.player1?.id === match.winner && hasWinner ? styles.winner : ''}`}
+          >
+            {getPlayerName(match.player1)}
+          </div>
+          <div className={styles.vs}>vs</div>
+          <div 
+            className={`${styles.playerSlot} ${match.player2?.id === match.winner && hasWinner ? styles.winner : ''}`}
+          >
+            {getPlayerName(match.player2)}
+          </div>
+        </div>
+        {!isLastRound && (
+          <div className={styles.connector}></div>
+        )}
+      </div>
+    );
+  };
+
+  // Render a round
+  const renderRound = (round, roundIndex) => {
+    const isLastRound = roundIndex === bracketData.rounds.length - 1;
+    
+    // Group matches by bracket type for double elimination
+    const groupedMatches = round.matches || [];
+    
+    return (
+      <div key={round.roundNumber} className={styles.round}>
+        <div className={styles.roundTitle}>
+          {round.bracket ? `${round.bracket}: ${round.name}` : round.name}
+        </div>
+        <div className={styles.matches}>
+          {groupedMatches.map((match, matchIndex) => 
+            renderMatch(match, matchIndex, roundIndex, isLastRound)
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className={styles.visualizationPanel}>
       <div className={styles.panelContent}>
-        <h2 className={styles.panelTitle}>Tournament Bracket Data</h2>
+        <h2 className={styles.panelTitle}>Tournament Bracket</h2>
         <div className={styles.bracketContainer}>
           {loading ? (
             <div className={styles.loadingContainer}>
-              <p className={styles.loadingText}>Loading bracket data...</p>
+              <p className={styles.loadingText}>Loading bracket...</p>
             </div>
-          ) : bracketData ? (
-            <div className={styles.jsonContainer}>
-              <pre className={styles.jsonContent}>
-                {JSON.stringify(bracketData, null, 2)}
-              </pre>
+          ) : bracketData && bracketData.rounds ? (
+            <div className={styles.bracketVisualization}>
+              {bracketData.rounds.map((round, index) => renderRound(round, index))}
             </div>
           ) : (
             <div className={styles.placeholderContainer}>
