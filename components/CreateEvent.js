@@ -145,6 +145,8 @@ export default function CreateEvent() {
       // Create tournament for the event
       const tournamentData = {
         event_id: data[0].id,
+        name: formData.title,
+        description: formData.description,
         max_participants: 64,
         min_participants: 2,
         status: 'registration',
