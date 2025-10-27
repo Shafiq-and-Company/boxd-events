@@ -151,7 +151,8 @@ export default function CreateEvent() {
         min_participants: 2,
         status: 'registration',
         tournament_type: 'single_elimination',
-        rules: 'Standard tournament rules apply. Check with event host for specific details.'
+        rules: 'Standard tournament rules apply. Check with event host for specific details.',
+        bracket_data: {}
       }
 
       const { data: tournamentResult, error: tournamentError } = await supabase
