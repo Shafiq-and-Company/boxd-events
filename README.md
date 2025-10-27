@@ -1,6 +1,6 @@
 # Locals
 
-Locals is is a platform designed for discovering, creating, and managing real-world gaming events — from casual board game nights and trading card meetups to esports tournaments and LAN parties. The app acts as a community hub where players can find "locals" happening nearby, join events, or organize their own.
+Locals is a platform designed for discovering, creating, and managing real-world gaming events — from casual board game nights and trading card meetups to esports tournaments and LAN parties. The app acts as a community hub where players can find "locals" happening nearby, join events, or organize their own.
 
 For organizers, Locals provides a full suite of tools tailored for gaming events: automated tournament setup and bracket management (for games like Smash, Magic, or Valorant), check-in and registration handling, and promotion tools for sharing events across social platforms.
 
