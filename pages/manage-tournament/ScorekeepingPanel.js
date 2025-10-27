@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabaseClient';
 import styles from './ScorekeepingPanel.module.css';
 
 const ScorekeepingPanel = ({ eventData, participants, onMatchUpdate, isCollapsed }) => {
@@ -11,24 +10,9 @@ const ScorekeepingPanel = ({ eventData, participants, onMatchUpdate, isCollapsed
   const fetchMatches = async () => {
     if (!eventData?.id) return;
     
-    setLoading(true);
-    try {
-      const { data: tournament, error } = await supabase
-        .from('tournaments')
-        .select('*')
-        .eq('event_id', eventData.id)
-        .single();
-
-      if (error) throw error;
-      setTournamentData(tournament);
-      
-      // Initialize with empty matches for now
-      setMatches([]);
-    } catch (err) {
-      console.error('Error fetching tournament:', err);
-    } finally {
-      setLoading(false);
-    }
+    console.log('Fetching matches for tournament - awaiting brackets-manager.js integration');
+    // TODO: Fetch matches with brackets-manager.js
+    setMatches([]);
   };
 
   useEffect(() => {

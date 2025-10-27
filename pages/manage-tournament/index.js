@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { supabase } from '../../lib/supabaseClient';
-import { useAuth } from '../../lib/AuthContext';
 import TitlePanel from './TitlePanel';
 import ConfigurationPanel from './ConfigurationPanel';
 import VisualizationPanel from './VisualizationPanel';
@@ -9,7 +7,6 @@ import ScorekeepingPanel from './ScorekeepingPanel';
 
 const ManageTournament = () => {
   const router = useRouter();
-  const { user } = useAuth();
   const { eventId } = router.query;
   
   const [eventData, setEventData] = useState(null);
@@ -18,76 +15,32 @@ const ManageTournament = () => {
   const [participants, setParticipants] = useState([]);
   const [isTournamentLive, setIsTournamentLive] = useState(false);
 
+  // TODO: Fetch event data with brackets-manager.js integration
   const fetchEventData = async () => {
-    if (!eventId || !user) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .eq('id', eventId)
-        .eq('host_id', user.id)
-        .single();
-
-      if (error) throw error;
-      setEventData(data);
-    } catch (err) {
-      console.error('Error fetching event:', err);
-    }
+    if (!eventId) return;
+    console.log('Fetching event data for:', eventId);
+    // Placeholder for future implementation
+    setEventData({ id: eventId, title: 'Sample Tournament', game_title: 'Sample Game' });
   };
 
   const fetchTournamentData = async () => {
     if (!eventId) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('tournaments')
-        .select('*')
-        .eq('event_id', eventId)
-        .single();
-
-      if (error) throw error;
-      setTournamentData(data);
-    } catch (err) {
-      console.error('Error fetching tournament data:', err);
-    }
-  };
-
-  const updateTournamentStatus = async (status) => {
-    if (!eventId || !tournamentData) return;
-    
-    try {
-      const { error } = await supabase
-        .from('tournaments')
-        .update({ status })
-        .eq('event_id', eventId);
-
-      if (error) throw error;
-      
-      // Refresh tournament data to get updated status
-      fetchTournamentData();
-    } catch (err) {
-      console.error('Error updating tournament status:', err);
-    }
+    console.log('Fetching tournament data for:', eventId);
+    // Placeholder for future implementation
+    setTournamentData({ 
+      id: 'placeholder-id',
+      tournament_type: 'single_elimination',
+      status: 'seeding'
+    });
   };
 
   useEffect(() => {
-    if (eventId && user) {
+    if (eventId) {
       fetchEventData();
       fetchTournamentData();
       fetchParticipants();
     }
-  }, [eventId, user]);
-
-  // Update tournament status when configuration panel state changes
-  useEffect(() => {
-    if (tournamentData && !isTournamentLive) {
-      // Configuration panel is open - ensure status is seeding
-      if (tournamentData.status !== 'seeding') {
-        updateTournamentStatus('seeding');
-      }
-    }
-  }, [isTournamentLive, tournamentData, updateTournamentStatus]);
+  }, [eventId]);
 
 
   const resetTournamentData = async () => {
@@ -124,28 +77,26 @@ const ManageTournament = () => {
   const fetchParticipants = async () => {
     if (!eventId) return;
     
-    try {
-      const { data, error } = await supabase
-        .from('rsvps')
-        .select(`
-          user_id,
-          created_at,
-          users:user_id (
-            username,
-            first_name,
-            last_name
-          )
-        `)
-        .eq('event_id', eventId)
-        .eq('status', 'going')
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-      setParticipants(data || []);
-    } catch (err) {
-      console.error('Error fetching participants:', err);
-      setParticipants([]);
-    }
+    console.log('Fetching participants for event:', eventId);
+    // Placeholder for future implementation
+    setParticipants([
+      {
+        user_id: '1',
+        users: { username: 'Player 1', first_name: 'Player', last_name: 'One' }
+      },
+      {
+        user_id: '2',
+        users: { username: 'Player 2', first_name: 'Player', last_name: 'Two' }
+      },
+      {
+        user_id: '3',
+        users: { username: 'Player 3', first_name: 'Player', last_name: 'Three' }
+      },
+      {
+        user_id: '4',
+        users: { username: 'Player 4', first_name: 'Player', last_name: 'Four' }
+      }
+    ]);
   };
 
   return (
