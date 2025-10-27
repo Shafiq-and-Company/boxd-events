@@ -4,6 +4,12 @@
 
 This application uses [brackets-manager.js](https://github.com/Drarig29/brackets-manager.js) to manage tournament bracket logic and [brackets-viewer.js](https://github.com/Drarig29/brackets-viewer.js) to display tournament brackets. The bracket data is stored in Supabase PostgreSQL using a JSONB column for flexible, efficient storage.
 
+**Key Libraries:**
+- [brackets-manager.js](https://github.com/Drarig29/brackets-manager.js) - Manages tournament logic (306 stars)
+- [brackets-viewer.js](https://github.com/Drarig29/brackets-viewer.js) - Visual bracket rendering (205 stars)
+
+**Documentation:** https://drarig29.github.io/brackets-docs/
+
 ## Architecture
 
 ### Components
@@ -67,39 +73,74 @@ interface Tournament {
 
 ### Bracket Data Structure
 
-The `bracket_data` column stores the complete bracket state in brackets-manager.js format:
+The `bracket_data` column stores the complete bracket state in brackets-manager.js format. This is the **raw data structure** that brackets-manager uses internally:
 
 ```json
 {
-  "tournamentId": 0,
-  "type": "single_elimination",
-  "name": "Tournament Name",
-  "seeding": [
-    { "id": "uuid-1", "name": "Participant 1" },
-    { "id": "uuid-2", "name": "Participant 2" }
+  "participant": [
+    {
+      "id": 0,
+      "tournament_id": 0,
+      "name": "Team 1"
+    },
+    {
+      "id": 1,
+      "tournament_id": 0,
+      "name": "Team 2"
+    }
   ],
-  "settings": {
-    "seedOrdering": ["natural"],
-    "balanceByes": true
-  },
-  "bracketViewerData": {
-    "participant": [...],
-    "stage": [...],
-    "group": [...],
-    "round": [...],
-    "match": [...]
-  },
-  "metadata": {
-    "totalRounds": 4,
-    "currentRound": 1,
-    "completedMatches": 0,
-    "totalMatches": 15,
-    "winner": null,
-    "startDate": "2024-01-15T10:00:00Z",
-    "lastUpdate": "2024-01-15T11:30:00Z"
-  }
+  "stage": [
+    {
+      "id": 0,
+      "tournament_id": 0,
+      "name": "Main Bracket",
+      "type": "single_elimination",
+      "number": 1,
+      "settings": {}
+    }
+  ],
+  "group": [
+    {
+      "id": 0,
+      "stage_id": 0,
+      "number": 1
+    }
+  ],
+  "round": [
+    {
+      "id": 0,
+      "stage_id": 0,
+      "group_id": 0,
+      "number": 0,
+      "name": "Round 1"
+    }
+  ],
+  "match": [
+    {
+      "id": 0,
+      "stage_id": 0,
+      "group_id": 0,
+      "round_id": 0,
+      "number": 0,
+      "status": 0,
+      "opponent1": {
+        "id": 0,
+        "position": 1,
+        "score": 0,
+        "result": "win"
+      },
+      "opponent2": {
+        "id": 1,
+        "position": 2,
+        "score": 0,
+        "result": "loss"
+      }
+    }
+  ]
 }
 ```
+
+**Important:** This is the exact structure that brackets-manager.js creates. We store this directly in Supabase JSONB.
 
 ## Implementation
 
@@ -118,77 +159,32 @@ Or include via CDN (for viewer only):
 <script src="https://cdn.jsdelivr.net/npm/brackets-viewer@latest/dist/brackets-viewer.min.js"></script>
 ```
 
-### 2. Supabase Storage Implementation
+### 2. Storage Approach - In-Memory + JSONB
 
-**Note:** For this implementation, we store bracket data directly in the `tournaments.bracket_data` JSONB column rather than using brackets-manager's storage interface. This provides more control over serialization and better performance with Supabase.
+**How it works:** We use brackets-manager.js's InMemoryDatabase to create and manage brackets, then serialize the data to Supabase JSONB. When loading, we deserialize and recreate the in-memory database.
 
-However, if you need a full storage adapter for brackets-manager.js, here's a basic implementation:
-
-Since brackets-manager.js requires a CRUD interface, we need to create a custom storage adapter for Supabase.
+**Why this approach?**
+- Simpler than building a full Supabase adapter
+- Better performance - all bracket logic happens in-memory
+- Easier to understand and debug
+- Direct control over serialization
 
 ```javascript
-import { BracketsManager } from 'brackets-manager';
+import { BracketsManager, InMemoryDatabase } from 'brackets-manager';
 import { supabase } from './lib/supabaseClient';
 
-class SupabaseStorage {
-  async select(table, filters = {}) {
-    let query = supabase.from(table).select('*');
-    
-    // Apply filters
-    for (const [key, value] of Object.entries(filters)) {
-      if (Array.isArray(value)) {
-        query = query.in(key, value);
-      } else {
-        query = query.eq(key, value);
-      }
-    }
-    
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
-  }
-
-  async insert(table, values) {
-    const { data, error } = await supabase
-      .from(table)
-      .insert(values)
-      .select()
-      .single();
-    
-    if (error) throw error;
-    return data;
-  }
-
-  async update(table, filters, values) {
-    let query = supabase.from(table).update(values);
-    
-    // Apply filters
-    for (const [key, value] of Object.entries(filters)) {
-      query = query.eq(key, value);
-    }
-    
-    const { data, error } = await query.select();
-    if (error) throw error;
-    return data;
-  }
-
-  async delete(table, filters) {
-    let query = supabase.from(table).delete();
-    
-    // Apply filters
-    for (const [key, value] of Object.entries(filters)) {
-      query = query.eq(key, value);
-    }
-    
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
-  }
+// Create a fresh in-memory database for each operation
+function createManager() {
+  const storage = new InMemoryDatabase();
+  return new BracketsManager(storage);
 }
-
-const storage = new SupabaseStorage();
-const manager = new BracketsManager(storage);
 ```
+
+**Key Points:**
+- We create a new manager instance for each operation
+- The manager operates on in-memory data
+- We save/load the entire bracket state to/from Supabase
+- No database adapter needed!
 
 ### 3. Creating a Tournament
 
@@ -232,58 +228,37 @@ async function initializeTournamentBracket(tournamentId, participants) {
   
   if (error) throw error;
   
-  // Prepare seeding data
-  const seeding = participants.map((p, index) => ({
-    id: p.id,
-    name: p.name || `Participant ${index + 1}`
-  }));
+  // Create fresh in-memory manager
+  const manager = createManager();
+  
+  // Prepare seeding data (just names for brackets-manager)
+  const seeding = participants.map(p => p.name || 'Participant');
   
   // Create bracket stage using brackets-manager
+  // Note: tournamentId should be 0 for in-memory operations
   await manager.create.stage({
-    tournamentId: tournamentId,
+    tournamentId: 0,
     name: 'Main Bracket',
-    type: tournament.tournament_type,
-    seeding: seeding.map(p => p.name), // brackets-manager expects just names
+    type: tournament.tournament_type, // single_elimination, double_elimination, round_robin, swiss
+    seeding: seeding,
     settings: {
       seedOrdering: ['natural'],
       balanceByes: true
     }
   });
   
-  // Get the generated bracket data
-  const stageData = await manager.get.stageData(tournamentId);
-  const tournamentData = await manager.get.tournamentData(tournamentId);
-  
-  // Serialize data for storage
+  // Get ALL bracket data from in-memory storage
+  const storage = manager.storage;
   const bracketData = {
-    tournamentId: tournamentId,
-    type: tournament.tournament_type,
-    name: tournament.name,
-    seeding: seeding,
-    settings: {
-      seedOrdering: ['natural'],
-      balanceByes: true
-    },
-    bracketViewerData: {
-      participant: stageData.participant,
-      stage: stageData.stage,
-      group: stageData.group,
-      round: stageData.round,
-      match: stageData.match
-    },
-    metadata: {
-      totalRounds: stageData.round?.length || 0,
-      currentRound: 1,
-      completedMatches: 0,
-      totalMatches: stageData.match?.length || 0,
-      winner: null,
-      startDate: new Date().toISOString(),
-      lastUpdate: new Date().toISOString()
-    }
+    participant: await storage.select('participant'),
+    stage: await storage.select('stage'),
+    group: await storage.select('group'),
+    round: await storage.select('round'),
+    match: await storage.select('match')
   };
   
   // Update tournament with bracket data
-  await supabase
+  const { error: updateError } = await supabase
     .from('tournaments')
     .update({ 
       bracket_data: bracketData,
@@ -291,9 +266,17 @@ async function initializeTournamentBracket(tournamentId, participants) {
     })
     .eq('id', tournamentId);
   
+  if (updateError) throw updateError;
+  
   return bracketData;
 }
 ```
+
+**What this does:**
+1. Creates a fresh in-memory database
+2. Uses brackets-manager to generate bracket structure
+3. Extracts the raw data (participant, stage, group, round, match)
+4. Saves it to Supabase as JSONB
 
 ### 4. Updating Match Results
 
@@ -308,6 +291,19 @@ async function updateMatchResult(tournamentId, matchId, scores) {
   
   if (fetchError) throw fetchError;
   
+  // Create manager and load existing bracket data
+  const manager = createManager();
+  const storage = manager.storage;
+  
+  // Load existing bracket data into in-memory database
+  // Option 1: Insert data directly into storage
+  const bracketData = tournament.bracket_data;
+  await storage.insert('participant', bracketData.participant || []);
+  await storage.insert('stage', bracketData.stage || []);
+  await storage.insert('group', bracketData.group || []);
+  await storage.insert('round', bracketData.round || []);
+  await storage.insert('match', bracketData.match || []);
+  
   // Update match using brackets-manager
   await manager.update.match({
     id: matchId,
@@ -315,27 +311,16 @@ async function updateMatchResult(tournamentId, matchId, scores) {
     opponent2: { score: scores.opponent2 }
   });
   
-  // Get updated data
-  const stageData = await manager.get.stageData(tournamentId);
-  
-  // Update bracket data in database
+  // Get updated data from in-memory storage
   const updatedBracketData = {
-    ...tournament.bracket_data,
-    bracketViewerData: {
-      participant: stageData.participant,
-      stage: stageData.stage,
-      group: stageData.group,
-      round: stageData.round,
-      match: stageData.match
-    },
-    metadata: {
-      ...tournament.bracket_data.metadata,
-      completedMatches: stageData.match.filter(m => m.status === 3).length,
-      lastUpdate: new Date().toISOString()
-    }
+    participant: await storage.select('participant'),
+    stage: await storage.select('stage'),
+    group: await storage.select('group'),
+    round: await storage.select('round'),
+    match: await storage.select('match')
   };
   
-  // Update tournament record
+  // Update tournament record in Supabase
   const { error: updateError } = await supabase
     .from('tournaments')
     .update({ 
@@ -348,29 +333,34 @@ async function updateMatchResult(tournamentId, matchId, scores) {
 }
 ```
 
+**How this works:**
+1. Load bracket data from Supabase into in-memory database
+2. Use brackets-manager to update the match
+3. Extract updated data from in-memory storage
+4. Save back to Supabase
+
 ### 5. Displaying the Bracket
 
-#### Using brackets-viewer.js
+#### Using brackets-viewer.js (Vanilla JS)
+
+For vanilla JavaScript (using CDN):
 
 ```javascript
 async function renderTournamentBracket(tournamentId) {
   // Fetch tournament bracket data
   const { data: tournament, error } = await supabase
     .from('tournaments')
-    .select('bracket_data, tournament_type')
+    .select('bracket_data')
     .eq('id', tournamentId)
     .single();
   
   if (error) throw error;
   
-  const { bracketViewerData } = tournament.bracket_data;
-  
-  // Render bracket
+  // Render bracket (brackets-viewer.js expects the data structure directly)
   window.bracketsViewer.render({
-    stages: bracketViewerData.stage,
-    matches: bracketViewerData.match,
-    matchGames: bracketViewerData.match_game || [],
-    participants: bracketViewerData.participant
+    stages: tournament.bracket_data.stage,
+    matches: tournament.bracket_data.match,
+    participants: tournament.bracket_data.participant
   }, {
     selector: '#bracket',
     participantOriginPlacement: 'before',
@@ -378,7 +368,6 @@ async function renderTournamentBracket(tournamentId) {
     showLowerSlots: true,
     highlightedParticipant: null,
     participantOnClick: (participant) => {
-      // Handle participant click
       console.log('Clicked:', participant);
     }
   });
@@ -389,47 +378,56 @@ async function renderTournamentBracket(tournamentId) {
 
 ```jsx
 import { useEffect, useRef } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
 function TournamentBracket({ tournamentId }) {
   const containerRef = useRef(null);
   
   useEffect(() => {
     const loadBracket = async () => {
-      // Import brackets-viewer dynamically
-      const { renderBracket } = await import('brackets-viewer');
+      if (!containerRef.current || !tournamentId) return;
       
-      // Fetch tournament data
-      const { data: tournament } = await supabase
-        .from('tournaments')
-        .select('bracket_data')
-        .eq('id', tournamentId)
-        .single();
-      
-      const { bracketViewerData } = tournament.bracket_data;
-      
-      // Render bracket
-      renderBracket({
-        stages: bracketViewerData.stage,
-        matches: bracketViewerData.match,
-        participants: bracketViewerData.participant
-      }, {
-        selector: containerRef.current,
-        participantOriginPlacement: 'before'
-      });
+      try {
+        // Import brackets-viewer dynamically
+        const bracketsViewer = await import('brackets-viewer');
+        
+        // Fetch tournament data
+        const { data: tournament, error } = await supabase
+          .from('tournaments')
+          .select('bracket_data')
+          .eq('id', tournamentId)
+          .single();
+        
+        if (error) throw error;
+        
+        // Render bracket
+        bracketsViewer.renderBracket({
+          stages: tournament.bracket_data.stage,
+          matches: tournament.bracket_data.match,
+          participants: tournament.bracket_data.participant
+        }, {
+          selector: containerRef.current
+        });
+      } catch (error) {
+        console.error('Error loading bracket:', error);
+      }
     };
     
-    if (containerRef.current && tournamentId) {
-      loadBracket();
-    }
+    loadBracket();
   }, [tournamentId]);
   
   return (
     <div>
-      <div id="bracket" ref={containerRef}></div>
+      <div ref={containerRef}></div>
     </div>
   );
 }
 ```
+
+**Important Notes for React:**
+- Use `bracketsViewer.renderBracket()` (with uppercase B)
+- The selector should be the DOM element, not a string
+- Don't use `id="bracket"` - just use a ref
 
 ### 6. Loading Participants from RSVPs
 
@@ -741,6 +739,273 @@ Participant Names Displayed
 2. RSVP status is set to 'going'
 3. Event exists and is linked to the tournament
 4. Users table has proper data for participant names
+
+## Complete Example File
+
+Here's a complete implementation you can copy and use:
+
+```javascript
+// lib/tournamentManager.js
+import { BracketsManager, InMemoryDatabase } from 'brackets-manager';
+import { supabase } from './supabaseClient';
+
+// Create fresh in-memory manager
+function createManager() {
+  const storage = new InMemoryDatabase();
+  return new BracketsManager(storage);
+}
+
+// Get participants from RSVPs
+async function getTournamentParticipants(eventId) {
+  const { data: rsvps, error } = await supabase
+    .from('rsvps')
+    .select('user_id, users(id, first_name, last_name, username)')
+    .eq('event_id', eventId)
+    .eq('status', 'going');
+  
+  if (error) throw error;
+  if (!rsvps || rsvps.length === 0) return [];
+  
+  return rsvps.map(rsvp => ({
+    id: rsvp.user_id,
+    name: rsvp.users.username || 
+          `${rsvp.users.first_name || ''} ${rsvp.users.last_name || ''}`.trim() || 
+          `User ${rsvp.user_id}`
+  }));
+}
+
+// Create tournament
+async function createEventTournament(eventId, tournamentConfig) {
+  try {
+    // Verify event exists
+    const { data: event, error: eventError } = await supabase
+      .from('events')
+      .select('id, host_id')
+      .eq('id', eventId)
+      .single();
+    
+    if (eventError) throw eventError;
+    if (!event) throw new Error('Event not found');
+    
+    // Get participants
+    const participants = await getTournamentParticipants(eventId);
+    
+    if (participants.length < tournamentConfig.min_participants) {
+      throw new Error(`Minimum ${tournamentConfig.min_participants} participants required`);
+    }
+    if (participants.length > tournamentConfig.max_participants) {
+      throw new Error(`Maximum ${tournamentConfig.max_participants} participants allowed`);
+    }
+    
+    // Create tournament record
+    const { data: tournament, error } = await supabase
+      .from('tournaments')
+      .insert({
+        event_id: eventId,
+        name: tournamentConfig.name,
+        description: tournamentConfig.description,
+        tournament_type: tournamentConfig.tournament_type,
+        max_participants: tournamentConfig.max_participants,
+        min_participants: tournamentConfig.min_participants,
+        status: 'registration',
+        bracket_data: {}
+      })
+      .select()
+      .single();
+    
+    if (error) throw error;
+    
+    // Initialize bracket
+    const manager = createManager();
+    const seeding = participants.map(p => p.name);
+    
+    await manager.create.stage({
+      tournamentId: 0,
+      name: 'Main Bracket',
+      type: tournamentConfig.tournament_type,
+      seeding: seeding,
+      settings: {
+        seedOrdering: ['natural'],
+        balanceByes: true
+      }
+    });
+    
+    // Get bracket data
+    const storage = manager.storage;
+    const bracketData = {
+      participant: await storage.select('participant'),
+      stage: await storage.select('stage'),
+      group: await storage.select('group'),
+      round: await storage.select('round'),
+      match: await storage.select('match')
+    };
+    
+    // Save to Supabase
+    await supabase
+      .from('tournaments')
+      .update({ 
+        bracket_data: bracketData,
+        status: 'active',
+        started_at: new Date().toISOString()
+      })
+      .eq('id', tournament.id);
+    
+    return tournament;
+  } catch (error) {
+    console.error('Failed to create tournament:', error);
+    throw error;
+  }
+}
+
+// Update match
+async function updateMatchResult(tournamentId, matchId, scores) {
+  const { data: tournament, error: fetchError } = await supabase
+    .from('tournaments')
+    .select('bracket_data')
+    .eq('id', tournamentId)
+    .single();
+  
+  if (fetchError) throw fetchError;
+  
+  const manager = createManager();
+  const storage = manager.storage;
+  
+  // Load existing data
+  const bracketData = tournament.bracket_data;
+  await storage.insert('participant', bracketData.participant || []);
+  await storage.insert('stage', bracketData.stage || []);
+  await storage.insert('group', bracketData.group || []);
+  await storage.insert('round', bracketData.round || []);
+  await storage.insert('match', bracketData.match || []);
+  
+  // Update match
+  await manager.update.match({
+    id: matchId,
+    opponent1: { score: scores.opponent1 },
+    opponent2: { score: scores.opponent2 }
+  });
+  
+  // Get updated data
+  const updatedBracketData = {
+    participant: await storage.select('participant'),
+    stage: await storage.select('stage'),
+    group: await storage.select('group'),
+    round: await storage.select('round'),
+    match: await storage.select('match')
+  };
+  
+  // Save to Supabase
+  await supabase
+    .from('tournaments')
+    .update({ 
+      bracket_data: updatedBracketData,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', tournamentId);
+}
+
+export { createEventTournament, updateMatchResult, getTournamentParticipants };
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Issue: "Cannot read property 'storage' of undefined"**
+- Make sure you imported `InMemoryDatabase` from brackets-manager
+- Use `createManager()` to create a new manager for each operation
+
+**Issue: "Match not found" when updating**
+- Ensure you're using the correct match ID
+- Match IDs are integers (0, 1, 2, etc.) not UUIDs
+
+**Issue: Bracket not rendering**
+- Check that `bracket_data` is not empty
+- Verify bracket_data structure matches the expected format (participant, stage, group, round, match)
+- For React, ensure you're using `selector: containerRef.current` (DOM element, not string)
+
+**Issue: Participants not loading**
+- Verify users have RSVP'd with `status = 'going'`
+- Check RLS policies allow reading RSVPs
+- Ensure users table has proper data
+
+**Issue: "Minimum participants required" error**
+- Users must RSVP as 'going' before creating tournament
+- Check that `rsvps.status` = 'going'
+
+**Issue: Data not loading into in-memory database**
+- Insert data one by one if bulk insert doesn't work:
+  ```javascript
+  for (const participant of bracketData.participant || []) {
+    await storage.insert('participant', participant);
+  }
+  ```
+
+### Performance Optimization
+
+For loading many tournaments at once:
+
+```javascript
+// Bulk load all bracket data
+async function getAllTournaments(eventId) {
+  const { data, error } = await supabase
+    .from('tournaments')
+    .select('id, name, bracket_data')
+    .eq('event_id', eventId);
+  
+  // Process all tournaments
+  return data.map(t => ({
+    id: t.id,
+    name: t.name,
+    matches: t.bracket_data.match,
+    participants: t.bracket_data.participant
+  }));
+}
+```
+
+### Testing Your Implementation
+
+1. Create a test event
+2. Have users RSVP as 'going'
+3. Create tournament:
+   ```javascript
+   await createEventTournament(eventId, {
+     name: 'Test Tournament',
+     tournament_type: 'single_elimination',
+     max_participants: 8,
+     min_participants: 2
+   });
+   ```
+4. Update a match:
+   ```javascript
+   await updateMatchResult(tournamentId, 0, { opponent1: 10, opponent2: 5 });
+   ```
+5. Render the bracket and verify it displays correctly
+
+## Quick Start Checklist
+
+1. **Install packages:**
+   ```bash
+   npm install brackets-manager brackets-viewer
+   ```
+
+2. **Create the tournament helper file:**
+   - Copy the complete example above to `lib/tournamentManager.js`
+
+3. **Import in your page:**
+   ```javascript
+   import { createEventTournament } from '../lib/tournamentManager';
+   ```
+
+4. **Use it:**
+   ```javascript
+   await createEventTournament(eventId, {
+     name: 'Single Elimination Tournament',
+     tournament_type: 'single_elimination',
+     max_participants: 16,
+     min_participants: 4
+   });
+   ```
 
 ## References
 
