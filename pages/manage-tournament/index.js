@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../lib/AuthContext';
@@ -18,7 +18,6 @@ const ManageTournament = () => {
   
   const [eventData, setEventData] = useState(null);
   const [tournamentData, setTournamentData] = useState(null);
-  const [activeSection, setActiveSection] = useState('bracket');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [participants, setParticipants] = useState([]);
   const [isTournamentLive, setIsTournamentLive] = useState(false);
@@ -58,7 +57,7 @@ const ManageTournament = () => {
     }
   };
 
-  const updateTournamentStatus = useCallback(async (status) => {
+  const updateTournamentStatus = async (status) => {
     if (!eventId || !tournamentData) return;
     
     try {
@@ -74,7 +73,7 @@ const ManageTournament = () => {
     } catch (err) {
       console.error('Error updating tournament status:', err);
     }
-  }, [eventId, tournamentData]);
+  };
 
   useEffect(() => {
     if (eventId && user) {
@@ -94,25 +93,6 @@ const ManageTournament = () => {
     }
   }, [isTournamentLive, tournamentData, updateTournamentStatus]);
 
-  const handleTournamentUpdate = () => {
-    // Trigger refresh of bracket visualization and tournament data
-    setRefreshTrigger(prev => prev + 1);
-    fetchTournamentData();
-  };
-
-  const handleMatchUpdate = () => {
-    // Trigger refresh of both bracket visualization and upcoming matches
-    setRefreshTrigger(prev => prev + 1);
-    fetchTournamentData();
-  };
-
-  const handleSeedingUpdate = (action, method) => {
-    // Handle seeding actions
-    console.log('Seeding action:', action, method);
-    // Trigger refresh of bracket visualization
-    setRefreshTrigger(prev => prev + 1);
-    fetchTournamentData();
-  };
 
   const handleTournamentLiveChange = async (isLive) => {
     setIsTournamentLive(isLive);
@@ -125,6 +105,21 @@ const ManageTournament = () => {
       // Configuration panel is closed - set status to active
       await updateTournamentStatus('active');
     }
+  };
+
+  const handleTournamentUpdate = () => {
+    setRefreshTrigger(prev => prev + 1);
+    fetchTournamentData();
+  };
+
+  const handleMatchUpdate = () => {
+    setRefreshTrigger(prev => prev + 1);
+    fetchTournamentData();
+  };
+
+  const handleSeedingUpdate = () => {
+    setRefreshTrigger(prev => prev + 1);
+    fetchTournamentData();
   };
 
   const handleFormatChange = async (newFormat) => {
@@ -212,47 +207,47 @@ const ManageTournament = () => {
   return (
     <div>
       <TitlePanel title="Tournament Management" eventData={eventData} tournamentData={tournamentData} />
-        <div style={{ 
-          paddingTop: '50px',
-          padding: '1rem',
-          margin: '0 auto',
-          maxWidth: 'calc(100vw - 4rem)',
-          boxSizing: 'border-box'
-        }}>
+      <div style={{ 
+        paddingTop: '72px',
+        padding: '1rem',
+        margin: '0 auto',
+        maxWidth: '100vw',
+        boxSizing: 'border-box',
+        minHeight: 'calc(100vh - 72px)'
+      }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: isTournamentLive ? '60px 1fr 20%' : '20% 1fr',
+          gridTemplateColumns: isTournamentLive ? '60px 1fr 20%' : '20% 1fr 60px',
           height: 'calc(100vh - 72px - 2rem)',
           gap: '1rem',
           maxWidth: '100%',
           transition: 'grid-template-columns 0.3s ease-in-out'
         }}>
-        {/* Left Column - Configuration */}
-        <ConfigurationPanel 
-          eventData={eventData}
-          tournamentData={tournamentData}
-          participants={participants}
-          onTournamentUpdate={handleTournamentUpdate}
-          onSeedingUpdate={handleSeedingUpdate}
-          onTournamentLiveChange={handleTournamentLiveChange}
-          onFormatChange={handleFormatChange}
-        />
+          {/* Left Column - Configuration */}
+          <ConfigurationPanel 
+            eventData={eventData}
+            tournamentData={tournamentData}
+            participants={participants}
+            onTournamentUpdate={handleTournamentUpdate}
+            onSeedingUpdate={handleSeedingUpdate}
+            onTournamentLiveChange={handleTournamentLiveChange}
+            onFormatChange={handleFormatChange}
+          />
 
-        {/* Center Column - Bracket Visualization */}
-        <VisualizationPanel 
-          eventData={eventData}
-          participants={participants}
-          refreshTrigger={refreshTrigger}
-        />
+          {/* Center Column - Bracket Visualization */}
+          <VisualizationPanel 
+            eventData={eventData}
+            participants={participants}
+            refreshTrigger={refreshTrigger}
+          />
 
-        {/* Right Column - Scorekeeping */}
-        {isTournamentLive && (
+          {/* Right Column - Scorekeeping */}
           <ScorekeepingPanel 
             eventData={eventData}
             participants={participants}
             onMatchUpdate={handleMatchUpdate}
+            isCollapsed={!isTournamentLive}
           />
-        )}
         </div>
       </div>
     </div>

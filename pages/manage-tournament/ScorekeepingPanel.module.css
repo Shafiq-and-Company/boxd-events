@@ -7,9 +7,15 @@
   display: flex;
   flex-direction: column;
   box-shadow: 3px 3px 0px 0px #000000;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s ease, width 0.3s ease;
-  opacity: 1;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, width 0.3s ease, padding 0.3s ease;
   width: 100%;
+}
+
+.scorekeepingPanel.collapsed {
+  width: 60px;
+  min-width: 60px;
+  height: 500px;
+  padding: 0.5rem;
 }
 
 .scorekeepingPanel:hover {
@@ -28,4 +34,29 @@
   font-weight: 500;
   color: #6b7280;
   margin: 0 0 1rem 0;
+}
+
+.collapsedContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.editIcon {
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.collapsedText {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  transform: rotate(0deg);
+  white-space: nowrap;
 }

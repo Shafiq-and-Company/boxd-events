@@ -14,7 +14,7 @@
 .configurationPanel.collapsed {
   width: 60px;
   min-width: 60px;
-  height: 50%;
+  height: 500px;
   padding: 0.5rem;
 }
 
@@ -447,3 +447,4 @@
   transform: translateX(-50%) rotate(270deg);
   text-transform: uppercase;
 }
+
