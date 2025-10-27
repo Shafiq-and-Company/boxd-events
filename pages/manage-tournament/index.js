@@ -19,19 +19,13 @@ const ManageTournament = () => {
   const fetchEventData = async () => {
     if (!eventId) return;
     console.log('Fetching event data for:', eventId);
-    // Placeholder for future implementation
-    setEventData({ id: eventId, title: 'Sample Tournament', game_title: 'Sample Game' });
+    // TODO: Implement with brackets-manager.js
   };
 
   const fetchTournamentData = async () => {
     if (!eventId) return;
     console.log('Fetching tournament data for:', eventId);
-    // Placeholder for future implementation
-    setTournamentData({ 
-      id: 'placeholder-id',
-      tournament_type: 'single_elimination',
-      status: 'seeding'
-    });
+    // TODO: Implement with brackets-manager.js
   };
 
   useEffect(() => {
@@ -78,25 +72,7 @@ const ManageTournament = () => {
     if (!eventId) return;
     
     console.log('Fetching participants for event:', eventId);
-    // Placeholder for future implementation
-    setParticipants([
-      {
-        user_id: '1',
-        users: { username: 'Player 1', first_name: 'Player', last_name: 'One' }
-      },
-      {
-        user_id: '2',
-        users: { username: 'Player 2', first_name: 'Player', last_name: 'Two' }
-      },
-      {
-        user_id: '3',
-        users: { username: 'Player 3', first_name: 'Player', last_name: 'Three' }
-      },
-      {
-        user_id: '4',
-        users: { username: 'Player 4', first_name: 'Player', last_name: 'Four' }
-      }
-    ]);
+    // TODO: Implement with brackets-manager.js
   };
 
   return (
