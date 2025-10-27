@@ -10,6 +10,22 @@ This application uses [brackets-manager.js](https://github.com/Drarig29/brackets
 
 **Documentation:** https://drarig29.github.io/brackets-docs/
 
+## Automatic Tournament Generation
+
+When an event is created, a tournament is automatically generated with those event details. The tournament defaults to **single elimination** format.
+
+**Automatic Behavior:**
+- Tournament is created automatically upon event creation
+- Uses event details (name, description, date, etc.)
+- Default tournament type: `single_elimination`
+- Tournament starts in `registration` status
+- Participants are seeded from RSVPs once users RSVP as 'going'
+
+**Customization:**
+- Tournament type can be changed by event hosts
+- Tournament settings (max/min participants, rules, prize pool) can be modified
+- Event hosts can start, manage, and complete tournaments
+
 ## Architecture
 
 ### Components
@@ -42,10 +58,10 @@ Users → RSVPs → Events → Tournaments
 - **Tournaments → Events**: `tournaments.event_id` → `events.id`
 
 **Data Flow:**
-1. Users create events and other users RSVP
-2. Tournament participants are derived from RSVPs with `status = 'going'`
-3. Tournaments are created for specific events
-4. Participants are seeded from RSVPs for that event
+1. User creates an event → Tournament is automatically generated with event details (defaults to single elimination)
+2. Other users RSVP to the event
+3. Tournament participants are derived from RSVPs with `status = 'going'`
+4. Tournament bracket is initialized and participants are seeded when tournament starts
 
 ### Tournaments Table Structure
 
@@ -723,7 +739,11 @@ async function safeTournamentOperation(operation) {
 ### How It Works
 
 ```
-User RSVPs 'going' to Event
+User Creates Event
+    ↓
+Tournament Automatically Generated (defaults to single_elimination)
+    ↓ (tournaments.event_id = events.id)
+Users RSVP 'going' to Event
     ↓ (rsvps.status = 'going')
 RSVP Record Created
     ↓ (rsvps.event_id = events.id)
