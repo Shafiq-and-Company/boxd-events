@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import styles from './VisualizationPanel.module.css';
 
 const VisualizationPanel = ({ eventData, participants, refreshTrigger }) => {
   const [bracketData, setBracketData] = useState(null);
+  const [tournamentType, setTournamentType] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Fetch bracket data from tournaments table
@@ -14,12 +15,13 @@ const VisualizationPanel = ({ eventData, participants, refreshTrigger }) => {
     try {
       const { data, error } = await supabase
         .from('tournaments')
-        .select('bracket_data')
+        .select('bracket_data, tournament_type')
         .eq('event_id', eventData.id)
         .single();
 
       if (error) throw error;
       setBracketData(data?.bracket_data || null);
+      setTournamentType(data?.tournament_type || 'single_elimination');
     } catch (err) {
       console.error('Error fetching bracket data:', err);
       setBracketData(null);
@@ -41,65 +43,159 @@ const VisualizationPanel = ({ eventData, participants, refreshTrigger }) => {
     fetchBracketData();
   }, [eventData?.id]);
 
-  // Create a mapping of user_id to username
-  const participantsMap = useMemo(() => {
-    const map = {};
-    participants.forEach(participant => {
-      map[participant.user_id] = participant.users?.username || 'Unknown';
-    });
-    return map;
-  }, [participants]);
-
-  // Get player username
-  const getPlayerName = (player) => {
-    if (!player || !player.id) return '-';
-    return participantsMap[player.id] || 'Unknown';
+  const getParticipantInfo = (player) => {
+    if (!player) return null;
+    
+    // player could be an object with id property, or just an id string
+    const playerId = typeof player === 'string' ? player : player?.id;
+    if (!playerId) return null;
+    
+    const participant = participants.find(p => p.user_id === playerId);
+    if (!participant) return null;
+    
+    return {
+      username: participant.users?.username || 'Unknown',
+      firstName: participant.users?.first_name || '',
+      lastName: participant.users?.last_name || '',
+    };
   };
 
-  // Render a match
-  const renderMatch = (match, matchIndex, roundIndex, isLastRound) => {
-    const isCompleted = match.status === 'completed';
-    const hasWinner = match.winner && isCompleted;
-    
+  const renderMatch = (match, index) => {
+    const player1Info = getParticipantInfo(match.player1);
+    const player2Info = getParticipantInfo(match.player2);
+
     return (
-      <div key={match.matchId} className={styles.matchContainer}>
-        <div className={`${styles.match} ${isCompleted ? styles.completed : ''}`}>
-          <div 
-            className={`${styles.playerSlot} ${match.player1?.id === match.winner && hasWinner ? styles.winner : ''}`}
-          >
-            {getPlayerName(match.player1)}
-          </div>
-          <div className={styles.vs}>vs</div>
-          <div 
-            className={`${styles.playerSlot} ${match.player2?.id === match.winner && hasWinner ? styles.winner : ''}`}
-          >
-            {getPlayerName(match.player2)}
-          </div>
+      <div key={match.matchId || index} className={styles.match}>
+        <div className={styles.matchSlot}>
+          {player1Info ? (
+            <div className={styles.player}>
+              <span className={styles.username}>{player1Info.username}</span>
+              {(player1Info.firstName || player1Info.lastName) && (
+                <span className={styles.fullName}>
+                  {`${player1Info.firstName} ${player1Info.lastName}`.trim()}
+                </span>
+              )}
+            </div>
+          ) : (
+            <div className={styles.playerEmpty}>—</div>
+          )}
         </div>
-        {!isLastRound && (
-          <div className={styles.connector}></div>
-        )}
+        <div className={styles.matchSlot}>
+          {player2Info ? (
+            <div className={styles.player}>
+              <span className={styles.username}>{player2Info.username}</span>
+              {(player2Info.firstName || player2Info.lastName) && (
+                <span className={styles.fullName}>
+                  {`${player2Info.firstName} ${player2Info.lastName}`.trim()}
+                </span>
+              )}
+            </div>
+          ) : (
+            <div className={styles.playerEmpty}>—</div>
+          )}
+        </div>
       </div>
     );
   };
 
-  // Render a round
-  const renderRound = (round, roundIndex) => {
-    const isLastRound = roundIndex === bracketData.rounds.length - 1;
+  const renderBracket = () => {
+    if (!bracketData || !bracketData.rounds) return null;
+
+    // Group rounds by bracket type for double elimination
+    const isDoubleElimination = tournamentType === 'double_elimination';
     
-    // Group matches by bracket type for double elimination
-    const groupedMatches = round.matches || [];
-    
-    return (
-      <div key={round.roundNumber} className={styles.round}>
-        <div className={styles.roundTitle}>
-          {round.bracket ? `${round.bracket}: ${round.name}` : round.name}
-        </div>
-        <div className={styles.matches}>
-          {groupedMatches.map((match, matchIndex) => 
-            renderMatch(match, matchIndex, roundIndex, isLastRound)
+    if (isDoubleElimination) {
+      // Separate winners, losers, and grand finals
+      const winnersRounds = bracketData.rounds.filter(r => r.bracket === 'winners' || !r.bracket);
+      const losersRounds = bracketData.rounds.filter(r => r.bracket === 'losers');
+      const grandFinals = bracketData.rounds.filter(r => r.bracket === 'grand_finals');
+
+      return (
+        <div className={styles.bracket}>
+          {/* Winners Bracket */}
+          <div className={styles.bracketGroup}>
+            <div className={styles.bracketGroupLabel}>Winners Bracket</div>
+            <div className={styles.roundsGroup}>
+              {winnersRounds.map((round, idx) => (
+                <div key={`winners-${idx}`} className={styles.round}>
+                  <div className={styles.roundHeader}>{round.name || `Round ${round.roundNumber}`}</div>
+                  <div className={styles.matchesContainer}>
+                    {round.matches && round.matches.length > 0 ? (
+                      round.matches.map((match, matchIndex) => renderMatch(match, matchIndex))
+                    ) : (
+                      <div className={styles.noMatches}>No matches</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Losers Bracket */}
+          {losersRounds.length > 0 && (
+            <div className={styles.bracketGroup}>
+              <div className={styles.bracketGroupLabel}>Losers Bracket</div>
+              <div className={styles.roundsGroup}>
+                {losersRounds.map((round, idx) => (
+                  <div key={`losers-${idx}`} className={styles.round}>
+                    <div className={styles.roundHeader}>{round.name || `Round ${round.roundNumber}`}</div>
+                    <div className={styles.matchesContainer}>
+                      {round.matches && round.matches.length > 0 ? (
+                        round.matches.map((match, matchIndex) => renderMatch(match, matchIndex))
+                      ) : (
+                        <div className={styles.noMatches}>No matches</div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Grand Finals */}
+          {grandFinals.length > 0 && (
+            <div className={styles.bracketGroup}>
+              <div className={styles.bracketGroupLabel}>Grand Finals</div>
+              <div className={styles.roundsGroup}>
+                {grandFinals.map((round, idx) => {
+                  // Label additional grand finals matches as "If Necessary"
+                  const roundName = round.name || (idx === 0 ? 'Grand Finals' : 'Grand Finals (If Necessary)');
+                  
+                  return (
+                    <div key={`grand-${idx}`} className={styles.round}>
+                      <div className={styles.roundHeader}>{roundName}</div>
+                      <div className={styles.matchesContainer}>
+                        {round.matches && round.matches.length > 0 ? (
+                          round.matches.map((match, matchIndex) => renderMatch(match, matchIndex))
+                        ) : (
+                          <div className={styles.noMatches}>No matches</div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           )}
         </div>
+      );
+    }
+
+    // Single elimination, round robin, swiss - render normally
+    return (
+      <div className={styles.bracket}>
+        {bracketData.rounds.map((round, roundIndex) => (
+          <div key={roundIndex} className={styles.round}>
+            <div className={styles.roundHeader}>{round.name || `Round ${round.roundNumber}`}</div>
+            <div className={styles.matchesContainer}>
+              {round.matches && round.matches.length > 0 ? (
+                round.matches.map((match, matchIndex) => renderMatch(match, matchIndex))
+              ) : (
+                <div className={styles.noMatches}>No matches</div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     );
   };
@@ -111,11 +207,11 @@ const VisualizationPanel = ({ eventData, participants, refreshTrigger }) => {
         <div className={styles.bracketContainer}>
           {loading ? (
             <div className={styles.loadingContainer}>
-              <p className={styles.loadingText}>Loading bracket...</p>
+              <p className={styles.loadingText}>Loading bracket data...</p>
             </div>
-          ) : bracketData && bracketData.rounds ? (
-            <div className={styles.bracketVisualization}>
-              {bracketData.rounds.map((round, index) => renderRound(round, index))}
+          ) : bracketData ? (
+            <div className={styles.bracketWrapper}>
+              {renderBracket()}
             </div>
           ) : (
             <div className={styles.placeholderContainer}>

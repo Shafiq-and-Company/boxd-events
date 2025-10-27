@@ -31,19 +31,45 @@
 
 .bracketContainer {
   flex: 1;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-.bracketVisualization {
-  display: flex;
-  flex-direction: row;
+.bracketWrapper {
+  width: 100%;
+  height: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 1rem;
+}
+
+.bracket {
+  display: flex;
+  flex-direction: row;
   gap: 2rem;
-  height: 100%;
+  padding: 1rem;
+  min-width: fit-content;
+}
+
+.bracketGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bracketGroupLabel {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #111827;
+  text-transform: uppercase;
+  padding: 0.5rem 0;
+  letter-spacing: 0.05em;
+}
+
+.roundsGroup {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
 }
 
 .round {
@@ -53,68 +79,66 @@
   min-width: 200px;
 }
 
-.roundTitle {
+.roundHeader {
   font-size: 0.75rem;
   font-weight: 600;
   color: #374151;
-  text-transform: capitalize;
-  border-bottom: 1px solid #e5e7eb;
+  text-transform: uppercase;
   padding-bottom: 0.5rem;
-  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.matches {
+.matchesContainer {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
-
-.matchContainer {
-  position: relative;
+  gap: 0.75rem;
 }
 
 .match {
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  padding: 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  background-color: #ffffff;
-}
-
-.match.completed {
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 0.5rem;
   background-color: #f9fafb;
 }
 
-.playerSlot {
-  padding: 0.25rem 0.5rem;
+.matchSlot {
+  min-height: 24px;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.username {
   font-size: 0.875rem;
-  min-height: 1.75rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.fullName {
+  font-size: 0.625rem;
+  color: #9ca3af;
+}
+
+.playerEmpty {
+  font-size: 0.875rem;
+  color: #d1d5db;
+  min-height: 24px;
   display: flex;
   align-items: center;
 }
 
-.playerSlot.winner {
-  font-weight: 600;
-  background-color: #dcfce7;
-}
-
-.vs {
+.noMatches {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #9ca3af;
+  font-style: italic;
+  padding: 1rem;
   text-align: center;
-  margin: 0.25rem 0;
-}
-
-.connector {
-  position: absolute;
-  right: -2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 2rem;
-  height: 1px;
-  background-color: #d1d5db;
 }
 
 .placeholderText {
