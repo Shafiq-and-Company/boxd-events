@@ -165,15 +165,17 @@ The `bracket_data` column stores the complete bracket state in brackets-manager.
 Install the required packages:
 
 ```bash
-npm install brackets-manager brackets-viewer
+npm install brackets-manager brackets-memory-db brackets-viewer
 ```
 
-Or include via CDN (for viewer only):
+**Note:** 
+- `brackets-manager` - Manages tournament bracket logic
+- `brackets-memory-db` - Provides InMemoryDatabase storage
+- `brackets-viewer` - Renders tournament brackets visually
 
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/brackets-viewer@latest/dist/brackets-viewer.min.css" />
-<script src="https://cdn.jsdelivr.net/npm/brackets-viewer@latest/dist/brackets-viewer.min.js"></script>
-```
+For Next.js, you can use either:
+1. CDN approach (recommended for client-side rendering)
+2. npm package with dynamic imports
 
 ### 2. Storage Approach - In-Memory + JSONB
 
@@ -185,8 +187,14 @@ Or include via CDN (for viewer only):
 - Easier to understand and debug
 - Direct control over serialization
 
+**Next.js Considerations:**
+- Use `brackets-memory-db` (not from `brackets-manager`) for InMemoryDatabase
+- Client-side only rendering for brackets (use `useEffect` with proper checks)
+- CDN approach works best for Next.js to avoid SSR issues
+
 ```javascript
-import { BracketsManager, InMemoryDatabase } from 'brackets-manager';
+import { BracketsManager } from 'brackets-manager';
+import { InMemoryDatabase } from 'brackets-memory-db';
 import { supabase } from './lib/supabaseClient';
 
 // Create a fresh in-memory database for each operation
@@ -390,23 +398,25 @@ async function renderTournamentBracket(tournamentId) {
 }
 ```
 
-#### React Implementation
+#### React/Next.js Implementation
+
+For Next.js applications, you can use brackets-viewer with dynamic imports:
+
+**Option 1: Using CDN (Recommended for Next.js)**
 
 ```jsx
-import { useEffect, useRef } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import Script from 'next/script';
+import { useEffect, useRef, useState } from 'react';
 
 function TournamentBracket({ tournamentId }) {
   const containerRef = useRef(null);
+  const [viewerLoaded, setViewerLoaded] = useState(false);
   
   useEffect(() => {
+    if (!containerRef.current || !tournamentId || !viewerLoaded) return;
+    
     const loadBracket = async () => {
-      if (!containerRef.current || !tournamentId) return;
-      
       try {
-        // Import brackets-viewer dynamically
-        const bracketsViewer = await import('brackets-viewer');
-        
         // Fetch tournament data
         const { data: tournament, error } = await supabase
           .from('tournaments')
@@ -416,8 +426,63 @@ function TournamentBracket({ tournamentId }) {
         
         if (error) throw error;
         
-        // Render bracket
-        bracketsViewer.renderBracket({
+        // Create BracketsViewer instance and render
+        const viewer = new window.bracketsViewer();
+        viewer.render({
+          stages: tournament.bracket_data.stage,
+          matches: tournament.bracket_data.match,
+          participants: tournament.bracket_data.participant
+        }, {
+          selector: containerRef.current
+        });
+      } catch (error) {
+        console.error('Error loading bracket:', error);
+      }
+    };
+    
+    loadBracket();
+  }, [tournamentId, viewerLoaded]);
+  
+  return (
+    <>
+      <Script 
+        src="https://cdn.jsdelivr.net/npm/brackets-viewer@latest/dist/brackets-viewer.min.js"
+        onLoad={() => setViewerLoaded(true)}
+      />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/brackets-viewer@latest/dist/brackets-viewer.min.css" />
+      <div ref={containerRef}></div>
+    </>
+  );
+}
+```
+
+**Option 2: Using npm package (Alternative)**
+
+```jsx
+import { useEffect, useRef } from 'react';
+import { BracketsViewer } from 'brackets-viewer';
+import { supabase } from '../lib/supabaseClient';
+
+function TournamentBracket({ tournamentId }) {
+  const containerRef = useRef(null);
+  
+  useEffect(() => {
+    if (!containerRef.current || !tournamentId) return;
+    
+    const loadBracket = async () => {
+      try {
+        // Fetch tournament data
+        const { data: tournament, error } = await supabase
+          .from('tournaments')
+          .select('bracket_data')
+          .eq('id', tournamentId)
+          .single();
+        
+        if (error) throw error;
+        
+        // Create viewer instance and render
+        const viewer = new BracketsViewer();
+        viewer.render({
           stages: tournament.bracket_data.stage,
           matches: tournament.bracket_data.match,
           participants: tournament.bracket_data.participant
@@ -432,18 +497,15 @@ function TournamentBracket({ tournamentId }) {
     loadBracket();
   }, [tournamentId]);
   
-  return (
-    <div>
-      <div ref={containerRef}></div>
-    </div>
-  );
+  return <div ref={containerRef}></div>;
 }
 ```
 
-**Important Notes for React:**
-- Use `bracketsViewer.renderBracket()` (with uppercase B)
+**Important Notes for Next.js/React:**
+- Use `new BracketsViewer()` to create an instance
+- Call `render()` method with data and config
 - The selector should be the DOM element, not a string
-- Don't use `id="bracket"` - just use a ref
+- Use dynamic imports or CDN for better Next.js compatibility
 
 ### 6. Loading Participants from RSVPs
 
@@ -932,26 +994,30 @@ export { createEventTournament, updateMatchResult, getTournamentParticipants };
 ### Common Issues
 
 **Issue: "Cannot read property 'storage' of undefined"**
-- Make sure you imported `InMemoryDatabase` from brackets-manager
+- Make sure you imported `InMemoryDatabase` from `brackets-memory-db` (not from brackets-manager)
 - Use `createManager()` to create a new manager for each operation
 
 **Issue: "Match not found" when updating**
 - Ensure you're using the correct match ID
 - Match IDs are integers (0, 1, 2, etc.) not UUIDs
 
-**Issue: Bracket not rendering**
+**Issue: Bracket not rendering in Next.js**
 - Check that `bracket_data` is not empty
 - Verify bracket_data structure matches the expected format (participant, stage, group, round, match)
-- For React, ensure you're using `selector: containerRef.current` (DOM element, not string)
+- For React/Next.js, ensure you're using `selector: containerRef.current` (DOM element, not string)
+- Make sure you wait for the CDN script to load before rendering (use `useState` for `viewerLoaded` flag)
+- Check browser console for any JavaScript errors
 
 **Issue: Participants not loading**
 - Verify users have RSVP'd with `status = 'going'`
-- Check RLS policies allow reading RSVPs
+- Check RLS policies allow reading RSVPs and users tables
 - Ensure users table has proper data
+- Check that the Supabase query includes proper foreign key relationships
 
 **Issue: "Minimum participants required" error**
 - Users must RSVP as 'going' before creating tournament
 - Check that `rsvps.status` = 'going'
+- Verify at least 2 participants exist for the event
 
 **Issue: Data not loading into in-memory database**
 - Insert data one by one if bulk insert doesn't work:
@@ -960,6 +1026,17 @@ export { createEventTournament, updateMatchResult, getTournamentParticipants };
     await storage.insert('participant', participant);
   }
   ```
+
+**Issue: Next.js SSR errors with brackets-viewer**
+- brackets-viewer requires browser APIs and should only run client-side
+- Use `useEffect` with proper dependency checks
+- Use CDN approach instead of dynamic imports for better compatibility
+- Ensure `typeof window !== 'undefined'` checks are in place
+
+**Issue: "bracketsViewer is not defined" in Next.js**
+- Wait for the CDN script to load using `Script` component's `onLoad` callback
+- Check that the script is loaded before attempting to render
+- Use `typeof window !== 'undefined' && window.bracketsViewer` check
 
 ### Performance Optimization
 
@@ -1006,11 +1083,12 @@ async function getAllTournaments(eventId) {
 
 1. **Install packages:**
    ```bash
-   npm install brackets-manager brackets-viewer
+   npm install brackets-manager brackets-memory-db brackets-viewer
    ```
 
 2. **Create the tournament helper file:**
    - Copy the complete example above to `lib/tournamentManager.js`
+   - Ensure imports are correct: `InMemoryDatabase` from `brackets-memory-db`
 
 3. **Import in your page:**
    ```javascript
@@ -1026,6 +1104,11 @@ async function getAllTournaments(eventId) {
      min_participants: 4
    });
    ```
+
+5. **For Next.js client-side rendering:**
+   - Use `useEffect` for bracket rendering
+   - Use CDN approach with `Script` component for loading brackets-viewer
+   - Always check `typeof window !== 'undefined'` before using browser APIs
 
 ## References
 
