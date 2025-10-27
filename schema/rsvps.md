@@ -72,7 +72,7 @@ CREATE POLICY "Event hosts can view RSVPs for their events" ON rsvps
         EXISTS (
             SELECT 1 FROM events 
             WHERE events.id = rsvps.event_id 
-            AND events.host = auth.uid()::text
+            AND events.host_id = auth.uid()
         )
     );
 ```

@@ -21,6 +21,26 @@ User Action → brackets-manager.js → Serialize Data → Supabase → Fetch Da
 
 ## Database Schema
 
+### Table Relationships
+
+The tournament system uses the following relationship chain:
+
+```
+Users → RSVPs → Events → Tournaments
+```
+
+**Relationships:**
+- **RSVPs → Events**: `rsvps.event_id` → `events.id`
+- **RSVPs → Users**: `rsvps.user_id` → `users.id`
+- **Events → Users**: `events.host_id` → `users.id`
+- **Tournaments → Events**: `tournaments.event_id` → `events.id`
+
+**Data Flow:**
+1. Users create events and other users RSVP
+2. Tournament participants are derived from RSVPs with `status = 'going'`
+3. Tournaments are created for specific events
+4. Participants are seeded from RSVPs for that event
+
 ### Tournaments Table Structure
 
 The `tournaments` table stores all tournament data:
@@ -99,6 +119,10 @@ Or include via CDN (for viewer only):
 ```
 
 ### 2. Supabase Storage Implementation
+
+**Note:** For this implementation, we store bracket data directly in the `tournaments.bracket_data` JSONB column rather than using brackets-manager's storage interface. This provides more control over serialization and better performance with Supabase.
+
+However, if you need a full storage adapter for brackets-manager.js, here's a basic implementation:
 
 Since brackets-manager.js requires a CRUD interface, we need to create a custom storage adapter for Supabase.
 
@@ -409,6 +433,8 @@ function TournamentBracket({ tournamentId }) {
 
 ### 6. Loading Participants from RSVPs
 
+Participants are loaded from RSVPs where users have RSVP'd 'going' to the event. The function joins with the users table to get participant information.
+
 ```javascript
 async function getTournamentParticipants(eventId) {
   // Get RSVPs for the event where status is 'going'
@@ -426,25 +452,68 @@ async function getTournamentParticipants(eventId) {
     .eq('event_id', eventId)
     .eq('status', 'going');
   
-  if (error) throw error;
+  if (error) {
+    console.error('Error fetching participants:', error);
+    throw error;
+  }
+  
+  if (!rsvps || rsvps.length === 0) {
+    return [];
+  }
   
   // Map RSVPs to participants
-  const participants = rsvps.map(rsvp => ({
-    id: rsvp.user_id,
-    name: rsvp.users.username || 
-          `${rsvp.users.first_name} ${rsvp.users.last_name}`.trim()
-  }));
+  const participants = rsvps.map(rsvp => {
+    const user = rsvp.users;
+    if (!user) {
+      console.warn(`Missing user data for rsvp with user_id: ${rsvp.user_id}`);
+      return {
+        id: rsvp.user_id,
+        name: `User ${rsvp.user_id}`
+      };
+    }
+    
+    return {
+      id: rsvp.user_id,
+      name: user.username || 
+            `${user.first_name || ''} ${user.last_name || ''}`.trim() || 
+            `User ${rsvp.user_id}`
+    };
+  });
   
   return participants;
 }
 ```
 
+**Key Points:**
+- Only includes RSVPs with `status = 'going'`
+- Joins with `users` table to get participant names
+- Handles missing user data gracefully
+- Returns empty array if no participants found
+
 ### 7. Complete Tournament Creation Flow
+
+**Relationship Verification:** Before creating a tournament, verify the user is the host of the event.
 
 ```javascript
 async function createEventTournament(eventId, tournamentConfig) {
   try {
-    // Step 1: Get participants from RSVPs
+    // Step 0: Verify event exists and user is the host
+    const { data: event, error: eventError } = await supabase
+      .from('events')
+      .select('id, host_id')
+      .eq('id', eventId)
+      .single();
+    
+    if (eventError) throw eventError;
+    if (!event) throw new Error('Event not found');
+    
+    // Optional: Verify current user is the event host
+    // const { data: { user } } = await supabase.auth.getUser();
+    // if (event.host_id !== user.id) {
+    //   throw new Error('Only event hosts can create tournaments');
+    // }
+    
+    // Step 1: Get participants from RSVPs for this event
     const participants = await getTournamentParticipants(eventId);
     
     if (participants.length < tournamentConfig.min_participants) {
@@ -455,10 +524,10 @@ async function createEventTournament(eventId, tournamentConfig) {
       throw new Error(`Maximum ${tournamentConfig.max_participants} participants allowed`);
     }
     
-    // Step 2: Create tournament record
+    // Step 2: Create tournament record linked to event
     const tournament = await createTournament(eventId, tournamentConfig);
     
-    // Step 3: Initialize bracket
+    // Step 3: Initialize bracket with participants from RSVPs
     const bracketData = await initializeTournamentBracket(
       tournament.id, 
       participants
@@ -477,6 +546,13 @@ async function createEventTournament(eventId, tournamentConfig) {
   }
 }
 ```
+
+**Key Points:**
+- Verifies event exists before creating tournament
+- Checks event ownership (optional, RLS enforces this)
+- Participants are loaded from RSVPs with `status = 'going'`
+- Tournament is linked to event via `event_id`
+- Bracket is initialized with participants from that event's RSVPs
 
 ## Tournament Types
 
@@ -570,8 +646,29 @@ Tournament data is protected by Row Level Security (RLS) policies in Supabase:
 - **Public Read**: Anyone can view active tournaments
 - **Host Management**: Event hosts can manage tournaments for their events
 - **Service Role**: Full access for system operations
+- **RSVP Access**: Users can view RSVPs for events they host (see `schema/rsvps.md`)
 
-See `schema/tournaments.md` for complete policy documentation.
+### Required RLS Policies
+
+For the participant loading to work, ensure these policies exist:
+
+**RSVPs Table:**
+- Users can view RSVPs for events they host
+- Public read access (optional, for event pages)
+
+**Users Table:**
+- Public read access for host information
+- OR authenticated users can read limited user data
+
+**Events Table:**
+- Public read access for event details
+- Hosts can manage their events
+
+**Tournaments Table:**
+- Public read access for active tournaments
+- Event hosts can manage tournaments for their events
+
+See `schema/tournaments.md`, `schema/rsvps.md`, and `schema/events.md` for complete policy documentation.
 
 ## Performance Considerations
 
@@ -623,6 +720,28 @@ async function safeTournamentOperation(operation) {
 }
 ```
 
+## Summary: Participants from RSVPs
+
+### How It Works
+
+```
+User RSVPs 'going' to Event
+    ↓ (rsvps.status = 'going')
+RSVP Record Created
+    ↓ (rsvps.event_id = events.id)
+Event Linked to Tournament
+    ↓ (tournaments.event_id = events.id)
+Tournament Seeded with Participants
+    ↓ (From rsvps.user_id → users.id)
+Participant Names Displayed
+```
+
+**Important:** Participants come ONLY from RSVPs with `status = 'going'` for the tournament's event. Ensure:
+1. Users have RSVP'd to the event
+2. RSVP status is set to 'going'
+3. Event exists and is linked to the tournament
+4. Users table has proper data for participant names
+
 ## References
 
 - [brackets-manager.js Documentation](https://drarig29.github.io/brackets-docs/getting-started/)
@@ -631,3 +750,4 @@ async function safeTournamentOperation(operation) {
 - [Tournament Schema](./schema/tournaments.md)
 - [Events Schema](./schema/events.md)
 - [RSVPs Schema](./schema/rsvps.md)
+- [Users Schema](./schema/users.md)
