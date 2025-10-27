@@ -27,6 +27,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .panelTitle {
@@ -34,6 +35,192 @@
   font-weight: 500;
   color: #6b7280;
   margin: 0 0 1rem 0;
+}
+
+.matchesContainer {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.loadingText {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-align: center;
+  padding: 1rem;
+}
+
+.noMatches {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.noMatches p {
+  margin: 0.25rem 0;
+}
+
+.noMatches .hint {
+  font-size: 0.75rem;
+  color: #d1d5db;
+}
+
+.roundGroup {
+  margin-bottom: 1.5rem;
+}
+
+.roundName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.matchesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.matchCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 0;
+  padding: 0.75rem;
+  background-color: #f9fafb;
+}
+
+.matchHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.matchId {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.roundNumber {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.matchContent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.playerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.playerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.playerName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.playerFullName {
+  font-size: 0.625rem;
+  color: #9ca3af;
+}
+
+.winnerButton {
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 0;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.winnerButton:hover:not(:disabled) {
+  background-color: #f9fafb;
+  border-color: #6b7280;
+}
+
+.winnerButton.selected {
+  background-color: #10b981;
+  border-color: #059669;
+  color: #ffffff;
+}
+
+.winnerButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.vs {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9ca3af;
+  padding: 0 0.5rem;
+  flex-shrink: 0;
+}
+
+.matchActions {
+  display: flex;
+  justify-content: center;
+}
+
+.lockInButton,
+.unlockButton {
+  background-color: #10b981;
+  border: 1px solid #059669;
+  border-radius: 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.lockInButton:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.lockInButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.unlockButton {
+  background-color: #6b7280;
+  border-color: #4b5563;
+}
+
+.unlockButton:hover:not(:disabled) {
+  background-color: #4b5563;
 }
 
 .collapsedContent {
