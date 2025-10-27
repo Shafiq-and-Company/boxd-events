@@ -264,6 +264,75 @@
   cursor: not-allowed;
 }
 
+/* Forgot Password */
+.forgotPasswordLink {
+  background: none;
+  border: none;
+  color: #007AFF;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 4px 0;
+  margin-top: 4px;
+  text-align: left;
+  transition: color 200ms ease;
+}
+
+.forgotPasswordLink:hover:not(:disabled) {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.forgotPasswordLink:disabled {
+  color: #999;
+  cursor: not-allowed;
+}
+
+.forgotPasswordForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.forgotPasswordText {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.cancelButton {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #f8f8f8;
+  color: #666;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+}
+
+.cancelButton:disabled {
+  background-color: #f8f8f8;
+  border-color: #e1e1e1;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.cancelButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+}
+
 /* Messages */
 .error {
   background-color: #fff5f5;
@@ -336,6 +405,19 @@
   .toggleContainer {
     margin-top: 16px;
   }
+  
+  .forgotPasswordLink {
+    font-size: 13px;
+  }
+  
+  .forgotPasswordText {
+    font-size: 13px;
+  }
+  
+  .cancelButton {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -363,7 +445,9 @@
   .submitButton,
   .googleButton,
   .discordButton,
-  .toggleButton { 
+  .toggleButton,
+  .forgotPasswordLink,
+  .cancelButton { 
     transition: none; 
   }
 }
@@ -373,7 +457,8 @@
   .input:focus,
   .submitButton,
   .googleButton,
-  .discordButton { 
+  .discordButton,
+  .cancelButton { 
     border-color: #000000; 
   }
 }
