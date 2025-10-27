@@ -19,7 +19,7 @@ export default function SplashNav() {
   }, [router]);
 
   const handleGetStarted = () => {
-    window.open('https://ravel-bell-55722578.figma.site/', '_blank');
+    window.open('https://locals-gg-demo.figma.site/', '_blank');
   };
 
   const handleLogoClick = () => {
