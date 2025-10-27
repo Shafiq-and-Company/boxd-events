@@ -208,7 +208,7 @@ const ManageTournament = () => {
     <div>
       <TitlePanel title="Tournament Management" eventData={eventData} tournamentData={tournamentData} />
       <div style={{ 
-        paddingTop: '72px',
+        paddingTop: '32px',
         padding: '1rem',
         margin: '0 auto',
         maxWidth: '100vw',
