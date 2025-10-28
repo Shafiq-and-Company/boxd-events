@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import tournamentManager from '../lib/tournamentManager';
-import styles from './TournamentManager.module.css';
+import styles from './TournamentManagement.module.css';
 
 export default function TournamentBracket({ tournamentId }) {
   const [bracketData, setBracketData] = useState(null);

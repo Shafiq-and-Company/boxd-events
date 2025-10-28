@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import tournamentManager from '../lib/tournamentManager';
-import styles from './TournamentManager.module.css';
+import styles from './TournamentManagement.module.css';
 
 // Helper function to check if a number is a power of 2
 function isPowerOfTwo(n) {
@@ -27,6 +27,10 @@ export default function TournamentManagement({ tournamentId }) {
   const loadData = async () => {
     try {
       setLoading(true);
+      
+      // First check if tournament needs to be regenerated
+      await tournamentManager.checkAndRegenerateTournament(tournamentId);
+      
       const [participantsData, currentMatches] = await Promise.all([
         tournamentManager.getParticipants(tournamentId),
         tournamentManager.getCurrentMatches(tournamentId)
@@ -78,10 +82,19 @@ export default function TournamentManagement({ tournamentId }) {
         <h3>Current Matches</h3>
         {matches.length === 0 ? (
           <div className={styles.noMatches}>
-            <p>No matches available yet. Tournament bracket will be generated automatically.</p>
-            {participants.length < 2 && (
-              <p className={styles.warning}>
-                <strong>Warning:</strong> Need at least 2 participants to generate matches.
+            <p>No matches available yet.</p>
+            {participants.length < 2 ? (
+              <div>
+                <p className={styles.warning}>
+                  <strong>Waiting for participants:</strong> Need at least 2 participants to generate matches.
+                </p>
+                <p className={styles.info}>
+                  Matches will be automatically generated when enough participants RSVP to the event.
+                </p>
+              </div>
+            ) : (
+              <p className={styles.info}>
+                Tournament bracket will be generated automatically.
               </p>
             )}
           </div>

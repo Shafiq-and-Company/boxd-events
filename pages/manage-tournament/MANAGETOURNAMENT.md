@@ -199,13 +199,13 @@ export default new TournamentManager();
 ### Phase 2: React Components
 
 #### 2.1 Tournament Management Component
-Create `/components/TournamentManager.js`:
+Create `/components/TournamentManagement.js`:
 
 ```javascript
 import { useState, useEffect } from 'react';
 import tournamentManager from '../lib/tournamentManager';
 
-export default function TournamentManager({ tournamentId }) {
+export default function TournamentManagement({ tournamentId }) {
   const [participants, setParticipants] = useState([]);
   const [matches, setMatches] = useState([]);
   const [tournamentName, setTournamentName] = useState('');
@@ -427,7 +427,7 @@ Update `/pages/manage-tournament/[id].js`:
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
-import TournamentManager from '../../components/TournamentManager';
+import TournamentManagement from '../../components/TournamentManagement';
 import TournamentBracket from '../../components/TournamentBracket';
 
 export default function ManageTournament() {
@@ -483,7 +483,7 @@ export default function ManageTournament() {
       </div>
 
       {activeTab === 'manage' && (
-        <TournamentManager tournamentId={id} />
+        <TournamentManagement tournamentId={id} />
       )}
 
       {activeTab === 'bracket' && (
@@ -495,7 +495,7 @@ export default function ManageTournament() {
 ```
 
 ### Phase 4: Styling
-Create `/components/TournamentManager.module.css`:
+Create `/components/TournamentManagement.module.css`:
 
 ```css
 .tournament-manager {

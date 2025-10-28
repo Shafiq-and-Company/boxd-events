@@ -1,0 +1,309 @@
+.tournamentManager {
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.participantsSection {
+  margin-bottom: 32px;
+}
+
+.byeInfo {
+  background: #fff8f0;
+  border: 1px solid #ffa500;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 12px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.participantsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.participantItem {
+  padding: 12px;
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.createTournament {
+  padding: 24px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.createTournament input {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px;
+  margin: 16px 0;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.createTournament button {
+  padding: 12px 24px;
+  background: #000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.createTournament button:disabled {
+  background: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.matchesSection {
+  margin-top: 32px;
+}
+
+.noMatches {
+  text-align: center;
+  padding: 40px 20px;
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  color: #666;
+}
+
+.noMatches p {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+}
+
+.warning {
+  color: #ffa500 !important;
+  font-weight: 500;
+}
+
+.info {
+  color: #666;
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+.matchCard {
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+  background: white;
+}
+
+.byeMatch {
+  border-color: #ffa500;
+  background: #fff8f0;
+}
+
+.byeOpponent {
+  color: #ffa500;
+  font-weight: 600;
+}
+
+.participants {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.matchActions {
+  margin-top: 16px;
+}
+
+.byeActions {
+  text-align: center;
+  padding: 16px;
+  background: #f8f8f8;
+  border-radius: 6px;
+  border: 1px solid #e8e8e8;
+}
+
+.byeInfo {
+  margin-bottom: 12px;
+  font-weight: 500;
+  color: #666;
+}
+
+.byeButton {
+  padding: 8px 16px;
+  background: #ffa500;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.byeButton:hover {
+  background: #e6940a;
+}
+
+.byeResult {
+  text-align: center;
+  font-weight: 500;
+  color: #ffa500;
+  font-style: italic;
+}
+
+.scoreInput {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.scoreInput input {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.scoreInput button {
+  padding: 8px 16px;
+  background: #000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.matchResult {
+  text-align: center;
+  font-weight: 500;
+  color: #404040;
+}
+
+.manageTournament {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.backButton {
+  padding: 8px 16px;
+  background: #f8f8f8;
+  color: #333;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.backButton:hover:not(:disabled) {
+  background: #e8e8e8;
+  border-color: #d0d0d0;
+}
+
+.backButton:disabled {
+  background: #f0f0f0;
+  color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.tournamentInfo {
+  margin-bottom: 24px;
+}
+
+.tournamentSettings {
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.tournamentSettings h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.settingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.settingItem:last-child {
+  border-bottom: none;
+}
+
+.settingLabel {
+  font-weight: 500;
+  color: #666;
+  font-size: 14px;
+}
+
+.settingValue {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.tabs button {
+  padding: 12px 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-bottom: 2px solid transparent;
+}
+
+.tabs button.active {
+  border-bottom-color: #000;
+  font-weight: 500;
+}
+
+.tournamentBracket {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.bracketContainer {
+  width: 100%;
+  overflow-x: auto;
+  padding: 24px 0;
+}

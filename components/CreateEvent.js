@@ -149,7 +149,7 @@ export default function CreateEvent() {
         description: formData.description,
         max_participants: 64,
         min_participants: 2,
-        status: 'registration',
+        status: 'active', // Set to active so bracket is immediately generated
         tournament_type: 'single_elimination',
         rules: 'Standard tournament rules apply. Check with event host for specific details.',
         bracket_data: {}
@@ -163,6 +163,18 @@ export default function CreateEvent() {
       if (tournamentError) {
         console.error('Error creating tournament:', tournamentError)
         // Don't throw error here - event was created successfully
+      } else if (tournamentResult && tournamentResult[0]) {
+        // Import tournament manager to generate the bracket
+        const tournamentManager = (await import('../lib/tournamentManager')).default;
+        
+        // Generate the tournament bracket immediately (if enough participants)
+        const bracketResult = await tournamentManager.createTournament(tournamentResult[0].id, formData.title);
+        
+        if (bracketResult) {
+          console.log('Tournament bracket generated successfully');
+        } else {
+          console.log('Tournament created but waiting for more participants');
+        }
       }
 
       // Show success popup and navigate to manage event page
