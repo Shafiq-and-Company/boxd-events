@@ -198,14 +198,14 @@ export default new TournamentManager();
 
 ### Phase 2: React Components
 
-#### 2.1 Tournament Management Component
-Create `/components/TournamentManagement.js`:
+#### 2.1 Match Manager Component
+Create `/pages/manage-tournament/MatchManager.js`:
 
 ```javascript
 import { useState, useEffect } from 'react';
-import tournamentManager from '../lib/tournamentManager';
+import tournamentManager from '../../lib/tournamentManager';
 
-export default function TournamentManagement({ tournamentId }) {
+export default function MatchManager({ tournamentId }) {
   const [participants, setParticipants] = useState([]);
   const [matches, setMatches] = useState([]);
   const [tournamentName, setTournamentName] = useState('');
@@ -352,15 +352,15 @@ function MatchCard({ match, onUpdate }) {
 }
 ```
 
-#### 2.2 Bracket Visualization Component
-Create `/components/TournamentBracket.js`:
+#### 2.2 Bracket Viewer Component
+Create `/pages/manage-tournament/BracketViewer.js`:
 
 ```javascript
 import { useEffect, useRef, useState } from 'react';
 import { BracketsViewer } from 'brackets-viewer';
-import tournamentManager from '../lib/tournamentManager';
+import tournamentManager from '../../lib/tournamentManager';
 
-export default function TournamentBracket({ tournamentId }) {
+export default function BracketViewer({ tournamentId }) {
   const containerRef = useRef(null);
   const viewerRef = useRef(null);
   const [bracketData, setBracketData] = useState(null);
@@ -427,8 +427,8 @@ Update `/pages/manage-tournament/[id].js`:
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
-import TournamentManagement from '../../components/TournamentManagement';
-import TournamentBracket from '../../components/TournamentBracket';
+import MatchManager from './MatchManager';
+import BracketViewer from './BracketViewer';
 
 export default function ManageTournament() {
   const router = useRouter();
@@ -483,11 +483,11 @@ export default function ManageTournament() {
       </div>
 
       {activeTab === 'manage' && (
-        <TournamentManagement tournamentId={id} />
+        <MatchManager tournamentId={id} />
       )}
 
       {activeTab === 'bracket' && (
-        <TournamentBracket tournamentId={id} />
+        <BracketViewer tournamentId={id} />
       )}
     </div>
   );
@@ -495,7 +495,7 @@ export default function ManageTournament() {
 ```
 
 ### Phase 4: Styling
-Create `/components/TournamentManagement.module.css`:
+Create `/pages/manage-tournament/tournament.module.css`:
 
 ```css
 .tournament-manager {

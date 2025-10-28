@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import tournamentManager from '../lib/tournamentManager';
-import styles from './TournamentManagement.module.css';
+import tournamentManager from '../../lib/tournamentManager';
+import styles from './tournament.module.css';
 
-export default function TournamentBracket({ tournamentId }) {
+export default function BracketViewer({ tournamentId }) {
   const [bracketData, setBracketData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -26,7 +26,7 @@ export default function TournamentBracket({ tournamentId }) {
   if (!bracketData) return <div>No bracket data available</div>;
 
   return (
-    <div className={styles.tournamentBracket}>
+    <div>
       <h3>Tournament Bracket</h3>
       <div className={styles.bracketContainer}>
         <div style={{ padding: '20px', textAlign: 'center' }}>

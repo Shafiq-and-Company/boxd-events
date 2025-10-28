@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import tournamentManager from '../lib/tournamentManager';
-import styles from './TournamentManager.module.css';
+import tournamentManager from '../../lib/tournamentManager';
+import styles from './tournament.module.css';
 
 // Helper function to check if a number is a power of 2
 function isPowerOfTwo(n) {
@@ -14,7 +14,7 @@ function getByeCount(participantCount) {
   return nextPowerOfTwo - participantCount;
 }
 
-export default function TournamentManagement({ tournamentId }) {
+export default function MatchManager({ tournamentId }) {
   const [participants, setParticipants] = useState([]);
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,6 +27,10 @@ export default function TournamentManagement({ tournamentId }) {
   const loadData = async () => {
     try {
       setLoading(true);
+      
+      // First check if tournament needs to be regenerated
+      await tournamentManager.checkAndRegenerateTournament(tournamentId);
+      
       const [participantsData, currentMatches] = await Promise.all([
         tournamentManager.getParticipants(tournamentId),
         tournamentManager.getCurrentMatches(tournamentId)
@@ -35,6 +39,7 @@ export default function TournamentManagement({ tournamentId }) {
       setParticipants(participantsData);
       setMatches(currentMatches || []);
     } catch (err) {
+      console.error('Error loading tournament data:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -54,47 +59,35 @@ export default function TournamentManagement({ tournamentId }) {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className={styles.tournamentManager}>
-      <div className={styles.participantsSection}>
-        <h3>Participants ({participants.length})</h3>
-        {participants.length > 0 && !isPowerOfTwo(participants.length) && (
-          <div className={styles.byeInfo}>
-            <strong>BYE Information:</strong> With {participants.length} participants, 
-            {getByeCount(participants.length)} BYE slot(s) will be added to create a balanced bracket.
-            <br />
-            <small>Tournament will have {Math.pow(2, Math.ceil(Math.log2(participants.length)))} total slots.</small>
-          </div>
-        )}
-        <div className={styles.participantsList}>
-          {participants.map(participant => (
-            <div key={participant.id} className={styles.participantItem}>
-              {participant.name}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className={styles.matchesSection}>
-        <h3>Current Matches</h3>
-        {matches.length === 0 ? (
-          <div className={styles.noMatches}>
-            <p>No matches available yet. Tournament bracket will be generated automatically.</p>
-            {participants.length < 2 && (
+    <div>
+      <h3>Current Matches</h3>
+      {matches.length === 0 ? (
+        <div className={styles.noMatches}>
+          <p>No matches available yet.</p>
+          {participants.length < 2 ? (
+            <div>
               <p className={styles.warning}>
-                <strong>Warning:</strong> Need at least 2 participants to generate matches.
+                <strong>Waiting for participants:</strong> Need at least 2 participants to generate matches.
               </p>
-            )}
-          </div>
-        ) : (
-          matches.map(match => (
-            <MatchCard 
-              key={match.id} 
-              match={match} 
-              onUpdate={updateMatchResult}
-            />
-          ))
-        )}
-      </div>
+              <p className={styles.info}>
+                Matches will be automatically generated when enough participants RSVP to the event.
+              </p>
+            </div>
+          ) : (
+            <p className={styles.info}>
+              Tournament bracket will be generated automatically.
+            </p>
+          )}
+        </div>
+      ) : (
+        matches.map(match => (
+          <MatchCard 
+            key={match.id} 
+            match={match} 
+            onUpdate={updateMatchResult}
+          />
+        ))
+      )}
     </div>
   );
 }

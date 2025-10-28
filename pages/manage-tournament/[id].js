@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
-import TournamentManagement from '../../components/TournamentManagement';
-import TournamentBracket from '../../components/TournamentBracket';
-import styles from '../../components/TournamentManagement.module.css';
+import MatchManager from './MatchManager';
+import BracketViewer from './BracketViewer';
+import ParticipantsList from './ParticipantsList';
+import styles from './tournament.module.css';
 
 export default function ManageTournament() {
   const router = useRouter();
@@ -79,12 +80,16 @@ export default function ManageTournament() {
       </div>
       
       <div className={styles.content}>
-        <div className={styles.managementSection}>
-          <TournamentManagement tournamentId={id} />
+        <div className={styles.matchesSection}>
+          <MatchManager tournamentId={id} />
         </div>
         
         <div className={styles.bracketSection}>
-          <TournamentBracket tournamentId={id} />
+          <BracketViewer tournamentId={id} />
+        </div>
+
+        <div className={styles.participantsSection}>
+          <ParticipantsList tournamentId={id} />
         </div>
       </div>
     </div>
