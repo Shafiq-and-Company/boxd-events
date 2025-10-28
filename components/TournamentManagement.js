@@ -39,6 +39,7 @@ export default function TournamentManagement({ tournamentId }) {
       setParticipants(participantsData);
       setMatches(currentMatches || []);
     } catch (err) {
+      console.error('Error loading tournament data:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -71,8 +72,9 @@ export default function TournamentManagement({ tournamentId }) {
         )}
         <div className={styles.participantsList}>
           {participants.map(participant => (
-            <div key={participant.id} className={styles.participantItem}>
+            <div key={participant.id} className={`${styles.participantItem} ${participant.isHost ? styles.hostParticipant : ''}`}>
               {participant.name}
+              {participant.isHost && <span className={styles.hostBadge}>Host</span>}
             </div>
           ))}
         </div>

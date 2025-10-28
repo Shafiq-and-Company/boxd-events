@@ -9,7 +9,6 @@ export default function ManageTournament() {
   const router = useRouter();
   const { id } = router.query;
   const [tournament, setTournament] = useState(null);
-  const [activeTab, setActiveTab] = useState('manage');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -79,28 +78,15 @@ export default function ManageTournament() {
         </div>
       </div>
       
-      <div className={styles.tabs}>
-        <button 
-          className={activeTab === 'manage' ? styles.active : ''}
-          onClick={() => setActiveTab('manage')}
-        >
-          Manage Matches
-        </button>
-        <button 
-          className={activeTab === 'bracket' ? styles.active : ''}
-          onClick={() => setActiveTab('bracket')}
-        >
-          View Bracket
-        </button>
+      <div className={styles.content}>
+        <div className={styles.managementSection}>
+          <TournamentManagement tournamentId={id} />
+        </div>
+        
+        <div className={styles.bracketSection}>
+          <TournamentBracket tournamentId={id} />
+        </div>
       </div>
-
-      {activeTab === 'manage' && (
-        <TournamentManagement tournamentId={id} />
-      )}
-
-      {activeTab === 'bracket' && (
-        <TournamentBracket tournamentId={id} />
-      )}
     </div>
   );
 }

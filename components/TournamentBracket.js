@@ -27,9 +27,9 @@ export default function TournamentBracket({ tournamentId }) {
 
   return (
     <div className={styles.tournamentBracket}>
+      <h3>Tournament Bracket</h3>
       <div className={styles.bracketContainer}>
         <div style={{ padding: '20px', textAlign: 'center' }}>
-          <h3>Bracket Visualization</h3>
           <p>Bracket viewer will be implemented here</p>
           <p>Bracket data loaded: {bracketData ? 'Yes' : 'No'}</p>
         </div>
