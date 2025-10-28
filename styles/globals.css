@@ -3,16 +3,7 @@
 
 /* CSS Reset and Base */
 :root {
-  --rainbow-border-image: linear-gradient(
-    90deg,
-    #ff0000,
-    #ff7f00,
-    #ffff00,
-    #00ff00,
-    #0000ff,
-    #4b0082,
-    #8f00ff
-  );
+  --rainbow-border-image: #000000;
 }
 
 * {
