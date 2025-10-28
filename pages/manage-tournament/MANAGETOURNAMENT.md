@@ -1,26 +1,29 @@
-# Tournament Management Integration Guide
+# Single Elimination Tournament Management System
 
 ## Overview
-This guide provides step-by-step instructions for integrating [brackets-manager.js](https://github.com/Drarig29/brackets-manager.js) into the tournament management system.
+Complete implementation guide for a simple single elimination tournament management system using [brackets-manager.js](https://github.com/Drarig29/brackets-manager.js) and [brackets-viewer.js](https://github.com/Drarig29/brackets-viewer.js).
 
-## Library Features
-- **Tournament Types**: Single elimination, double elimination, round-robin
-- **BYE Support**: Automatic seeding and balancing
-- **Match Management**: Locked, waiting, ready, running, completed, archived states
-- **Multi-Stage**: Support for multiple tournament stages (e.g., round-robin → elimination)
-- **Storage Agnostic**: Works with JSON, SQL, Redis, and more
+## System Architecture
 
-## Current Setup Status
-✅ **Already Installed**:
-- `brackets-manager` (v1.7.1)
-- `brackets-viewer` (v1.8.1) 
-- `brackets-memory-db` (v1.0.5)
+### Core Components
+- **Tournament Manager Service**: Handles all bracket operations
+- **Participant Management**: Draws from RSVPs table
+- **Bracket Visualization**: Real-time bracket updates
+- **Match Management**: Score input and result updates
+- **Database Integration**: Stores bracket state in `bracket_data` JSONB column
 
-✅ **Database Schema**: Ready with `bracket_data` JSONB column
+### Data Flow
+1. **Load Participants**: Fetch RSVPs for tournament event
+2. **Create Bracket**: Generate single elimination bracket
+3. **Update Matches**: Record scores and advance winners
+4. **Real-time Sync**: Bracket visualization updates automatically
+5. **Persist State**: Save bracket data to tournaments table
 
-## Integration Steps
+## Implementation Plan
 
-### Step 1: Create Tournament Manager Service
+### Phase 1: Core Service Layer
+
+#### 1.1 Tournament Manager Service
 Create `/lib/tournamentManager.js`:
 
 ```javascript
@@ -34,48 +37,95 @@ class TournamentManager {
     this.manager = new BracketsManager(this.storage);
   }
 
-  // Create tournament stage
-  async createStage(tournamentData) {
-    const { tournamentId, name, type, seeding, settings } = tournamentData;
+  // Load participants from RSVPs table
+  async getParticipants(tournamentId) {
+    const { data: tournament } = await supabase
+      .from('tournaments')
+      .select('event_id')
+      .eq('id', tournamentId)
+      .single();
+
+    const { data: rsvps } = await supabase
+      .from('rsvps')
+      .select(`
+        user_id,
+        users!inner(first_name, last_name)
+      `)
+      .eq('event_id', tournament.event_id)
+      .eq('status', 'going');
+
+    return rsvps.map(rsvp => ({
+      id: rsvp.user_id,
+      name: `${rsvp.users.first_name} ${rsvp.users.last_name}`
+    }));
+  }
+
+  // Create single elimination tournament
+  async createTournament(tournamentId, tournamentName) {
+    const participants = await this.getParticipants(tournamentId);
     
+    if (participants.length < 2) {
+      throw new Error('Need at least 2 participants');
+    }
+
     const stage = await this.manager.create.stage({
-      tournamentId,
-      name,
-      type, // 'single_elimination', 'double_elimination', 'round_robin'
-      seeding,
-      settings: settings || {}
+      tournamentId: parseInt(tournamentId.replace(/-/g, '').slice(0, 8), 16),
+      name: tournamentName,
+      type: 'single_elimination',
+      seeding: participants.map(p => p.name),
+      settings: {
+        seedOrdering: ['natural'],
+        balanceByes: true
+      }
     });
 
     // Save to database
-    await this.saveToDatabase(tournamentId, stage);
+    await this.saveBracketData(tournamentId, stage);
     return stage;
   }
 
-  // Update match results
-  async updateMatch(matchId, opponent1, opponent2) {
+  // Update match result
+  async updateMatch(tournamentId, matchId, opponent1Score, opponent2Score) {
+    const bracketData = await this.loadBracketData(tournamentId);
+    
+    // Load bracket into memory
+    await this.loadBracketIntoMemory(bracketData);
+
     const match = await this.manager.update.match({
       id: matchId,
-      opponent1,
-      opponent2
+      opponent1: {
+        score: opponent1Score,
+        result: opponent1Score > opponent2Score ? 'win' : 'loss'
+      },
+      opponent2: {
+        score: opponent2Score,
+        result: opponent2Score > opponent1Score ? 'win' : 'loss'
+      }
     });
 
-    // Save updated bracket to database
-    await this.saveToDatabase(match.tournamentId, match);
+    // Save updated bracket
+    await this.saveBracketData(tournamentId, bracketData);
     return match;
-  }
-
-  // Get tournament data
-  async getTournament(tournamentId) {
-    return await this.manager.get.tournament(tournamentId);
   }
 
   // Get current matches
   async getCurrentMatches(tournamentId) {
-    return await this.manager.get.currentMatches(tournamentId);
+    const bracketData = await this.loadBracketData(tournamentId);
+    await this.loadBracketIntoMemory(bracketData);
+    
+    return await this.manager.get.currentMatches(
+      parseInt(tournamentId.replace(/-/g, '').slice(0, 8), 16)
+    );
   }
 
-  // Save bracket data to Supabase
-  async saveToDatabase(tournamentId, bracketData) {
+  // Get bracket data for visualization
+  async getBracketData(tournamentId) {
+    const bracketData = await this.loadBracketData(tournamentId);
+    return bracketData.bracketViewerData;
+  }
+
+  // Save bracket data to database
+  async saveBracketData(tournamentId, bracketData) {
     const { error } = await supabase
       .from('tournaments')
       .update({ bracket_data: bracketData })
@@ -84,8 +134,8 @@ class TournamentManager {
     if (error) throw error;
   }
 
-  // Load bracket data from Supabase
-  async loadFromDatabase(tournamentId) {
+  // Load bracket data from database
+  async loadBracketData(tournamentId) {
     const { data, error } = await supabase
       .from('tournaments')
       .select('bracket_data')
@@ -95,12 +145,60 @@ class TournamentManager {
     if (error) throw error;
     return data.bracket_data;
   }
+
+  // Load bracket into memory storage
+  async loadBracketIntoMemory(bracketData) {
+    // Clear existing data
+    this.storage.reset();
+    
+    // Load tournament data
+    if (bracketData.bracketViewerData) {
+      const data = bracketData.bracketViewerData;
+      
+      // Load participants
+      if (data.participant) {
+        for (const participant of data.participant) {
+          await this.storage.insert.participant(participant);
+        }
+      }
+      
+      // Load stages
+      if (data.stage) {
+        for (const stage of data.stage) {
+          await this.storage.insert.stage(stage);
+        }
+      }
+      
+      // Load groups
+      if (data.group) {
+        for (const group of data.group) {
+          await this.storage.insert.group(group);
+        }
+      }
+      
+      // Load rounds
+      if (data.round) {
+        for (const round of data.round) {
+          await this.storage.insert.round(round);
+        }
+      }
+      
+      // Load matches
+      if (data.match) {
+        for (const match of data.match) {
+          await this.storage.insert.match(match);
+        }
+      }
+    }
+  }
 }
 
 export default new TournamentManager();
 ```
 
-### Step 2: Create Tournament Management Component
+### Phase 2: React Components
+
+#### 2.1 Tournament Management Component
 Create `/components/TournamentManager.js`:
 
 ```javascript
@@ -108,23 +206,40 @@ import { useState, useEffect } from 'react';
 import tournamentManager from '../lib/tournamentManager';
 
 export default function TournamentManager({ tournamentId }) {
-  const [tournament, setTournament] = useState(null);
+  const [participants, setParticipants] = useState([]);
   const [matches, setMatches] = useState([]);
+  const [tournamentName, setTournamentName] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadTournament();
+    loadData();
   }, [tournamentId]);
 
-  const loadTournament = async () => {
+  const loadData = async () => {
     try {
-      const tournamentData = await tournamentManager.getTournament(tournamentId);
-      const currentMatches = await tournamentManager.getCurrentMatches(tournamentId);
+      setLoading(true);
+      const [participantsData, currentMatches] = await Promise.all([
+        tournamentManager.getParticipants(tournamentId),
+        tournamentManager.getCurrentMatches(tournamentId)
+      ]);
       
-      setTournament(tournamentData);
-      setMatches(currentMatches);
-    } catch (error) {
-      console.error('Error loading tournament:', error);
+      setParticipants(participantsData);
+      setMatches(currentMatches || []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createTournament = async () => {
+    try {
+      setLoading(true);
+      await tournamentManager.createTournament(tournamentId, tournamentName);
+      await loadData();
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -132,77 +247,143 @@ export default function TournamentManager({ tournamentId }) {
 
   const updateMatchResult = async (matchId, opponent1Score, opponent2Score) => {
     try {
-      await tournamentManager.updateMatch(matchId, {
-        score: opponent1Score,
-        result: opponent1Score > opponent2Score ? 'win' : 'loss'
-      }, {
-        score: opponent2Score,
-        result: opponent2Score > opponent1Score ? 'win' : 'loss'
-      });
-      
-      // Reload tournament data
-      await loadTournament();
-    } catch (error) {
-      console.error('Error updating match:', error);
+      await tournamentManager.updateMatch(tournamentId, matchId, opponent1Score, opponent2Score);
+      await loadData();
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   if (loading) return <div>Loading tournament...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="tournament-manager">
-      <h2>{tournament?.name}</h2>
-      
-      <div className="matches-section">
-        <h3>Current Matches</h3>
-        {matches.map(match => (
-          <div key={match.id} className="match-card">
-            <div className="participants">
-              <span>{match.opponent1?.name || 'TBD'}</span>
-              <span>vs</span>
-              <span>{match.opponent2?.name || 'TBD'}</span>
+      <div className="participants-section">
+        <h3>Participants ({participants.length})</h3>
+        <div className="participants-list">
+          {participants.map(participant => (
+            <div key={participant.id} className="participant-item">
+              {participant.name}
             </div>
-            
-            {match.status === 'ready' && (
-              <div className="score-input">
-                <input 
-                  type="number" 
-                  placeholder="Score 1"
-                  onChange={(e) => setOpponent1Score(e.target.value)}
-                />
-                <input 
-                  type="number" 
-                  placeholder="Score 2"
-                  onChange={(e) => setOpponent2Score(e.target.value)}
-                />
-                <button 
-                  onClick={() => updateMatchResult(match.id, opponent1Score, opponent2Score)}
-                >
-                  Submit Result
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+
+      {matches.length === 0 ? (
+        <div className="create-tournament">
+          <h3>Create Tournament</h3>
+          <input
+            type="text"
+            placeholder="Tournament Name"
+            value={tournamentName}
+            onChange={(e) => setTournamentName(e.target.value)}
+          />
+          <button 
+            onClick={createTournament}
+            disabled={participants.length < 2 || !tournamentName}
+          >
+            Create Single Elimination Tournament
+          </button>
+        </div>
+      ) : (
+        <div className="matches-section">
+          <h3>Current Matches</h3>
+          {matches.map(match => (
+            <MatchCard 
+              key={match.id} 
+              match={match} 
+              onUpdate={updateMatchResult}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MatchCard({ match, onUpdate }) {
+  const [opponent1Score, setOpponent1Score] = useState('');
+  const [opponent2Score, setOpponent2Score] = useState('');
+
+  const handleSubmit = () => {
+    if (opponent1Score && opponent2Score) {
+      onUpdate(match.id, parseInt(opponent1Score), parseInt(opponent2Score));
+      setOpponent1Score('');
+      setOpponent2Score('');
+    }
+  };
+
+  return (
+    <div className="match-card">
+      <div className="participants">
+        <span>{match.opponent1?.name || 'TBD'}</span>
+        <span>vs</span>
+        <span>{match.opponent2?.name || 'TBD'}</span>
+      </div>
+      
+      {match.status === 'ready' && (
+        <div className="score-input">
+          <input 
+            type="number" 
+            placeholder="Score 1"
+            value={opponent1Score}
+            onChange={(e) => setOpponent1Score(e.target.value)}
+          />
+          <input 
+            type="number" 
+            placeholder="Score 2"
+            value={opponent2Score}
+            onChange={(e) => setOpponent2Score(e.target.value)}
+          />
+          <button onClick={handleSubmit}>
+            Submit Result
+          </button>
+        </div>
+      )}
+      
+      {match.status === 'completed' && (
+        <div className="match-result">
+          {match.opponent1.name}: {match.opponent1.score} - {match.opponent2.score} :{match.opponent2.name}
+        </div>
+      )}
     </div>
   );
 }
 ```
 
-### Step 3: Create Tournament Bracket Viewer
+#### 2.2 Bracket Visualization Component
 Create `/components/TournamentBracket.js`:
 
 ```javascript
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BracketsViewer } from 'brackets-viewer';
+import tournamentManager from '../lib/tournamentManager';
 
-export default function TournamentBracket({ tournamentData }) {
+export default function TournamentBracket({ tournamentId }) {
   const containerRef = useRef(null);
   const viewerRef = useRef(null);
+  const [bracketData, setBracketData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (tournamentData && containerRef.current) {
+    loadBracketData();
+  }, [tournamentId]);
+
+  const loadBracketData = async () => {
+    try {
+      setLoading(true);
+      const data = await tournamentManager.getBracketData(tournamentId);
+      setBracketData(data);
+    } catch (error) {
+      console.error('Error loading bracket:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (bracketData && containerRef.current) {
       // Clean up previous viewer
       if (viewerRef.current) {
         viewerRef.current.destroy();
@@ -218,7 +399,7 @@ export default function TournamentBracket({ tournamentData }) {
       });
 
       // Render the tournament
-      viewerRef.current.render(tournamentData);
+      viewerRef.current.render(bracketData);
     }
 
     return () => {
@@ -226,7 +407,10 @@ export default function TournamentBracket({ tournamentData }) {
         viewerRef.current.destroy();
       }
     };
-  }, [tournamentData]);
+  }, [bracketData]);
+
+  if (loading) return <div>Loading bracket...</div>;
+  if (!bracketData) return <div>No bracket data available</div>;
 
   return (
     <div className="tournament-bracket">
@@ -236,21 +420,22 @@ export default function TournamentBracket({ tournamentData }) {
 }
 ```
 
-### Step 4: Update Main Tournament Page
+### Phase 3: Main Tournament Page
 Update `/pages/manage-tournament/[id].js`:
 
 ```javascript
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { supabase } from '../../lib/supabaseClient';
 import TournamentManager from '../../components/TournamentManager';
 import TournamentBracket from '../../components/TournamentBracket';
-import tournamentManager from '../../lib/tournamentManager';
 
 export default function ManageTournament() {
   const router = useRouter();
   const { id } = router.query;
   const [tournament, setTournament] = useState(null);
   const [activeTab, setActiveTab] = useState('manage');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -260,28 +445,27 @@ export default function ManageTournament() {
 
   const loadTournament = async () => {
     try {
-      const tournamentData = await tournamentManager.getTournament(id);
-      setTournament(tournamentData);
+      const { data, error } = await supabase
+        .from('tournaments')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      setTournament(data);
     } catch (error) {
       console.error('Error loading tournament:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const createTournamentStage = async (stageData) => {
-    try {
-      await tournamentManager.createStage({
-        tournamentId: id,
-        ...stageData
-      });
-      await loadTournament();
-    } catch (error) {
-      console.error('Error creating stage:', error);
-    }
-  };
+  if (loading) return <div>Loading...</div>;
+  if (!tournament) return <div>Tournament not found</div>;
 
   return (
     <div className="manage-tournament">
-      <h1>Manage Tournament</h1>
+      <h1>{tournament.name || 'Tournament Management'}</h1>
       
       <div className="tabs">
         <button 
@@ -302,135 +486,197 @@ export default function ManageTournament() {
         <TournamentManager tournamentId={id} />
       )}
 
-      {activeTab === 'bracket' && tournament && (
-        <TournamentBracket tournamentData={tournament} />
+      {activeTab === 'bracket' && (
+        <TournamentBracket tournamentId={id} />
       )}
     </div>
   );
 }
 ```
 
-### Step 5: Add CSS Styles
+### Phase 4: Styling
 Create `/components/TournamentManager.module.css`:
 
 ```css
 .tournament-manager {
-  padding: 20px;
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.participants-section {
+  margin-bottom: 32px;
+}
+
+.participants-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.participant-item {
+  padding: 12px;
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.create-tournament {
+  padding: 24px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.create-tournament input {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px;
+  margin: 16px 0;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.create-tournament button {
+  padding: 12px 24px;
+  background: #000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.create-tournament button:disabled {
+  background: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.matches-section {
+  margin-top: 32px;
 }
 
 .match-card {
-  border: 1px solid #ddd;
+  border: 1px solid #e8e8e8;
   border-radius: 8px;
-  padding: 15px;
-  margin: 10px 0;
-  background: #f9f9f9;
+  padding: 20px;
+  margin: 16px 0;
+  background: white;
 }
 
 .participants {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
-  font-weight: bold;
+  margin-bottom: 16px;
+  font-weight: 500;
+  font-size: 18px;
 }
 
 .score-input {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
+  justify-content: center;
 }
 
 .score-input input {
   width: 80px;
-  padding: 5px;
-  border: 1px solid #ccc;
+  padding: 8px;
+  border: 1px solid #d0d0d0;
   border-radius: 4px;
+  text-align: center;
 }
 
 .score-input button {
   padding: 8px 16px;
-  background: #007bff;
+  background: #000;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
-.score-input button:hover {
-  background: #0056b3;
+.match-result {
+  text-align: center;
+  font-weight: 500;
+  color: #404040;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.tabs button {
+  padding: 12px 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-bottom: 2px solid transparent;
+}
+
+.tabs button.active {
+  border-bottom-color: #000;
+  font-weight: 500;
 }
 
 .bracket-container {
   width: 100%;
   overflow-x: auto;
-}
-
-.tabs {
-  display: flex;
-  margin-bottom: 20px;
-}
-
-.tabs button {
-  padding: 10px 20px;
-  border: none;
-  background: #f0f0f0;
-  cursor: pointer;
-  margin-right: 5px;
-}
-
-.tabs button.active {
-  background: #007bff;
-  color: white;
+  padding: 24px 0;
 }
 ```
 
-## Usage Examples
+## Key Features
 
-### Creating a Single Elimination Tournament
-```javascript
-const stageData = {
-  name: 'Main Tournament',
-  type: 'single_elimination',
-  seeding: ['Player 1', 'Player 2', 'Player 3', 'Player 4'],
-  settings: {}
-};
+### ✅ Participant Management
+- Automatically loads participants from RSVPs table
+- Shows participant count and names
+- Validates minimum 2 participants for tournament creation
 
-await tournamentManager.createStage(stageData);
-```
+### ✅ Tournament Creation
+- Single elimination format (fixed)
+- Automatic bracket generation with BYE handling
+- Tournament name from tournaments table
+- Bracket data stored in `bracket_data` JSONB column
 
-### Creating a Double Elimination Tournament
-```javascript
-const stageData = {
-  name: 'Double Elimination Tournament',
-  type: 'double_elimination',
-  seeding: ['Player 1', 'Player 2', 'Player 3', 'Player 4'],
-  settings: { grandFinal: 'double' }
-};
+### ✅ Match Management
+- Real-time match result input
+- Score validation and winner determination
+- Automatic bracket advancement
+- Match status tracking (ready, completed)
 
-await tournamentManager.createStage(stageData);
-```
+### ✅ Bracket Visualization
+- Live bracket updates using brackets-viewer.js
+- Responsive design with horizontal scrolling
+- Match highlighting and participant tracking
+- Clean, minimalist design following brand guidelines
 
-### Updating Match Results
-```javascript
-await tournamentManager.updateMatch(matchId, {
-  score: 16,
-  result: 'win'
-}, {
-  score: 12,
-  result: 'loss'
-});
-```
+### ✅ Real-time Updates
+- Bracket visualization updates immediately after match results
+- Persistent state in database
+- Seamless data flow between components
 
-## Key Benefits
-- **Automatic Bracket Generation**: Handles seeding, BYEs, and bracket structure
-- **Real-time Updates**: Live bracket updates as matches complete
-- **Multiple Formats**: Support for all major tournament types
-- **Visual Display**: Built-in bracket visualization with brackets-viewer
-- **Database Integration**: Seamless Supabase integration
+## Usage Flow
 
-## Next Steps
-1. Implement the components above
-2. Add tournament creation wizard
-3. Add participant management
-4. Add tournament settings configuration
-5. Add match scheduling features
+1. **Visit Tournament Page**: Navigate to `/manage-tournament/[id]`
+2. **View Participants**: See RSVP participants for the event
+3. **Create Tournament**: Enter tournament name and generate bracket
+4. **Manage Matches**: Input scores for current matches
+5. **View Bracket**: Switch to bracket tab for visual representation
+6. **Real-time Updates**: Bracket updates automatically as matches complete
+
+## Database Integration
+
+- **Participants**: Fetched from `rsvps` table where `status = 'going'`
+- **Tournament Info**: Loaded from `tournaments` table
+- **Bracket State**: Stored in `bracket_data` JSONB column
+- **Real-time Sync**: All changes persisted immediately
+
+This implementation provides a complete, simple single elimination tournament management system with real-time bracket visualization and seamless database integration.
