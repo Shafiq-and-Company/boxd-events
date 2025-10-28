@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
+import tournamentManager from '../../lib/tournamentManager';
 import MatchManager from './MatchManager';
 import BracketViewer from './BracketViewer';
 import ParticipantsList from './ParticipantsList';
@@ -22,6 +23,20 @@ export default function ManageTournament() {
   const handleMatchUpdate = () => {
     // Trigger a refresh of all components
     setRefreshKey(prev => prev + 1);
+  };
+
+  const handleResetTournament = async () => {
+    try {
+      setLoading(true);
+      await tournamentManager.resetTournament(id);
+      setRefreshKey(prev => prev + 1);
+      await loadTournament();
+    } catch (error) {
+      console.error('Error resetting tournament:', error);
+      alert('Failed to reset tournament: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loadTournament = async () => {
@@ -97,6 +112,17 @@ export default function ManageTournament() {
         <div className={styles.participantsSection}>
           <ParticipantsList tournamentId={id} key={`participants-${refreshKey}`} />
         </div>
+      </div>
+
+      <div className={styles.resetSection}>
+        <h3>Danger Zone</h3>
+        <p>Reset the tournament to start fresh. This will clear all matches and bracket data.</p>
+        <button 
+          className={styles.resetButton}
+          onClick={handleResetTournament}
+        >
+          Reset Tournament
+        </button>
       </div>
     </div>
   );

@@ -99,6 +99,7 @@ export default function MatchManager({ tournamentId, onMatchUpdate }) {
 function MatchCard({ match, onUpdate }) {
   const [opponent1Score, setOpponent1Score] = useState('');
   const [opponent2Score, setOpponent2Score] = useState('');
+  const [inputMode, setInputMode] = useState('winner'); // 'winner' or 'score'
 
   // Check if this is a BYE match (one opponent is null/undefined)
   const isByeMatch = !match.opponent1 || !match.opponent2;
@@ -113,6 +114,15 @@ function MatchCard({ match, onUpdate }) {
     }
   };
 
+  const handleSetWinner = (winnerOpponent) => {
+    // Set winner with default score (1-0 for simplicity)
+    if (winnerOpponent === 1) {
+      onUpdate(match.id, 1, 0);
+    } else if (winnerOpponent === 2) {
+      onUpdate(match.id, 0, 1);
+    }
+  };
+
   const handleByeAdvance = () => {
     // For BYE matches, automatically advance the non-BYE opponent
     if (hasByeOpponent && byeOpponent) {
@@ -122,63 +132,112 @@ function MatchCard({ match, onUpdate }) {
 
   return (
     <div className={`${styles.matchCard} ${isByeMatch ? styles.byeMatch : ''}`}>
-      <div className={styles.participants}>
-        <span className={!match.opponent1 ? styles.byeOpponent : ''}>
-          {match.opponent1?.name || 'BYE'}
-        </span>
-        <span>vs</span>
-        <span className={!match.opponent2 ? styles.byeOpponent : ''}>
-          {match.opponent2?.name || 'BYE'}
-        </span>
-      </div>
-      
-      {match.status === 'ready' && (
-        <div className={styles.matchActions}>
+      {(match.status === 2 || match.status === 3) && (
+        <>
           {isByeMatch ? (
-            <div className={styles.byeActions}>
-              <div className={styles.byeInfo}>
-                {byeOpponent?.name} advances automatically
-              </div>
+            <div className={styles.matchRow}>
+              <span className={styles.byeOpponent}>
+                {byeOpponent?.name}
+              </span>
+              <span className={styles.vsText}>advances</span>
               <button 
                 className={styles.byeButton}
                 onClick={handleByeAdvance}
               >
-                Advance {byeOpponent?.name}
+                Advance
               </button>
             </div>
           ) : (
-            <div className={styles.scoreInput}>
-              <input 
-                type="number" 
-                placeholder="Score 1"
-                value={opponent1Score}
-                onChange={(e) => setOpponent1Score(e.target.value)}
-              />
-              <input 
-                type="number" 
-                placeholder="Score 2"
-                value={opponent2Score}
-                onChange={(e) => setOpponent2Score(e.target.value)}
-              />
-              <button onClick={handleSubmit}>
-                Submit Result
-              </button>
+            <div className={styles.matchRow}>
+              <span className={styles.playerName}>
+                {match.opponent1?.name || 'TBD'}
+              </span>
+              <span className={styles.vsText}>vs</span>
+              <span className={styles.playerName}>
+                {match.opponent2?.name || 'TBD'}
+              </span>
+              <div className={styles.matchControls}>
+                <button 
+                  className={styles.winnerButtonCompact}
+                  onClick={() => handleSetWinner(1)}
+                  title={`${match.opponent1?.name} Wins`}
+                >
+                  ← Win
+                </button>
+                {inputMode === 'score' && (
+                  <>
+                    <input 
+                      type="number" 
+                      className={styles.scoreInputCompact}
+                      placeholder="0"
+                      value={opponent1Score}
+                      onChange={(e) => setOpponent1Score(e.target.value)}
+                    />
+                    <input 
+                      type="number" 
+                      className={styles.scoreInputCompact}
+                      placeholder="0"
+                      value={opponent2Score}
+                      onChange={(e) => setOpponent2Score(e.target.value)}
+                    />
+                    <button 
+                      className={styles.submitScoreButton}
+                      onClick={handleSubmit}
+                      disabled={!opponent1Score || !opponent2Score}
+                    >
+                      Submit
+                    </button>
+                  </>
+                )}
+                {inputMode === 'winner' && (
+                  <button 
+                    className={styles.modeToggleButton}
+                    onClick={() => setInputMode('score')}
+                    title="Enter exact scores"
+                  >
+                    📊
+                  </button>
+                )}
+                {inputMode === 'score' && (
+                  <button 
+                    className={styles.modeToggleButton}
+                    onClick={() => setInputMode('winner')}
+                    title="Quick winner selection"
+                  >
+                    ⚡
+                  </button>
+                )}
+                <button 
+                  className={styles.winnerButtonCompact}
+                  onClick={() => handleSetWinner(2)}
+                  title={`${match.opponent2?.name} Wins`}
+                >
+                  Win →
+                </button>
+              </div>
             </div>
           )}
-        </div>
+        </>
       )}
       
-      {match.status === 'completed' && (
-        <div className={styles.matchResult}>
-          {isByeMatch ? (
-            <div className={styles.byeResult}>
-              {byeOpponent?.name} advanced (BYE)
-            </div>
-          ) : (
-            <div>
-              {match.opponent1.name}: {match.opponent1.score} - {match.opponent2.score} :{match.opponent2.name}
-            </div>
-          )}
+      {match.status === 4 && (
+        <div className={styles.matchRow}>
+          <span className={styles.playerName}>
+            {match.opponent1?.name || 'BYE'}
+          </span>
+          <span className={styles.scoreDisplay}>
+            {match.opponent1?.score || 0}
+          </span>
+          <span className={styles.vsText}>-</span>
+          <span className={styles.scoreDisplay}>
+            {match.opponent2?.score || 0}
+          </span>
+          <span className={styles.playerName}>
+            {match.opponent2?.name || 'BYE'}
+          </span>
+          <span className={styles.winnerBadge}>
+            {match.opponent1?.result === 'win' ? '← Winner' : 'Winner →'}
+          </span>
         </div>
       )}
     </div>

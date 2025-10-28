@@ -75,10 +75,6 @@ export default function BracketViewer({ tournamentId }) {
     }
   };
 
-  if (loading) return <div className={styles.loading}>Loading bracket...</div>;
-  if (error) return <div className={styles.error}>{error}</div>;
-  if (!bracketData) return <div className={styles.noBracket}>No bracket data available</div>;
-
   return (
     <>
       {/* Load brackets-viewer from CDN */}
@@ -100,14 +96,20 @@ export default function BracketViewer({ tournamentId }) {
       />
       <div>
         <h3>Tournament Bracket</h3>
-        {!scriptsLoaded && (
+        {loading && <div className={styles.loading}>Loading bracket...</div>}
+        {error && <div className={styles.error}>{error}</div>}
+        {!loading && !error && !bracketData && (
+          <div className={styles.noBracket}>No bracket data available</div>
+        )}
+        {!loading && !error && bracketData && !scriptsLoaded && (
           <div className={styles.loading}>Loading bracket viewer...</div>
         )}
-        <div 
-          className={`${styles.bracketContainer} brackets-viewer`} 
-          ref={containerRef}
-          style={{ display: scriptsLoaded ? 'block' : 'none' }}
-        />
+        {!loading && !error && bracketData && scriptsLoaded && (
+          <div 
+            className={`${styles.bracketContainer} brackets-viewer`} 
+            ref={containerRef}
+          />
+        )}
       </div>
     </>
   );
