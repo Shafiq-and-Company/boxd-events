@@ -34,6 +34,8 @@ export default function ManageEvent() {
   const [loadingAttendees, setLoadingAttendees] = useState(false)
   const [currentTheme, setCurrentTheme] = useState(null)
   const [activeTab, setActiveTab] = useState('overview')
+  const [tournament, setTournament] = useState(null)
+  const [tournamentLoading, setTournamentLoading] = useState(false)
 
   // Helper functions
   const formatDateForInput = (dateString) => {
@@ -376,8 +378,75 @@ export default function ManageEvent() {
   useEffect(() => {
     if (id) {
       fetchAttendees()
+      loadTournament()
     }
   }, [id])
+
+  // Load tournament data
+  const loadTournament = async () => {
+    try {
+      const { data: tournamentData, error } = await supabase
+        .from('tournaments')
+        .select('*')
+        .eq('event_id', id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+        console.error('Error loading tournament:', error);
+        return;
+      }
+
+      setTournament(tournamentData || null);
+    } catch (error) {
+      console.error('Error loading tournament:', error);
+      setTournament(null);
+    }
+  }
+
+  // Create tournament
+  const createTournament = async () => {
+    if (!formData.title) {
+      setError('Event title is required to create a tournament');
+      return;
+    }
+
+    setTournamentLoading(true);
+    setError(null);
+
+    try {
+      const tournamentData = {
+        event_id: id,
+        name: formData.title,
+        description: formData.description || 'Tournament for ' + formData.title,
+        max_participants: 64,
+        min_participants: 2,
+        status: 'registration',
+        tournament_type: 'single_elimination',
+        rules: 'Standard tournament rules apply. Check with event host for specific details.',
+        bracket_data: {}
+      }
+
+      const { data: newTournament, error } = await supabase
+        .from('tournaments')
+        .insert([tournamentData])
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      setTournament(newTournament);
+      
+      // Navigate to tournament management page
+      router.push(`/manage-tournament/${newTournament.id}`);
+    } catch (error) {
+      console.error('Error creating tournament:', error);
+      setError('Failed to create tournament: ' + error.message);
+    } finally {
+      setTournamentLoading(false);
+    }
+  }
 
   // Early returns
   if (!user) {
@@ -437,16 +506,32 @@ export default function ManageEvent() {
               <div className={styles.tournamentCardDescription}>Manage tournament structure, seed players, and track match results</div>
             </div>
             <div className={styles.tournamentCardActions}>
-              <button
-                type="button"
-                className={styles.manageTournamentCardButton}
-                onClick={() => {
-                  router.push(`/manage-tournament?eventId=${id}`)
-                }}
-                title="Manage tournament"
-              >
-                Manage →
-              </button>
+              {tournament ? (
+                <button
+                  type="button"
+                  className={styles.manageTournamentCardButton}
+                  onClick={async () => {
+                    try {
+                      router.push(`/manage-tournament/${tournament.id}`);
+                    } catch (error) {
+                      console.error('Error navigating to tournament:', error);
+                    }
+                  }}
+                  title="Manage tournament"
+                >
+                  Manage →
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className={styles.createTournamentCardButton}
+                  onClick={createTournament}
+                  disabled={tournamentLoading || !formData.title}
+                  title="Create tournament"
+                >
+                  {tournamentLoading ? 'Creating...' : 'Create Tournament'}
+                </button>
+              )}
             </div>
           </div>
         </div>

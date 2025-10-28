@@ -625,6 +625,30 @@
   border-color: #333;
 }
 
+.createTournamentCardButton {
+  background: #28a745;
+  color: #fff;
+  border: 1px solid #28a745;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.createTournamentCardButton:hover {
+  background: #218838;
+  border-color: #218838;
+}
+
+.createTournamentCardButton:disabled {
+  background: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+}
+
 /* Buttons */
 .submitButton {
   background: #000;
