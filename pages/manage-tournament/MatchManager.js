@@ -135,36 +135,27 @@ function MatchCard({ match, onUpdate }) {
         <>
           {isByeMatch ? (
             <div className={styles.matchRow}>
-              <span className={styles.byeOpponent}>
+              <span 
+                className={styles.playerNameClickable}
+                onClick={handleByeAdvance}
+                title="Click to advance"
+              >
                 {byeOpponent?.name}
               </span>
               <span className={styles.vsText}>advances</span>
-              <button 
-                className={styles.byeButton}
-                onClick={handleByeAdvance}
-              >
-                Advance
-              </button>
             </div>
           ) : (
-            <div className={styles.matchRow}>
-              <span className={styles.playerName}>
-                {match.opponent1?.name || 'TBD'}
-              </span>
-              <span className={styles.vsText}>vs</span>
-              <span className={styles.playerName}>
-                {match.opponent2?.name || 'TBD'}
-              </span>
-              <div className={styles.matchControls}>
-                <button 
-                  className={styles.winnerButtonCompact}
-                  onClick={() => handleSetWinner(1)}
-                  title={`${match.opponent1?.name} Wins`}
-                >
-                  ← Win
-                </button>
-                {inputMode === 'score' && (
-                  <>
+            <>
+              <div className={styles.matchRow}>
+                <div className={styles.playerColumn}>
+                  <span 
+                    className={styles.playerNameClickable}
+                    onClick={() => handleSetWinner(1)}
+                  >
+                    {match.opponent1?.name || 'TBD'}
+                    <span className={styles.hintText}>click to win</span>
+                  </span>
+                  {inputMode === 'score' && (
                     <input 
                       type="number" 
                       className={styles.scoreInputCompact}
@@ -172,6 +163,18 @@ function MatchCard({ match, onUpdate }) {
                       value={opponent1Score}
                       onChange={(e) => setOpponent1Score(e.target.value)}
                     />
+                  )}
+                </div>
+                <span className={styles.vsText}>vs</span>
+                <div className={styles.playerColumn}>
+                  <span 
+                    className={styles.playerNameClickable}
+                    onClick={() => handleSetWinner(2)}
+                  >
+                    {match.opponent2?.name || 'TBD'}
+                    <span className={styles.hintText}>click to win</span>
+                  </span>
+                  {inputMode === 'score' && (
                     <input 
                       type="number" 
                       className={styles.scoreInputCompact}
@@ -179,42 +182,28 @@ function MatchCard({ match, onUpdate }) {
                       value={opponent2Score}
                       onChange={(e) => setOpponent2Score(e.target.value)}
                     />
+                  )}
+                </div>
+                <div className={styles.matchActions}>
+                  <button 
+                    className={styles.modeToggleButton}
+                    onClick={() => setInputMode(inputMode === 'score' ? 'winner' : 'score')}
+                    title={inputMode === 'score' ? 'Hide score entry' : 'Enter exact scores'}
+                  >
+                    {inputMode === 'score' ? '×' : '⋯'}
+                  </button>
+                  {inputMode === 'score' && (
                     <button 
                       className={styles.submitScoreButton}
                       onClick={handleSubmit}
                       disabled={!opponent1Score || !opponent2Score}
                     >
-                      Submit
+                      ✓
                     </button>
-                  </>
-                )}
-                {inputMode === 'winner' && (
-                  <button 
-                    className={styles.modeToggleButton}
-                    onClick={() => setInputMode('score')}
-                    title="Enter exact scores"
-                  >
-                    📊
-                  </button>
-                )}
-                {inputMode === 'score' && (
-                  <button 
-                    className={styles.modeToggleButton}
-                    onClick={() => setInputMode('winner')}
-                    title="Quick winner selection"
-                  >
-                    ⚡
-                  </button>
-                )}
-                <button 
-                  className={styles.winnerButtonCompact}
-                  onClick={() => handleSetWinner(2)}
-                  title={`${match.opponent2?.name} Wins`}
-                >
-                  Win →
-                </button>
+                  )}
+                </div>
               </div>
-            </div>
+            </>
           )}
         </>
       )}
@@ -235,7 +224,7 @@ function MatchCard({ match, onUpdate }) {
             {match.opponent2?.name || 'BYE'}
           </span>
           <span className={styles.winnerBadge}>
-            {match.opponent1?.result === 'win' ? '← Winner' : 'Winner →'}
+            {match.opponent1?.result === 'win' ? '✓' : '✓'}
           </span>
         </div>
       )}
