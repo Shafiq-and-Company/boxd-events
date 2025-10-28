@@ -13,6 +13,8 @@ export default function ManageTournament() {
   const [tournament, setTournament] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isEditingFormat, setIsEditingFormat] = useState(false);
+  const [selectedFormat, setSelectedFormat] = useState('single_elimination');
 
   useEffect(() => {
     if (id) {
@@ -49,8 +51,36 @@ export default function ManageTournament() {
 
       if (error) throw error;
       setTournament(data);
+      setSelectedFormat(data.tournament_type || 'single_elimination');
     } catch (error) {
       console.error('Error loading tournament:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFormatChange = async (newFormat) => {
+    try {
+      setLoading(true);
+      
+      // Update tournament format in database
+      const { error } = await supabase
+        .from('tournaments')
+        .update({ tournament_type: newFormat })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Regenerate tournament with new format
+      await tournamentManager.resetTournament(id);
+      
+      setSelectedFormat(newFormat);
+      setIsEditingFormat(false);
+      setRefreshKey(prev => prev + 1);
+      await loadTournament();
+    } catch (error) {
+      console.error('Error changing format:', error);
+      alert('Failed to change format: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -87,8 +117,54 @@ export default function ManageTournament() {
             <div className={styles.tournamentSettings}>
               <div className={styles.settingItem}>
                 <span className={styles.settingLabel}>Format:</span>
-                <span className={styles.settingValue}>Single Elimination</span>
+                {isEditingFormat ? (
+                  <div className={styles.formatSelector}>
+                    <select 
+                      value={selectedFormat}
+                      onChange={(e) => setSelectedFormat(e.target.value)}
+                      className={styles.formatSelect}
+                    >
+                      <option value="single_elimination">Single Elimination</option>
+                      <option value="double_elimination">Double Elimination</option>
+                    </select>
+                    <button 
+                      className={styles.formatSaveButton}
+                      onClick={() => handleFormatChange(selectedFormat)}
+                    >
+                      Save
+                    </button>
+                    <button 
+                      className={styles.formatCancelButton}
+                      onClick={() => {
+                        setIsEditingFormat(false);
+                        setSelectedFormat(tournament.tournament_type || 'single_elimination');
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <div className={styles.formatDisplay}>
+                    <span className={styles.settingValue}>
+                      {selectedFormat === 'double_elimination' ? 'Double Elimination' : 'Single Elimination'}
+                    </span>
+                    <button 
+                      className={styles.formatEditButton}
+                      onClick={() => setIsEditingFormat(true)}
+                    >
+                      Edit
+                    </button>
+                  </div>
+                )}
               </div>
+              {selectedFormat === 'double_elimination' && (
+                <div className={styles.formatNote}>
+                  <span className={styles.noteIcon}>ℹ️</span>
+                  <span className={styles.noteText}>
+                    Grand Finals Reset enabled: If loser's bracket winner wins the first grand final, a reset match will be played.
+                  </span>
+                </div>
+              )}
               <div className={styles.settingItem}>
                 <span className={styles.settingLabel}>Max Participants:</span>
                 <span className={styles.settingValue}>{tournament.max_participants || 64}</span>

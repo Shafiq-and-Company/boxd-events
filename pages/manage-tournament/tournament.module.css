@@ -427,6 +427,113 @@
   font-size: 14px;
 }
 
+.formatSelector {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+}
+
+.formatDisplay {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.formatSelect {
+  padding: 6px 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 0;
+  font-size: 13px;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  flex: 1;
+}
+
+.formatSelect:focus {
+  outline: none;
+  border-color: #333;
+}
+
+.formatEditButton {
+  padding: 4px 12px;
+  background: #f8f8f8;
+  color: #666;
+  border: 1px solid #e8e8e8;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.formatEditButton:hover {
+  background: #e8e8e8;
+  color: #333;
+}
+
+.formatSaveButton {
+  padding: 6px 12px;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.formatSaveButton:hover {
+  background: #000;
+}
+
+.formatCancelButton {
+  padding: 6px 12px;
+  background: #f8f8f8;
+  color: #666;
+  border: 1px solid #e8e8e8;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.formatCancelButton:hover {
+  background: #e8e8e8;
+  color: #333;
+}
+
+.formatNote {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: #f0f8ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 0;
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.noteIcon {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.noteText {
+  color: #555;
+  flex: 1;
+}
+
 .matchesSection {
   padding: 24px;
   background: #f8f8f8;

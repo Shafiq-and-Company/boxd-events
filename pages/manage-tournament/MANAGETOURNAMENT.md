@@ -1,7 +1,7 @@
-# Single Elimination Tournament Management System
+# Tournament Management System
 
 ## Overview
-Complete implementation guide for a simple single elimination tournament management system using [brackets-manager.js](https://github.com/Drarig29/brackets-manager.js) and [brackets-viewer.js](https://github.com/Drarig29/brackets-viewer.js).
+Complete implementation guide for single and double elimination tournament management using [brackets-manager.js](https://github.com/Drarig29/brackets-manager.js) and [brackets-viewer.js](https://github.com/Drarig29/brackets-viewer.js).
 
 ## System Architecture
 
@@ -640,8 +640,21 @@ Create `/pages/manage-tournament/tournament.module.css`:
 - Shows participant count and names
 - Validates minimum 2 participants for tournament creation
 
+### ✅ Tournament Formats
+- **Single Elimination**: Traditional bracket where losing once eliminates you
+- **Double Elimination**: Losers get a second chance in the loser's bracket
+  - Winner Bracket: Main bracket for undefeated participants
+  - Loser Bracket: Second-chance bracket for participants with one loss
+  - Grand Final: Winner of each bracket face off
+  - **Grand Finals Reset**: If the loser's bracket winner wins the first grand final match, a reset match is played
+    - This ensures both finalists have the same number of losses (fairness principle)
+    - The winner's bracket finalist gets one "life" advantage
+    - If they lose the first grand final, a second match determines the champion
+- Format can be changed from the Configuration panel
+- Changing format regenerates the entire bracket
+
 ### ✅ Tournament Creation
-- Single elimination format (fixed)
+- Configurable format (single or double elimination)
 - Automatic bracket generation with BYE handling
 - Tournament name from tournaments table
 - Bracket data stored in `bracket_data` JSONB column
@@ -667,16 +680,76 @@ Create `/pages/manage-tournament/tournament.module.css`:
 
 1. **Visit Tournament Page**: Navigate to `/manage-tournament/[id]`
 2. **View Participants**: See RSVP participants for the event
-3. **Create Tournament**: Enter tournament name and generate bracket
-4. **Manage Matches**: Input scores for current matches
-5. **View Bracket**: Switch to bracket tab for visual representation
-6. **Real-time Updates**: Bracket updates automatically as matches complete
+3. **Select Format**: Click "Edit" in Configuration panel to choose Single or Double Elimination
+4. **Create Tournament**: Tournament bracket generates automatically with selected format
+5. **Manage Matches**: Input scores for current matches
+6. **View Bracket**: Bracket displays in the center column with real-time updates
+7. **Change Format** (optional): Edit format to regenerate bracket with different structure
+8. **Real-time Updates**: Bracket updates automatically as matches complete
+
+### Changing Tournament Format
+
+To change the tournament format:
+1. Navigate to the Configuration panel (left column)
+2. Click "Edit" next to the Format field
+3. Select "Single Elimination" or "Double Elimination" from the dropdown
+4. Click "Save" to apply changes
+5. The tournament bracket will automatically regenerate with the new format
+6. All previous match results will be cleared
+
+**Note**: Changing format will reset all match results. Use with caution!
+
+## Double Elimination Grand Finals Reset
+
+In double elimination tournaments, the system automatically handles grand finals reset:
+
+### How It Works
+
+1. **Grand Final Match 1**: Winner's bracket winner (0 losses) vs Loser's bracket winner (1 loss)
+   - If winner's bracket winner wins → Tournament complete (champion decided)
+   - If loser's bracket winner wins → Both players now have 1 loss → Reset match triggered
+
+2. **Grand Final Reset Match**: Only played if loser's bracket winner wins Match 1
+   - Both finalists now have equal losses (1 each)
+   - Winner of this match becomes the tournament champion
+   - Ensures fairness: both finalists must lose twice to be eliminated
+
+### Bracket Display
+
+- The bracket viewer will automatically display both grand final matches
+- Grand Final Match 1 is always shown
+- Grand Final Reset (Match 2) appears only after Match 1 is won by loser's bracket winner
+- Once Match 1 is completed, Match 2 becomes playable if reset is triggered
+
+### Configuration
+
+The grand finals reset is automatically enabled for all double elimination tournaments:
+- Setting: `grandFinal: 'double'` in brackets-manager.js
+- Cannot be disabled (ensures tournament integrity)
+- Follows standard double elimination rules used in competitive gaming
 
 ## Database Integration
 
+### Required Fields in `tournaments` table:
+- `id`: Tournament UUID
+- `name`: Tournament name
+- `event_id`: Associated event
+- `tournament_type`: Tournament format (`single_elimination` or `double_elimination`)
+- `bracket_data`: JSONB column storing complete bracket state
+- `status`: Tournament status (`waiting_for_participants`, `active`, etc.)
+- `max_participants`: Maximum allowed participants
+- `min_participants`: Minimum required participants
+
+### Data Flow:
 - **Participants**: Fetched from `rsvps` table where `status = 'going'`
 - **Tournament Info**: Loaded from `tournaments` table
 - **Bracket State**: Stored in `bracket_data` JSONB column
 - **Real-time Sync**: All changes persisted immediately
 
-This implementation provides a complete, simple single elimination tournament management system with real-time bracket visualization and seamless database integration.
+### Format Storage:
+The `tournament_type` field determines the tournament structure:
+- Default: `single_elimination`
+- Options: `single_elimination`, `double_elimination`
+- Changing format triggers automatic bracket regeneration
+
+This implementation provides a complete tournament management system with both single and double elimination formats, real-time bracket visualization, and seamless database integration.
