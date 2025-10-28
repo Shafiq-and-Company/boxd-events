@@ -1,7 +1,7 @@
 .byeInfo {
   background: #fff8f0;
   border: 1px solid #ffa500;
-  border-radius: 6px;
+  border-radius: 0;
   padding: 12px;
   margin: 12px 0;
   font-size: 14px;
@@ -19,11 +19,10 @@
   padding: 16px;
   background: white;
   border: 1px solid #d0d0d0;
-  border-radius: 8px;
+  border-radius: 0;
   text-align: left;
   position: relative;
   font-weight: 500;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .hostParticipant {
@@ -39,7 +38,7 @@
   color: white;
   font-size: 10px;
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: 0;
   font-weight: 600;
 }
 
@@ -48,7 +47,7 @@
   padding: 40px 20px;
   background: white;
   border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  border-radius: 0;
   color: #666;
 }
 
@@ -70,11 +69,10 @@
 
 .matchCard {
   border: 1px solid #d0d0d0;
-  border-radius: 8px;
+  border-radius: 0;
   padding: 16px;
   margin: 12px 0;
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .byeMatch {
@@ -117,7 +115,7 @@
   background: #4caf50;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 0;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -134,7 +132,7 @@
   width: 50px;
   padding: 6px;
   border: 1px solid #d0d0d0;
-  border-radius: 4px;
+  border-radius: 0;
   text-align: center;
   font-size: 14px;
   font-weight: 600;
@@ -145,7 +143,7 @@
   background: #000;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 0;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -165,7 +163,7 @@
   padding: 4px 8px;
   background: #f8f8f8;
   border: 1px solid #d0d0d0;
-  border-radius: 4px;
+  border-radius: 0;
   font-size: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -190,7 +188,7 @@
   color: #4caf50;
   padding: 4px 12px;
   background: #e8f5e9;
-  border-radius: 12px;
+  border-radius: 0;
   white-space: nowrap;
 }
 
@@ -205,7 +203,7 @@
   background: #ffa500;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 0;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -230,14 +228,14 @@
   top: 0;
   left: 0;
   right: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 16px;
   padding: 16px 24px;
   background: white;
   border-bottom: 2px solid #e8e8e8;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .backButton {
@@ -245,11 +243,13 @@
   background: #f8f8f8;
   color: #333;
   border: 1px solid #e8e8e8;
-  border-radius: 6px;
+  border-radius: 0;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  justify-self: start;
+  width: fit-content;
 }
 
 .backButton:hover:not(:disabled) {
@@ -267,7 +267,21 @@
   margin: 0;
   font-size: 24px;
   font-weight: 600;
-  flex: 1;
+  text-align: center;
+  grid-column: 2;
+}
+
+.statusBadge {
+  padding: 6px 16px;
+  background: #4caf50;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  justify-self: end;
+  grid-column: 3;
 }
 
 .threeColumnLayout {
@@ -285,7 +299,7 @@
 .leftColumnCard {
   background: #f8f8f8;
   border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  border-radius: 0;
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -335,7 +349,7 @@
   padding: 24px;
   background: #f8f8f8;
   border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  border-radius: 0;
   height: fit-content;
   min-height: 400px;
 }
@@ -344,7 +358,7 @@
   padding: 24px;
   background: #f8f8f8;
   border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  border-radius: 0;
   min-height: 600px;
   overflow-x: auto;
   display: flex;
@@ -360,7 +374,7 @@
   flex: 1;
   overflow-x: auto;
   background: transparent;
-  border-radius: 8px;
+  border-radius: 0;
   min-height: 300px;
 }
 
@@ -377,7 +391,7 @@
   color: #d32f2f;
   font-size: 16px;
   background: #ffebee;
-  border-radius: 8px;
+  border-radius: 0;
   margin: 20px 0;
 }
 
@@ -387,7 +401,7 @@
   color: #666;
   font-size: 16px;
   background: #f8f8f8;
-  border-radius: 8px;
+  border-radius: 0;
   margin: 20px 0;
 }
 
@@ -395,7 +409,7 @@
   padding: 20px;
   background: #fff5f5;
   border: 2px solid #ff4444;
-  border-radius: 6px;
+  border-radius: 0;
   text-align: center;
 }
 
@@ -417,7 +431,7 @@
   background: #d32f2f;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 0;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
@@ -426,8 +440,6 @@
 
 .resetButton:hover {
   background: #b71c1c;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
 }
 
 .divider {

@@ -45,15 +45,7 @@ export default function ParticipantsList({ tournamentId }) {
 
   return (
     <div>
-      <h3>Participants ({participants.length})</h3>
-      {participants.length > 0 && !isPowerOfTwo(participants.length) && (
-        <div className={styles.byeInfo}>
-          <strong>BYE Information:</strong> With {participants.length} participants, 
-          {getByeCount(participants.length)} BYE slot(s) will be added to create a balanced bracket.
-          <br />
-          <small>Tournament will have {Math.pow(2, Math.ceil(Math.log2(participants.length)))} total slots.</small>
-        </div>
-      )}
+      <h2 className={styles.columnTitle}>Participants ({participants.length})</h2>
       <div className={styles.participantsList}>
         {participants.map(participant => (
           <div key={participant.id} className={`${styles.participantItem} ${participant.isHost ? styles.hostParticipant : ''}`}>

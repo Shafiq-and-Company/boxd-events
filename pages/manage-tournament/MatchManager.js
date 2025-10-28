@@ -64,7 +64,6 @@ export default function MatchManager({ tournamentId, onMatchUpdate }) {
 
   return (
     <div>
-      <h3>Current Matches</h3>
       {matches.length === 0 ? (
         <div className={styles.noMatches}>
           <p>No matches available yet.</p>

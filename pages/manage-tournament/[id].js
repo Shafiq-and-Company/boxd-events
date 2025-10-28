@@ -76,6 +76,7 @@ export default function ManageTournament() {
           ← Back to Event
         </button>
         <h1>{tournament.name || 'Tournament Management'}</h1>
+        <span className={styles.statusBadge}>{tournament.status || 'Active'}</span>
       </div>
       
       <div className={styles.threeColumnLayout}>
@@ -87,10 +88,6 @@ export default function ManageTournament() {
               <div className={styles.settingItem}>
                 <span className={styles.settingLabel}>Format:</span>
                 <span className={styles.settingValue}>Single Elimination</span>
-              </div>
-              <div className={styles.settingItem}>
-                <span className={styles.settingLabel}>Status:</span>
-                <span className={styles.settingValue}>{tournament.status || 'Active'}</span>
               </div>
               <div className={styles.settingItem}>
                 <span className={styles.settingLabel}>Max Participants:</span>

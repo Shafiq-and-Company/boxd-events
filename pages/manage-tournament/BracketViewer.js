@@ -152,7 +152,6 @@ export default function BracketViewer({ tournamentId }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <h3>Tournament Bracket</h3>
       {loading && <div className={styles.loading}>Loading bracket...</div>}
       {error && <div className={styles.error}>{error}</div>}
       {!loading && !error && bracketData && (
