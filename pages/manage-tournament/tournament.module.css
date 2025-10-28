@@ -1,13 +1,3 @@
-.tournamentManager {
-  padding: 24px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.participantsSection {
-  margin-bottom: 32px;
-}
-
 .byeInfo {
   background: #fff8f0;
   border: 1px solid #ffa500;
@@ -51,42 +41,6 @@
   padding: 2px 6px;
   border-radius: 10px;
   font-weight: 600;
-}
-
-.createTournament {
-  padding: 24px;
-  background: #f8f8f8;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.createTournament input {
-  width: 100%;
-  max-width: 400px;
-  padding: 12px;
-  margin: 16px 0;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.createTournament button {
-  padding: 12px 24px;
-  background: #000;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.createTournament button:disabled {
-  background: #a0a0a0;
-  cursor: not-allowed;
-}
-
-.matchesSection {
-  margin-top: 32px;
 }
 
 .noMatches {
@@ -246,33 +200,6 @@
   font-size: 16px;
 }
 
-.participants {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  font-weight: 500;
-  font-size: 18px;
-}
-
-.matchActions {
-  margin-top: 16px;
-}
-
-.byeActions {
-  text-align: center;
-  padding: 16px;
-  background: #f8f8f8;
-  border-radius: 6px;
-  border: 1px solid #e8e8e8;
-}
-
-.byeInfo {
-  margin-bottom: 12px;
-  font-weight: 500;
-  color: #666;
-}
-
 .byeButton {
   padding: 6px 16px;
   background: #ffa500;
@@ -291,25 +218,26 @@
   transform: scale(1.05);
 }
 
-.byeResult {
-  text-align: center;
-  font-weight: 500;
-  color: #ffa500;
-  font-style: italic;
-}
-
-
 .manageTournament {
   padding: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding-top: 100px;
+  width: 100%;
+  margin: 0;
 }
 
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 24px;
+  padding: 16px 24px;
+  background: white;
+  border-bottom: 2px solid #e8e8e8;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .backButton {
@@ -337,12 +265,33 @@
 
 .header h1 {
   margin: 0;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
+  flex: 1;
 }
 
-.tournamentInfo {
-  margin-bottom: 24px;
+.threeColumnLayout {
+  display: grid;
+  grid-template-columns: 300px 1fr 350px;
+  gap: 24px;
+  width: 100%;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.middleColumn {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
 }
 
 .tournamentSettings {
@@ -350,7 +299,6 @@
   border: 1px solid #e8e8e8;
   border-radius: 8px;
   padding: 20px;
-  margin-bottom: 16px;
 }
 
 .tournamentSettings h3 {
@@ -384,74 +332,38 @@
   font-size: 14px;
 }
 
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  margin-top: 24px;
-}
-
 .matchesSection {
-  order: 1;
-  width: 100%;
-  min-height: 400px;
   padding: 24px;
   background: #f8f8f8;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
+  height: fit-content;
+  min-height: 400px;
 }
 
 .bracketSection {
-  order: 2;
-  width: 100%;
-  min-height: 400px;
   padding: 24px;
   background: #f8f8f8;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
+  min-height: 600px;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .participantsSection {
-  order: 3;
-  width: 100%;
-  min-height: 400px;
   padding: 24px;
   background: #f8f8f8;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
-}
-
-.tabs {
-  display: flex;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #e8e8e8;
-}
-
-.tabs button {
-  padding: 12px 24px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 16px;
-  border-bottom: 2px solid transparent;
-}
-
-.tabs button.active {
-  border-bottom-color: #000;
-  font-weight: 500;
-}
-
-.tournamentBracket {
-  padding: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .bracketContainer {
   width: 100%;
+  flex: 1;
   overflow-x: auto;
-  padding: 24px 0;
-  background: white;
+  background: transparent;
   border-radius: 8px;
   min-height: 300px;
 }
@@ -484,8 +396,7 @@
 }
 
 .resetSection {
-  margin-top: 48px;
-  padding: 24px;
+  padding: 20px;
   background: #fff5f5;
   border: 2px solid #ff4444;
   border-radius: 8px;
@@ -493,16 +404,16 @@
 }
 
 .resetSection h3 {
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
   color: #d32f2f;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
 }
 
 .resetSection p {
-  margin: 0 0 20px 0;
+  margin: 0 0 16px 0;
   color: #666;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .resetButton {
@@ -523,52 +434,54 @@
   box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
 }
 
-.resetConfirm {
-  margin-top: 16px;
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .threeColumnLayout {
+    grid-template-columns: 280px 1fr 320px;
+    gap: 20px;
+  }
 }
 
-.confirmText {
-  color: #d32f2f !important;
-  font-weight: 600 !important;
-  font-size: 16px !important;
-  margin-bottom: 20px !important;
+@media (max-width: 1200px) {
+  .threeColumnLayout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .manageTournament {
+    padding: 16px;
+    padding-top: 100px;
+  }
+
+  .leftColumn {
+    order: 1;
+  }
+
+  .middleColumn {
+    order: 2;
+  }
+
+  .rightColumn {
+    order: 3;
+  }
 }
 
-.confirmButtons {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  align-items: center;
-}
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 16px;
+  }
 
-.confirmResetButton {
-  padding: 12px 24px;
-  background: #d32f2f;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+  .header h1 {
+    font-size: 18px;
+  }
 
-.confirmResetButton:hover {
-  background: #b71c1c;
-}
+  .backButton {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
 
-.cancelButton {
-  padding: 12px 24px;
-  background: #666;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.cancelButton:hover {
-  background: #444;
+  .manageTournament {
+    padding: 12px;
+    padding-top: 90px;
+  }
 }
