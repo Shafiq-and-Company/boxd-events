@@ -2,7 +2,30 @@
 /* Johnny Ive Minimalism - Base Styles Only */
 
 /* CSS Reset and Base */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --rainbow-border-image: linear-gradient(
+    90deg,
+    #ff0000,
+    #ff7f00,
+    #ffff00,
+    #00ff00,
+    #0000ff,
+    #4b0082,
+    #8f00ff
+  );
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  border-image: var(--rainbow-border-image) 1 !important;
+  border-image-slice: 1 !important;
+  border-color: transparent !important;
+}
 
 html { font-size: 16px; line-height: 1.5; }
 body { 
