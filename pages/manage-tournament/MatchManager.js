@@ -17,6 +17,7 @@ function getByeCount(participantCount) {
 export default function MatchManager({ tournamentId, onMatchUpdate }) {
   const [participants, setParticipants] = useState([]);
   const [matches, setMatches] = useState([]);
+  const [bracketData, setBracketData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -31,13 +32,15 @@ export default function MatchManager({ tournamentId, onMatchUpdate }) {
       // First check if tournament needs to be regenerated
       await tournamentManager.checkAndRegenerateTournament(tournamentId);
       
-      const [participantsData, currentMatches] = await Promise.all([
+      const [participantsData, currentMatches, fullBracketData] = await Promise.all([
         tournamentManager.getParticipants(tournamentId),
-        tournamentManager.getCurrentMatches(tournamentId)
+        tournamentManager.getCurrentMatches(tournamentId),
+        tournamentManager.getBracketData(tournamentId)
       ]);
       
       setParticipants(participantsData);
       setMatches(currentMatches || []);
+      setBracketData(fullBracketData);
     } catch (err) {
       console.error('Error loading tournament data:', err);
       setError(err.message);
@@ -57,6 +60,40 @@ export default function MatchManager({ tournamentId, onMatchUpdate }) {
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  // Helper function to get bracket and round information
+  const getMatchContext = (match) => {
+    if (!bracketData || !bracketData.group || !bracketData.round) {
+      return { bracketName: '', roundName: '', isGrandFinal: false };
+    }
+
+    const group = bracketData.group.find(g => g.id === match.group_id);
+    const round = bracketData.round.find(r => r.id === match.round_id);
+    
+    if (!group || !round) {
+      return { bracketName: '', roundName: '', isGrandFinal: false };
+    }
+
+    // Determine bracket type
+    let bracketName = '';
+    let isGrandFinal = false;
+    
+    // For double elimination, groups have specific numbers
+    // Group 1 = Winner's Bracket, Group 2 = Loser's Bracket, Group 3 = Grand Finals
+    if (group.number === 1) {
+      bracketName = "Winner's Bracket";
+    } else if (group.number === 2) {
+      bracketName = "Loser's Bracket";
+    } else if (group.number === 3) {
+      bracketName = "Grand Finals";
+      isGrandFinal = true;
+    }
+
+    // Get round name
+    const roundName = round.number ? `Round ${round.number}` : '';
+
+    return { bracketName, roundName, isGrandFinal };
   };
 
   if (loading) return <div>Loading tournament...</div>;
@@ -83,19 +120,25 @@ export default function MatchManager({ tournamentId, onMatchUpdate }) {
           )}
         </div>
       ) : (
-        matches.map(match => (
-          <MatchCard 
-            key={match.id} 
-            match={match} 
-            onUpdate={updateMatchResult}
-          />
-        ))
+        matches.map(match => {
+          const context = getMatchContext(match);
+          return (
+            <MatchCard 
+              key={match.id} 
+              match={match} 
+              onUpdate={updateMatchResult}
+              bracketName={context.bracketName}
+              roundName={context.roundName}
+              isGrandFinal={context.isGrandFinal}
+            />
+          );
+        })
       )}
     </div>
   );
 }
 
-function MatchCard({ match, onUpdate }) {
+function MatchCard({ match, onUpdate, bracketName, roundName, isGrandFinal }) {
   const [opponent1Score, setOpponent1Score] = useState('');
   const [opponent2Score, setOpponent2Score] = useState('');
   const [inputMode, setInputMode] = useState('winner'); // 'winner' or 'score'
@@ -130,7 +173,16 @@ function MatchCard({ match, onUpdate }) {
   };
 
   return (
-    <div className={`${styles.matchCard} ${isByeMatch ? styles.byeMatch : ''}`}>
+    <div className={`${styles.matchCard} ${isByeMatch ? styles.byeMatch : ''} ${isGrandFinal ? styles.grandFinalMatch : ''}`}>
+      {/* Bracket Context Header */}
+      {(bracketName || roundName) && (
+        <div className={`${styles.matchHeader} ${isGrandFinal ? styles.grandFinalHeader : ''}`}>
+          {bracketName && <span className={styles.bracketLabel}>{bracketName}</span>}
+          {bracketName && roundName && <span className={styles.headerDivider}>•</span>}
+          {roundName && <span className={styles.roundLabel}>{roundName}</span>}
+        </div>
+      )}
+
       {(match.status === 2 || match.status === 3) && (
         <>
           {isByeMatch ? (
