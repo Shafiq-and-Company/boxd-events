@@ -81,45 +81,52 @@ export default function ManageTournament() {
       <div className={styles.threeColumnLayout}>
         {/* Left Column: Settings, Participants, Danger Zone */}
         <div className={styles.leftColumn}>
-          <div className={styles.tournamentSettings}>
-            <h3>Tournament Settings</h3>
-            <div className={styles.settingItem}>
-              <span className={styles.settingLabel}>Format:</span>
-              <span className={styles.settingValue}>Single Elimination</span>
+          <div className={styles.leftColumnCard}>
+            <h2 className={styles.columnTitle}>Configuration</h2>
+            <div className={styles.tournamentSettings}>
+              <div className={styles.settingItem}>
+                <span className={styles.settingLabel}>Format:</span>
+                <span className={styles.settingValue}>Single Elimination</span>
+              </div>
+              <div className={styles.settingItem}>
+                <span className={styles.settingLabel}>Status:</span>
+                <span className={styles.settingValue}>{tournament.status || 'Active'}</span>
+              </div>
+              <div className={styles.settingItem}>
+                <span className={styles.settingLabel}>Max Participants:</span>
+                <span className={styles.settingValue}>{tournament.max_participants || 64}</span>
+              </div>
+              <div className={styles.settingItem}>
+                <span className={styles.settingLabel}>Min Participants:</span>
+                <span className={styles.settingValue}>{tournament.min_participants || 2}</span>
+              </div>
             </div>
-            <div className={styles.settingItem}>
-              <span className={styles.settingLabel}>Status:</span>
-              <span className={styles.settingValue}>{tournament.status || 'Active'}</span>
-            </div>
-            <div className={styles.settingItem}>
-              <span className={styles.settingLabel}>Max Participants:</span>
-              <span className={styles.settingValue}>{tournament.max_participants || 64}</span>
-            </div>
-            <div className={styles.settingItem}>
-              <span className={styles.settingLabel}>Min Participants:</span>
-              <span className={styles.settingValue}>{tournament.min_participants || 2}</span>
-            </div>
-          </div>
 
-          <div className={styles.participantsSection}>
-            <ParticipantsList tournamentId={id} key={`participants-${refreshKey}`} />
-          </div>
+            <div className={styles.divider}></div>
 
-          <div className={styles.resetSection}>
-            <h3>Danger Zone</h3>
-            <p>Reset the tournament to start fresh. This will clear all matches and bracket data.</p>
-            <button 
-              className={styles.resetButton}
-              onClick={handleResetTournament}
-            >
-              Reset Tournament
-            </button>
+            <div className={styles.participantsSection}>
+              <ParticipantsList tournamentId={id} key={`participants-${refreshKey}`} />
+            </div>
+
+            <div className={styles.divider}></div>
+
+            <div className={styles.resetSection}>
+              <h3>Danger Zone</h3>
+              <p>Reset the tournament to start fresh. This will clear all matches and bracket data.</p>
+              <button 
+                className={styles.resetButton}
+                onClick={handleResetTournament}
+              >
+                Reset Tournament
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Middle Column: Bracket Viewer */}
         <div className={styles.middleColumn}>
           <div className={styles.bracketSection}>
+            <h2 className={styles.columnTitle}>Bracket</h2>
             <BracketViewer tournamentId={id} key={`bracket-${refreshKey}`} />
           </div>
         </div>
@@ -127,6 +134,7 @@ export default function ManageTournament() {
         {/* Right Column: Current Matches */}
         <div className={styles.rightColumn}>
           <div className={styles.matchesSection}>
+            <h2 className={styles.columnTitle}>Scorecard</h2>
             <MatchManager tournamentId={id} onMatchUpdate={handleMatchUpdate} key={`matches-${refreshKey}`} />
           </div>
         </div>

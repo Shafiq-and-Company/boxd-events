@@ -280,7 +280,16 @@
 .leftColumn {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+}
+
+.leftColumnCard {
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .middleColumn {
@@ -295,17 +304,7 @@
 }
 
 .tournamentSettings {
-  background: #f8f8f8;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
-  padding: 20px;
-}
-
-.tournamentSettings h3 {
-  margin: 0 0 16px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
+  padding: 0;
 }
 
 .settingItem {
@@ -353,10 +352,7 @@
 }
 
 .participantsSection {
-  padding: 24px;
-  background: #f8f8f8;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  padding: 0;
 }
 
 .bracketContainer {
@@ -399,7 +395,7 @@
   padding: 20px;
   background: #fff5f5;
   border: 2px solid #ff4444;
-  border-radius: 8px;
+  border-radius: 6px;
   text-align: center;
 }
 
@@ -432,6 +428,21 @@
   background: #b71c1c;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
+}
+
+.divider {
+  height: 1px;
+  background: #e8e8e8;
+  margin: 24px 0;
+}
+
+.columnTitle {
+  margin: 0 0 16px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Responsive Design */
