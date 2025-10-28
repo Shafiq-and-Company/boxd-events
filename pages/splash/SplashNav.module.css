@@ -31,7 +31,6 @@
   padding: 12px 20px;
   background: #FFFFFF;
   border: 2px solid #000000;
-  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   transition: all 200ms ease;
 }
@@ -39,7 +38,6 @@
 .logo:hover {
   background: #F8F8F8;
   transform: translateY(-1px);
-  box-shadow: 6px 6px 0px #000000;
 }
 
 .logoText {

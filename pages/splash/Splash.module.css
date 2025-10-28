@@ -103,7 +103,6 @@
   max-width: 1200px;
   height: 600px;
   border: 2px solid #000000;
-  box-shadow: 8px 8px 0px #000000;
   border-radius: 0;
   object-fit: cover;
   object-position: center top;
@@ -116,7 +115,6 @@
 
 .heroImagePlaceholder:hover {
   transform: scale(1.2) translateY(-2px);
-  box-shadow: 10px 10px 0px #000000;
 }
 
 @keyframes fadeInRight {
@@ -260,7 +258,6 @@
   animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.4s both,
              subtleBounce 2s ease-in-out infinite;
   animation-delay: 1.4s, 4s;
-  box-shadow: 4px 4px 0px #000000;
   margin-top: 16px;
   position: relative;
   overflow: hidden;
@@ -290,12 +287,10 @@
   background: #F5F5F5;
   color: #000000;
   transform: translateY(-2px);
-  box-shadow: 6px 6px 0px #000000;
 }
 
 .ctaButton:active {
   transform: translateY(0);
-  box-shadow: 2px 2px 0px #000000;
 }
 
 
@@ -350,7 +345,6 @@
   padding: 32px;
   background: #FFFFFF;
   border: 2px solid #000000;
-  box-shadow: 8px 8px 0px #000000;
   border-radius: 0;
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   text-align: left;
@@ -396,7 +390,6 @@
 .valueProp:hover {
   background: #F8F8F8;
   transform: translateY(-4px);
-  box-shadow: 12px 12px 0px #000000;
 }
 
 
@@ -475,7 +468,6 @@
   max-width: 600px;
   height: auto;
   border: 2px solid #000000;
-  box-shadow: 8px 8px 0px #000000;
   border-radius: 0;
   object-fit: cover;
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -495,7 +487,6 @@
 
 .discoverImagePlaceholder:hover {
   transform: translateY(-2px);
-  box-shadow: 10px 10px 0px #000000;
 }
 
 /* Calendar Section */
@@ -534,7 +525,6 @@
   max-width: 600px;
   height: auto;
   border: 2px solid #000000;
-  box-shadow: 8px 8px 0px #000000;
   border-radius: 0;
   object-fit: cover;
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -554,7 +544,6 @@
 
 .calendarImagePlaceholder:hover {
   transform: translateY(-2px);
-  box-shadow: 10px 10px 0px #000000;
 }
 
 /* Link Profiles Section */
@@ -598,7 +587,6 @@
   padding: 24px;
   background: #FFFFFF;
   border: 2px solid #000000;
-  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   min-width: 120px;
@@ -628,7 +616,6 @@
 .profileIcon:hover {
   background: #F8F8F8;
   transform: translateY(-2px);
-  box-shadow: 6px 6px 0px #000000;
 }
 
 .iconContainer {
@@ -668,7 +655,6 @@
 .videoDemo {
   background: #FFFFFF;
   border: 1px solid #000000;
-  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   overflow: hidden;
@@ -684,7 +670,6 @@
 .videoDemo:hover {
   background: #F8F8F8;
   transform: translateY(-4px);
-  box-shadow: 8px 8px 0px #000000;
 }
 
 .videoContainer {
@@ -828,7 +813,6 @@
   padding: 32px;
   background: #FFFFFF;
   border: 1px solid #000000;
-  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   opacity: 0;
@@ -843,7 +827,6 @@
 .advancedFeature:hover {
   background: #F8F8F8;
   transform: translateY(-2px);
-  box-shadow: 6px 6px 0px #000000;
 }
 
 .advancedFeatureIcon {
@@ -917,19 +900,16 @@
   cursor: pointer;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  box-shadow: 4px 4px 0px #000000;
 }
 
 .primaryButton:hover {
   background: #F5F5F5;
   color: #000000;
   transform: translateY(-2px);
-  box-shadow: 6px 6px 0px #000000;
 }
 
 .primaryButton:active {
   transform: translateY(0);
-  box-shadow: 2px 2px 0px #000000;
 }
 
 /* FAQs Section */
@@ -954,7 +934,6 @@
   padding: 20px;
   background: #FFFFFF;
   border: 1px solid #000000;
-  box-shadow: 4px 4px 0px #000000;
   border-radius: 0;
   transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   cursor: pointer;
@@ -973,7 +952,6 @@
 .faq:hover {
   background: #F8F8F8;
   transform: translateY(-2px);
-  box-shadow: 6px 6px 0px #000000;
 }
 
 .faqHeader {
