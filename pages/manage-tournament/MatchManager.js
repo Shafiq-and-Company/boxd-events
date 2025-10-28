@@ -14,7 +14,7 @@ function getByeCount(participantCount) {
   return nextPowerOfTwo - participantCount;
 }
 
-export default function MatchManager({ tournamentId }) {
+export default function MatchManager({ tournamentId, onMatchUpdate }) {
   const [participants, setParticipants] = useState([]);
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,6 +50,10 @@ export default function MatchManager({ tournamentId }) {
     try {
       await tournamentManager.updateMatch(tournamentId, matchId, opponent1Score, opponent2Score);
       await loadData();
+      // Notify parent component to refresh bracket
+      if (onMatchUpdate) {
+        onMatchUpdate();
+      }
     } catch (err) {
       setError(err.message);
     }

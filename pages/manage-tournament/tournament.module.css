@@ -364,4 +364,34 @@
   width: 100%;
   overflow-x: auto;
   padding: 24px 0;
+  background: white;
+  border-radius: 8px;
+  min-height: 300px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.error {
+  text-align: center;
+  padding: 40px;
+  color: #d32f2f;
+  font-size: 16px;
+  background: #ffebee;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.noBracket {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  margin: 20px 0;
 }

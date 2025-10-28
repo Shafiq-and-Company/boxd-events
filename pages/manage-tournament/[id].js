@@ -11,12 +11,18 @@ export default function ManageTournament() {
   const { id } = router.query;
   const [tournament, setTournament] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (id) {
       loadTournament();
     }
   }, [id]);
+  
+  const handleMatchUpdate = () => {
+    // Trigger a refresh of all components
+    setRefreshKey(prev => prev + 1);
+  };
 
   const loadTournament = async () => {
     try {
@@ -81,15 +87,15 @@ export default function ManageTournament() {
       
       <div className={styles.content}>
         <div className={styles.matchesSection}>
-          <MatchManager tournamentId={id} />
+          <MatchManager tournamentId={id} onMatchUpdate={handleMatchUpdate} key={`matches-${refreshKey}`} />
         </div>
         
         <div className={styles.bracketSection}>
-          <BracketViewer tournamentId={id} />
+          <BracketViewer tournamentId={id} key={`bracket-${refreshKey}`} />
         </div>
 
         <div className={styles.participantsSection}>
-          <ParticipantsList tournamentId={id} />
+          <ParticipantsList tournamentId={id} key={`participants-${refreshKey}`} />
         </div>
       </div>
     </div>
