@@ -49,7 +49,12 @@ export default function ParticipantsList({ tournamentId }) {
       <div className={styles.participantsList}>
         {participants.map(participant => (
           <div key={participant.id} className={`${styles.participantItem} ${participant.isHost ? styles.hostParticipant : ''}`}>
-            {participant.name}
+            <div className={styles.participantUsername}>{participant.name}</div>
+            {(participant.firstName || participant.lastName) && (
+              <div className={styles.participantFullName}>
+                {participant.firstName} {participant.lastName}
+              </div>
+            )}
             {participant.isHost && <span className={styles.hostBadge}>Host</span>}
           </div>
         ))}
