@@ -11,13 +11,14 @@
   padding: 16px 24px;
   height: 72px;
   background: white;
-  border-bottom: 1px solid #000000;
+  border-bottom: none;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  transition: border-bottom 0.2s ease;
 }
 
 .navbar.scrolled {
   background: white;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1px solid #e5e5e5;
 }
 
 /* Navigation Links */
@@ -35,7 +36,7 @@
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  border: 1px solid #000000;
+  border: none;
   background: #ffffff;
   border-radius: 0;
   cursor: pointer;
@@ -66,6 +67,13 @@
   display: inline;
 }
 
+/* Left Section */
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 /* Logo */
 .logo {
   display: block;
@@ -89,6 +97,39 @@
 
 .logo:hover .logoImage {
   opacity: 1;
+}
+
+/* Time Display */
+.timeDisplay {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.date {
+  font-size: 12px;
+  font-weight: 400;
+  color: #999999;
+}
+
+.timeSeparator {
+  font-size: 12px;
+  font-weight: 400;
+  color: #cccccc;
+}
+
+.time {
+  font-size: 12px;
+  font-weight: 400;
+  color: #999999;
+}
+
+.timezone {
+  font-size: 11px;
+  font-weight: 400;
+  color: #bbbbbb;
 }
 
 /* Profile Section */
@@ -124,7 +165,7 @@
 
 .loginButton {
   background: #ffffff;
-  border: 1px solid #000000;
+  border: none;
   padding: 8px 16px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -140,7 +181,7 @@
   align-items: center;
   gap: 6px;
   background: #ffffff;
-  border: 1px solid #000000;
+  border: none;
   padding: 8px 12px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -156,7 +197,7 @@
 }
 
 .createEventIcon {
-  display: none;
+  display: block;
   width: 16px;
   height: 16px;
   opacity: 1;
@@ -181,7 +222,7 @@
 .profileDropdownItem {
   padding: 12px 16px;
   background: #ffffff;
-  border: 1px solid #000000;
+  border: 1px solid #e5e5e5;
   border-radius: 0;
 }
 
@@ -203,7 +244,7 @@
   width: 32px;
   height: 32px;
   background-color: #D0D0D0;
-  border: 1px solid #000000;
+  border: 1px solid #e5e5e5;
   border-radius: 0;
   display: flex;
   align-items: center;
@@ -245,7 +286,7 @@
 .profileLogoutButton {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid #000000;
+  border: 1px solid #e5e5e5;
   background: #ffffff;
   border-radius: 0;
   cursor: pointer;
@@ -291,6 +332,31 @@
   .navText {
     display: none;
   }
+
+  .leftSection {
+    gap: 12px;
+  }
+
+  .timeDisplay {
+    padding: 4px 8px;
+    gap: 4px;
+  }
+
+  .date {
+    font-size: 11px;
+  }
+
+  .timeSeparator {
+    font-size: 11px;
+  }
+
+  .time {
+    font-size: 11px;
+  }
+
+  .timezone {
+    font-size: 10px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -315,6 +381,14 @@
   
   .profile {
     gap: 8px;
+  }
+
+  .leftSection {
+    gap: 8px;
+  }
+
+  .timeDisplay {
+    display: none;
   }
   
   .profilePlaceholder,
