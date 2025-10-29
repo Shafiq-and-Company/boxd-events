@@ -616,10 +616,11 @@ The tournament system uses numeric status codes to track match state:
   - Winner Bracket: Main bracket for undefeated participants
   - Loser Bracket: Second-chance bracket for participants with one loss
   - Grand Final: Winner of each bracket face off
-  - **Grand Finals Reset**: If the loser's bracket winner wins the first grand final match, a reset match is played
+  - **Grand Finals Reset** (Always Enabled): If the loser's bracket winner wins the first grand final match, a reset match is played
     - This ensures both finalists have the same number of losses (fairness principle)
     - The winner's bracket finalist gets one "life" advantage
     - If they lose the first grand final, a second match determines the champion
+    - Uses `grandFinal: 'double'` setting from brackets-manager.js
 - Format can be changed from the Configuration panel
 - Changing format regenerates the entire bracket
 
@@ -653,28 +654,27 @@ The tournament system uses numeric status codes to track match state:
 
 1. **Visit Tournament Page**: Navigate to `/manage-tournament/[id]`
 2. **View Participants**: See RSVP participants for the event
-3. **Select Format**: Click "Edit" in Configuration panel to choose Single or Double Elimination
+3. **Select Format**: Choose Single or Double Elimination from dropdown in Configuration panel
 4. **Create Tournament**: Tournament bracket generates automatically with selected format
 5. **Manage Matches**: Input scores for current matches
 6. **View Bracket**: Bracket displays in the center column with real-time updates
-7. **Change Format** (optional): Edit format to regenerate bracket with different structure
+7. **Change Format** (optional): Select different format to regenerate bracket with new structure
 8. **Real-time Updates**: Bracket updates automatically as matches complete
 
 ### Changing Tournament Format
 
 To change the tournament format:
 1. Navigate to the Configuration panel (left column)
-2. Click "Edit" next to the Format field
-3. Select "Single Elimination" or "Double Elimination" from the dropdown
-4. Click "Save" to apply changes
-5. The tournament bracket will automatically regenerate with the new format
-6. All previous match results will be cleared
+2. Select "Single Elimination" or "Double Elimination" from the Format dropdown
+3. Confirm the change when prompted (this will reset all matches)
+4. The tournament bracket will automatically regenerate with the new format
+5. All previous match results will be cleared
 
 **Note**: Changing format will reset all match results. Use with caution!
 
 ## Double Elimination Grand Finals Reset
 
-In double elimination tournaments, the system automatically handles grand finals reset:
+In double elimination tournaments, the grand finals reset is **always enabled** to maintain tournament integrity:
 
 ### How It Works
 
@@ -694,12 +694,13 @@ In double elimination tournaments, the system automatically handles grand finals
 - Grand Final Reset (Match 2) appears only after Match 1 is won by loser's bracket winner
 - Once Match 1 is completed, Match 2 becomes playable if reset is triggered
 
-### Configuration
+### Implementation
 
 The grand finals reset is automatically enabled for all double elimination tournaments:
-- Setting: `grandFinal: 'double'` in brackets-manager.js
-- Cannot be disabled (ensures tournament integrity)
+- Setting: `grandFinal: 'double'` in brackets-manager.js (verified from library source)
+- Always enabled (ensures tournament integrity and fairness)
 - Follows standard double elimination rules used in competitive gaming
+- No configuration needed - it's part of the double elimination format
 
 ## Database Integration
 

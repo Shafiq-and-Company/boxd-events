@@ -34,7 +34,11 @@ export default function VerticalBracketViewer({ tournamentId }) {
     }
   };
 
-  if (loading) return <div className={styles.loading}>Loading bracket...</div>;
+  if (loading) return (
+    <div className={styles.loading}>
+      <img src="/dance-duck.gif" alt="Loading..." />
+    </div>
+  );
   if (error) return <div className={styles.error}>{error}</div>;
   if (!bracketData) return <div className={styles.error}>No bracket data available</div>;
 

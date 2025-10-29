@@ -7,7 +7,7 @@ function Application({ Component, pageProps }) {
   const router = useRouter()
   const isLoginPage = router.pathname === '/login'
   const isSplashPage = router.pathname === '/splash'
-  const isManageTournamentPage = router.pathname === '/manage-tournament'
+  const isManageTournamentPage = router.pathname.startsWith('/manage-tournament')
   
   return (
     <AuthProvider>

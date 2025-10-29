@@ -302,7 +302,21 @@
 }
 
 /* Loading & Error States */
-.loading,
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: white;
+  width: 100%;
+}
+
+.loading img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
 .error {
   display: flex;
   align-items: center;

@@ -98,6 +98,22 @@
   color: #333;
 }
 
+/* Loading State */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  background: white;
+  width: 100%;
+}
+
+.loading img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
 /* No Matches State */
 .noMatches {
   text-align: center;

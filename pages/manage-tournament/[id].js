@@ -13,7 +13,6 @@ export default function ManageTournament() {
   const [tournament, setTournament] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [isEditingFormat, setIsEditingFormat] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState('single_elimination');
 
   useEffect(() => {
@@ -59,7 +58,16 @@ export default function ManageTournament() {
     }
   };
 
-  const handleFormatChange = async (newFormat) => {
+  const handleFormatChange = async (e) => {
+    const newFormat = e.target.value;
+    
+    // Confirm before changing format
+    if (!confirm('Changing format will reset all matches and bracket data. Continue?')) {
+      // Reset select to current format
+      e.target.value = selectedFormat;
+      return;
+    }
+    
     try {
       setLoading(true);
       
@@ -75,18 +83,23 @@ export default function ManageTournament() {
       await tournamentManager.resetTournament(id);
       
       setSelectedFormat(newFormat);
-      setIsEditingFormat(false);
       setRefreshKey(prev => prev + 1);
       await loadTournament();
     } catch (error) {
       console.error('Error changing format:', error);
       alert('Failed to change format: ' + error.message);
+      // Reset select to current format on error
+      e.target.value = selectedFormat;
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div className={styles.loading}>
+      <img src="/dance-duck.gif" alt="Loading..." />
+    </div>
+  );
   if (!tournament) return <div>Tournament not found</div>;
 
   const handleBackToEvent = () => {
@@ -116,64 +129,23 @@ export default function ManageTournament() {
             <h2 className={styles.columnTitle}>Configuration</h2>
             <div className={styles.tournamentSettings}>
               <div className={styles.settingItem}>
-                {isEditingFormat ? (
-                  <div className={styles.formatSelector}>
-                    <span className={styles.settingLabel}>Format</span>
-                    <select 
-                      value={selectedFormat}
-                      onChange={(e) => setSelectedFormat(e.target.value)}
-                      className={styles.formatSelect}
-                    >
-                      <option value="single_elimination">Single Elimination</option>
-                      <option value="double_elimination">Double Elimination</option>
-                    </select>
-                    <div className={styles.formatButtons}>
-                      <button 
-                        className={styles.formatSaveButton}
-                        onClick={() => handleFormatChange(selectedFormat)}
-                      >
-                        Save
-                      </button>
-                      <button 
-                        className={styles.formatCancelButton}
-                        onClick={() => {
-                          setIsEditingFormat(false);
-                          setSelectedFormat(tournament.tournament_type || 'single_elimination');
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className={styles.formatDisplay}>
-                    <span className={styles.settingLabel}>Format:</span>
-                    <span className={styles.settingValue}>
-                      {selectedFormat === 'double_elimination' ? 'Double Elimination' : 'Single Elimination'}
-                    </span>
-                    <button 
-                      className={styles.formatEditButton}
-                      onClick={() => setIsEditingFormat(true)}
-                    >
-                      Edit
-                    </button>
-                  </div>
-                )}
+                <span className={styles.settingLabel}>Format</span>
+                <select 
+                  value={selectedFormat}
+                  onChange={handleFormatChange}
+                  className={styles.formatSelect}
+                  disabled={loading}
+                >
+                  <option value="single_elimination">Single Elimination</option>
+                  <option value="double_elimination">Double Elimination</option>
+                </select>
               </div>
-              {selectedFormat === 'double_elimination' && (
-                <div className={styles.formatNote}>
-                  <span className={styles.noteIcon}>ℹ️</span>
-                  <span className={styles.noteText}>
-                    Grand Finals Reset enabled: If loser's bracket winner wins the first grand final, a reset match will be played.
-                  </span>
-                </div>
-              )}
-              <div className={styles.settingItemHorizontal}>
-                <span className={styles.settingLabel}>Max Participants:</span>
+              <div className={styles.settingItem}>
+                <span className={styles.settingLabel}>Max Participants</span>
                 <span className={styles.settingValue}>{tournament.max_participants || 64}</span>
               </div>
-              <div className={styles.settingItemHorizontal}>
-                <span className={styles.settingLabel}>Min Participants:</span>
+              <div className={styles.settingItem}>
+                <span className={styles.settingLabel}>Min Participants</span>
                 <span className={styles.settingValue}>{tournament.min_participants || 2}</span>
               </div>
             </div>

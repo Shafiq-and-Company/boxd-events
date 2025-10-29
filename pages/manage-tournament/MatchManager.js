@@ -97,7 +97,11 @@ export default function MatchManager({ tournamentId, onMatchUpdate }) {
     return { bracketName, roundName, isGrandFinal };
   };
 
-  if (loading) return <div>Loading tournament...</div>;
+  if (loading) return (
+    <div className={styles.loading}>
+      <img src="/dance-duck.gif" alt="Loading..." />
+    </div>
+  );
   if (error) return <div>Error: {error}</div>;
 
   // Detect if double elimination (has multiple groups)

@@ -13,6 +13,8 @@
   flex-direction: column;
   gap: 6px;
   margin-top: 16px;
+  max-height: 600px;
+  overflow-y: auto;
 }
 
 .participantItem {
@@ -169,12 +171,7 @@
   flex-direction: column;
   align-items: stretch;
   padding: 8px 0;
-  border-bottom: 1px solid #e8e8e8;
   gap: 8px;
-}
-
-.settingItem:last-child {
-  border-bottom: none;
 }
 
 .settingItemHorizontal {
@@ -182,11 +179,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #e8e8e8;
-}
-
-.settingItemHorizontal:last-child {
-  border-bottom: none;
 }
 
 .settingLabel {
@@ -229,12 +221,18 @@
   background: white;
   color: #333;
   cursor: pointer;
-  width: 100%;
+  min-width: 180px;
 }
 
 .formatSelect:focus {
   outline: none;
   border-color: #333;
+}
+
+.formatSelect:disabled {
+  background: #f0f0f0;
+  color: #a0a0a0;
+  cursor: not-allowed;
 }
 
 .formatEditButton {
@@ -347,10 +345,18 @@
 }
 
 .loading {
-  text-align: center;
-  padding: 40px;
-  color: #666;
-  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background: white;
+  width: 100%;
+}
+
+.loading img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
 }
 
 .error {
