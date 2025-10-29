@@ -52,7 +52,6 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .eventTitle {
@@ -80,7 +79,6 @@
   background: #ffffff;
   border: 1px solid #000;
   width: 100%;
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .hostManagementText {
@@ -100,7 +98,6 @@
 }
 
 .manageButton:hover {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 /* Hosted By */
@@ -113,7 +110,6 @@
   padding: 8px 12px;
   background: #ffffff;
   border: 1px solid #000;
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .hostedByIcon {
@@ -156,7 +152,6 @@
   padding: 8px 12px;
   background: #ffffff;
   border: 1px solid #000;
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .attendeesHeader {
@@ -234,7 +229,6 @@
   background: #ffffff;
   border: 1px solid #000;
   overflow: hidden;
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .rsvpHeader {
@@ -338,7 +332,6 @@
 }
 
 .loginButton:hover, .rsvpButton:hover:not(:disabled) {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .rsvpButton:disabled {
@@ -371,7 +364,6 @@
 }
 
 .inviteButton:hover {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .inviteButton:active {

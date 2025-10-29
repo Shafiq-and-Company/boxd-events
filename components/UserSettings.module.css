@@ -145,7 +145,6 @@
   background: #333;
   border: 2px solid #333;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .saveButton:disabled {
@@ -153,7 +152,6 @@
   border: 1px solid #a0a0a0;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
 }
 
 /* Security & Google Auth Buttons */
@@ -191,14 +189,12 @@
   background: #dc2626;
   border: 1px solid #dc2626;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
 }
 
 .discordUnlinkedButton:hover {
   background: #707070;
   border: 1px solid #707070;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(112, 112, 112, 0.15);
 }
 
 .securityButton:disabled, .googleLinkedButton:disabled, .discordLinkedButton:disabled {
@@ -206,7 +202,6 @@
   border: 1px solid #a0a0a0;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
 }
 
 .discordUnlinkedButton:disabled {
@@ -214,7 +209,6 @@
   border: 1px solid #d0d0d0;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
 }
 
 /* Google & Discord Button Hover Text Effect */

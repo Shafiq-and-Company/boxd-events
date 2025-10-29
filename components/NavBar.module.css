@@ -44,19 +44,15 @@
   color: #000000;
   text-decoration: none;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .navLink:hover {
-  box-shadow: 4px 4px 0px 0px #000000;
 }
 
 .navLink:active {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .navLink.active {
-  box-shadow: 2px 2px 0px 0px #000000;
   font-weight: 500;
 }
 
@@ -110,12 +106,10 @@
   border: 1px solid #000000;
   border-radius: 0;
   cursor: pointer;
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .profilePlaceholder:hover {
   background-color: #000000;
-  box-shadow: 4px 4px 0px 0px #000000;
 }
 
 /* Buttons */
@@ -133,15 +127,12 @@
   border: 1px solid #000000;
   padding: 8px 16px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .loginButton:hover {
-  box-shadow: 4px 4px 0px 0px #000000;
 }
 
 .loginButton:active {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .createEventButton {
@@ -152,15 +143,12 @@
   border: 1px solid #000000;
   padding: 8px 12px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .createEventButton:hover {
-  box-shadow: 4px 4px 0px 0px #000000;
 }
 
 .createEventButton:active {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .createEventText {
@@ -195,7 +183,6 @@
   background: #ffffff;
   border: 1px solid #000000;
   border-radius: 0;
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .profileInfo {
@@ -222,7 +209,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .profileInitial {
@@ -268,17 +254,14 @@
   font-weight: 400;
   color: #000000;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .profileSettingsButton:hover,
 .profileLogoutButton:hover {
-  box-shadow: 4px 4px 0px 0px #000000;
 }
 
 .profileSettingsButton:active,
 .profileLogoutButton:active {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 /* Responsive Design */

@@ -46,7 +46,6 @@
 }
 
 .eventCard:hover {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .eventImage {
@@ -186,11 +185,9 @@
 }
 
 .manageButton:hover {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .manageButton:active {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .goingButton {
@@ -214,18 +211,14 @@
 }
 
 .goingButton:hover {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.2);
   }
   50% {
-    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.2);
   }
 }
 
@@ -310,7 +303,6 @@
 }
 
 .discoverButton:hover, .signInButton:hover {
-  box-shadow: 2px 2px 0px 0px #000000;
 }
 
 .notLoggedIn {
