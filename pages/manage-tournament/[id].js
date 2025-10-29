@@ -116,9 +116,9 @@ export default function ManageTournament() {
             <h2 className={styles.columnTitle}>Configuration</h2>
             <div className={styles.tournamentSettings}>
               <div className={styles.settingItem}>
-                <span className={styles.settingLabel}>Format:</span>
                 {isEditingFormat ? (
                   <div className={styles.formatSelector}>
+                    <span className={styles.settingLabel}>Format</span>
                     <select 
                       value={selectedFormat}
                       onChange={(e) => setSelectedFormat(e.target.value)}
@@ -127,24 +127,27 @@ export default function ManageTournament() {
                       <option value="single_elimination">Single Elimination</option>
                       <option value="double_elimination">Double Elimination</option>
                     </select>
-                    <button 
-                      className={styles.formatSaveButton}
-                      onClick={() => handleFormatChange(selectedFormat)}
-                    >
-                      Save
-                    </button>
-                    <button 
-                      className={styles.formatCancelButton}
-                      onClick={() => {
-                        setIsEditingFormat(false);
-                        setSelectedFormat(tournament.tournament_type || 'single_elimination');
-                      }}
-                    >
-                      Cancel
-                    </button>
+                    <div className={styles.formatButtons}>
+                      <button 
+                        className={styles.formatSaveButton}
+                        onClick={() => handleFormatChange(selectedFormat)}
+                      >
+                        Save
+                      </button>
+                      <button 
+                        className={styles.formatCancelButton}
+                        onClick={() => {
+                          setIsEditingFormat(false);
+                          setSelectedFormat(tournament.tournament_type || 'single_elimination');
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <div className={styles.formatDisplay}>
+                    <span className={styles.settingLabel}>Format:</span>
                     <span className={styles.settingValue}>
                       {selectedFormat === 'double_elimination' ? 'Double Elimination' : 'Single Elimination'}
                     </span>
@@ -165,11 +168,11 @@ export default function ManageTournament() {
                   </span>
                 </div>
               )}
-              <div className={styles.settingItem}>
+              <div className={styles.settingItemHorizontal}>
                 <span className={styles.settingLabel}>Max Participants:</span>
                 <span className={styles.settingValue}>{tournament.max_participants || 64}</span>
               </div>
-              <div className={styles.settingItem}>
+              <div className={styles.settingItemHorizontal}>
                 <span className={styles.settingLabel}>Min Participants:</span>
                 <span className={styles.settingValue}>{tournament.min_participants || 2}</span>
               </div>

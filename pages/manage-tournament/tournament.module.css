@@ -445,13 +445,26 @@
 
 .settingItem {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 8px 0;
+  border-bottom: 1px solid #e8e8e8;
+  gap: 8px;
+}
+
+.settingItem:last-child {
+  border-bottom: none;
+}
+
+.settingItemHorizontal {
+  display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
   border-bottom: 1px solid #e8e8e8;
 }
 
-.settingItem:last-child {
+.settingItemHorizontal:last-child {
   border-bottom: none;
 }
 
@@ -469,17 +482,22 @@
 
 .formatSelector {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-items: center;
-  flex: 1;
+  align-items: stretch;
 }
 
 .formatDisplay {
   display: flex;
   gap: 8px;
   align-items: center;
-  flex: 1;
   justify-content: space-between;
+}
+
+.formatButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .formatSelect {
@@ -490,7 +508,7 @@
   background: white;
   color: #333;
   cursor: pointer;
-  flex: 1;
+  width: 100%;
 }
 
 .formatSelect:focus {
