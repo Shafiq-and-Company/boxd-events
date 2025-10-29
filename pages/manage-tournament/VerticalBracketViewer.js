@@ -6,6 +6,7 @@ export default function VerticalBracketViewer({ tournamentId }) {
   const [bracketData, setBracketData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'winners', 'losers'
 
   useEffect(() => {
     if (tournamentId) {
@@ -79,6 +80,21 @@ export default function VerticalBracketViewer({ tournamentId }) {
   // Sort groups for display (Winner's, Loser's, Grand Finals)
   const sortedGroups = Object.values(groupMap).sort((a, b) => a.number - b.number);
 
+  // Detect if double elimination (has multiple groups)
+  const isDoubleElimination = sortedGroups.length > 1;
+
+  // Filter groups based on active tab
+  const filteredGroups = sortedGroups.filter(group => {
+    if (!isDoubleElimination || activeTab === 'all') return true;
+    if (activeTab === 'winners') return group.number === 1;
+    if (activeTab === 'losers') return group.number === 2;
+    if (activeTab === 'finals') return group.number === 3;
+    return true;
+  });
+
+  // Check if Grand Finals exists
+  const hasGrandFinals = sortedGroups.some(g => g.number === 3);
+
   const getGroupName = (groupNumber) => {
     if (groupNumber === 1) return "Winner's Bracket";
     if (groupNumber === 2) return "Loser's Bracket";
@@ -118,7 +134,41 @@ export default function VerticalBracketViewer({ tournamentId }) {
 
   return (
     <div className={styles.verticalBracket}>
-      {sortedGroups.map(group => {
+      <div className={styles.bracketHeader}>
+        <h2 className={styles.bracketTitle}>Bracket</h2>
+        {isDoubleElimination && (
+          <div className={styles.bracketTabs}>
+            <button 
+              className={`${styles.bracketTab} ${activeTab === 'all' ? styles.bracketTabActive : ''}`}
+              onClick={() => setActiveTab('all')}
+            >
+              All Brackets
+            </button>
+            <button 
+              className={`${styles.bracketTab} ${activeTab === 'winners' ? styles.bracketTabActive : ''}`}
+              onClick={() => setActiveTab('winners')}
+            >
+              Winner's Bracket
+            </button>
+            <button 
+              className={`${styles.bracketTab} ${activeTab === 'losers' ? styles.bracketTabActive : ''}`}
+              onClick={() => setActiveTab('losers')}
+            >
+              Loser's Bracket
+            </button>
+            {hasGrandFinals && (
+              <button 
+                className={`${styles.bracketTab} ${activeTab === 'finals' ? styles.bracketTabActive : ''}`}
+                onClick={() => setActiveTab('finals')}
+              >
+                Grand Finals
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+      
+      {filteredGroups.map(group => {
         const groupMatches = group.rounds.reduce((total, round) => total + round.matches.length, 0);
         const groupCompleted = group.rounds.reduce((total, round) => 
           total + round.matches.filter(m => m.status === 4).length, 0
@@ -160,7 +210,20 @@ export default function VerticalBracketViewer({ tournamentId }) {
                       {round.matches.map((match) => {
                         const opponent1 = match.opponent1 ? participantMap[match.opponent1.id] : null;
                         const opponent2 = match.opponent2 ? participantMap[match.opponent2.id] : null;
-                        const isBye = !opponent1 || !opponent2;
+                        
+                        // True BYE: match.opponent1/2 is null (no participant assigned)
+                        // TBD: match.opponent1/2 exists but participant not determined yet
+                        const isTrueBye = !match.opponent1 || !match.opponent2;
+                        const isBye = isTrueBye;
+                        
+                        const getOpponentDisplay = (matchOpponent, participant) => {
+                          if (!matchOpponent) return { text: 'BYE', isTBD: false };
+                          if (!participant) return { text: 'TBD', isTBD: true };
+                          return { text: participant.name, isTBD: false };
+                        };
+                        
+                        const opponent1Display = getOpponentDisplay(match.opponent1, opponent1);
+                        const opponent2Display = getOpponentDisplay(match.opponent2, opponent2);
                         
                         return (
                           <div 
@@ -168,8 +231,8 @@ export default function VerticalBracketViewer({ tournamentId }) {
                             className={`${styles.matchCard} ${getMatchStatusClass(match.status)} ${isBye ? styles.byeMatch : ''}`}
                           >
                             <div className={`${styles.opponent} ${getWinnerClass(match.opponent1, match)}`}>
-                              <span className={styles.opponentName}>
-                                {opponent1?.name || 'BYE'}
+                              <span className={`${styles.opponentName} ${opponent1Display.isTBD ? styles.tbdOpponent : ''}`}>
+                                {opponent1Display.text}
                               </span>
                               {match.status === 4 && match.opponent1 && (
                                 <span className={styles.score}>
@@ -179,7 +242,7 @@ export default function VerticalBracketViewer({ tournamentId }) {
                             </div>
                             
                             <div className={styles.matchDivider}>
-                              {match.status !== 4 && !isBye && (
+                              {!isBye && (
                                 <span className={styles.matchStatus}>
                                   {getMatchStatusLabel(match.status)}
                                 </span>
@@ -187,8 +250,8 @@ export default function VerticalBracketViewer({ tournamentId }) {
                             </div>
                             
                             <div className={`${styles.opponent} ${getWinnerClass(match.opponent2, match)}`}>
-                              <span className={styles.opponentName}>
-                                {opponent2?.name || 'BYE'}
+                              <span className={`${styles.opponentName} ${opponent2Display.isTBD ? styles.tbdOpponent : ''}`}>
+                                {opponent2Display.text}
                               </span>
                               {match.status === 4 && match.opponent2 && (
                                 <span className={styles.score}>

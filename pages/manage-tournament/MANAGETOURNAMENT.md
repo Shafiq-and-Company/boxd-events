@@ -322,7 +322,7 @@ function MatchCard({ match, onUpdate }) {
         <span>{match.opponent2?.name || 'TBD'}</span>
       </div>
       
-      {match.status === 'ready' && (
+      {(match.status === 2 || match.status === 3) && (
         <div className="score-input">
           <input 
             type="number" 
@@ -342,7 +342,7 @@ function MatchCard({ match, onUpdate }) {
         </div>
       )}
       
-      {match.status === 'completed' && (
+      {match.status === 4 && (
         <div className="match-result">
           {match.opponent1.name}: {match.opponent1.score} - {match.opponent2.score} :{match.opponent2.name}
         </div>
@@ -581,6 +581,28 @@ Create `/pages/manage-tournament/tournament.module.css`:
 }
 ```
 
+## Match Status System
+
+The tournament system uses numeric status codes to track match state:
+
+| Status Code | Internal Name | Display Label | Description |
+|-------------|---------------|---------------|-------------|
+| 0 | `locked` | Pending | Match is locked, waiting for previous matches to complete |
+| 1 | `waiting` | Pending | Match is waiting to start |
+| 2 | `ready` | Active | Match is ready to be played |
+| 3 | `running` | Active | Match is currently in progress |
+| 4 | `completed` | Complete | Match has finished with final scores |
+
+### Status Display in Bracket Viewer:
+- **Pending**: Gray text, matches that can't be played yet
+- **Active**: Green text, matches ready to play or in progress
+- **Complete**: Gray text, finished matches showing final scores and winners
+
+### Status Display in Match Manager:
+- Matches with status 2 or 3 show score input interface
+- Matches with status 4 show final scores and winner badge
+- BYE matches can be advanced by clicking the participant name
+
 ## Key Features
 
 ### ✅ Participant Management
@@ -611,7 +633,7 @@ Create `/pages/manage-tournament/tournament.module.css`:
 - Real-time match result input
 - Score validation and winner determination
 - Automatic bracket advancement
-- Match status tracking (ready, completed)
+- Match status tracking: Pending (locked/waiting), Active (ready/running), Complete
 
 ### ✅ Bracket Visualization
 - Custom vertical bracket viewer (no external dependencies)

@@ -202,7 +202,6 @@ export default function ManageTournament() {
         {/* Middle Column: Bracket Viewer */}
         <div className={styles.middleColumn}>
           <div className={styles.bracketSection}>
-            <h2 className={styles.columnTitle}>Bracket</h2>
             <VerticalBracketViewer tournamentId={id} key={`bracket-${refreshKey}`} />
           </div>
         </div>
@@ -210,7 +209,6 @@ export default function ManageTournament() {
         {/* Right Column: Current Matches */}
         <div className={styles.rightColumn}>
           <div className={styles.matchesSection}>
-            <h2 className={styles.columnTitle}>Scorecard</h2>
             <MatchManager tournamentId={id} onMatchUpdate={handleMatchUpdate} key={`matches-${refreshKey}`} />
           </div>
         </div>

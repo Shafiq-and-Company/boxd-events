@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import tournamentManager from '../../lib/tournamentManager';
-import styles from './tournament.module.css';
+import styles from './matchManager.module.css';
 
 // Helper function to check if a number is a power of 2
 function isPowerOfTwo(n) {
@@ -20,6 +20,7 @@ export default function MatchManager({ tournamentId, onMatchUpdate }) {
   const [bracketData, setBracketData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'winners', 'losers', 'finals'
 
   useEffect(() => {
     loadData();
@@ -99,46 +100,141 @@ export default function MatchManager({ tournamentId, onMatchUpdate }) {
   if (loading) return <div>Loading tournament...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  // Detect if double elimination (has multiple groups)
+  const isDoubleElimination = bracketData && bracketData.group && bracketData.group.length > 1;
+
+  // Filter matches based on active tab
+  const getFilteredMatches = () => {
+    if (!isDoubleElimination || activeTab === 'all') {
+      return matches;
+    }
+
+    return matches.filter(match => {
+      const group = bracketData.group.find(g => g.id === match.group_id);
+      if (!group) return false;
+
+      if (activeTab === 'winners') return group.number === 1;
+      if (activeTab === 'losers') return group.number === 2;
+      if (activeTab === 'finals') return group.number === 3;
+      return true;
+    });
+  };
+
+  const filteredMatches = getFilteredMatches();
+
+  // Create participant lookup map
+  const participantMap = {};
+  participants.forEach(p => {
+    participantMap[p.name] = p;
+  });
+
+  // Count matches per bracket for tab badges
+  const getMatchCount = (tabName) => {
+    if (tabName === 'all') return matches.length;
+    
+    return matches.filter(match => {
+      const group = bracketData.group.find(g => g.id === match.group_id);
+      if (!group) return false;
+      
+      if (tabName === 'winners') return group.number === 1;
+      if (tabName === 'losers') return group.number === 2;
+      if (tabName === 'finals') return group.number === 3;
+      return false;
+    }).length;
+  };
+
   return (
     <div>
       {matches.length === 0 ? (
-        <div className={styles.noMatches}>
-          <p>No matches available yet.</p>
-          {participants.length < 2 ? (
-            <div>
-              <p className={styles.warning}>
-                <strong>Waiting for participants:</strong> Need at least 2 participants to generate matches.
-              </p>
+        <>
+          <div className={styles.matchManagerHeader}>
+            <h2 className={styles.matchManagerTitle}>Scorecard</h2>
+          </div>
+          <div className={styles.noMatches}>
+            <p>No matches available yet.</p>
+            {participants.length < 2 ? (
+              <div>
+                <p className={styles.warning}>
+                  <strong>Waiting for participants:</strong> Need at least 2 participants to generate matches.
+                </p>
+                <p className={styles.info}>
+                  Matches will be automatically generated when enough participants RSVP to the event.
+                </p>
+              </div>
+            ) : (
               <p className={styles.info}>
-                Matches will be automatically generated when enough participants RSVP to the event.
+                Tournament bracket will be generated automatically.
               </p>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className={styles.matchManagerHeader}>
+            <h2 className={styles.matchManagerTitle}>Scorecard</h2>
+            {isDoubleElimination && (
+              <div className={styles.bracketTabs}>
+                <button 
+                  className={`${styles.bracketTab} ${activeTab === 'all' ? styles.bracketTabActive : ''}`}
+                  onClick={() => setActiveTab('all')}
+                  title="All Brackets"
+                >
+                  A <span className={styles.tabBadge}>{getMatchCount('all')}</span>
+                </button>
+                <button 
+                  className={`${styles.bracketTab} ${activeTab === 'winners' ? styles.bracketTabActive : ''}`}
+                  onClick={() => setActiveTab('winners')}
+                  title="Winner's Bracket"
+                >
+                  W <span className={styles.tabBadge}>{getMatchCount('winners')}</span>
+                </button>
+                <button 
+                  className={`${styles.bracketTab} ${activeTab === 'losers' ? styles.bracketTabActive : ''}`}
+                  onClick={() => setActiveTab('losers')}
+                  title="Loser's Bracket"
+                >
+                  L <span className={styles.tabBadge}>{getMatchCount('losers')}</span>
+                </button>
+                {getMatchCount('finals') > 0 && (
+                  <button 
+                    className={`${styles.bracketTab} ${activeTab === 'finals' ? styles.bracketTabActive : ''}`}
+                    onClick={() => setActiveTab('finals')}
+                    title="Grand Finals"
+                  >
+                    F <span className={styles.tabBadge}>{getMatchCount('finals')}</span>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+          
+          {filteredMatches.length === 0 ? (
+            <div className={styles.noMatches}>
+              <p>No matches in this bracket yet.</p>
             </div>
           ) : (
-            <p className={styles.info}>
-              Tournament bracket will be generated automatically.
-            </p>
+            filteredMatches.map(match => {
+              const context = getMatchContext(match);
+              return (
+                <MatchCard 
+                  key={match.id} 
+                  match={match} 
+                  onUpdate={updateMatchResult}
+                  bracketName={context.bracketName}
+                  roundName={context.roundName}
+                  isGrandFinal={context.isGrandFinal}
+                  participantMap={participantMap}
+                />
+              );
+            })
           )}
-        </div>
-      ) : (
-        matches.map(match => {
-          const context = getMatchContext(match);
-          return (
-            <MatchCard 
-              key={match.id} 
-              match={match} 
-              onUpdate={updateMatchResult}
-              bracketName={context.bracketName}
-              roundName={context.roundName}
-              isGrandFinal={context.isGrandFinal}
-            />
-          );
-        })
+        </>
       )}
     </div>
   );
 }
 
-function MatchCard({ match, onUpdate, bracketName, roundName, isGrandFinal }) {
+function MatchCard({ match, onUpdate, bracketName, roundName, isGrandFinal, participantMap }) {
   const [opponent1Score, setOpponent1Score] = useState('');
   const [opponent2Score, setOpponent2Score] = useState('');
   const [inputMode, setInputMode] = useState('winner'); // 'winner' or 'score'
@@ -147,6 +243,15 @@ function MatchCard({ match, onUpdate, bracketName, roundName, isGrandFinal }) {
   const isByeMatch = !match.opponent1 || !match.opponent2;
   const hasByeOpponent = !match.opponent1 || !match.opponent2;
   const byeOpponent = !match.opponent1 ? match.opponent2 : match.opponent1;
+
+  // Get participant details
+  const getParticipantDetails = (opponentName) => {
+    if (!opponentName || opponentName === 'TBD' || opponentName === 'BYE') return null;
+    return participantMap[opponentName];
+  };
+
+  const opponent1Details = getParticipantDetails(match.opponent1?.name);
+  const opponent2Details = getParticipantDetails(match.opponent2?.name);
 
   const handleSubmit = () => {
     if (opponent1Score && opponent2Score) {
@@ -192,7 +297,12 @@ function MatchCard({ match, onUpdate, bracketName, roundName, isGrandFinal }) {
                 onClick={handleByeAdvance}
                 title="Click to advance"
               >
-                {byeOpponent?.name}
+                <span className={styles.playerUsername}>{byeOpponent?.name}</span>
+                {getParticipantDetails(byeOpponent?.name) && (getParticipantDetails(byeOpponent?.name).firstName || getParticipantDetails(byeOpponent?.name).lastName) && (
+                  <span className={styles.playerRealName}>
+                    {getParticipantDetails(byeOpponent?.name).firstName} {getParticipantDetails(byeOpponent?.name).lastName}
+                  </span>
+                )}
               </span>
               <span className={styles.vsText}>advances</span>
             </div>
@@ -204,7 +314,12 @@ function MatchCard({ match, onUpdate, bracketName, roundName, isGrandFinal }) {
                     className={styles.playerNameClickable}
                     onClick={() => handleSetWinner(1)}
                   >
-                    {match.opponent1?.name || 'TBD'}
+                    <span className={styles.playerUsername}>{match.opponent1?.name || 'TBD'}</span>
+                    {opponent1Details && (opponent1Details.firstName || opponent1Details.lastName) && (
+                      <span className={styles.playerRealName}>
+                        {opponent1Details.firstName} {opponent1Details.lastName}
+                      </span>
+                    )}
                     <span className={styles.hintText}>click to win</span>
                   </span>
                   {inputMode === 'score' && (
@@ -223,7 +338,12 @@ function MatchCard({ match, onUpdate, bracketName, roundName, isGrandFinal }) {
                     className={styles.playerNameClickable}
                     onClick={() => handleSetWinner(2)}
                   >
-                    {match.opponent2?.name || 'TBD'}
+                    <span className={styles.playerUsername}>{match.opponent2?.name || 'TBD'}</span>
+                    {opponent2Details && (opponent2Details.firstName || opponent2Details.lastName) && (
+                      <span className={styles.playerRealName}>
+                        {opponent2Details.firstName} {opponent2Details.lastName}
+                      </span>
+                    )}
                     <span className={styles.hintText}>click to win</span>
                   </span>
                   {inputMode === 'score' && (
@@ -262,9 +382,14 @@ function MatchCard({ match, onUpdate, bracketName, roundName, isGrandFinal }) {
       
       {match.status === 4 && (
         <div className={styles.matchRow}>
-          <span className={styles.playerName}>
-            {match.opponent1?.name || 'BYE'}
-          </span>
+          <div className={styles.playerColumn}>
+            <span className={styles.playerUsername}>{match.opponent1?.name || 'BYE'}</span>
+            {opponent1Details && (opponent1Details.firstName || opponent1Details.lastName) && (
+              <span className={styles.playerRealName}>
+                {opponent1Details.firstName} {opponent1Details.lastName}
+              </span>
+            )}
+          </div>
           <span className={styles.scoreDisplay}>
             {match.opponent1?.score || 0}
           </span>
@@ -272,9 +397,14 @@ function MatchCard({ match, onUpdate, bracketName, roundName, isGrandFinal }) {
           <span className={styles.scoreDisplay}>
             {match.opponent2?.score || 0}
           </span>
-          <span className={styles.playerName}>
-            {match.opponent2?.name || 'BYE'}
-          </span>
+          <div className={styles.playerColumn}>
+            <span className={styles.playerUsername}>{match.opponent2?.name || 'BYE'}</span>
+            {opponent2Details && (opponent2Details.firstName || opponent2Details.lastName) && (
+              <span className={styles.playerRealName}>
+                {opponent2Details.firstName} {opponent2Details.lastName}
+              </span>
+            )}
+          </div>
           <span className={styles.winnerBadge}>
             {match.opponent1?.result === 'win' ? '✓' : '✓'}
           </span>
