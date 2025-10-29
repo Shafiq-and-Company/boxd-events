@@ -8,6 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [isSignUp, setIsSignUp] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
@@ -30,7 +31,7 @@ export default function Login() {
           setMessage('Check your email for the confirmation link!')
         }
       } else {
-        const { data, error } = await signIn(email, password)
+        const { data, error } = await signIn(email, password, rememberMe)
         if (error) {
           setError(error.message)
         } else {
@@ -149,35 +150,52 @@ export default function Login() {
           </div>
           
           {!showForgotPassword && (
-            <div className={styles.inputGroup}>
-              <label htmlFor="password" className={styles.label}>
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={styles.input}
-                required
-                disabled={loading}
-                minLength={6}
-              />
-              {!isSignUp && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowForgotPassword(true)
-                    setError('')
-                    setMessage('')
-                  }}
-                  className={styles.forgotPasswordLink}
+            <>
+              <div className={styles.inputGroup}>
+                <label htmlFor="password" className={styles.label}>
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={styles.input}
+                  required
                   disabled={loading}
-                >
-                  Forgot your password?
-                </button>
+                  minLength={6}
+                />
+                {!isSignUp && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowForgotPassword(true)
+                      setError('')
+                      setMessage('')
+                    }}
+                    className={styles.forgotPasswordLink}
+                    disabled={loading}
+                  >
+                    Forgot your password?
+                  </button>
+                )}
+              </div>
+              
+              {!isSignUp && (
+                <div className={styles.checkboxGroup}>
+                  <label className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className={styles.checkbox}
+                      disabled={loading}
+                    />
+                    <span className={styles.checkboxText}>Remember me</span>
+                  </label>
+                </div>
               )}
-            </div>
+            </>
           )}
           
           {error && (
