@@ -1,0 +1,308 @@
+/* Minimal Vertical Bracket - 8px spacing system */
+
+.verticalBracket {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Bracket Group */
+.bracketGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.groupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid #e8e8e8;
+}
+
+.groupTitle {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.groupStats {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.groupStat {
+  font-size: 11px;
+  font-weight: 500;
+  color: #666;
+}
+
+.groupActiveIndicator {
+  font-size: 10px;
+  font-weight: 500;
+  color: #4caf50;
+  padding: 2px 8px;
+  background: #f0f8f0;
+}
+
+/* Rounds Container - Horizontal Scroll */
+.roundsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 0 8px 16px 8px;
+}
+
+.roundColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 240px;
+  flex-shrink: 0;
+}
+
+.roundHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid #e8e8e8;
+  height: 32px;
+}
+
+.roundTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.roundMeta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.roundProgress {
+  font-size: 10px;
+  font-weight: 500;
+  color: #888;
+}
+
+.roundActiveIndicator {
+  font-size: 8px;
+  color: #4caf50;
+  line-height: 1;
+}
+
+/* Matches Column */
+.matchesColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Match Card - Minimal Design */
+.matchCard {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #e8e8e8;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.matchCard.ready {
+  border-color: #000;
+  border-width: 2px;
+}
+
+.matchCard.completed {
+  opacity: 0.75;
+}
+
+.matchCard.locked {
+  opacity: 0.5;
+}
+
+.matchCard.byeMatch {
+  opacity: 0.4;
+  border-style: dashed;
+}
+
+/* Opponent Row */
+.opponent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 8px;
+  min-height: 32px;
+  transition: background 0.15s ease;
+}
+
+.opponent.winner {
+  background: #f8f8f8;
+  font-weight: 600;
+}
+
+.opponent.loser {
+  opacity: 0.5;
+}
+
+.opponentName {
+  font-size: 13px;
+  font-weight: 500;
+  color: #000;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.opponent.loser .opponentName {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.score {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+  min-width: 24px;
+  text-align: right;
+  line-height: 1;
+}
+
+.opponent.loser .score {
+  color: #888;
+}
+
+/* Match Divider */
+.matchDivider {
+  height: 1px;
+  background: #e8e8e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.matchStatus {
+  position: absolute;
+  font-size: 8px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: white;
+  padding: 0 6px;
+}
+
+.matchCard.ready .matchStatus {
+  color: #4caf50;
+}
+
+/* Loading & Error States */
+.loading,
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  font-size: 13px;
+  color: #888;
+}
+
+.error {
+  color: #d32f2f;
+  background: #fff5f5;
+  border: 1px solid #ffcdd2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .roundColumn {
+    min-width: 200px;
+  }
+
+  .opponentName {
+    font-size: 12px;
+  }
+
+  .score {
+    font-size: 13px;
+  }
+}
+
+/* Print Styles for Tournament Organizers */
+@media print {
+  .verticalBracket {
+    overflow: visible;
+  }
+
+  .roundsContainer {
+    overflow: visible;
+    flex-wrap: wrap;
+  }
+
+  .matchCard.ready {
+    border-color: #000;
+    background: #f8f8f8;
+  }
+
+  .matchCard.completed {
+    opacity: 0.6;
+  }
+
+  .matchCard.locked {
+    display: none;
+  }
+}
+
+/* Scrollbar Styling */
+.roundsContainer::-webkit-scrollbar {
+  height: 8px;
+}
+
+.roundsContainer::-webkit-scrollbar-track {
+  background: #f8f8f8;
+}
+
+.roundsContainer::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+  border-radius: 0;
+}
+
+.roundsContainer::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0;
+}
+
+.verticalBracket::-webkit-scrollbar {
+  width: 8px;
+}
+
+.verticalBracket::-webkit-scrollbar-track {
+  background: #f8f8f8;
+}
+
+.verticalBracket::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+  border-radius: 0;
+}
+
+.verticalBracket::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0;
+}

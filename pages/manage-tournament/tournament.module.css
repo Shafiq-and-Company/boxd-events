@@ -419,7 +419,7 @@
 }
 
 .leftColumnCard {
-  background: #f8f8f8;
+  background: transparent;
   border: 1px solid #e8e8e8;
   border-radius: 0;
   padding: 24px;
@@ -594,7 +594,7 @@
 
 .matchesSection {
   padding: 24px;
-  background: #f8f8f8;
+  background: transparent;
   border: 1px solid #e8e8e8;
   border-radius: 0;
   height: fit-content;
@@ -603,7 +603,7 @@
 
 .bracketSection {
   padding: 24px;
-  background: #f8f8f8;
+  background: transparent;
   border: 1px solid #e8e8e8;
   border-radius: 0;
   min-height: 600px;

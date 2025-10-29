@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import tournamentManager from '../../lib/tournamentManager';
 import MatchManager from './MatchManager';
-import BracketViewer from './BracketViewer';
+import VerticalBracketViewer from './VerticalBracketViewer';
 import ParticipantsList from './ParticipantsList';
 import styles from './tournament.module.css';
 
@@ -203,7 +203,7 @@ export default function ManageTournament() {
         <div className={styles.middleColumn}>
           <div className={styles.bracketSection}>
             <h2 className={styles.columnTitle}>Bracket</h2>
-            <BracketViewer tournamentId={id} key={`bracket-${refreshKey}`} />
+            <VerticalBracketViewer tournamentId={id} key={`bracket-${refreshKey}`} />
           </div>
         </div>
 

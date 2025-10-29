@@ -1,7 +1,7 @@
 # Tournament Management System
 
 ## Overview
-Complete implementation guide for single and double elimination tournament management using [brackets-manager.js](https://github.com/Drarig29/brackets-manager.js) and [brackets-viewer.js](https://github.com/Drarig29/brackets-viewer.js).
+Complete implementation guide for single and double elimination tournament management using [brackets-manager.js](https://github.com/Drarig29/brackets-manager.js) for bracket logic and a custom vertical bracket viewer for visualization.
 
 ## System Architecture
 
@@ -352,73 +352,21 @@ function MatchCard({ match, onUpdate }) {
 }
 ```
 
-#### 2.2 Bracket Viewer Component
-Create `/pages/manage-tournament/BracketViewer.js`:
+#### 2.2 Vertical Bracket Viewer Component
+Create `/pages/manage-tournament/VerticalBracketViewer.js`:
 
-```javascript
-import { useEffect, useRef, useState } from 'react';
-import { BracketsViewer } from 'brackets-viewer';
-import tournamentManager from '../../lib/tournamentManager';
+**Custom bracket viewer that renders bracket_data in a vertical, minimal layout with real-time tournament statistics.**
 
-export default function BracketViewer({ tournamentId }) {
-  const containerRef = useRef(null);
-  const viewerRef = useRef(null);
-  const [bracketData, setBracketData] = useState(null);
-  const [loading, setLoading] = useState(true);
+Key Features:
+- No external dependencies (renders bracket_data directly)
+- Tournament progress tracking (participants, matches, completion %)
+- Minimal design with 8px spacing system
+- Scales beautifully for 64+ participants
+- Round-based organization with traditional names (Quarterfinals, Semifinals, Finals)
+- Match status indicators (Active, Pending, Complete)
+- Winner highlighting and score display
 
-  useEffect(() => {
-    loadBracketData();
-  }, [tournamentId]);
-
-  const loadBracketData = async () => {
-    try {
-      setLoading(true);
-      const data = await tournamentManager.getBracketData(tournamentId);
-      setBracketData(data);
-    } catch (error) {
-      console.error('Error loading bracket:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (bracketData && containerRef.current) {
-      // Clean up previous viewer
-      if (viewerRef.current) {
-        viewerRef.current.destroy();
-      }
-
-      // Create new viewer
-      viewerRef.current = new BracketsViewer(containerRef.current, {
-        participantOriginPlacement: 'before',
-        separatedChildCountLabel: true,
-        showSlotsOrigin: true,
-        showLowerBracketSlotsOrigin: true,
-        highlightParticipantOnHover: true,
-      });
-
-      // Render the tournament
-      viewerRef.current.render(bracketData);
-    }
-
-    return () => {
-      if (viewerRef.current) {
-        viewerRef.current.destroy();
-      }
-    };
-  }, [bracketData]);
-
-  if (loading) return <div>Loading bracket...</div>;
-  if (!bracketData) return <div>No bracket data available</div>;
-
-  return (
-    <div className="tournament-bracket">
-      <div ref={containerRef} className="bracket-container"></div>
-    </div>
-  );
-}
-```
+See `VerticalBracketViewer.js` in the repository for full implementation.
 
 ### Phase 3: Main Tournament Page
 Update `/pages/manage-tournament/[id].js`:
@@ -428,7 +376,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
 import MatchManager from './MatchManager';
-import BracketViewer from './BracketViewer';
+import VerticalBracketViewer from './VerticalBracketViewer';
 
 export default function ManageTournament() {
   const router = useRouter();
@@ -487,7 +435,7 @@ export default function ManageTournament() {
       )}
 
       {activeTab === 'bracket' && (
-        <BracketViewer tournamentId={id} />
+        <VerticalBracketViewer tournamentId={id} />
       )}
     </div>
   );
@@ -666,10 +614,13 @@ Create `/pages/manage-tournament/tournament.module.css`:
 - Match status tracking (ready, completed)
 
 ### ✅ Bracket Visualization
-- Live bracket updates using brackets-viewer.js
-- Responsive design with horizontal scrolling
-- Match highlighting and participant tracking
-- Clean, minimalist design following brand guidelines
+- Custom vertical bracket viewer (no external dependencies)
+- Real-time tournament progress statistics
+- Minimal design with 8px spacing system
+- Scales beautifully for 64+ participants
+- Traditional round names (Quarterfinals, Semifinals, Finals)
+- Match status indicators (Active, Pending, Complete)
+- Winner highlighting and score display
 
 ### ✅ Real-time Updates
 - Bracket visualization updates immediately after match results
