@@ -21,6 +21,52 @@
   margin-bottom: 0;
 }
 
+/* ===== HEADER & TOGGLE ===== */
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.toggleContainer {
+  display: flex;
+  gap: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.toggleButton {
+  background: transparent;
+  color: #666666;
+  border: none;
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease;
+  white-space: nowrap;
+  position: relative;
+}
+
+.toggleButton:first-child {
+  border-right: 1px solid #e0e0e0;
+}
+
+.toggleButton:hover {
+  background: #f8f8f8;
+}
+
+.toggleButton.active {
+  background: #000000;
+  color: #ffffff;
+}
+
+.toggleButton.active:hover {
+  background: #000000;
+}
+
 /* ===== EVENTS GRID ===== */
 .eventsList {
   display: grid;
@@ -33,15 +79,15 @@
 /* ===== EVENT CARDS ===== */
 .eventCard {
   background: #ffffff;
-  border: 1px solid #000000;
-  height: 160px;
+  height: auto;
+  min-height: 180px;
   position: relative;
   cursor: pointer;
-  overflow: hidden;
+  overflow: visible;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   padding: 20px;
 }
 
@@ -49,25 +95,27 @@
 }
 
 .eventImage {
-  width: 110px;
-  height: 110px;
+  width: 200px;
+  height: 200px;
   background: #f8f8f8;
-  border: 1px solid #000;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 20px;
   flex-shrink: 0;
+  align-self: stretch;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .imagePlaceholder {
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  height: 100%;
   background: #d0d0d0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-weight: 500;
   color: #707070;
 }
@@ -76,22 +124,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   background: #ffffff;
   color: #000000;
   height: 100%;
-}
-
-.eventHeader {
-  margin-bottom: 6px;
-}
-
-.eventHeaderTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 8px;
-  gap: 12px;
+  min-height: 0;
 }
 
 .eventTitle {
@@ -99,7 +136,7 @@
   font-weight: 600;
   color: #000000;
   line-height: 1.3;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -107,62 +144,64 @@
   overflow: hidden;
 }
 
-.gameTitle {
-  background: #f8f8f8;
-  color: #404040;
-  padding: 4px 8px;
-  font-size: 0.65rem;
-  font-weight: 500;
-  border: 1px solid #000;
-  display: inline-flex;
+.eventMetaRow {
+  display: flex;
   align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-  line-height: 1.2;
-  max-width: fit-content;
-  flex-shrink: 0;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.gameIcon {
-  color: #999999;
-  flex-shrink: 0;
-}
-
-.eventDetails {
+.calendarIconBox, .locationIconBox {
   display: flex;
   flex-direction: column;
-}
-
-.eventDate, .eventLocation {
-  color: #666666;
-  font-size: 0.75rem;
-  font-weight: 400;
-  line-height: 1.3;
-}
-
-.eventDate {
-  margin-bottom: 4px;
-  font-weight: 500;
-  color: #000000;
-  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
+  padding: 12px 16px;
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  width: 180px;
+  height: 120px;
+  flex-shrink: 0;
+  border-radius: 8px;
 }
 
-.dateIcon {
-  color: #999999;
+.calendarIcon, .locationIcon {
+  color: #666666;
   flex-shrink: 0;
 }
 
-.eventLocation {
-  margin-bottom: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.calendarDate, .calendarTime {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #000000;
+  line-height: 1.3;
+  text-align: center;
+  width: 100%;
 }
 
-.locationIcon {
-  color: #999999;
+.calendarTime {
+  font-size: 0.7rem;
+  color: #666666;
+}
+
+.locationAddress, .locationCity {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #000000;
+  line-height: 1.3;
+  text-align: center;
+  width: 100%;
+}
+
+.locationCity {
+  font-size: 0.7rem;
+  color: #666666;
+}
+
+.eventActions {
+  display: flex;
+  align-items: center;
   flex-shrink: 0;
 }
 
@@ -180,8 +219,14 @@
   letter-spacing: 0;
   white-space: nowrap;
   flex-shrink: 0;
-  border-radius: 0;
+  border-radius: 8px;
   position: relative;
+  width: 180px;
+  height: 120px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .manageButton:hover {
@@ -204,10 +249,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  border-radius: 8px;
   position: relative;
   overflow: hidden;
   animation: pulse 2s infinite;
+  width: 180px;
+  height: 120px;
 }
 
 .goingButton:hover {
@@ -331,6 +378,15 @@
     padding: 0 12px;
   }
   
+  .header {
+    margin-bottom: 20px;
+  }
+  
+  .toggleButton {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+  }
+  
   .eventsList {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -338,40 +394,55 @@
   }
   
   .eventCard {
-    height: 130px;
+    height: auto;
+    min-height: 130px;
     padding: 16px;
   }
   
   .eventImage {
-    width: 85px;
-    height: 85px;
+    width: 150px;
+    height: 150px;
     margin-right: 16px;
   }
   
   .imagePlaceholder {
-    width: 75px;
-    height: 75px;
-    font-size: 1.3rem;
+    font-size: 2rem;
   }
-  
   
   .eventTitle {
     font-size: 1.1rem;
     line-height: 1.3;
   }
   
-  .eventDate, .eventLocation {
+  .eventMetaRow {
+    gap: 8px;
+  }
+  
+  .calendarIconBox, .locationIconBox {
+    padding: 8px 10px;
+    gap: 5px;
+    width: 140px;
+    height: 100px;
+  }
+  
+  .calendarIcon, .locationIcon {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .calendarDate, .locationAddress {
     font-size: 0.7rem;
   }
   
-  .gameTitle {
-    font-size: 0.6rem;
-    padding: 3px 6px;
+  .calendarTime, .locationCity {
+    font-size: 0.65rem;
   }
   
   .manageButton, .goingButton {
     font-size: 0.7rem;
     padding: 6px 12px;
+    width: 140px;
+    height: 100px;
   }
 }
 
@@ -384,6 +455,15 @@
     padding: 0 8px;
   }
   
+  .header {
+    margin-bottom: 16px;
+  }
+  
+  .toggleButton {
+    padding: 7px 14px;
+    font-size: 0.75rem;
+  }
+  
   .eventsList {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -391,40 +471,55 @@
   }
   
   .eventCard {
-    height: 120px;
+    height: auto;
+    min-height: 120px;
     padding: 12px;
   }
   
   .eventImage {
-    width: 75px;
-    height: 75px;
+    width: 130px;
+    height: 130px;
     margin-right: 14px;
   }
   
   .imagePlaceholder {
-    width: 65px;
-    height: 65px;
-    font-size: 1.2rem;
+    font-size: 1.8rem;
   }
-  
   
   .eventTitle {
     font-size: 1rem;
     line-height: 1.3;
   }
   
-  .eventDate, .eventLocation {
+  .eventMetaRow {
+    gap: 6px;
+  }
+  
+  .calendarIconBox, .locationIconBox {
+    padding: 6px 8px;
+    gap: 4px;
+    width: 120px;
+    height: 90px;
+  }
+  
+  .calendarIcon, .locationIcon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .calendarDate, .locationAddress {
     font-size: 0.65rem;
   }
   
-  .gameTitle {
-    font-size: 0.55rem;
-    padding: 2px 4px;
+  .calendarTime, .locationCity {
+    font-size: 0.6rem;
   }
   
   .manageButton, .goingButton {
     font-size: 0.65rem;
     padding: 5px 10px;
+    width: 120px;
+    height: 90px;
   }
 }
 
@@ -436,26 +531,50 @@
   }
   
   .eventCard {
-    height: 150px;
+    height: auto;
+    min-height: 150px;
     padding: 12px;
   }
   
   .eventImage {
-    width: 100px;
-    height: 100px;
+    width: 170px;
+    height: 170px;
     margin-right: 18px;
   }
   
   .imagePlaceholder {
-    width: 90px;
-    height: 90px;
-    font-size: 1.4rem;
+    font-size: 2.2rem;
   }
   
+  .eventMetaRow {
+    gap: 10px;
+  }
+  
+  .calendarIconBox, .locationIconBox {
+    padding: 10px 12px;
+    gap: 5px;
+    width: 160px;
+    height: 110px;
+  }
+  
+  .calendarIcon, .locationIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .calendarDate, .locationAddress {
+    font-size: 0.72rem;
+  }
+  
+  .calendarTime, .locationCity {
+    font-size: 0.67rem;
+  }
   
   .manageButton, .goingButton {
     font-size: 0.7rem;
     padding: 6px 12px;
+    width: 160px;
+    height: 110px;
   }
 }
 
@@ -476,40 +595,55 @@
   }
   
   .eventCard {
-    height: 160px;
+    height: auto;
+    min-height: 180px;
     padding: 20px;
   }
   
   .eventImage {
-    width: 110px;
-    height: 110px;
+    width: 200px;
+    height: 200px;
     margin-right: 20px;
   }
   
   .imagePlaceholder {
-    width: 100px;
-    height: 100px;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
   }
-  
   
   .eventTitle { 
     font-size: 1.2rem; 
     line-height: 1.3;
   }
   
-  .eventDate, .eventLocation { 
-    font-size: 0.75rem; 
+  .eventMetaRow {
+    gap: 12px;
   }
   
-  .gameTitle {
-    font-size: 0.65rem;
-    padding: 4px 8px;
+  .calendarIconBox, .locationIconBox {
+    padding: 12px 16px;
+    gap: 6px;
+    width: 180px;
+    height: 120px;
+  }
+  
+  .calendarIcon, .locationIcon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .calendarDate, .locationAddress {
+    font-size: 0.75rem;
+  }
+  
+  .calendarTime, .locationCity {
+    font-size: 0.7rem;
   }
   
   .manageButton, .goingButton {
     font-size: 0.8rem;
     padding: 8px 16px;
+    width: 180px;
+    height: 120px;
   }
 }
 
