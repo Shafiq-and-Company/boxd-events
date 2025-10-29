@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabaseClient'
-import PageTitle from './PageTitle'
 import styles from './UserSettings.module.css'
 
 export default function UserSettings() {
-  const { user, loading: authLoading } = useAuth()
+  const { user, loading: authLoading, signInWithDiscord } = useAuth()
   const router = useRouter()
   
   // State management
@@ -16,8 +15,7 @@ export default function UserSettings() {
   const [passwordResetError, setPasswordResetError] = useState(false)
   const [googleAuthStatus, setGoogleAuthStatus] = useState(null)
   const [discordAuthStatus, setDiscordAuthStatus] = useState(null)
-  const [unlinkLoading, setUnlinkLoading] = useState(false)
-  const [discordUnlinkLoading, setDiscordUnlinkLoading] = useState(false)
+  const [unlinkLoading, setUnlinkLoading] = useState({ google: false, discord: false })
   
   const [userProfile, setUserProfile] = useState({
     first_name: '',
@@ -36,8 +34,8 @@ export default function UserSettings() {
     }
     if (user) {
       fetchUserProfile()
-      checkGoogleAuthStatus()
-      checkDiscordAuthStatus()
+      checkAuthStatus('google')
+      checkAuthStatus('discord')
     }
   }, [user, authLoading, router])
 
@@ -103,81 +101,61 @@ export default function UserSettings() {
     }
   }
 
-  // Check if user has Google authentication linked
-  const checkGoogleAuthStatus = async () => {
+  // Check authentication status for a provider
+  const checkAuthStatus = async (provider) => {
     try {
       const { data: { user: currentUser } } = await supabase.auth.getUser()
-      if (currentUser?.identities) {
-        const hasGoogleAuth = currentUser.identities.some(identity => identity.provider === 'google')
-        setGoogleAuthStatus(hasGoogleAuth)
-      } else {
-        setGoogleAuthStatus(false)
+      const hasAuth = currentUser?.identities?.some(identity => identity.provider === provider) || false
+      
+      if (provider === 'google') {
+        setGoogleAuthStatus(hasAuth)
+      } else if (provider === 'discord') {
+        setDiscordAuthStatus(hasAuth)
       }
     } catch (err) {
-      console.error('Error checking Google auth status:', err)
-      setGoogleAuthStatus(false)
-    }
-  }
-
-  // Check if user has Discord authentication linked
-  const checkDiscordAuthStatus = async () => {
-    try {
-      const { data: { user: currentUser } } = await supabase.auth.getUser()
-      if (currentUser?.identities) {
-        const hasDiscordAuth = currentUser.identities.some(identity => identity.provider === 'discord')
-        setDiscordAuthStatus(hasDiscordAuth)
-      } else {
+      console.error(`Error checking ${provider} auth status:`, err)
+      if (provider === 'google') {
+        setGoogleAuthStatus(false)
+      } else if (provider === 'discord') {
         setDiscordAuthStatus(false)
       }
-    } catch (err) {
-      console.error('Error checking Discord auth status:', err)
-      setDiscordAuthStatus(false)
     }
   }
 
-  // Handle Google unlink
-  const handleGoogleUnlink = async () => {
+  // Handle provider unlink
+  const handleUnlink = async (provider) => {
     try {
-      setUnlinkLoading(true)
-      setGoogleAuthStatus(null)
+      setUnlinkLoading(prev => ({ ...prev, [provider]: true }))
       
-      const { error } = await supabase.auth.unlinkIdentity({
-        provider: 'google'
-      })
+      if (provider === 'google') {
+        setGoogleAuthStatus(null)
+      } else if (provider === 'discord') {
+        setDiscordAuthStatus(null)
+      }
+      
+      const { error } = await supabase.auth.unlinkIdentity({ provider })
       
       if (error) throw error
       
-      await checkGoogleAuthStatus()
-      alert('Successfully unlinked from Google!')
+      await checkAuthStatus(provider)
+      alert(`Successfully unlinked from ${provider.charAt(0).toUpperCase() + provider.slice(1)}!`)
     } catch (err) {
-      console.error('Error unlinking Google auth:', err)
-      alert('Unable to unlink Google account automatically. Please contact support or sign out and sign back in to change your authentication method.')
-      await checkGoogleAuthStatus()
+      console.error(`Error unlinking ${provider} auth:`, err)
+      alert(`Unable to unlink ${provider.charAt(0).toUpperCase() + provider.slice(1)} account. Please contact support or sign out and sign back in to change your authentication method.`)
+      await checkAuthStatus(provider)
     } finally {
-      setUnlinkLoading(false)
+      setUnlinkLoading(prev => ({ ...prev, [provider]: false }))
     }
   }
 
-  // Handle Discord unlink
-  const handleDiscordUnlink = async () => {
+  // Handle Discord link using AuthContext
+  const handleDiscordLink = async () => {
     try {
-      setDiscordUnlinkLoading(true)
-      setDiscordAuthStatus(null)
-      
-      const { error } = await supabase.auth.unlinkIdentity({
-        provider: 'discord'
-      })
-      
+      const { error } = await signInWithDiscord()
       if (error) throw error
-      
-      await checkDiscordAuthStatus()
-      alert('Successfully unlinked from Discord!')
     } catch (err) {
-      console.error('Error unlinking Discord auth:', err)
-      alert('Unable to unlink Discord account automatically. Please contact support or sign out and sign back in to change your authentication method.')
-      await checkDiscordAuthStatus()
-    } finally {
-      setDiscordUnlinkLoading(false)
+      console.error('Error linking Discord auth:', err)
+      alert('Unable to link Discord account. Please try again or contact support.')
     }
   }
 
@@ -269,7 +247,6 @@ export default function UserSettings() {
   if (authLoading) {
     return (
       <div className={styles.userSettings}>
-        <PageTitle title="User Settings" subtitle="Manage your account information and preferences" />
         <div className={styles.loading}>Loading...</div>
       </div>
     )
@@ -282,8 +259,6 @@ export default function UserSettings() {
 
   return (
     <div className={styles.userSettings}>
-      <PageTitle title="User Settings" subtitle="Manage your account information and preferences" />
-      
       <form onSubmit={handleSubmit} className={styles.form}>
           {/* Name Fields */}
           <div className={styles.nameFields}>
@@ -344,6 +319,40 @@ export default function UserSettings() {
             </div>
           </div>
 
+          {/* Email and Phone Fields */}
+          <div className={styles.nameFields}>
+            <div className={styles.formGroup}>
+              <label htmlFor="email" className={styles.label}>Email Address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={userProfile.email}
+                className={styles.input}
+                disabled
+                title="Email cannot be changed here. Contact support if you need to change your email."
+              />
+              <p className={styles.helpText}>
+                Email address cannot be changed here. Contact support if you need to update your email.
+              </p>
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="phone" className={styles.label}>Phone Number</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={userProfile.phone}
+                onChange={handleInputChange}
+                className={styles.input}
+                placeholder="Enter your phone number"
+                maxLength={11}
+                pattern="[0-9]*"
+                inputMode="numeric"
+              />
+            </div>
+          </div>
+
           {/* Bio */}
           <div className={styles.formGroup}>
             <label htmlFor="biography" className={styles.label}>
@@ -362,40 +371,6 @@ export default function UserSettings() {
             <div className={styles.characterCount}>
               {userProfile.biography.length}/500
             </div>
-          </div>
-
-          {/* Email */}
-          <div className={styles.formGroup}>
-            <label htmlFor="email" className={styles.label}>Email Address</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={userProfile.email}
-              className={styles.input}
-              disabled
-              title="Email cannot be changed here. Contact support if you need to change your email."
-            />
-            <p className={styles.helpText}>
-              Email address cannot be changed here. Contact support if you need to update your email.
-            </p>
-          </div>
-
-          {/* Phone */}
-          <div className={styles.formGroup}>
-            <label htmlFor="phone" className={styles.label}>Phone Number</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={userProfile.phone}
-              onChange={handleInputChange}
-              className={styles.input}
-              placeholder="Enter your phone number"
-              maxLength={11}
-              pattern="[0-9]*"
-              inputMode="numeric"
-            />
           </div>
 
           {/* Save Button */}
@@ -464,15 +439,15 @@ export default function UserSettings() {
                 <button 
                   type="button" 
                   className={styles.googleLinkedButton}
-                  onClick={handleGoogleUnlink}
-                  disabled={googleAuthStatus === null || unlinkLoading}
+                  onClick={() => handleUnlink('google')}
+                  disabled={googleAuthStatus === null || unlinkLoading.google}
                   title="Click to unlink Google account"
                 >
                   <span className={styles.buttonText}>
-                    {unlinkLoading ? 'Unlinking...' : 'Linked'}
+                    {unlinkLoading.google ? 'Unlinking...' : 'Linked'}
                   </span>
                   <span className={styles.buttonHoverText}>
-                    {unlinkLoading ? 'Unlinking...' : 'Unlink'}
+                    {unlinkLoading.google ? 'Unlinking...' : 'Unlink'}
                   </span>
                 </button>
               )}
@@ -480,7 +455,7 @@ export default function UserSettings() {
                 <button 
                   type="button" 
                   className={styles.refreshButton}
-                  onClick={checkGoogleAuthStatus}
+                  onClick={() => checkAuthStatus('google')}
                   disabled={googleAuthStatus === null}
                 >
                   Refresh
@@ -511,15 +486,15 @@ export default function UserSettings() {
                 <button 
                   type="button" 
                   className={styles.discordLinkedButton}
-                  onClick={handleDiscordUnlink}
-                  disabled={discordAuthStatus === null || discordUnlinkLoading}
+                  onClick={() => handleUnlink('discord')}
+                  disabled={discordAuthStatus === null || unlinkLoading.discord}
                   title="Click to unlink Discord account"
                 >
                   <span className={styles.buttonText}>
-                    {discordUnlinkLoading ? 'Unlinking...' : 'Linked'}
+                    {unlinkLoading.discord ? 'Unlinking...' : 'Linked'}
                   </span>
                   <span className={styles.buttonHoverText}>
-                    {discordUnlinkLoading ? 'Unlinking...' : 'Unlink'}
+                    {unlinkLoading.discord ? 'Unlinking...' : 'Unlink'}
                   </span>
                 </button>
               )}
@@ -527,16 +502,11 @@ export default function UserSettings() {
                 <button 
                   type="button" 
                   className={styles.discordUnlinkedButton}
-                  onClick={checkDiscordAuthStatus}
+                  onClick={handleDiscordLink}
                   disabled={discordAuthStatus === null}
                   title="Click to link Discord account"
                 >
-                  <span className={styles.buttonText}>
-                    Link
-                  </span>
-                  <span className={styles.buttonHoverText}>
-                    Link
-                  </span>
+                  Link
                 </button>
               )}
             </div>
