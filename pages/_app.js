@@ -14,11 +14,7 @@ function Application({ Component, pageProps }) {
       <div style={{ 
         display: 'flex', 
         flexDirection: 'column', 
-        minHeight: '100vh',
-        backgroundImage: `
-          linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px)
-        `,
-        backgroundSize: '40px 40px'
+        minHeight: '100vh'
       }}>
         <Component {...pageProps} />
         {!isLoginPage && !isSplashPage && !isManageTournamentPage && <Footer />}

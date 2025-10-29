@@ -16,9 +16,6 @@ html { font-size: 16px; line-height: 1.5; }
 body { 
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica', 'Arial', sans-serif;
   background: #ffffff; 
-  background-image: 
-    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
   color: #000000; min-height: 100vh; 
   padding-top: 60px; /* Account for fixed navbar */
 }

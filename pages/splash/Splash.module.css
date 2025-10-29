@@ -5,10 +5,6 @@
   padding: 0;
   min-height: 100vh;
   position: relative;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
 }
 
 .pageContainer * {
@@ -30,16 +26,6 @@
   overflow: hidden;
   margin-top: -64px;
   padding-top: 144px;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
-  animation: backgroundShift 20s ease-in-out infinite;
-}
-
-@keyframes backgroundShift {
-  0%, 100% { background-position: 0 0, 0 0; }
-  50% { background-position: 40px 40px, 40px 40px; }
 }
 
 .heroContent {
@@ -298,12 +284,6 @@
 .valuePropsSection {
   padding: 120px 24px;
   background: #FFFFFF;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
-  animation: backgroundShift 20s ease-in-out infinite;
-  animation-delay: -10s;
 }
 
 .sectionContent {
@@ -438,10 +418,6 @@
 .discoverSection {
   padding: 120px 24px;
   background: #F8F8F8;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
 }
 
 .discoverContent {
@@ -493,10 +469,6 @@
 .calendarSection {
   padding: 120px 24px;
   background: #FFFFFF;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
 }
 
 .calendarContent {
@@ -550,10 +522,6 @@
 .linkProfilesSection {
   padding: 120px 24px;
   background: #F8F8F8;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
 }
 
 .linkProfilesContent {
@@ -639,10 +607,6 @@
 .videoDemoSection {
   padding: 60px 24px;
   background: #FFFFFF;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
 }
 
 .videoDemoGrid {
@@ -786,20 +750,12 @@
 .featuresSection {
   padding: 120px 24px;
   background: #FFFFFF;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
 }
 
 /* Advanced Features Section */
 .advancedFeaturesSection {
   padding: 120px 24px;
   background: #FFFFFF;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
 }
 
 .advancedFeaturesGrid {
@@ -916,10 +872,6 @@
 .faqsSection {
   padding: 80px 24px;
   background: #F8F8F8;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
 }
 
 .faqsGrid {
@@ -1016,10 +968,6 @@
   background: #000000;
   color: #FFFFFF;
   text-align: center;
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 0;
 }
 
 .finalCtaContent {
