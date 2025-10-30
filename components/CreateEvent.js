@@ -2,12 +2,12 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
+import ThemeSelector from './ThemeSelector'
 import styles from './CreateEvent.module.css'
 
 export default function CreateEvent() {
   const { user } = useAuth()
   const router = useRouter()
-  // Get today's date in the format required for datetime-local input
   const getTodayDateTime = () => {
     const now = new Date()
     const year = now.getFullYear()
@@ -48,14 +48,9 @@ export default function CreateEvent() {
       [name]: value
     }))
 
-    // Update background image when game is selected
     if (name === 'game_id') {
-      if (value === '') {
-        setGameBackgroundImage(null)
-      } else {
-        const selectedGame = games.find(game => String(game.id) === String(value))
-        setGameBackgroundImage(selectedGame?.game_background_image_url || null)
-      }
+      const selectedGame = value ? games.find(game => String(game.id) === String(value)) : null
+      setGameBackgroundImage(selectedGame?.game_background_image_url || null)
     }
   }
 
@@ -63,122 +58,10 @@ export default function CreateEvent() {
     const enabled = e.target.checked
     setGameSelectionEnabled(enabled)
     
-    // Clear game selection and background when disabled
     if (!enabled) {
-      setFormData(prev => ({
-        ...prev,
-        game_id: ''
-      }))
+      setFormData(prev => ({ ...prev, game_id: '' }))
       setGameBackgroundImage(null)
     }
-  }
-
-  const handleThemeChange = (e) => {
-    const { value } = e.target
-    
-    // If empty value, clear theme
-    if (value === '') {
-      setCurrentTheme(null)
-      return
-    }
-    
-    // Create theme object based on selected theme
-    let themeObject = null
-    if (value === 'blue') {
-      themeObject = {
-        name: 'blue',
-        colors: {
-          background: '#f0f8ff',
-          primary: '#000000',
-          secondary: '#e6f3ff',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'red') {
-      themeObject = {
-        name: 'red',
-        colors: {
-          background: '#fff0f0',
-          primary: '#000000',
-          secondary: '#ffe6e6',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'green') {
-      themeObject = {
-        name: 'green',
-        colors: {
-          background: '#f0fff0',
-          primary: '#000000',
-          secondary: '#e6ffe6',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'yellow') {
-      themeObject = {
-        name: 'yellow',
-        colors: {
-          background: '#fffef0',
-          primary: '#000000',
-          secondary: '#fffce6',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'purple') {
-      themeObject = {
-        name: 'purple',
-        colors: {
-          background: '#f8f0ff',
-          primary: '#000000',
-          secondary: '#f0e6ff',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'orange') {
-      themeObject = {
-        name: 'orange',
-        colors: {
-          background: '#fff8f0',
-          primary: '#000000',
-          secondary: '#ffe6cc',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'pink') {
-      themeObject = {
-        name: 'pink',
-        colors: {
-          background: '#fff0f8',
-          primary: '#000000',
-          secondary: '#ffe6f3',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    }
-
-    // Update current theme state
-    setCurrentTheme(themeObject)
   }
 
   useEffect(() => {
@@ -209,46 +92,37 @@ export default function CreateEvent() {
     }
   }, [user])
 
-  // Update CSS variable for theme overlay when theme or background changes
   useEffect(() => {
-    if (containerRef.current) {
-      if (currentTheme) {
-        const hex = currentTheme.colors.background
-        const r = parseInt(hex.slice(1, 3), 16)
-        const g = parseInt(hex.slice(3, 5), 16)
-        const b = parseInt(hex.slice(5, 7), 16)
-        const overlayColor = `rgba(${r}, ${g}, ${b}, 0.8)`
-        containerRef.current.style.setProperty('--theme-overlay-color', overlayColor)
-      } else {
-        // Default white overlay when no theme selected
-        containerRef.current.style.setProperty('--theme-overlay-color', 'rgba(255, 255, 255, 0.95)')
-      }
+    if (!containerRef.current) return
+
+    if (currentTheme) {
+      const hex = currentTheme.colors.background
+      const r = parseInt(hex.slice(1, 3), 16)
+      const g = parseInt(hex.slice(3, 5), 16)
+      const b = parseInt(hex.slice(5, 7), 16)
+      const overlayColor = `rgba(${r}, ${g}, ${b}, 0.8)`
+      containerRef.current.style.setProperty('--theme-overlay-color', overlayColor)
+    } else {
+      containerRef.current.style.setProperty('--theme-overlay-color', 'rgba(255, 255, 255, 0.95)')
     }
-  }, [gameBackgroundImage, currentTheme])
-
-
+  }, [currentTheme])
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setError('Please select an image file')
-        return
-      }
-      
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setError('File size must be less than 5MB')
-        return
-      }
-      
-      setBannerFile(file)
-      
-      // Create preview URL
-      const previewUrl = URL.createObjectURL(file)
-      setBannerPreview(previewUrl)
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file')
+      return
     }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File size must be less than 5MB')
+      return
+    }
+
+    setBannerFile(file)
+    setBannerPreview(URL.createObjectURL(file))
   }
 
   const uploadBannerImage = async () => {
@@ -257,7 +131,6 @@ export default function CreateEvent() {
     try {
       setUploading(true)
       
-      // Generate unique filename
       const fileExt = bannerFile.name.split('.').pop()
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
       
@@ -265,11 +138,8 @@ export default function CreateEvent() {
         .from('event_banner_images')
         .upload(fileName, bannerFile)
       
-      if (error) {
-        throw error
-      }
+      if (error) throw error
       
-      // Get public URL
       const { data: urlData } = supabase.storage
         .from('event_banner_images')
         .getPublicUrl(data.path)
@@ -284,7 +154,6 @@ export default function CreateEvent() {
     }
   }
 
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     
@@ -297,13 +166,8 @@ export default function CreateEvent() {
     setError(null)
 
     try {
-      // Upload banner image if provided
-      let bannerImageUrl = null
-      if (bannerFile) {
-        bannerImageUrl = await uploadBannerImage()
-      }
+      const bannerImageUrl = bannerFile ? await uploadBannerImage() : null
 
-      // Prepare event data with only the fields that should be saved
       const eventData = {
         title: formData.title,
         description: formData.description,
@@ -335,7 +199,7 @@ export default function CreateEvent() {
         description: formData.description,
         max_participants: 64,
         min_participants: 2,
-        status: 'active', // Set to active so bracket is immediately generated
+        status: 'active',
         tournament_type: 'single_elimination',
         rules: 'Standard tournament rules apply. Check with event host for specific details.',
         bracket_data: {}
@@ -348,26 +212,13 @@ export default function CreateEvent() {
 
       if (tournamentError) {
         console.error('Error creating tournament:', tournamentError)
-        // Don't throw error here - event was created successfully
-      } else if (tournamentResult && tournamentResult[0]) {
-        // Import tournament manager to generate the bracket
-        const tournamentManager = (await import('../lib/tournamentManager')).default;
-        
-        // Generate the tournament bracket immediately (if enough participants)
-        const bracketResult = await tournamentManager.createTournament(tournamentResult[0].id, formData.title);
-        
-        if (bracketResult) {
-          console.log('Tournament bracket generated successfully');
-        } else {
-          console.log('Tournament created but waiting for more participants');
-        }
+      } else if (tournamentResult?.[0]) {
+        const tournamentManager = (await import('../lib/tournamentManager')).default
+        await tournamentManager.createTournament(tournamentResult[0].id, formData.title)
       }
 
-      // Show success popup and navigate to manage event page
-      setTimeout(() => {
-        alert('Event and tournament created successfully!')
-        router.push(`/manage-event/${data[0].id}`)
-      }, 1000)
+      alert('Event and tournament created successfully!')
+      router.push(`/manage-event/${data[0].id}`)
 
     } catch (err) {
       setError(err.message)
@@ -386,7 +237,6 @@ export default function CreateEvent() {
     )
   }
 
-  // Apply game background image with theme overlay
   const pageStyle = gameBackgroundImage ? {
     backgroundImage: `url(${gameBackgroundImage})`,
     backgroundSize: 'cover',
@@ -553,7 +403,7 @@ export default function CreateEvent() {
               disabled={!gameSelectionEnabled || loadingGames}
             >
               <option value="">Select a game</option>
-              {games.map((game) => (
+              {games.map(game => (
                 <option key={game.id} value={game.id}>
                   {game.game_title}
                 </option>
@@ -602,9 +452,7 @@ export default function CreateEvent() {
                   onClick={() => {
                     setBannerFile(null)
                     setBannerPreview(null)
-                    // Reset file input
-                    const fileInput = document.getElementById('bannerFile')
-                    if (fileInput) fileInput.value = ''
+                    document.getElementById('bannerFile')?.setAttribute('value', '')
                   }}
                   className={styles.removeImageButton}
                 >
@@ -613,90 +461,7 @@ export default function CreateEvent() {
               )}
             </div>
 
-            <div className={styles.themeSelector}>
-              <div className={styles.themeLabel}>Choose Theme</div>
-              <div className={styles.themeOptions}>
-                <button
-                  type="button"
-                  className={`${styles.themeOption} ${!currentTheme ? styles.themeOptionActive : ''}`}
-                  onClick={() => handleThemeChange({ target: { value: '' } })}
-                  style={{ background: '#ffffff', border: '2px solid #000' }}
-                  title="Default"
-                >
-                  <div className={styles.themeOptionName}>Default</div>
-                </button>
-                
-                <button
-                  type="button"
-                  className={`${styles.themeOption} ${currentTheme?.name === 'blue' ? styles.themeOptionActive : ''}`}
-                  onClick={() => handleThemeChange({ target: { value: 'blue' } })}
-                  style={{ background: '#f0f8ff', border: '2px solid #000' }}
-                  title="Blue"
-                >
-                  <div className={styles.themeOptionName}>Blue</div>
-                </button>
-                
-                <button
-                  type="button"
-                  className={`${styles.themeOption} ${currentTheme?.name === 'red' ? styles.themeOptionActive : ''}`}
-                  onClick={() => handleThemeChange({ target: { value: 'red' } })}
-                  style={{ background: '#fff0f0', border: '2px solid #000' }}
-                  title="Red"
-                >
-                  <div className={styles.themeOptionName}>Red</div>
-                </button>
-                
-                <button
-                  type="button"
-                  className={`${styles.themeOption} ${currentTheme?.name === 'green' ? styles.themeOptionActive : ''}`}
-                  onClick={() => handleThemeChange({ target: { value: 'green' } })}
-                  style={{ background: '#f0fff0', border: '2px solid #000' }}
-                  title="Green"
-                >
-                  <div className={styles.themeOptionName}>Green</div>
-                </button>
-                
-                <button
-                  type="button"
-                  className={`${styles.themeOption} ${currentTheme?.name === 'yellow' ? styles.themeOptionActive : ''}`}
-                  onClick={() => handleThemeChange({ target: { value: 'yellow' } })}
-                  style={{ background: '#fffef0', border: '2px solid #000' }}
-                  title="Yellow"
-                >
-                  <div className={styles.themeOptionName}>Yellow</div>
-                </button>
-                
-                <button
-                  type="button"
-                  className={`${styles.themeOption} ${currentTheme?.name === 'purple' ? styles.themeOptionActive : ''}`}
-                  onClick={() => handleThemeChange({ target: { value: 'purple' } })}
-                  style={{ background: '#f8f0ff', border: '2px solid #000' }}
-                  title="Purple"
-                >
-                  <div className={styles.themeOptionName}>Purple</div>
-                </button>
-                
-                <button
-                  type="button"
-                  className={`${styles.themeOption} ${currentTheme?.name === 'orange' ? styles.themeOptionActive : ''}`}
-                  onClick={() => handleThemeChange({ target: { value: 'orange' } })}
-                  style={{ background: '#fff8f0', border: '2px solid #000' }}
-                  title="Orange"
-                >
-                  <div className={styles.themeOptionName}>Orange</div>
-                </button>
-                
-                <button
-                  type="button"
-                  className={`${styles.themeOption} ${currentTheme?.name === 'pink' ? styles.themeOptionActive : ''}`}
-                  onClick={() => handleThemeChange({ target: { value: 'pink' } })}
-                  style={{ background: '#fff0f8', border: '2px solid #000' }}
-                  title="Pink"
-                >
-                  <div className={styles.themeOptionName}>Pink</div>
-                </button>
-              </div>
-            </div>
+            <ThemeSelector value={currentTheme} onChange={setCurrentTheme} />
           </div>
         </div>
       </div>
