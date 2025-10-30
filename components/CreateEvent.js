@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
@@ -38,6 +38,8 @@ export default function CreateEvent() {
   const [loadingGames, setLoadingGames] = useState(false)
   const [gameBackgroundImage, setGameBackgroundImage] = useState(null)
   const [gameSelectionEnabled, setGameSelectionEnabled] = useState(false)
+  const [currentTheme, setCurrentTheme] = useState(null)
+  const containerRef = useRef(null)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -71,6 +73,114 @@ export default function CreateEvent() {
     }
   }
 
+  const handleThemeChange = (e) => {
+    const { value } = e.target
+    
+    // If empty value, clear theme
+    if (value === '') {
+      setCurrentTheme(null)
+      return
+    }
+    
+    // Create theme object based on selected theme
+    let themeObject = null
+    if (value === 'blue') {
+      themeObject = {
+        name: 'blue',
+        colors: {
+          background: '#f0f8ff',
+          primary: '#000000',
+          secondary: '#e6f3ff',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'red') {
+      themeObject = {
+        name: 'red',
+        colors: {
+          background: '#fff0f0',
+          primary: '#000000',
+          secondary: '#ffe6e6',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'green') {
+      themeObject = {
+        name: 'green',
+        colors: {
+          background: '#f0fff0',
+          primary: '#000000',
+          secondary: '#e6ffe6',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'yellow') {
+      themeObject = {
+        name: 'yellow',
+        colors: {
+          background: '#fffef0',
+          primary: '#000000',
+          secondary: '#fffce6',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'purple') {
+      themeObject = {
+        name: 'purple',
+        colors: {
+          background: '#f8f0ff',
+          primary: '#000000',
+          secondary: '#f0e6ff',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'orange') {
+      themeObject = {
+        name: 'orange',
+        colors: {
+          background: '#fff8f0',
+          primary: '#000000',
+          secondary: '#ffe6cc',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    } else if (value === 'pink') {
+      themeObject = {
+        name: 'pink',
+        colors: {
+          background: '#fff0f8',
+          primary: '#000000',
+          secondary: '#ffe6f3',
+          accent: '#333333',
+          text: '#000000',
+          textSecondary: '#666666',
+          border: '#000000'
+        }
+      }
+    }
+
+    // Update current theme state
+    setCurrentTheme(themeObject)
+  }
+
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -98,6 +208,23 @@ export default function CreateEvent() {
       fetchGames()
     }
   }, [user])
+
+  // Update CSS variable for theme overlay when theme or background changes
+  useEffect(() => {
+    if (containerRef.current) {
+      if (currentTheme) {
+        const hex = currentTheme.colors.background
+        const r = parseInt(hex.slice(1, 3), 16)
+        const g = parseInt(hex.slice(3, 5), 16)
+        const b = parseInt(hex.slice(5, 7), 16)
+        const overlayColor = `rgba(${r}, ${g}, ${b}, 0.8)`
+        containerRef.current.style.setProperty('--theme-overlay-color', overlayColor)
+      } else {
+        // Default white overlay when no theme selected
+        containerRef.current.style.setProperty('--theme-overlay-color', 'rgba(255, 255, 255, 0.95)')
+      }
+    }
+  }, [gameBackgroundImage, currentTheme])
 
 
 
@@ -188,7 +315,8 @@ export default function CreateEvent() {
         zip_code: formData.zip_code,
         host_id: user.id,
         banner_image_url: bannerImageUrl,
-        game_id: gameSelectionEnabled && formData.game_id ? formData.game_id : null
+        game_id: gameSelectionEnabled && formData.game_id ? formData.game_id : null,
+        theme: currentTheme
       }
 
       const { data, error } = await supabase
@@ -258,15 +386,19 @@ export default function CreateEvent() {
     )
   }
 
+  // Apply game background image with theme overlay
+  const pageStyle = gameBackgroundImage ? {
+    backgroundImage: `url(${gameBackgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat'
+  } : {}
+
   return (
     <div 
+      ref={containerRef}
       className={styles.createEvent}
-      style={gameBackgroundImage ? {
-        backgroundImage: `url(${gameBackgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      } : {}}
+      style={pageStyle}
     >
       {error && (
         <div className={styles.errorMessage}>
@@ -479,6 +611,91 @@ export default function CreateEvent() {
                   Remove Image
                 </button>
               )}
+            </div>
+
+            <div className={styles.themeSelector}>
+              <div className={styles.themeLabel}>Choose Theme</div>
+              <div className={styles.themeOptions}>
+                <button
+                  type="button"
+                  className={`${styles.themeOption} ${!currentTheme ? styles.themeOptionActive : ''}`}
+                  onClick={() => handleThemeChange({ target: { value: '' } })}
+                  style={{ background: '#ffffff', border: '2px solid #000' }}
+                  title="Default"
+                >
+                  <div className={styles.themeOptionName}>Default</div>
+                </button>
+                
+                <button
+                  type="button"
+                  className={`${styles.themeOption} ${currentTheme?.name === 'blue' ? styles.themeOptionActive : ''}`}
+                  onClick={() => handleThemeChange({ target: { value: 'blue' } })}
+                  style={{ background: '#f0f8ff', border: '2px solid #000' }}
+                  title="Blue"
+                >
+                  <div className={styles.themeOptionName}>Blue</div>
+                </button>
+                
+                <button
+                  type="button"
+                  className={`${styles.themeOption} ${currentTheme?.name === 'red' ? styles.themeOptionActive : ''}`}
+                  onClick={() => handleThemeChange({ target: { value: 'red' } })}
+                  style={{ background: '#fff0f0', border: '2px solid #000' }}
+                  title="Red"
+                >
+                  <div className={styles.themeOptionName}>Red</div>
+                </button>
+                
+                <button
+                  type="button"
+                  className={`${styles.themeOption} ${currentTheme?.name === 'green' ? styles.themeOptionActive : ''}`}
+                  onClick={() => handleThemeChange({ target: { value: 'green' } })}
+                  style={{ background: '#f0fff0', border: '2px solid #000' }}
+                  title="Green"
+                >
+                  <div className={styles.themeOptionName}>Green</div>
+                </button>
+                
+                <button
+                  type="button"
+                  className={`${styles.themeOption} ${currentTheme?.name === 'yellow' ? styles.themeOptionActive : ''}`}
+                  onClick={() => handleThemeChange({ target: { value: 'yellow' } })}
+                  style={{ background: '#fffef0', border: '2px solid #000' }}
+                  title="Yellow"
+                >
+                  <div className={styles.themeOptionName}>Yellow</div>
+                </button>
+                
+                <button
+                  type="button"
+                  className={`${styles.themeOption} ${currentTheme?.name === 'purple' ? styles.themeOptionActive : ''}`}
+                  onClick={() => handleThemeChange({ target: { value: 'purple' } })}
+                  style={{ background: '#f8f0ff', border: '2px solid #000' }}
+                  title="Purple"
+                >
+                  <div className={styles.themeOptionName}>Purple</div>
+                </button>
+                
+                <button
+                  type="button"
+                  className={`${styles.themeOption} ${currentTheme?.name === 'orange' ? styles.themeOptionActive : ''}`}
+                  onClick={() => handleThemeChange({ target: { value: 'orange' } })}
+                  style={{ background: '#fff8f0', border: '2px solid #000' }}
+                  title="Orange"
+                >
+                  <div className={styles.themeOptionName}>Orange</div>
+                </button>
+                
+                <button
+                  type="button"
+                  className={`${styles.themeOption} ${currentTheme?.name === 'pink' ? styles.themeOptionActive : ''}`}
+                  onClick={() => handleThemeChange({ target: { value: 'pink' } })}
+                  style={{ background: '#fff0f8', border: '2px solid #000' }}
+                  title="Pink"
+                >
+                  <div className={styles.themeOptionName}>Pink</div>
+                </button>
+              </div>
             </div>
           </div>
         </div>

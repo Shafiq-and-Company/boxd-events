@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
@@ -36,6 +36,8 @@ export default function ManageEvent() {
   const [activeTab, setActiveTab] = useState('overview')
   const [tournament, setTournament] = useState(null)
   const [tournamentLoading, setTournamentLoading] = useState(false)
+  const [gameBackgroundImage, setGameBackgroundImage] = useState(null)
+  const containerRef = useRef(null)
 
   // Helper functions
   const formatDateForInput = (dateString) => {
@@ -286,13 +288,23 @@ export default function ManageEvent() {
 
       const { data: event, error } = await supabase
         .from('events')
-        .select('*')
+        .select(`
+          *,
+          games (game_background_image_url)
+        `)
         .eq('id', id)
         .eq('host_id', user.id)
         .single()
 
       if (error) throw error
       if (!event) throw new Error('Event not found or you do not have permission to edit it')
+
+      // Set game background image if available
+      if (event.games && event.games.game_background_image_url) {
+        setGameBackgroundImage(event.games.game_background_image_url)
+      } else {
+        setGameBackgroundImage(null)
+      }
 
       // Extract theme name from theme object
       let themeName = ''
@@ -369,6 +381,22 @@ export default function ManageEvent() {
       Notification.requestPermission()
     }
   }, [])
+
+  // Update CSS variable for theme overlay when theme or background changes
+  useEffect(() => {
+    if (containerRef.current) {
+      if (gameBackgroundImage && currentTheme) {
+        const hex = currentTheme.colors.background
+        const r = parseInt(hex.slice(1, 3), 16)
+        const g = parseInt(hex.slice(3, 5), 16)
+        const b = parseInt(hex.slice(5, 7), 16)
+        const overlayColor = `rgba(${r}, ${g}, ${b}, 0.8)`
+        containerRef.current.style.setProperty('--theme-overlay-color', overlayColor)
+      } else if (gameBackgroundImage) {
+        containerRef.current.style.setProperty('--theme-overlay-color', 'rgba(255, 255, 255, 0.95)')
+      }
+    }
+  }, [gameBackgroundImage, currentTheme])
 
   useEffect(() => {
     if (id && user) fetchEventData()
@@ -485,14 +513,19 @@ export default function ManageEvent() {
     )
   }
 
-  // Apply theme background
-  const pageStyle = currentTheme ? {
+  // Apply game background image with theme overlay
+  const pageStyle = gameBackgroundImage ? {
+    backgroundImage: `url(${gameBackgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat'
+  } : currentTheme ? {
     background: currentTheme.colors.background,
     minHeight: '100vh'
   } : {}
 
   return (
-    <div className={styles.manageEvent} style={pageStyle}>
+    <div ref={containerRef} className={styles.manageEvent} style={pageStyle}>
       
       {error && (
         <div className={styles.errorMessage}>{error}</div>
