@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabaseClient'
-import { useAuth } from '../lib/AuthContext'
+import { supabase } from '../../lib/supabaseClient'
+import { useAuth } from '../../lib/AuthContext'
 import styles from './DiscoverEvents.module.css'
 
 export default function DiscoverEvents() {
@@ -29,18 +29,33 @@ export default function DiscoverEvents() {
       setLoading(true)
       const { data, error } = await supabase
         .from('events')
-        .select('*')
+        .select(`
+          *,
+          games (id, game_title, game_background_image_url)
+        `)
         .order('starts_at', { ascending: true })
 
       if (error) {
         throw error
       }
 
-      setEvents(data || [])
+      // Map events to include game_title from joined games table
+      const eventsWithGameTitle = (data || []).map(event => {
+        const gameData = event.games 
+          ? (Array.isArray(event.games) ? event.games[0] : event.games)
+          : null
+        return {
+          ...event,
+          game_title: gameData?.game_title || null,
+          game_id: event.game_id || null
+        }
+      })
+
+      setEvents(eventsWithGameTitle)
       
-      // Extract unique game titles
+      // Extract unique game titles from joined games data
       const uniqueGameTitles = [...new Set(
-        (data || [])
+        eventsWithGameTitle
           .map(event => event.game_title)
           .filter(title => title && title.trim() !== '')
       )].sort()
@@ -200,3 +215,4 @@ export default function DiscoverEvents() {
     </div>
   )
 }
+
