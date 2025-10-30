@@ -210,6 +210,141 @@ export default function CreateEvent() {
 
       <div className={styles.formContainer}>
         <div className={styles.twoColumnLayout}>
+          <div className={styles.formColumn}>
+            <form onSubmit={handleSubmit} className={styles.form}>
+            <h2 className={styles.sectionTitle}>Basic Information</h2>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="title" className={styles.fieldLabel}>Event Title</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            required
+            className={styles.titleInput}
+            placeholder="Smash Tournament"
+          />
+        </div>
+
+        <div className={styles.dateTimeSection}>
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label htmlFor="starts_at" className={styles.fieldLabel}>Start Date & Time</label>
+              <input
+                type="datetime-local"
+                id="starts_at"
+                name="starts_at"
+                value={formData.starts_at}
+                onChange={handleInputChange}
+                required
+                className={styles.input}
+                placeholder="Start Date & Time"
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="ends_at" className={styles.fieldLabel}>End Date & Time</label>
+              <input
+                type="datetime-local"
+                id="ends_at"
+                name="ends_at"
+                value={formData.ends_at}
+                onChange={handleInputChange}
+                className={styles.input}
+                placeholder="End Date & Time"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.descriptionSection}>
+          <div className={styles.formGroup}>
+            <label htmlFor="description" className={styles.fieldLabel}>Description</label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              className={styles.textarea}
+              placeholder="Super Smash Bros Ultimate tournament with bracket matches and prizes. All skill levels welcome!"
+              rows="3"
+            />
+          </div>
+        </div>
+
+        <div className={styles.locationSection}>
+          <label className={styles.fieldLabel}>Location</label>
+          <div className={styles.combinedLocationField}>
+            <div className={styles.formGroup}>
+              <input
+                type="text"
+                id="location"
+                name="location"
+                value={formData.location}
+                onChange={handleInputChange}
+                className={styles.locationInput}
+                placeholder="Address"
+              />
+            </div>
+
+            <div className={styles.locationDivider}></div>
+
+            <div className={styles.formGroup}>
+              <input
+                type="text"
+                id="zip_code"
+                name="zip_code"
+                value={formData.zip_code}
+                onChange={handleInputChange}
+                className={styles.locationInput}
+                placeholder="Zip Code"
+              />
+            </div>
+
+            <div className={styles.locationDivider}></div>
+
+            <div className={styles.formGroup}>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                value={formData.city}
+                onChange={handleInputChange}
+                className={styles.locationInput}
+                placeholder="City"
+              />
+            </div>
+
+            <div className={styles.locationDivider}></div>
+
+            <div className={styles.formGroup}>
+              <input
+                type="text"
+                id="state"
+                name="state"
+                value={formData.state}
+                onChange={handleInputChange}
+                className={styles.locationInput}
+                placeholder="State"
+              />
+            </div>
+          </div>
+        </div>
+
+
+
+            <button 
+              type="submit" 
+              disabled={loading || uploading}
+              className={styles.submitButton}
+            >
+              {uploading ? 'Uploading Image...' : loading ? 'Creating Event...' : 'Create Event'}
+            </button>
+            </form>
+          </div>
+
           <div className={styles.bannerColumn}>
             <div className={styles.bannerImage}>
               {bannerPreview ? (
@@ -250,129 +385,6 @@ export default function CreateEvent() {
                 </button>
               )}
             </div>
-          </div>
-
-          <div className={styles.formColumn}>
-            <form onSubmit={handleSubmit} className={styles.form}>
-
-        <div className={styles.formGroup}>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
-            className={styles.titleInput}
-            placeholder="Event Title"
-          />
-        </div>
-
-        <div className={styles.dateTimeSection}>
-          <div className={styles.formRow}>
-            <div className={styles.formGroup}>
-              <input
-                type="datetime-local"
-                id="starts_at"
-                name="starts_at"
-                value={formData.starts_at}
-                onChange={handleInputChange}
-                required
-                className={styles.input}
-                placeholder="Start Date & Time"
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <input
-                type="datetime-local"
-                id="ends_at"
-                name="ends_at"
-                value={formData.ends_at}
-                onChange={handleInputChange}
-                className={styles.input}
-                placeholder="End Date & Time"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.descriptionSection}>
-          <div className={styles.formGroup}>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              className={styles.textarea}
-              placeholder="Event Description"
-              rows="3"
-            />
-          </div>
-        </div>
-
-        <div className={styles.locationSection}>
-          <div className={styles.formRowThree}>
-            <div className={styles.formGroup}>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                className={styles.input}
-                placeholder="Address"
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <input
-                type="text"
-                id="zip_code"
-                name="zip_code"
-                value={formData.zip_code}
-                onChange={handleInputChange}
-                className={styles.input}
-                placeholder="Zip Code"
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                className={styles.input}
-                placeholder="City"
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <input
-                type="text"
-                id="state"
-                name="state"
-                value={formData.state}
-                onChange={handleInputChange}
-                className={styles.input}
-                placeholder="State"
-              />
-            </div>
-          </div>
-        </div>
-
-
-
-            <button 
-              type="submit" 
-              disabled={loading || uploading}
-              className={styles.submitButton}
-            >
-              {uploading ? 'Uploading Image...' : loading ? 'Creating Event...' : 'Create Event'}
-            </button>
-            </form>
           </div>
         </div>
       </div>
