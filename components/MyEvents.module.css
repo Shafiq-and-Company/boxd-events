@@ -76,36 +76,69 @@
   margin: 0;
 }
 
+/* ===== TIMELINE LAYOUT ===== */
+.timelineWrapper { display: grid; gap: 24px; }
+
+.dateGroup { display: grid; grid-template-columns: 132px 1fr; gap: 20px; }
+
+.dateColumn { text-align: left; padding-top: 6px; }
+
+.dateKey {
+  color: #000000;
+  font-weight: 600;
+}
+
+.dateWeekday {
+  color: #707070;
+  font-size: 0.85rem;
+}
+
+.eventsColumn { position: relative; }
+
+.verticalTrack {
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #e0e0e0;
+}
+
+.eventItem { position: relative; padding-left: 24px; margin-bottom: 16px; }
+
+.trackDot { position: absolute; left: 3px; top: 28px; width: 9px; height: 9px; background: #9a9a9a; border-radius: 50%; }
+
 /* ===== EVENT CARDS ===== */
 .eventCard {
   background: #ffffff;
   height: auto;
-  min-height: 180px;
+  min-height: 112px;
   position: relative;
   cursor: pointer;
-  overflow: visible;
+  overflow: hidden;
   transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   width: 100%;
-  display: flex;
-  align-items: flex-start;
-  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 128px;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #ececec;
 }
 
-.eventCard:hover {
-}
+/* hover styles intentionally minimal to keep monochrome palette */
+.eventCard:hover { border-color: #d9d9d9; }
 
-.eventImage {
-  width: 200px;
-  height: 200px;
-  background: #f8f8f8;
+.eventThumb {
+  width: 128px;
+  height: 128px;
+  background: #f5f5f5;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 20px;
-  flex-shrink: 0;
-  align-self: stretch;
   border-radius: 8px;
   overflow: hidden;
+  margin-left: 0;
 }
 
 .imagePlaceholder {
@@ -131,143 +164,46 @@
   min-height: 0;
 }
 
-.eventTitle {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #000000;
-  line-height: 1.3;
-  margin-bottom: 12px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+.eventHeaderRow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 
-.eventMetaRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
+.eventTime { color: #707070; font-size: 0.85rem; }
 
-.calendarIconBox, .locationIconBox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 12px 16px;
-  background: transparent;
-  border: 1px solid #e0e0e0;
-  width: 180px;
-  height: 120px;
-  flex-shrink: 0;
-  border-radius: 8px;
-}
+.eventTitle { font-size: 1.1rem; font-weight: 600; color: #000000; line-height: 1.35; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-.calendarIcon, .locationIcon {
-  color: #666666;
-  flex-shrink: 0;
-}
+.metaRow { display: flex; gap: 8px; align-items: baseline; }
 
-.calendarDate, .calendarTime {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #000000;
-  line-height: 1.3;
-  text-align: center;
-  width: 100%;
-}
+.metaText { color: #000000; font-size: 0.9rem; }
+.metaSub { color: #707070; font-size: 0.8rem; }
+.metaWarn { color: #b36b00; font-size: 0.9rem; }
 
-.calendarTime {
-  font-size: 0.7rem;
-  color: #666666;
-}
+/* removed legacy icon/location/calendar blocks */
 
-.locationAddress, .locationCity {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #000000;
-  line-height: 1.3;
-  text-align: center;
-  width: 100%;
-}
-
-.locationCity {
-  font-size: 0.7rem;
-  color: #666666;
-}
-
-.eventActions {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
+.eventActions { display: flex; align-items: center; gap: 8px; }
 
 /* ===== EVENT ACTIONS ===== */
-.manageButton {
-  background: #666666;
+.managePill {
+  background: #000000;
   color: #ffffff;
-  border: 1px solid #666666;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border: 1px solid #000000;
+  padding: 6px 10px;
   font-size: 0.75rem;
   font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0;
-  white-space: nowrap;
-  flex-shrink: 0;
-  border-radius: 8px;
-  position: relative;
-  width: 180px;
-  height: 120px;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 999px;
 }
 
-.manageButton:hover {
-}
+/* removed legacy empty states */
 
-.manageButton:active {
-}
-
-.goingButton {
-  background: #4ade80;
-  color: #ffffff;
-  border: 1px solid #22c55e;
-  padding: 8px 16px;
+.goingPill {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+  padding: 6px 10px;
   font-size: 0.75rem;
   font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0;
-  white-space: nowrap;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  position: relative;
-  overflow: hidden;
-  animation: pulse 2s infinite;
-  width: 180px;
-  height: 120px;
+  border-radius: 999px;
 }
 
-.goingButton:hover {
-}
-
-@keyframes pulse {
-  0% {
-  }
-  50% {
-  }
-  100% {
-  }
-}
+/* removed unused keyframes */
 
 /* ===== STATE CLASSES ===== */
 .loading {
@@ -349,8 +285,7 @@
   margin-top: 16px;
 }
 
-.discoverButton:hover, .signInButton:hover {
-}
+/* hover left intentionally minimal */
 
 .notLoggedIn {
   text-align: left;
@@ -387,23 +322,14 @@
     font-size: 0.8rem;
   }
   
-  .eventsList {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    width: 100%;
-  }
+  .eventsList { grid-template-columns: 1fr; gap: 16px; width: 100%; }
+  .dateGroup { grid-template-columns: 110px 1fr; }
+  .eventCard { grid-template-columns: 1fr 104px; padding: 16px; gap: 12px; }
+  .eventThumb { width: 104px; height: 104px; }
   
-  .eventCard {
-    height: auto;
-    min-height: 130px;
-    padding: 16px;
-  }
+  .eventCard { height: auto; min-height: 120px; }
   
-  .eventImage {
-    width: 150px;
-    height: 150px;
-    margin-right: 16px;
-  }
+  /* removed legacy image sizing */
   
   .imagePlaceholder {
     font-size: 2rem;
@@ -414,36 +340,9 @@
     line-height: 1.3;
   }
   
-  .eventMetaRow {
-    gap: 8px;
-  }
+  /* removed legacy meta row */
   
-  .calendarIconBox, .locationIconBox {
-    padding: 8px 10px;
-    gap: 5px;
-    width: 140px;
-    height: 100px;
-  }
-  
-  .calendarIcon, .locationIcon {
-    width: 22px;
-    height: 22px;
-  }
-  
-  .calendarDate, .locationAddress {
-    font-size: 0.7rem;
-  }
-  
-  .calendarTime, .locationCity {
-    font-size: 0.65rem;
-  }
-  
-  .manageButton, .goingButton {
-    font-size: 0.7rem;
-    padding: 6px 12px;
-    width: 140px;
-    height: 100px;
-  }
+  /* removed legacy calendar/location/pill sizes */
 }
 
 @media (max-width: 480px) {
@@ -464,23 +363,14 @@
     font-size: 0.75rem;
   }
   
-  .eventsList {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    width: 100%;
-  }
+  .eventsList { grid-template-columns: 1fr; gap: 12px; width: 100%; }
+  .dateGroup { grid-template-columns: 96px 1fr; gap: 16px; }
+  .eventCard { grid-template-columns: 1fr 96px; padding: 12px; gap: 10px; }
+  .eventThumb { width: 96px; height: 96px; }
   
-  .eventCard {
-    height: auto;
-    min-height: 120px;
-    padding: 12px;
-  }
+  .eventCard { height: auto; min-height: 112px; }
   
-  .eventImage {
-    width: 130px;
-    height: 130px;
-    margin-right: 14px;
-  }
+  /* removed legacy image sizing */
   
   .imagePlaceholder {
     font-size: 1.8rem;
@@ -491,91 +381,24 @@
     line-height: 1.3;
   }
   
-  .eventMetaRow {
-    gap: 6px;
-  }
+  /* removed legacy meta row */
   
-  .calendarIconBox, .locationIconBox {
-    padding: 6px 8px;
-    gap: 4px;
-    width: 120px;
-    height: 90px;
-  }
-  
-  .calendarIcon, .locationIcon {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .calendarDate, .locationAddress {
-    font-size: 0.65rem;
-  }
-  
-  .calendarTime, .locationCity {
-    font-size: 0.6rem;
-  }
-  
-  .manageButton, .goingButton {
-    font-size: 0.65rem;
-    padding: 5px 10px;
-    width: 120px;
-    height: 90px;
-  }
+  /* removed legacy calendar/location/pill sizes */
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
-  .eventsList {
-    grid-template-columns: 1fr;
-    gap: 18px;
-    width: 100%;
-  }
+  .eventsList { grid-template-columns: 1fr; gap: 18px; width: 100%; }
   
-  .eventCard {
-    height: auto;
-    min-height: 150px;
-    padding: 12px;
-  }
-  
-  .eventImage {
-    width: 170px;
-    height: 170px;
-    margin-right: 18px;
-  }
+  .eventCard { height: auto; min-height: 120px; padding: 16px; gap: 14px; grid-template-columns: 1fr 116px; }
+  /* removed legacy image sizing */
   
   .imagePlaceholder {
     font-size: 2.2rem;
   }
   
-  .eventMetaRow {
-    gap: 10px;
-  }
+  /* removed legacy meta row */
   
-  .calendarIconBox, .locationIconBox {
-    padding: 10px 12px;
-    gap: 5px;
-    width: 160px;
-    height: 110px;
-  }
-  
-  .calendarIcon, .locationIcon {
-    width: 24px;
-    height: 24px;
-  }
-  
-  .calendarDate, .locationAddress {
-    font-size: 0.72rem;
-  }
-  
-  .calendarTime, .locationCity {
-    font-size: 0.67rem;
-  }
-  
-  .manageButton, .goingButton {
-    font-size: 0.7rem;
-    padding: 6px 12px;
-    width: 160px;
-    height: 110px;
-  }
+  /* removed legacy calendar/location/pill sizes */
 }
 
 @media (min-width: 1024px) {
@@ -594,17 +417,9 @@
     width: 100%;
   }
   
-  .eventCard {
-    height: auto;
-    min-height: 180px;
-    padding: 20px;
-  }
+  .eventCard { height: auto; min-height: 128px; padding: 20px; gap: 18px; grid-template-columns: 1fr 140px; }
   
-  .eventImage {
-    width: 200px;
-    height: 200px;
-    margin-right: 20px;
-  }
+  /* removed legacy image sizing */
   
   .imagePlaceholder {
     font-size: 2.5rem;
@@ -615,36 +430,9 @@
     line-height: 1.3;
   }
   
-  .eventMetaRow {
-    gap: 12px;
-  }
+  /* removed legacy meta row */
   
-  .calendarIconBox, .locationIconBox {
-    padding: 12px 16px;
-    gap: 6px;
-    width: 180px;
-    height: 120px;
-  }
-  
-  .calendarIcon, .locationIcon {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .calendarDate, .locationAddress {
-    font-size: 0.75rem;
-  }
-  
-  .calendarTime, .locationCity {
-    font-size: 0.7rem;
-  }
-  
-  .manageButton, .goingButton {
-    font-size: 0.8rem;
-    padding: 8px 16px;
-    width: 180px;
-    height: 120px;
-  }
+  /* removed legacy calendar/location/pill sizes */
 }
 
 /* ===== ACCESSIBILITY ===== */
@@ -655,10 +443,10 @@
 
 /* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
-  .eventCard, .manageButton { 
+  .eventCard, .managePill { 
     transition: none; 
   }
-  .eventCard:hover, .manageButton:hover { 
+  .eventCard:hover, .managePill:hover { 
     transform: none; 
   }
 }
@@ -671,11 +459,11 @@
   .eventCard:hover { 
     border-color: #000000; 
   }
-  .manageButton { 
+  .managePill { 
     border-color: #000000; 
     background: #ffffff;
   }
-  .goingButton {
+  .goingPill {
     border-color: #000000;
     background: #ffffff;
     color: #000000;

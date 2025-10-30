@@ -185,68 +185,17 @@ export default function MyEvents({ onTabChange }) {
 
   const renderEventCard = (event, isHosted = false) => (
     <div 
-      key={event.id} 
+      key={event.id}
       className={styles.eventCard}
       onClick={() => handleEventClick(event.id)}
     >
-      <div className={styles.eventImage}>
-        {event.banner_image_url ? (
-          <img 
-            src={event.banner_image_url} 
-            alt={event.title}
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              objectFit: 'cover'
-            }}
-          />
-        ) : (
-          <div className={styles.imagePlaceholder}>
-            {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
-          </div>
-        )}
-      </div>
-      
       <div className={styles.eventContent}>
-        <h3 className={styles.eventTitle}>{event.title}</h3>
-        
-        <div className={styles.eventMetaRow}>
-          <div className={styles.calendarIconBox}>
-            <svg className={styles.calendarIcon} width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-            <div className={styles.calendarDate}>
-              {formatDate(event.starts_at)}
-            </div>
-            <div className={styles.calendarTime}>
-              {formatTime(event.starts_at)}
-            </div>
-          </div>
-          
-          {event.location && (
-            <div className={styles.locationIconBox}>
-              <svg className={styles.locationIcon} width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-              <div className={styles.locationAddress}>
-                {event.location}
-              </div>
-              {event.city && (
-                <div className={styles.locationCity}>
-                  {event.city}
-                </div>
-              )}
-            </div>
-          )}
-          
+        <div className={styles.eventHeaderRow}>
+          <div className={styles.eventTime}>{formatTime(event.starts_at)}</div>
           <div className={styles.eventActions}>
             {isHosted ? (
-              <button 
-                className={styles.manageButton}
+              <button
+                className={styles.managePill}
                 onClick={(e) => {
                   e.stopPropagation()
                   handleEditEvent(event.id)
@@ -257,12 +206,35 @@ export default function MyEvents({ onTabChange }) {
                 Manage Event
               </button>
             ) : (
-              <div className={styles.goingButton}>
-                Going
-              </div>
+              <div className={styles.goingPill}>Going</div>
             )}
           </div>
         </div>
+        <h3 className={styles.eventTitle}>{event.title}</h3>
+        {!event.location && (
+          <div className={styles.metaWarn}>Location Missing</div>
+        )}
+        {event.location && (
+          <div className={styles.metaRow}>
+            <span className={styles.metaText}>{event.location}</span>
+            {event.city && <span className={styles.metaSub}>{event.city}</span>}
+          </div>
+        )}
+      </div>
+
+      <div className={styles.eventThumb}
+           aria-hidden="true">
+        {event.banner_image_url ? (
+          <img
+            src={event.banner_image_url}
+            alt=""
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        ) : (
+          <div className={styles.imagePlaceholder}>
+            {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
+          </div>
+        )}
       </div>
     </div>
   )
@@ -276,6 +248,20 @@ export default function MyEvents({ onTabChange }) {
     const eventDate = new Date(event.starts_at)
     return viewMode === 'upcoming' ? eventDate >= now : eventDate < now
   })
+
+  // Build grouped-by-date structure for timeline layout
+  const sortAsc = (a, b) => new Date(a.starts_at) - new Date(b.starts_at)
+  const sortDesc = (a, b) => new Date(b.starts_at) - new Date(a.starts_at)
+  const sorted = [...filteredEvents].sort(viewMode === 'upcoming' ? sortAsc : sortDesc)
+
+  const groups = sorted.reduce((acc, event) => {
+    const d = new Date(event.starts_at)
+    const key = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    const weekday = d.toLocaleDateString('en-US', { weekday: 'long' })
+    if (!acc[key]) acc[key] = { weekday, items: [] }
+    acc[key].items.push(event)
+    return acc
+  }, {})
 
   return (
     <div className={styles.myEvents}>
@@ -332,8 +318,24 @@ export default function MyEvents({ onTabChange }) {
             </div>
           </div>
         ) : (
-          <div className={styles.eventsList}>
-            {filteredEvents.map(event => renderEventCard(event, event.isHosted))}
+          <div className={styles.timelineWrapper}>
+            {Object.entries(groups).map(([dateKey, group]) => (
+              <div className={styles.dateGroup} key={dateKey}>
+                <div className={styles.dateColumn}>
+                  <div className={styles.dateKey}>{dateKey}</div>
+                  <div className={styles.dateWeekday}>{group.weekday}</div>
+                </div>
+                <div className={styles.eventsColumn}>
+                  <div className={styles.verticalTrack} />
+                  {group.items.map(event => (
+                    <div className={styles.eventItem} key={event.id}>
+                      <div className={styles.trackDot} />
+                      {renderEventCard(event, event.isHosted)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
