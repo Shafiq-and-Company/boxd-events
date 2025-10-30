@@ -6,7 +6,7 @@ The `events` table stores information about gaming events and tournaments.
 
 | Column | Type | Nullable | Default | Description |
 |--------|------|----------|---------|-------------|
-| `id` | uuid | NO | gen_random_uuid() | Primary key |
+| `id` | uuid | NO | gen_random_uuid() | Primary key (unique identifier for this event) |
 | `title` | text | NO | null | Event title |
 | `description` | text | YES | null | Event description |
 | `location` | text | YES | null | Event location |
@@ -25,14 +25,20 @@ The `events` table stores information about gaming events and tournaments.
 ## Database Relationships
 
 ### Games Table
-- **Foreign Key**: `game_id` references `games.id` (bigint)
+- **Foreign Key**: `events_game_id_fkey` on `game_id` references `games.id` (bigint)
 - **Relationship**: Many-to-one (many events can reference one game)
 - **Usage**: Links events to specific games in the games table
 
 ### Users Table
-- **Foreign Key**: `host_id` references `users.id` (uuid)
+- **Foreign Key**: `events_host_id_fkey` on `host_id` references `users.id` (uuid)
 - **Relationship**: Many-to-one (many events can be hosted by one user)
 - **Usage**: Identifies the event host/creator
+
+### Indexes
+- **Primary Key**: `events_pkey` on `id`
+- **Foreign Keys**:
+  - `events_host_id_fkey` on `host_id` references `users.id`
+  - `events_game_id_fkey` on `game_id` references `games.id`
 
 ## Theme Column Structure
 

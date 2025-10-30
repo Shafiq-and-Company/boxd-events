@@ -8,9 +8,9 @@ The `rsvps` table manages user event registrations and payment status.
 |--------|------|----------|---------|-------------|
 | `user_id` | uuid | NO | null | Foreign key to users table |
 | `event_id` | uuid | NO | null | Foreign key to events table |
-| `status` | text | NO | 'going'::text | RSVP status (going, maybe, not_going) |
+| `status` | text | NO | 'going'::text | RSVP status (going, maybe, not_going) - CHECK constraint enforced |
 | `created_at` | timestamp with time zone | YES | now() | Record creation time |
-| `payment_status` | text | YES | 'pending'::text | Payment status (pending, paid, failed, refunded) |
+| `payment_status` | text | YES | 'pending'::text | Payment status (pending, paid, failed, refunded) - CHECK constraint enforced |
 | `updated_at` | timestamp with time zone | YES | now() | Record update time |
 
 ## Row Level Security (RLS) Policies
@@ -19,6 +19,25 @@ The `rsvps` table manages user event registrations and payment status.
 ```sql
 ALTER TABLE rsvps ENABLE ROW LEVEL SECURITY;
 ```
+
+### Check Constraints
+```sql
+-- Status constraint: Only allows 'going', 'maybe', or 'not_going'
+ALTER TABLE rsvps ADD CONSTRAINT rsvps_status_check 
+CHECK (status = ANY (ARRAY['going'::text, 'maybe'::text, 'not_going'::text]));
+
+-- Payment status constraint: Only allows 'pending', 'paid', 'failed', or 'refunded'
+ALTER TABLE rsvps ADD CONSTRAINT rsvps_payment_status_check 
+CHECK (payment_status = ANY (ARRAY['pending'::text, 'paid'::text, 'failed'::text, 'refunded'::text]));
+```
+
+### Primary Key
+- **Composite Primary Key**: (`user_id`, `event_id`) - ensures one RSVP per user per event
+- **Index**: `rsvps_pkey` on (`user_id`, `event_id`)
+
+### Foreign Keys
+- `rsvps_user_id_fkey`: `user_id` references `users.id`
+- `rsvps_event_id_fkey`: `event_id` references `events.id`
 
 ### Policy 1: Users Can View Their Own RSVPs
 ```sql

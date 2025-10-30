@@ -9,15 +9,13 @@ The `users` table stores user profile information and authentication data.
 | `id` | uuid | NO | gen_random_uuid() | Primary key, matches auth.users.id |
 | `first_name` | text | NO | null | User's first name |
 | `last_name` | text | NO | null | User's last name |
-| `email` | text | NO | null | User's email address |
+| `email` | text | NO | null | User's email address (unique constraint) |
 | `created_at` | timestamp with time zone | YES | now() | Record creation time |
 | `username` | text | YES | null | User's username |
 | `biography` | text | YES | null | User's bio/description |
 | `phone` | text | YES | null | User's phone number |
-| `stripe_account_id` | text | YES | null | Stripe account ID for payments |
-| `stripe_account_status` | text | YES | null | Status of Stripe account |
 | `zip_code` | text | YES | null | User's zip code |
-| `profile_pic` | text | YES | null | URL to user's profile picture |
+| `profile_pic` | text | YES | null | URL to user's profile picture (link to supabase bucket) |
 
 ## Authentication Integration
 
@@ -29,7 +27,7 @@ RETURNS trigger AS $$
 BEGIN
   INSERT INTO public.users (
     id, first_name, last_name, email, created_at, username, biography, phone,
-    stripe_account_id, stripe_account_status, zip_code, profile_pic
+    zip_code, profile_pic
   )
   VALUES (
     new.id,
@@ -40,8 +38,6 @@ BEGIN
     COALESCE(new.raw_user_meta_data->>'username', ''),
     COALESCE(new.raw_user_meta_data->>'biography', ''),
     COALESCE(new.raw_user_meta_data->>'phone', ''),
-    COALESCE(new.raw_user_meta_data->>'stripe_account_id', ''),
-    COALESCE(new.raw_user_meta_data->>'stripe_account_status', ''),
     COALESCE(new.raw_user_meta_data->>'zip_code', ''),
     COALESCE(new.raw_user_meta_data->>'profile_pic', '')
   );
@@ -69,8 +65,6 @@ BEGIN
     username = COALESCE(new.raw_user_meta_data->>'username', old.raw_user_meta_data->>'username', ''),
     biography = COALESCE(new.raw_user_meta_data->>'biography', old.raw_user_meta_data->>'biography', ''),
     phone = COALESCE(new.raw_user_meta_data->>'phone', old.raw_user_meta_data->>'phone', ''),
-    stripe_account_id = COALESCE(new.raw_user_meta_data->>'stripe_account_id', old.raw_user_meta_data->>'stripe_account_id', ''),
-    stripe_account_status = COALESCE(new.raw_user_meta_data->>'stripe_account_status', old.raw_user_meta_data->>'stripe_account_status', ''),
     zip_code = COALESCE(new.raw_user_meta_data->>'zip_code', old.raw_user_meta_data->>'zip_code', ''),
     profile_pic = COALESCE(new.raw_user_meta_data->>'profile_pic', old.raw_user_meta_data->>'profile_pic', '')
   WHERE id = new.id;
@@ -228,8 +222,12 @@ CREATE POLICY "Public can view event host profiles" ON users
 - **Public Display**: Limited profile data for event pages
 
 ### Database Relationships
-- **Events Table**: `host` field references `users.id`
+- **Events Table**: `host_id` field references `users.id`
 - **RSVPs Table**: `user_id` field references `users.id`
 - **Auth Integration**: `id` field matches `auth.users.id`
 - **Automatic Sync**: Triggers keep tables synchronized
+
+### Indexes
+- **Primary Key**: `users_pkey` on `id`
+- **Unique**: `users_email_key` on `email` (ensures email uniqueness)
 

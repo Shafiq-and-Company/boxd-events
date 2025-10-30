@@ -10,7 +10,8 @@
 | game_background_image_url | text | NULL | URL to game background image stored in Supabase storage |
 
 ## Indexes
-- `idx_games_game_title` on `game_title` for fast lookups
+- **Primary Key**: `games_pkey` on `id`
+- **Unique**: `games_id_key` on `id`
 
 ## Relationships
 - One-to-many with events table via `game_id` field (events.game_id references games.id)

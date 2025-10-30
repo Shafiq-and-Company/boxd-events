@@ -9,9 +9,9 @@ The `tournaments` table stores information about gaming tournaments linked to ev
 | `id` | uuid | NO | gen_random_uuid() | Primary key |
 | `event_id` | uuid | NO | null | Foreign key to events table |
 | `max_participants` | integer | NO | 16 | Maximum number of participants |
-| `min_participants` | integer | NO | 2 | Minimum number of participants required |
-| `status` | text | NO | 'registration'::text | Tournament status (registration, seeding, active, completed, cancelled) |
-| `tournament_type` | text | NO | 'single_elimination'::text | Tournament format (single_elimination, double_elimination, round_robin, swiss) |
+| `min_participants` | integer | NO | 2 | Minimum number of participants required (CHECK constraint: >= 2) |
+| `status` | text | NO | 'registration'::text | Tournament status (registration, seeding, active, completed, cancelled) - CHECK constraint enforced |
+| `tournament_type` | text | NO | 'single_elimination'::text | Tournament format (single_elimination, double_elimination, round_robin, swiss) - CHECK constraint enforced |
 | `name` | text | YES | null | Tournament name |
 | `description` | text | YES | null | Tournament description |
 | `rules` | text | YES | null | Tournament rules and regulations |
@@ -53,6 +53,25 @@ ON tournaments(event_id);
 ```
 
 **Note:** After migration, `bracket_data` will contain the full brackets-manager.js data structure with embedded match information. The separate `tournament_matches` table is no longer required for the new system.
+
+### Check Constraints
+```sql
+-- Status constraint: Only allows valid tournament statuses
+ALTER TABLE tournaments ADD CONSTRAINT tournaments_status_check 
+CHECK (status = ANY (ARRAY['registration'::text, 'seeding'::text, 'active'::text, 'completed'::text, 'cancelled'::text]));
+
+-- Tournament type constraint: Only allows valid tournament types
+ALTER TABLE tournaments ADD CONSTRAINT tournaments_tournament_type_check 
+CHECK (tournament_type = ANY (ARRAY['single_elimination'::text, 'double_elimination'::text, 'round_robin'::text, 'swiss'::text]));
+
+-- Minimum participants constraint: Must be at least 2
+ALTER TABLE tournaments ADD CONSTRAINT tournaments_min_participants_check 
+CHECK (min_participants >= 2);
+```
+
+### Indexes
+- **Primary Key**: `tournaments_pkey` on `id`
+- **Foreign Key**: `tournaments_event_id_fkey` on `event_id` references `events.id`
 
 ## Row Level Security (RLS) Policies
 
