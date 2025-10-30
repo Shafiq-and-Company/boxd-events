@@ -75,12 +75,6 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
             className={styles.logoImage}
           />
         </div>
-        <div className={styles.timeDisplay}>
-          <span className={styles.date}>{formatDate()}</span>
-          <span className={styles.timeSeparator}>·</span>
-          <span className={styles.time}>{formatTime()}</span>
-          <span className={styles.timezone}>{getTimezone()}</span>
-        </div>
       </div>
       {!hideMiddleNav && (
         <div className={styles.navLinks}>
@@ -141,6 +135,12 @@ export default function NavBar({ activeTab, onTabChange, hideMiddleNav = false }
       <div className={styles.profile} ref={profileRef}>
         {user ? (
           <>
+            <div className={styles.timeDisplay}>
+              <span className={styles.date}>{formatDate()}</span>
+              <span className={styles.timeSeparator}>·</span>
+              <span className={styles.time}>{formatTime()}</span>
+              <span className={styles.timezone}>{getTimezone()}</span>
+            </div>
             <button 
               onClick={() => {
                 if (onTabChange) {
