@@ -85,11 +85,12 @@ export default function MyEvents({ onTabChange }) {
             description,
             location,
             city,
-            game_title,
+            game_id,
             starts_at,
             ends_at,
             cost,
-            banner_image_url
+            banner_image_url,
+            games (game_title)
           )
         `)
         .eq('user_id', user.id)
@@ -100,6 +101,7 @@ export default function MyEvents({ onTabChange }) {
 
       const userEvents = rsvps?.map(rsvp => ({
         ...rsvp.events,
+        game_title: rsvp.events?.games?.game_title || null,
         rsvpStatus: rsvp.status,
         paymentStatus: rsvp.payment_status,
         rsvpCreatedAt: rsvp.created_at
@@ -127,19 +129,25 @@ export default function MyEvents({ onTabChange }) {
           description,
           location,
           city,
-          game_title,
+          game_id,
           starts_at,
           ends_at,
           cost,
           created_at,
-          banner_image_url
+          banner_image_url,
+          games (game_title)
         `)
         .eq('host_id', user.id)
         .order('created_at', { ascending: false })
 
       if (eventsError) throw eventsError
 
-      setHostedEvents(events || [])
+      const hostedEventsWithGameTitle = events?.map(event => ({
+        ...event,
+        game_title: event.games?.game_title || null
+      })) || []
+
+      setHostedEvents(hostedEventsWithGameTitle)
     } catch (err) {
       console.error('Error fetching hosted events:', err)
       setHostedError('Failed to load your hosted events')
