@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../lib/supabaseClient'
-import { useAuth } from '../lib/AuthContext'
+import { supabase } from '../../lib/supabaseClient'
+import { useAuth } from '../../lib/AuthContext'
 import styles from './ManageRegistration.module.css'
 
 export default function ManageRegistration() {

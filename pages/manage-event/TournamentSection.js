@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../lib/supabaseClient'
+import { supabase } from '../../lib/supabaseClient'
 import styles from './TournamentSection.module.css'
 
 export default function TournamentSection({ eventId, eventTitle, eventDescription, onError }) {
@@ -65,7 +65,7 @@ export default function TournamentSection({ eventId, eventTitle, eventDescriptio
       }
 
       // Import tournament manager to generate the bracket
-      const tournamentManager = (await import('../lib/tournamentManager')).default
+      const tournamentManager = (await import('../../lib/tournamentManager')).default
       
       // Generate the tournament bracket immediately (if enough participants)
       const bracketResult = await tournamentManager.createTournament(newTournament.id, eventTitle)

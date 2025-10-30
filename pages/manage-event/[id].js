@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import ManageEvent from '../../components/ManageEvent'
+import ManageEvent from './ManageEvent'
 import NavBar from '../../components/NavBar'
 
 export default function ManageEventPage() {
