@@ -4,7 +4,7 @@ import { useAuth } from '../lib/AuthContext'
 import NavBar from '../components/NavBar'
 import DiscoverEvents from '../components/DiscoverEvents'
 import MyEvents from '../components/MyEvents'
-import CreateEvent from '../components/CreateEvent'
+import CreateEvent from './create-event/CreateEvent'
 import UserSettings from '../components/UserSettings'
 
 export default function Home() {

@@ -1,11 +1,23 @@
-/* BOXD Event Detail - Clean CSS */
-
 /* Layout */
 .pageWrapper {
   min-height: 100vh;
+  position: relative;
+}
+
+.pageWrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--theme-overlay-color, rgba(255, 255, 255, 0.95));
+  z-index: 0;
 }
 
 .container {
+  position: relative;
+  z-index: 1;
   width: 100%;
   margin: 0 auto;
   padding: 80px 16px 24px 16px;
@@ -22,7 +34,8 @@
   padding: 0 24px;
 }
 
-.leftColumn, .rightColumn {
+.leftColumn,
+.rightColumn {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -47,11 +60,18 @@
   width: 400px;
   aspect-ratio: 1 / 1;
   background: #ffffff;
-  border: 1px solid #000;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+.imagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 0.9rem;
 }
 
 .eventTitle {
@@ -77,7 +97,6 @@
   margin-top: 4px;
   padding: 8px 12px;
   background: #ffffff;
-  border: 1px solid #000;
   width: 100%;
 }
 
@@ -97,9 +116,6 @@
   transition: all 0.2s ease;
 }
 
-.manageButton:hover {
-}
-
 /* Hosted By */
 .hostedBy {
   display: flex;
@@ -109,7 +125,6 @@
   width: 100%;
   padding: 8px 12px;
   background: #ffffff;
-  border: 1px solid #000;
 }
 
 .hostedByIcon {
@@ -120,7 +135,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1px solid #000;
   color: #666;
 }
 
@@ -151,7 +165,6 @@
   width: 100%;
   padding: 8px 12px;
   background: #ffffff;
-  border: 1px solid #000;
 }
 
 .attendeesHeader {
@@ -169,7 +182,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1px solid #000;
   color: #666;
 }
 
@@ -208,7 +220,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1px solid #000;
 }
 
 .attendeeInitial {
@@ -227,14 +238,12 @@
 /* RSVP Card */
 .rsvpCard {
   background: #ffffff;
-  border: 1px solid #000;
   overflow: hidden;
 }
 
 .rsvpHeader {
   background: #ffffff;
   padding: 12px 16px;
-  border-bottom: 1px solid #000;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -262,6 +271,28 @@
   font-weight: 400;
 }
 
+.unregisterButton {
+  background: transparent;
+  color: #999;
+  border: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.unregisterButton:hover:not(:disabled) {
+  color: #666;
+  background: #f5f5f5;
+}
+
+.unregisterButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* User Info */
 .userInfo {
   display: flex;
@@ -277,7 +308,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1px solid #000;
 }
 
 .userAvatar {
@@ -312,7 +342,8 @@
 }
 
 /* Buttons */
-.loginButton, .rsvpButton {
+.loginButton,
+.rsvpButton {
   background: #000000;
   color: #ffffff;
   border: 1px solid #000;
@@ -331,9 +362,6 @@
   width: auto;
 }
 
-.loginButton:hover, .rsvpButton:hover:not(:disabled) {
-}
-
 .rsvpButton:disabled {
   background: #e8e8e8;
   color: #a0a0a0;
@@ -344,6 +372,12 @@
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+.registeredButtons {
+  display: flex;
+  gap: 12px;
+  width: 100%;
 }
 
 .inviteButton {
@@ -363,9 +397,6 @@
   letter-spacing: -0.25px;
 }
 
-.inviteButton:hover {
-}
-
 .inviteButton:active {
   transform: translateY(1px);
 }
@@ -375,6 +406,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: 8px 12px;
+  background: #ffffff;
 }
 
 .aboutText {
@@ -394,19 +427,22 @@
   font-size: 0.8rem;
   color: #000;
   line-height: 1.5;
-  border-top: 1px solid #000;
   padding-top: 4px;
   margin-top: 2px;
 }
 
 /* Date & Location */
-.dateTime, .locationInfo {
+.dateTime,
+.locationInfo {
   display: flex;
   align-items: center;
   gap: 12px;
+  padding: 8px 12px;
+  background: #ffffff;
 }
 
-.calendarIcon, .locationIcon {
+.calendarIcon,
+.locationIcon {
   width: 48px;
   height: 48px;
   background: #ffffff;
@@ -414,7 +450,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1px solid #000;
   color: #666;
 }
 
@@ -438,7 +473,8 @@
   line-height: 1;
 }
 
-.dateTimeText, .locationText {
+.dateTimeText,
+.locationText {
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -464,8 +500,95 @@
   line-height: 1.2;
 }
 
+.locationNote {
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1.4;
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+/* Mobile: Separate Date/Time sections */
+.dateSeparate,
+.timeSeparate {
+  display: none;
+  width: 100%;
+}
+
+.dateSeparate .dateTimeText,
+.timeSeparate .dateTimeText {
+  padding: 8px 12px;
+  background: #ffffff;
+  width: 100%;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modalTitle {
+  margin: 0 0 16px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.modalMessage {
+  margin: 0 0 24px 0;
+  color: #666;
+  line-height: 1.5;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modalCancelButton {
+  background: transparent;
+  color: #666;
+  border: 1px solid #e8e8e8;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modalConfirmButton {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modalConfirmButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* States */
-.loading, .error {
+.loading,
+.error {
   text-align: center;
   font-size: 0.9rem;
   color: #999;
@@ -475,7 +598,112 @@
 .error {
   color: #666;
   background: #ffffff;
-  border: 1px solid #f0f0f0;
   border-radius: 2px;
   padding: 16px;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 80px 0 24px 0;
+    max-width: 100%;
+  }
+
+  .pageLayout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .leftColumn,
+  .rightColumn {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .eventTitle {
+    font-size: 2rem;
+    order: 1;
+  }
+
+  .eventImage {
+    width: 100%;
+    max-width: 100%;
+    order: 2;
+  }
+
+  .dateTime {
+    display: none;
+  }
+
+  .dateSeparate {
+    display: block;
+    order: 3;
+  }
+
+  .timeSeparate {
+    display: block;
+    order: 4;
+  }
+
+  .hostedBy {
+    order: 5;
+  }
+
+  .hostManagement {
+    order: 6;
+  }
+
+  .rsvpCard {
+    order: 7;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .locationInfo {
+    order: 8;
+  }
+
+  .attendeesSection {
+    order: 9;
+  }
+
+  .aboutSection {
+    order: 10;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .eventInfo {
+    display: contents;
+    width: 100%;
+  }
+
+  .leftColumn {
+    display: contents;
+  }
+
+  .rightColumn {
+    display: contents;
+  }
+
+  .eventDetail {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .dateTimeText {
+    width: 100%;
+    box-sizing: border-box;
+  }
 }

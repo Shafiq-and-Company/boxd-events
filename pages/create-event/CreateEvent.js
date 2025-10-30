@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../lib/supabaseClient'
-import { useAuth } from '../lib/AuthContext'
-import ThemeSelector from './ThemeSelector'
+import { supabase } from '../../lib/supabaseClient'
+import { useAuth } from '../../lib/AuthContext'
+import ThemeSelector from '../../components/ThemeSelector'
 import styles from './CreateEvent.module.css'
 
 export default function CreateEvent() {

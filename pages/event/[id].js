@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../../lib/supabaseClient'
 import { useAuth } from '../../lib/AuthContext'
@@ -20,19 +20,15 @@ export default function EventDetail() {
   const [attendees, setAttendees] = useState([])
   const [loadingAttendees, setLoadingAttendees] = useState(false)
   const [currentTheme, setCurrentTheme] = useState(null)
+  const [gameBackgroundImage, setGameBackgroundImage] = useState(null)
+  const containerRef = useRef(null)
 
   const handleTabChange = (tab) => {
-    if (tab === 'upcoming') {
-      router.push('/')
-    } else {
-      router.push(`/?tab=${tab}`)
-    }
+    router.push(tab === 'upcoming' ? '/' : `/?tab=${tab}`)
   }
 
   useEffect(() => {
-    if (id) {
-      fetchEvent()
-    }
+    if (id) fetchEvent()
   }, [id])
 
   useEffect(() => {
@@ -44,10 +40,24 @@ export default function EventDetail() {
   }, [user, event, authLoading])
 
   useEffect(() => {
-    if (event) {
-      fetchAttendees()
-    }
+    if (event) fetchAttendees()
   }, [event])
+
+  useEffect(() => {
+    if (!containerRef.current) return
+
+    const overlayColor = currentTheme
+      ? (() => {
+          const hex = currentTheme.colors.background
+          const r = parseInt(hex.slice(1, 3), 16)
+          const g = parseInt(hex.slice(3, 5), 16)
+          const b = parseInt(hex.slice(5, 7), 16)
+          return `rgba(${r}, ${g}, ${b}, 0.8)`
+        })()
+      : 'rgba(255, 255, 255, 0.95)'
+
+    containerRef.current.style.setProperty('--theme-overlay-color', overlayColor)
+  }, [currentTheme])
 
   const fetchEvent = async () => {
     try {
@@ -56,25 +66,25 @@ export default function EventDetail() {
         .from('events')
         .select(`
           *,
-          host_user:host_id (
-            first_name
-          )
+          host_user:host_id (first_name),
+          games (id, game_title, game_background_image_url)
         `)
         .eq('id', id)
         .single()
 
-      if (error) {
-        throw error
-      }
+      if (error) throw error
 
       setEvent(data)
-      
-      // Extract and set theme
-      if (data.theme && typeof data.theme === 'object' && data.theme.name) {
-        setCurrentTheme(data.theme)
-      } else {
-        setCurrentTheme(null)
-      }
+      setCurrentTheme(
+        data.theme && typeof data.theme === 'object' && data.theme.name
+          ? data.theme
+          : null
+      )
+
+      const gameData = data.game_id
+        ? (Array.isArray(data.games) ? data.games[0] : data.games)
+        : null
+      setGameBackgroundImage(gameData?.game_background_image_url || null)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -87,10 +97,9 @@ export default function EventDetail() {
       setIsAlreadyRegistered(false)
       return
     }
-    
+
     try {
       setCheckingRegistration(true)
-      
       const { data, error } = await supabase
         .from('rsvps')
         .select('user_id, event_id, status, payment_status, created_at, updated_at')
@@ -99,13 +108,7 @@ export default function EventDetail() {
         .eq('status', 'going')
         .maybeSingle()
 
-      if (error) {
-        setIsAlreadyRegistered(false)
-        return
-      }
-
-      const isRegistered = !!data
-      setIsAlreadyRegistered(isRegistered)
+      setIsAlreadyRegistered(error ? false : !!data)
     } catch (err) {
       setIsAlreadyRegistered(false)
     } finally {
@@ -115,28 +118,19 @@ export default function EventDetail() {
 
   const fetchAttendees = async () => {
     if (!event) return
-    
+
     try {
       setLoadingAttendees(true)
-      
       const { data, error } = await supabase
         .from('rsvps')
         .select(`
           user_id,
           created_at,
-          users:user_id (
-            username,
-            first_name
-          )
+          users:user_id (username, first_name)
         `)
         .eq('event_id', event.id)
         .eq('status', 'going')
         .order('created_at', { ascending: true })
-
-      if (error) {
-        setAttendees([])
-        return
-      }
 
       setAttendees(data || [])
     } catch (err) {
@@ -147,8 +141,7 @@ export default function EventDetail() {
   }
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
@@ -157,112 +150,56 @@ export default function EventDetail() {
   }
 
   const formatCalendarMonth = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short'
     }).toUpperCase()
   }
 
   const formatCalendarDay = (dateString) => {
-    const date = new Date(dateString)
-    return date.getDate().toString()
+    return new Date(dateString).getDate().toString()
   }
 
   const formatTimeRange = (startDate, endDate) => {
     const start = new Date(startDate)
-    const end = endDate ? new Date(endDate) : null
-    
     const startTime = start.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit'
     })
-    
-    if (end) {
-      const endTime = end.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-      return `${startTime} - ${endTime}`
-    }
-    
-    return startTime
+
+    if (!endDate) return startTime
+
+    const end = new Date(endDate)
+    const endTime = end.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+    return `${startTime} - ${endTime}`
   }
 
   const copyEventLink = async () => {
     try {
-      const eventUrl = `${window.location.origin}/event/${id}`
-      await navigator.clipboard.writeText(eventUrl)
+      await navigator.clipboard.writeText(`${window.location.origin}/event/${id}`)
       setCopySuccess(true)
       setTimeout(() => setCopySuccess(false), 2000)
     } catch (err) {
-      // Silent fail for copy functionality
+      // Silent fail
     }
   }
 
-  const renderAttendeesSection = () => (
-    <div className={styles.attendeesSection}>
-      <div className={styles.attendeesHeader}>
-        <div className={styles.attendeesIcon}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-        </div>
-        <div className={styles.attendeesText}>
-          <div className={styles.attendeesLabel}>
-            {loadingAttendees ? 'Loading...' : 
-             attendees.length === 0 ? 'No attendees yet' :
-             attendees.length === 1 ? '1 person attending' :
-             `${attendees.length} people attending`}
-          </div>
-        </div>
-      </div>
-      
-      {!loadingAttendees && attendees.length > 0 && (
-        <div className={styles.attendeesList}>
-          {attendees.map((attendee) => (
-            <div key={attendee.user_id} className={styles.attendeeItem}>
-              <div className={styles.attendeeIcon}>
-                <div className={styles.attendeeInitial}>
-                  {(attendee.users?.username?.charAt(0) || attendee.users?.first_name?.charAt(0) || 'U').toUpperCase()}
-                </div>
-              </div>
-              <div className={styles.attendeeName}>
-                {attendee.users?.username || attendee.users?.first_name || 'Unknown User'}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-
   const handleRSVP = async () => {
-    // Check if user is logged in
     if (!user) {
       router.push('/login')
       return
     }
-
-    // Check if already registered
-    if (isAlreadyRegistered) {
-      return
-    }
-
-    // Create RSVP (all events are now free)
+    if (isAlreadyRegistered) return
     await createRSVP()
   }
 
   const createRSVP = async () => {
-    if (!user || !event) {
-      return
-    }
+    if (!user || !event) return
 
     try {
       setIsProcessingRSVP(true)
-      
       const { error } = await supabase
         .from('rsvps')
         .insert({
@@ -272,34 +209,25 @@ export default function EventDetail() {
           payment_status: 'paid'
         })
 
-      if (error) {
-        return
+      if (!error) {
+        setIsAlreadyRegistered(true)
+        fetchAttendees()
+        setTimeout(() => {
+          router.push(`/?tab=myEvents&rsvp=success&event=${event.id}`)
+        }, 2000)
       }
-
-      // RSVP succeeded - update registration status and refresh attendees
-      setIsAlreadyRegistered(true)
-      fetchAttendees() // Refresh attendees list
-      
-      // Show success message briefly, then redirect
-      setTimeout(() => {
-        router.push('/?tab=myEvents&rsvp=success&event=' + event.id)
-      }, 2000)
-      
     } catch (err) {
-      // Silent fail for RSVP creation
+      // Silent fail
     } finally {
       setIsProcessingRSVP(false)
     }
   }
 
   const handleUnregister = async () => {
-    if (!user || !event) {
-      return
-    }
+    if (!user || !event) return
 
     try {
       setIsProcessingRSVP(true)
-      
       const { error } = await supabase
         .from('rsvps')
         .delete()
@@ -307,31 +235,47 @@ export default function EventDetail() {
         .eq('event_id', event.id)
         .eq('status', 'going')
 
-      if (error) {
-        return
+      if (!error) {
+        setIsAlreadyRegistered(false)
+        setShowUnregisterConfirm(false)
+        fetchAttendees()
       }
-
-      // Unregister succeeded - update registration status and refresh attendees
-      setIsAlreadyRegistered(false)
-      setShowUnregisterConfirm(false)
-      fetchAttendees() // Refresh attendees list
-      
     } catch (err) {
-      // Silent fail for unregistration
+      // Silent fail
     } finally {
       setIsProcessingRSVP(false)
     }
   }
 
-  // Apply theme background
-  const pageStyle = currentTheme ? {
-    background: currentTheme.colors.background,
-    minHeight: '100vh'
+  const getAttendeeInitial = (attendee) => {
+    return (attendee.users?.username?.charAt(0) || 
+            attendee.users?.first_name?.charAt(0) || 
+            'U').toUpperCase()
+  }
+
+  const getAttendeeName = (attendee) => {
+    return attendee.users?.username || 
+           attendee.users?.first_name || 
+           'Unknown User'
+  }
+
+  const getAttendeeCountText = () => {
+    if (loadingAttendees) return 'Loading...'
+    if (attendees.length === 0) return 'No attendees yet'
+    if (attendees.length === 1) return '1 person attending'
+    return `${attendees.length} people attending`
+  }
+
+  const pageStyle = gameBackgroundImage ? {
+    backgroundImage: `url(${gameBackgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat'
   } : {}
 
   if (loading) {
     return (
-      <div className={styles.pageWrapper} style={pageStyle}>
+      <div ref={containerRef} className={styles.pageWrapper} style={pageStyle}>
         <NavBar activeTab="" onTabChange={handleTabChange} />
         <div className={styles.container}>
           <div className={styles.loading}>Loading event...</div>
@@ -342,24 +286,24 @@ export default function EventDetail() {
 
   if (error || !event) {
     return (
-      <div className={styles.pageWrapper} style={pageStyle}>
+      <div ref={containerRef} className={styles.pageWrapper} style={pageStyle}>
         <NavBar activeTab="" onTabChange={handleTabChange} />
         <div className={styles.container}>
-          <div className={styles.error}>
-            {error || 'Event not found'}
-          </div>
+          <div className={styles.error}>{error || 'Event not found'}</div>
         </div>
       </div>
     )
   }
 
+  const isHost = user && user.id === event.host_id
+  const hasLocation = event.location || event.city || event.state
+
   return (
-    <div className={styles.pageWrapper} style={pageStyle}>
+    <div ref={containerRef} className={styles.pageWrapper} style={pageStyle}>
       <NavBar activeTab="" onTabChange={handleTabChange} />
       <div className={styles.container}>
         <div className={styles.eventDetail}>
           <div className={styles.pageLayout}>
-            {/* Left Column: Image, Hosting, Hosted By, Participants */}
             <div className={styles.leftColumn}>
               <div className={styles.eventImage}>
                 {event.banner_image_url ? (
@@ -373,20 +317,11 @@ export default function EventDetail() {
                     }}
                   />
                 ) : (
-                  <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    color: '#999',
-                    fontSize: '0.9rem'
-                  }}>
-                    No image
-                  </div>
+                  <div className={styles.imagePlaceholder}>No image</div>
                 )}
               </div>
               
-              {/* Host Management Section - Only show if user is the host */}
-              {user && event && user.id === event.host_id && (
+              {isHost && (
                 <div className={styles.hostManagement}>
                   <span className={styles.hostManagementText}>You're hosting this event</span>
                   <button 
@@ -413,14 +348,40 @@ export default function EventDetail() {
                 </div>
               </div>
 
-              {/* Attendees Section */}
-              {renderAttendeesSection()}
+              <div className={styles.attendeesSection}>
+                <div className={styles.attendeesHeader}>
+                  <div className={styles.attendeesIcon}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                  </div>
+                  <div className={styles.attendeesLabel}>{getAttendeeCountText()}</div>
+                </div>
+                
+                {!loadingAttendees && attendees.length > 0 && (
+                  <div className={styles.attendeesList}>
+                    {attendees.map((attendee) => (
+                      <div key={attendee.user_id} className={styles.attendeeItem}>
+                        <div className={styles.attendeeIcon}>
+                          <div className={styles.attendeeInitial}>
+                            {getAttendeeInitial(attendee)}
+                          </div>
+                        </div>
+                        <div className={styles.attendeeName}>
+                          {getAttendeeName(attendee)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Right Column: Title, Time, Location, Registration, About */}
             <div className={styles.rightColumn}>
               <h1 className={styles.eventTitle}>{event.title}</h1>
-              
 
               <div className={styles.eventInfo}>
                 <div className={styles.dateTime}>
@@ -434,7 +395,19 @@ export default function EventDetail() {
                   </div>
                 </div>
 
-                {event.location && (
+                <div className={styles.dateSeparate}>
+                  <div className={styles.dateTimeText}>
+                    <div className={styles.dateText}>{formatDate(event.starts_at)}</div>
+                  </div>
+                </div>
+
+                <div className={styles.timeSeparate}>
+                  <div className={styles.dateTimeText}>
+                    <div className={styles.timeText}>{formatTimeRange(event.starts_at, event.ends_at)}</div>
+                  </div>
+                </div>
+
+                {hasLocation && (
                   <div className={styles.locationInfo}>
                     <div className={styles.locationIcon}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -443,11 +416,28 @@ export default function EventDetail() {
                       </svg>
                     </div>
                     <div className={styles.locationText}>
-                      <div className={styles.locationAddress}>
-                        {event.location}
-                        {event.city && `, ${event.city}`}
-                        {event.state && `, ${event.state}`}
-                      </div>
+                      {isAlreadyRegistered && event.location ? (
+                        <div className={styles.locationAddress}>
+                          {event.location}
+                          {event.city && `, ${event.city}`}
+                          {event.state && `, ${event.state}`}
+                        </div>
+                      ) : (
+                        <>
+                          {(event.city || event.state) && (
+                            <div className={styles.locationAddress}>
+                              {event.city && event.city}
+                              {event.city && event.state && `, `}
+                              {event.state && event.state}
+                            </div>
+                          )}
+                          {event.location && (
+                            <div className={styles.locationNote}>
+                              The full address will be shown after you RSVP.
+                            </div>
+                          )}
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
@@ -458,25 +448,7 @@ export default function EventDetail() {
                     {isAlreadyRegistered && (
                       <button 
                         onClick={() => setShowUnregisterConfirm(true)}
-                        style={{
-                          background: 'transparent',
-                          color: '#999',
-                          border: 'none',
-                          fontSize: '0.8rem',
-                          cursor: 'pointer',
-                          textDecoration: 'underline',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          transition: 'all 0.2s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.color = '#666';
-                          e.target.style.background = '#f5f5f5';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.color = '#999';
-                          e.target.style.background = 'transparent';
-                        }}
+                        className={styles.unregisterButton}
                         disabled={isProcessingRSVP}
                       >
                         I can't make it anymore
@@ -485,7 +457,9 @@ export default function EventDetail() {
                   </div>
                   <div className={styles.rsvpContent}>
                     <div className={styles.welcomeMessage}>
-                      {isAlreadyRegistered ? 'You\'re registered for this event!' : 'Welcome! Register below to join this event.'}
+                      {isAlreadyRegistered 
+                        ? 'You\'re registered for this event!' 
+                        : 'Welcome! Register below to join this event.'}
                     </div>
                     {user && (
                       <div className={styles.userInfo}>
@@ -498,17 +472,19 @@ export default function EventDetail() {
                             />
                           ) : (
                             <div className={styles.userInitial}>
-                              {user.user_metadata?.first_name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                              {user.user_metadata?.first_name?.charAt(0) || 
+                               user.email?.charAt(0) || 
+                               'U'}
                             </div>
                           )}
                         </div>
                         <div className={styles.userDetails}>
                           <div className={styles.userName}>
-                            {user.user_metadata?.first_name || user.email?.split('@')[0] || 'User'}
+                            {user.user_metadata?.first_name || 
+                             user.email?.split('@')[0] || 
+                             'User'}
                           </div>
-                          <div className={styles.userEmail}>
-                            {user.email}
-                          </div>
+                          <div className={styles.userEmail}>{user.email}</div>
                         </div>
                       </div>
                     )}
@@ -519,12 +495,14 @@ export default function EventDetail() {
                           onClick={handleRSVP}
                           disabled={isProcessingRSVP || checkingRegistration}
                         >
-                          {isProcessingRSVP ? 'Processing...' : 
-                           checkingRegistration ? 'Checking...' : 
-                           'One-Click RSVP'}
+                          {isProcessingRSVP 
+                            ? 'Processing...' 
+                            : checkingRegistration 
+                            ? 'Checking...' 
+                            : 'One-Click RSVP'}
                         </button>
                       ) : (
-                        <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+                        <div className={styles.registeredButtons}>
                           <button 
                             className={styles.rsvpButton}
                             style={{ 
@@ -569,67 +547,30 @@ export default function EventDetail() {
                     </div>
                   </div>
                 )}
-
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      {/* Unregister Confirmation Dialog */}
       {showUnregisterConfirm && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: 'white',
-            padding: '24px',
-            borderRadius: '8px',
-            maxWidth: '400px',
-            width: '90%',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
-          }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.1rem', fontWeight: '600' }}>
-              Unregister from Event
-            </h3>
-            <p style={{ margin: '0 0 24px 0', color: '#666', lineHeight: '1.5' }}>
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <h3 className={styles.modalTitle}>Unregister from Event</h3>
+            <p className={styles.modalMessage}>
               Are you sure you want to unregister from "{event.title}"? You can always register again later.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <div className={styles.modalActions}>
               <button
                 onClick={() => setShowUnregisterConfirm(false)}
-                style={{
-                  background: 'transparent',
-                  color: '#666',
-                  border: '1px solid #e8e8e8',
-                  padding: '8px 16px',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
+                className={styles.modalCancelButton}
               >
                 Cancel
               </button>
               <button
                 onClick={handleUnregister}
                 disabled={isProcessingRSVP}
-                style={{
-                  background: '#dc3545',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '4px',
-                  cursor: isProcessingRSVP ? 'not-allowed' : 'pointer',
-                  opacity: isProcessingRSVP ? 0.6 : 1
-                }}
+                className={styles.modalConfirmButton}
               >
                 {isProcessingRSVP ? 'Unregistering...' : 'Unregister'}
               </button>
