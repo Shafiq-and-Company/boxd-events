@@ -155,19 +155,14 @@ export default function MatchManager({ tournamentId, onMatchUpdate }) {
             <h2 className={styles.matchManagerTitle}>Scorecard</h2>
           </div>
           <div className={styles.noMatches}>
-            <p>No matches available yet.</p>
+            <img src="/dance-duck.gif" alt="Waiting..." />
             {participants.length < 2 ? (
-              <div>
-                <p className={styles.warning}>
-                  <strong>Waiting for participants:</strong> Need at least 2 participants to generate matches.
-                </p>
-                <p className={styles.info}>
-                  Matches will be automatically generated when enough participants RSVP to the event.
-                </p>
-              </div>
+              <p className={styles.explanation}>
+                We need at least 2 people signed up before we can start matches.
+              </p>
             ) : (
-              <p className={styles.info}>
-                Tournament bracket will be generated automatically.
+              <p className={styles.explanation}>
+                Matches will show up here once the tournament starts.
               </p>
             )}
           </div>
@@ -214,7 +209,11 @@ export default function MatchManager({ tournamentId, onMatchUpdate }) {
           
           {filteredMatches.length === 0 ? (
             <div className={styles.noMatches}>
-              <p>No matches in this bracket yet.</p>
+              <img src="/dance-duck.gif" alt="Waiting..." />
+              <p>Still waiting for matches in this bracket.</p>
+              <p className={styles.explanation}>
+                Check back later or play matches in other brackets first.
+              </p>
             </div>
           ) : (
             filteredMatches.map(match => {
@@ -324,7 +323,7 @@ function MatchCard({ match, onUpdate, bracketName, roundName, isGrandFinal, part
                         {opponent1Details.firstName} {opponent1Details.lastName}
                       </span>
                     )}
-                    <span className={styles.hintText}>click to win</span>
+                    <span className={styles.hintText}>click name to pick winner</span>
                   </span>
                   {inputMode === 'score' && (
                     <input 
@@ -348,7 +347,7 @@ function MatchCard({ match, onUpdate, bracketName, roundName, isGrandFinal, part
                         {opponent2Details.firstName} {opponent2Details.lastName}
                       </span>
                     )}
-                    <span className={styles.hintText}>click to win</span>
+                    <span className={styles.hintText}>click name to pick winner</span>
                   </span>
                   {inputMode === 'score' && (
                     <input 

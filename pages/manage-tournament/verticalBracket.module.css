@@ -1,5 +1,10 @@
 /* Minimal Vertical Bracket - 8px spacing system */
 
+.verticalBracket,
+.verticalBracket * {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 .verticalBracket {
   display: flex;
   flex-direction: column;
@@ -21,8 +26,8 @@
 .bracketTitle {
   margin: 0;
   font-size: 12px;
-  font-weight: 600;
-  color: #888;
+  font-weight: 500;
+  color: #999;
   text-transform: uppercase;
   letter-spacing: 1px;
   flex-shrink: 0;
@@ -102,8 +107,8 @@
 .groupTitle {
   margin: 0;
   font-size: 11px;
-  font-weight: 600;
-  color: #000;
+  font-weight: 500;
+  color: #888;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -116,16 +121,16 @@
 
 .groupStat {
   font-size: 11px;
-  font-weight: 500;
-  color: #666;
+  font-weight: 400;
+  color: #999;
 }
 
 .groupActiveIndicator {
   font-size: 10px;
-  font-weight: 500;
-  color: #4caf50;
+  font-weight: 400;
+  color: #999;
   padding: 2px 8px;
-  background: #f0f8f0;
+  background: #f8f8f8;
 }
 
 /* Rounds Container - Horizontal Scroll */
@@ -157,8 +162,8 @@
 
 .roundTitle {
   font-size: 11px;
-  font-weight: 600;
-  color: #000;
+  font-weight: 500;
+  color: #888;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -171,13 +176,13 @@
 
 .roundProgress {
   font-size: 10px;
-  font-weight: 500;
-  color: #888;
+  font-weight: 400;
+  color: #999;
 }
 
 .roundActiveIndicator {
   font-size: 8px;
-  color: #4caf50;
+  color: #999;
   line-height: 1;
 }
 
@@ -238,8 +243,8 @@
 
 .opponentName {
   font-size: 13px;
-  font-weight: 500;
-  color: #000;
+  font-weight: 400;
+  color: #666;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -249,7 +254,7 @@
 
 .opponent.loser .opponentName {
   text-decoration: line-through;
-  color: #888;
+  color: #999;
 }
 
 /* TBD styling - muted color */
@@ -260,15 +265,15 @@
 
 .score {
   font-size: 14px;
-  font-weight: 600;
-  color: #000;
+  font-weight: 400;
+  color: #666;
   min-width: 24px;
   text-align: right;
   line-height: 1;
 }
 
 .opponent.loser .score {
-  color: #888;
+  color: #999;
 }
 
 /* Match Divider */
@@ -284,8 +289,8 @@
 .matchStatus {
   position: absolute;
   font-size: 8px;
-  font-weight: 600;
-  color: #888;
+  font-weight: 400;
+  color: #999;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   background: white;
@@ -293,12 +298,12 @@
 }
 
 .matchCard.ready .matchStatus {
-  color: #4caf50;
+  color: #999;
 }
 
 .matchCard.completed .matchStatus {
-  color: #666;
-  font-weight: 500;
+  color: #999;
+  font-weight: 400;
 }
 
 /* Loading & Error States */
@@ -307,14 +312,22 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  background: white;
+  height: 100%;
   width: 100%;
+  flex: 1;
 }
 
 .loading img {
   width: 100px;
   height: 100px;
   object-fit: contain;
+}
+
+.waitingMessage {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #999;
+  font-weight: 400;
 }
 
 .error {

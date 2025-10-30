@@ -11,6 +11,8 @@ export default function ManageTournament() {
   const router = useRouter();
   const { id } = router.query;
   const [tournament, setTournament] = useState(null);
+  const [gameTitle, setGameTitle] = useState(null);
+  const [gameBackgroundImage, setGameBackgroundImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedFormat, setSelectedFormat] = useState('single_elimination');
@@ -42,15 +44,37 @@ export default function ManageTournament() {
 
   const loadTournament = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: tournamentData, error } = await supabase
         .from('tournaments')
         .select('*')
         .eq('id', id)
         .single();
 
       if (error) throw error;
-      setTournament(data);
-      setSelectedFormat(data.tournament_type || 'single_elimination');
+      setTournament(tournamentData);
+      setSelectedFormat(tournamentData.tournament_type || 'single_elimination');
+      
+      // Fetch game title from event
+      if (tournamentData.event_id) {
+        const { data: eventData, error: eventError } = await supabase
+          .from('events')
+          .select('game_id, games(game_title, game_background_image_url)')
+          .eq('id', tournamentData.event_id)
+          .single();
+
+        if (!eventError && eventData && eventData.games) {
+          // games is returned as an array, get first element
+          const game = Array.isArray(eventData.games) ? eventData.games[0] : eventData.games;
+          if (game) {
+            if (game.game_title) {
+              setGameTitle(game.game_title);
+            }
+            if (game.game_background_image_url) {
+              setGameBackgroundImage(game.game_background_image_url);
+            }
+          }
+        }
+      }
     } catch (error) {
       console.error('Error loading tournament:', error);
     } finally {
@@ -109,7 +133,13 @@ export default function ManageTournament() {
   };
 
   return (
-    <div className={styles.manageTournament}>
+    <div 
+      className={styles.manageTournament}
+      style={gameBackgroundImage ? {
+        ['--bg-image']: `url(${gameBackgroundImage})`
+      } : {}}
+      data-has-background={!!gameBackgroundImage}
+    >
       <div className={styles.header}>
         <button 
           className={styles.backButton}
@@ -118,7 +148,15 @@ export default function ManageTournament() {
         >
           ← Back to Event
         </button>
-        <h1>{tournament.name || 'Tournament Management'}</h1>
+        <h1>
+          {tournament.name || 'Tournament Management'}
+          {gameTitle && (
+            <>
+              <span className={styles.titleSeparator}> | </span>
+              <span className={styles.gameTitle}>{gameTitle}</span>
+            </>
+          )}
+        </h1>
         <span className={styles.statusBadge}>{tournament.status || 'Active'}</span>
       </div>
       

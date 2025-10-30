@@ -21,7 +21,7 @@ export default function VerticalBracketViewer({ tournamentId }) {
       const data = await tournamentManager.getBracketData(tournamentId);
       
       if (!data) {
-        setError('No bracket data available yet.');
+        setBracketData(null);
         return;
       }
       
@@ -35,12 +35,25 @@ export default function VerticalBracketViewer({ tournamentId }) {
   };
 
   if (loading) return (
-    <div className={styles.loading}>
-      <img src="/dance-duck.gif" alt="Loading..." />
+    <div className={styles.verticalBracket}>
+      <div className={styles.loading} style={{ flexDirection: 'column' }}>
+        <img src="/dance-duck.gif" alt="Loading..." />
+      </div>
     </div>
   );
-  if (error) return <div className={styles.error}>{error}</div>;
-  if (!bracketData) return <div className={styles.error}>No bracket data available</div>;
+  if (error) return (
+    <div className={styles.verticalBracket}>
+      <div className={styles.error}>{error}</div>
+    </div>
+  );
+  if (!bracketData) return (
+    <div className={styles.verticalBracket}>
+      <div className={styles.loading} style={{ flexDirection: 'column' }}>
+        <img src="/dance-duck.gif" alt="Waiting..." />
+        <p className={styles.waitingMessage}>Still waiting for people to join!</p>
+      </div>
+    </div>
+  );
 
   // Organize bracket data
   const { match = [], participant = [], group = [], round = [] } = bracketData;

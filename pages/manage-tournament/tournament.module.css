@@ -6,6 +6,7 @@
   margin: 12px 0;
   font-size: 14px;
   color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .participantsList {
@@ -15,6 +16,7 @@
   margin-top: 16px;
   max-height: 600px;
   overflow-y: auto;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .participantItem {
@@ -28,6 +30,7 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .participantUsername {
@@ -66,6 +69,29 @@
   padding-top: 100px;
   width: 100%;
   margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: relative;
+  min-height: 100vh;
+}
+
+.manageTournament[data-has-background="true"]::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(3px);
+  z-index: -1;
+  transform: scale(1.6);
+}
+
+.manageTournament[data-has-background="true"] {
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
 .header {
@@ -79,7 +105,7 @@
   gap: 16px;
   padding: 16px 24px;
   background: white;
-  border-bottom: 2px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
   z-index: 1000;
 }
 
@@ -114,6 +140,18 @@
   font-weight: 600;
   text-align: center;
   grid-column: 2;
+}
+
+.titleSeparator {
+  color: #ccc;
+  margin: 0 8px;
+  font-weight: 400;
+}
+
+.gameTitle {
+  color: #999;
+  font-weight: 400;
+  font-size: 20px;
 }
 
 .statusBadge {
