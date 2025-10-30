@@ -13,7 +13,7 @@ The `events` table stores information about gaming events and tournaments.
 | `starts_at` | timestamp with time zone | NO | null | Event start time |
 | `ends_at` | timestamp with time zone | YES | null | Event end time |
 | `created_at` | timestamp with time zone | YES | now() | Record creation time |
-| `game_title` | text | NO | 'Unknown'::text | Game being played |
+| `game_id` | bigint | YES | null | Foreign key to games table (id) |
 | `city` | text | YES | null | Event city |
 | `cost` | text | YES | null | Event cost (free or paid) |
 | `state` | text | YES | null | Event state |
@@ -21,6 +21,18 @@ The `events` table stores information about gaming events and tournaments.
 | `zip_code` | integer | YES | null | Event zip code |
 | `banner_image_url` | text | YES | null | URL to banner image stored in Supabase |
 | `theme` | jsonb | YES | null | Event theme configuration stored as JSON |
+
+## Database Relationships
+
+### Games Table
+- **Foreign Key**: `game_id` references `games.id` (bigint)
+- **Relationship**: Many-to-one (many events can reference one game)
+- **Usage**: Links events to specific games in the games table
+
+### Users Table
+- **Foreign Key**: `host_id` references `users.id` (uuid)
+- **Relationship**: Many-to-one (many events can be hosted by one user)
+- **Usage**: Identifies the event host/creator
 
 ## Theme Column Structure
 
@@ -63,6 +75,19 @@ SELECT * FROM events WHERE theme->>'name' = 'dark';
 
 -- Update event theme
 UPDATE events SET theme = '{"name": "colorful", "colors": {...}}' WHERE id = 'event-uuid';
+
+-- Query events with game information (join with games table)
+SELECT 
+  e.id,
+  e.title,
+  e.game_id,
+  g.game_title,
+  g.game_background_image_url
+FROM events e
+LEFT JOIN games g ON e.game_id = g.id;
+
+-- Query events for a specific game
+SELECT * FROM events WHERE game_id = 1;
 ```
 
 ## Row Level Security (RLS) Policies

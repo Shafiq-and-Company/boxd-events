@@ -13,7 +13,7 @@
 - `idx_games_game_title` on `game_title` for fast lookups
 
 ## Relationships
-- One-to-many with events table via `game_title` field
+- One-to-many with events table via `game_id` field (events.game_id references games.id)
 
 ## RLS Policies
 
