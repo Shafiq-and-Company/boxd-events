@@ -132,16 +132,27 @@ export default function UserSettings() {
       } else if (provider === 'discord') {
         setDiscordAuthStatus(null)
       }
-      
-      const { error } = await supabase.auth.unlinkIdentity({ provider })
-      
+      // Resolve identityId for the given provider
+      const { data: { user: currentUser }, error: getUserError } = await supabase.auth.getUser()
+      if (getUserError) throw getUserError
+
+      const identity = currentUser?.identities?.find((i) => i.provider === provider)
+      if (!identity) {
+        throw new Error(`No ${provider} identity found for this account.`)
+      }
+
+      const { error } = await supabase.auth.unlinkIdentity({ identityId: identity.id })
       if (error) throw error
       
       await checkAuthStatus(provider)
       alert(`Successfully unlinked from ${provider.charAt(0).toUpperCase() + provider.slice(1)}!`)
     } catch (err) {
       console.error(`Error unlinking ${provider} auth:`, err)
-      alert(`Unable to unlink ${provider.charAt(0).toUpperCase() + provider.slice(1)} account. Please contact support or sign out and sign back in to change your authentication method.`)
+      const maybeLastMethod = typeof err?.message === 'string' && /last|only|unlink.*primary/i.test(err.message)
+      const reason = maybeLastMethod
+        ? 'You cannot unlink your only sign-in method. Link another provider first.'
+        : (err?.message || 'Unexpected error occurred.')
+      alert(`Unable to unlink ${provider.charAt(0).toUpperCase() + provider.slice(1)} account. ${reason}`)
       await checkAuthStatus(provider)
     } finally {
       setUnlinkLoading(prev => ({ ...prev, [provider]: false }))
