@@ -1,8 +1,48 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabaseClient'
 import styles from './MyEvents.module.css'
+
+const VIEW_MODES = {
+  UPCOMING: 'upcoming',
+  PAST: 'past'
+}
+
+const formatTime = (dateString) => {
+  return new Date(dateString).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+const groupEventsByDate = (events, viewMode) => {
+  const now = new Date()
+  const filtered = events.filter(event => {
+    const eventDate = new Date(event.starts_at)
+    return viewMode === VIEW_MODES.UPCOMING ? eventDate >= now : eventDate < now
+  })
+
+  const sorted = [...filtered].sort((a, b) => {
+    const dateA = new Date(a.starts_at)
+    const dateB = new Date(b.starts_at)
+    return viewMode === VIEW_MODES.UPCOMING 
+      ? dateA - dateB 
+      : dateB - dateA
+  })
+
+  return sorted.reduce((acc, event) => {
+    const date = new Date(event.starts_at)
+    const key = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    const weekday = date.toLocaleDateString('en-US', { weekday: 'long' })
+    
+    if (!acc[key]) {
+      acc[key] = { weekday, items: [] }
+    }
+    acc[key].items.push(event)
+    return acc
+  }, {})
+}
 
 export default function MyEvents({ onTabChange }) {
   const { user, loading: authLoading } = useAuth()
@@ -13,7 +53,7 @@ export default function MyEvents({ onTabChange }) {
   const [hostedLoading, setHostedLoading] = useState(true)
   const [error, setError] = useState('')
   const [hostedError, setHostedError] = useState('')
-  const [viewMode, setViewMode] = useState('upcoming') // 'upcoming' or 'past'
+  const [viewMode, setViewMode] = useState(VIEW_MODES.UPCOMING)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -56,9 +96,7 @@ export default function MyEvents({ onTabChange }) {
         .eq('status', 'going')
         .order('starts_at', { foreignTable: 'events', ascending: true })
 
-      if (rsvpError) {
-        throw rsvpError
-      }
+      if (rsvpError) throw rsvpError
 
       const userEvents = rsvps?.map(rsvp => ({
         ...rsvp.events,
@@ -99,9 +137,7 @@ export default function MyEvents({ onTabChange }) {
         .eq('host_id', user.id)
         .order('created_at', { ascending: false })
 
-      if (eventsError) {
-        throw eventsError
-      }
+      if (eventsError) throw eventsError
 
       setHostedEvents(events || [])
     } catch (err) {
@@ -112,35 +148,78 @@ export default function MyEvents({ onTabChange }) {
     }
   }
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    })
-  }
+  const allEvents = useMemo(() => {
+    return [...events, ...hostedEvents.map(event => ({ ...event, isHosted: true }))]
+  }, [events, hostedEvents])
 
-  const formatTime = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
+  const groupedEvents = useMemo(() => {
+    return groupEventsByDate(allEvents, viewMode)
+  }, [allEvents, viewMode])
+
+  const hasEvents = allEvents.length > 0
+  const filteredEventsCount = Object.values(groupedEvents).reduce((sum, group) => sum + group.items.length, 0)
 
   const handleEventClick = (eventId) => {
     router.push(`/event/${eventId}`)
   }
 
-  const handleSignIn = () => {
-    router.push('/login')
-  }
-
-  const handleEditEvent = (eventId) => {
+  const handleEditEvent = (eventId, e) => {
+    e.stopPropagation()
     router.push(`/manage-event/${eventId}`)
   }
+
+  const handleTabChange = (tab) => {
+    onTabChange ? onTabChange(tab) : router.push(tab === 'discoverEvents' ? '/' : '/create-event')
+  }
+
+  const renderEventCard = (event) => (
+    <div 
+      className={styles.eventCard}
+      onClick={() => handleEventClick(event.id)}
+    >
+      <div className={styles.eventContent}>
+        <div className={styles.eventHeaderRow}>
+          <div className={styles.eventTime}>{formatTime(event.starts_at)}</div>
+          <div className={styles.eventActions}>
+            {event.isHosted ? (
+              <button
+                className={styles.managePill}
+                onClick={(e) => handleEditEvent(event.id, e)}
+                title="Manage event"
+                aria-label="Manage event"
+              >
+                Manage Event
+              </button>
+            ) : (
+              <div className={styles.goingPill}>Going</div>
+            )}
+          </div>
+        </div>
+        <h3 className={styles.eventTitle}>{event.title}</h3>
+        {!event.location ? (
+          <div className={styles.metaWarn}>Location Missing</div>
+        ) : (
+          <div className={styles.metaRow}>
+            <span className={styles.metaText}>{event.location}</span>
+            {event.city && <span className={styles.metaSub}>{event.city}</span>}
+          </div>
+        )}
+      </div>
+      <div className={styles.eventThumb} aria-hidden="true">
+        {event.banner_image_url ? (
+          <img
+            src={event.banner_image_url}
+            alt=""
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        ) : (
+          <div className={styles.imagePlaceholder}>
+            {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
+          </div>
+        )}
+      </div>
+    </div>
+  )
 
   if (authLoading || loading || hostedLoading) {
     return (
@@ -159,7 +238,7 @@ export default function MyEvents({ onTabChange }) {
           <div className={styles.notLoggedIn}>
             <p>You need to be signed in to see your registered events.</p>
             <button 
-              onClick={handleSignIn}
+              onClick={() => router.push('/login')}
               className={styles.signInButton}
             >
               Sign In
@@ -183,132 +262,52 @@ export default function MyEvents({ onTabChange }) {
     )
   }
 
-  const renderEventCard = (event, isHosted = false) => (
-    <div 
-      key={event.id}
-      className={styles.eventCard}
-      onClick={() => handleEventClick(event.id)}
-    >
-      <div className={styles.eventContent}>
-        <div className={styles.eventHeaderRow}>
-          <div className={styles.eventTime}>{formatTime(event.starts_at)}</div>
-          <div className={styles.eventActions}>
-            {isHosted ? (
-              <button
-                className={styles.managePill}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleEditEvent(event.id)
-                }}
-                title="Manage event"
-                aria-label="Manage event"
-              >
-                Manage Event
-              </button>
-            ) : (
-              <div className={styles.goingPill}>Going</div>
-            )}
-          </div>
-        </div>
-        <h3 className={styles.eventTitle}>{event.title}</h3>
-        {!event.location && (
-          <div className={styles.metaWarn}>Location Missing</div>
-        )}
-        {event.location && (
-          <div className={styles.metaRow}>
-            <span className={styles.metaText}>{event.location}</span>
-            {event.city && <span className={styles.metaSub}>{event.city}</span>}
-          </div>
-        )}
-      </div>
-
-      <div className={styles.eventThumb}
-           aria-hidden="true">
-        {event.banner_image_url ? (
-          <img
-            src={event.banner_image_url}
-            alt=""
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        ) : (
-          <div className={styles.imagePlaceholder}>
-            {event.game_title ? event.game_title.charAt(0).toUpperCase() : 'E'}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-
-  // Combine all events for display
-  const allEvents = [...events, ...hostedEvents.map(event => ({ ...event, isHosted: true }))]
-  
-  // Filter events based on view mode
-  const now = new Date()
-  const filteredEvents = allEvents.filter(event => {
-    const eventDate = new Date(event.starts_at)
-    return viewMode === 'upcoming' ? eventDate >= now : eventDate < now
-  })
-
-  // Build grouped-by-date structure for timeline layout
-  const sortAsc = (a, b) => new Date(a.starts_at) - new Date(b.starts_at)
-  const sortDesc = (a, b) => new Date(b.starts_at) - new Date(a.starts_at)
-  const sorted = [...filteredEvents].sort(viewMode === 'upcoming' ? sortAsc : sortDesc)
-
-  const groups = sorted.reduce((acc, event) => {
-    const d = new Date(event.starts_at)
-    const key = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    const weekday = d.toLocaleDateString('en-US', { weekday: 'long' })
-    if (!acc[key]) acc[key] = { weekday, items: [] }
-    acc[key].items.push(event)
-    return acc
-  }, {})
-
   return (
     <div className={styles.myEvents}>
       <div className={styles.section}>
-        {allEvents.length > 0 && (
+        {hasEvents && (
           <div className={styles.header}>
             <div className={styles.toggleContainer}>
               <button 
-                className={`${styles.toggleButton} ${viewMode === 'upcoming' ? styles.active : ''}`}
-                onClick={() => setViewMode('upcoming')}
+                className={`${styles.toggleButton} ${viewMode === VIEW_MODES.UPCOMING ? styles.active : ''}`}
+                onClick={() => setViewMode(VIEW_MODES.UPCOMING)}
               >
                 Upcoming
               </button>
               <button 
-                className={`${styles.toggleButton} ${viewMode === 'past' ? styles.active : ''}`}
-                onClick={() => setViewMode('past')}
+                className={`${styles.toggleButton} ${viewMode === VIEW_MODES.PAST ? styles.active : ''}`}
+                onClick={() => setViewMode(VIEW_MODES.PAST)}
               >
                 Past
               </button>
             </div>
           </div>
         )}
-        {filteredEvents.length === 0 ? (
+        {filteredEventsCount === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyStateContent}>
               <p className={styles.emptyStateText}>
-                {allEvents.length === 0 
+                {!hasEvents 
                   ? "You haven't registered for or hosted any events yet."
                   : `No ${viewMode} events.`
                 }
               </p>
               <p className={styles.emptyStateSubtext}>
-                {allEvents.length === 0 
+                {!hasEvents 
                   ? "Find and join exciting gaming events or create your own."
                   : `You don't have any ${viewMode} events at the moment.`
                 }
               </p>
-              {allEvents.length === 0 && (
+              {!hasEvents && (
                 <div className={styles.emptyStateButtons}>
                   <button 
-                    onClick={() => onTabChange ? onTabChange('discoverEvents') : router.push('/')}
+                    onClick={() => handleTabChange('discoverEvents')}
                     className={styles.discoverButton}
                   >
                     Discover Events
                   </button>
                   <button 
-                    onClick={() => onTabChange ? onTabChange('createEvent') : router.push('/create-event')}
+                    onClick={() => handleTabChange('createEvent')}
                     className={styles.discoverButton}
                   >
                     Create Event
@@ -319,7 +318,7 @@ export default function MyEvents({ onTabChange }) {
           </div>
         ) : (
           <div className={styles.timelineWrapper}>
-            {Object.entries(groups).map(([dateKey, group]) => (
+            {Object.entries(groupedEvents).map(([dateKey, group]) => (
               <div className={styles.dateGroup} key={dateKey}>
                 <div className={styles.dateColumn}>
                   <div className={styles.dateKey}>{dateKey}</div>
@@ -330,7 +329,7 @@ export default function MyEvents({ onTabChange }) {
                   {group.items.map(event => (
                     <div className={styles.eventItem} key={event.id}>
                       <div className={styles.trackDot} />
-                      {renderEventCard(event, event.isHosted)}
+                      {renderEventCard(event)}
                     </div>
                   ))}
                 </div>
