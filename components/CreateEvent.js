@@ -26,13 +26,18 @@ export default function CreateEvent() {
     ends_at: getTodayDateTime(),
     city: '',
     state: '',
-    zip_code: ''
+    zip_code: '',
+    game_id: ''
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [bannerFile, setBannerFile] = useState(null)
   const [bannerPreview, setBannerPreview] = useState(null)
   const [uploading, setUploading] = useState(false)
+  const [games, setGames] = useState([])
+  const [loadingGames, setLoadingGames] = useState(false)
+  const [gameBackgroundImage, setGameBackgroundImage] = useState(null)
+  const [gameSelectionEnabled, setGameSelectionEnabled] = useState(false)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -40,7 +45,59 @@ export default function CreateEvent() {
       ...prev,
       [name]: value
     }))
+
+    // Update background image when game is selected
+    if (name === 'game_id') {
+      if (value === '') {
+        setGameBackgroundImage(null)
+      } else {
+        const selectedGame = games.find(game => String(game.id) === String(value))
+        setGameBackgroundImage(selectedGame?.game_background_image_url || null)
+      }
+    }
   }
+
+  const handleGameToggle = (e) => {
+    const enabled = e.target.checked
+    setGameSelectionEnabled(enabled)
+    
+    // Clear game selection and background when disabled
+    if (!enabled) {
+      setFormData(prev => ({
+        ...prev,
+        game_id: ''
+      }))
+      setGameBackgroundImage(null)
+    }
+  }
+
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        setLoadingGames(true)
+        const { data, error } = await supabase
+          .from('games')
+          .select('id, game_title, game_background_image_url')
+          .order('game_title', { ascending: true })
+
+        if (error) {
+          console.error('Error fetching games:', error)
+          setError('Failed to load games')
+        } else {
+          setGames(data || [])
+        }
+      } catch (err) {
+        console.error('Error fetching games:', err)
+        setError('Failed to load games')
+      } finally {
+        setLoadingGames(false)
+      }
+    }
+
+    if (user) {
+      fetchGames()
+    }
+  }, [user])
 
 
 
@@ -130,7 +187,8 @@ export default function CreateEvent() {
         state: formData.state,
         zip_code: formData.zip_code,
         host_id: user.id,
-        banner_image_url: bannerImageUrl
+        banner_image_url: bannerImageUrl,
+        game_id: gameSelectionEnabled && formData.game_id ? formData.game_id : null
       }
 
       const { data, error } = await supabase
@@ -201,7 +259,15 @@ export default function CreateEvent() {
   }
 
   return (
-    <div className={styles.createEvent}>
+    <div 
+      className={styles.createEvent}
+      style={gameBackgroundImage ? {
+        backgroundImage: `url(${gameBackgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      } : {}}
+    >
       {error && (
         <div className={styles.errorMessage}>
           {error}
@@ -333,7 +399,36 @@ export default function CreateEvent() {
           </div>
         </div>
 
-
+        <div className={styles.gameSection}>
+          <label className={styles.fieldLabel}>Game</label>
+          <div className={styles.gameToggleContainer}>
+            <label htmlFor="game_toggle" className={styles.toggleLabel}>
+              <input
+                type="checkbox"
+                id="game_toggle"
+                checked={gameSelectionEnabled}
+                onChange={handleGameToggle}
+                className={styles.toggleSwitch}
+              />
+              <span className={styles.toggleSlider}></span>
+            </label>
+            <select
+              id="game_id"
+              name="game_id"
+              value={formData.game_id}
+              onChange={handleInputChange}
+              className={styles.select}
+              disabled={!gameSelectionEnabled || loadingGames}
+            >
+              <option value="">Select a game</option>
+              {games.map((game) => (
+                <option key={game.id} value={game.id}>
+                  {game.game_title}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
             <button 
               type="submit" 

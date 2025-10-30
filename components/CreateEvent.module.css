@@ -4,6 +4,23 @@
   width: 100%;
   padding: 48px 16px 24px 16px;
   min-height: 100vh;
+  position: relative;
+}
+
+.createEvent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  z-index: 0;
+}
+
+.createEvent > * {
+  position: relative;
+  z-index: 1;
 }
 
 .formContainer {
@@ -120,6 +137,92 @@
   cursor: pointer;
 }
 
+.select {
+  width: 100%;
+  border: 1px solid #000;
+  background: #fff;
+  padding: 12px 16px;
+  font-size: 1rem;
+  color: #000;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.select:focus {
+  outline: none;
+  border: 1px solid #333;
+}
+
+.select:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+  color: #999;
+}
+
+/* Game Toggle */
+.gameToggleContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggleLabel {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.toggleSwitch {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleSlider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border: 1px solid #000;
+}
+
+.toggleSlider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #fff;
+  transition: 0.3s;
+  border: 1px solid #000;
+}
+
+.toggleSwitch:checked + .toggleSlider {
+  background-color: #000;
+}
+
+.toggleSwitch:checked + .toggleSlider:before {
+  transform: translateX(20px) translateY(-50%);
+}
+
+.toggleSwitch:disabled + .toggleSlider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gameToggleContainer .select {
+  flex: 1;
+}
+
 /* Form Layout */
 .formRow {
   display: grid;
@@ -217,7 +320,7 @@
 
 
 /* Form Sections */
-.dateTimeSection, .descriptionSection, .locationSection {
+.dateTimeSection, .descriptionSection, .locationSection, .gameSection {
   display: flex;
   flex-direction: column;
   gap: 0;
