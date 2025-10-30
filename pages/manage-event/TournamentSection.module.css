@@ -6,6 +6,13 @@
   padding: 0 24px;
 }
 
+@media (max-width: 768px) {
+  .tournamentSectionTop {
+    padding: 0;
+    margin-bottom: 24px;
+  }
+}
+
 .tournamentCard {
   width: 100%;
   background: white !important;
@@ -19,6 +26,28 @@
   gap: 16px;
   padding: 20px;
   width: 100%;
+}
+
+@media (max-width: 768px) {
+  .tournamentCardContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .tournamentCardText {
+    width: 100%;
+  }
+
+  .tournamentCardActions {
+    width: 100%;
+  }
+
+  .manageTournamentCardButton,
+  .createTournamentCardButton {
+    width: 100%;
+  }
 }
 
 .tournamentIcon {

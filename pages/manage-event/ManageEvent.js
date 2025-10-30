@@ -400,6 +400,55 @@ export default function ManageEvent() {
       <div className={styles.formContainer}>
         {activeTab === 'overview' && (
           <div className={styles.twoColumnLayout}>
+            <div className={styles.bannerColumn}>
+              <div className={styles.bannerImage}>
+                <div className={styles.imageControls}>
+                  <input
+                    type="file"
+                    id="bannerFile"
+                    name="bannerFile"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className={styles.fileInput}
+                  />
+                  <label htmlFor="bannerFile" className={styles.fileInputLabel}>
+                    {imageFile ? 'Change Image' : 'Choose Image'}
+                  </label>
+                  {imageFile && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className={styles.removeImageButton}
+                    >
+                      Remove Image
+                    </button>
+                  )}
+                </div>
+                
+                <div className={styles.imageContainer}>
+                  {imagePreview ? (
+                    <img 
+                      src={imagePreview} 
+                      alt="Banner preview" 
+                      className={styles.bannerPreview}
+                    />
+                  ) : bannerImageUrl ? (
+                    <img 
+                      src={bannerImageUrl} 
+                      alt="Event banner" 
+                      className={styles.bannerPreview}
+                    />
+                  ) : (
+                    <div className={styles.bannerPlaceholder}>
+                      <div className={styles.uploadText}>Upload banner image</div>
+                    </div>
+                  )}
+                </div>
+                
+                <ThemeSelector value={currentTheme} onChange={handleThemeChange} />
+              </div>
+            </div>
+
             <div className={styles.formColumn}>
               <form onSubmit={handleSubmit} className={styles.form}>
                 <h2 className={styles.sectionTitle}>Basic Information</h2>
@@ -562,55 +611,6 @@ export default function ManageEvent() {
                   {loading ? 'Updating Event...' : imageUploading ? 'Uploading Image...' : 'Update Event'}
                 </button>
               </form>
-            </div>
-
-            <div className={styles.bannerColumn}>
-              <div className={styles.bannerImage}>
-                <div className={styles.imageControls}>
-                  <input
-                    type="file"
-                    id="bannerFile"
-                    name="bannerFile"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className={styles.fileInput}
-                  />
-                  <label htmlFor="bannerFile" className={styles.fileInputLabel}>
-                    {imageFile ? 'Change Image' : 'Choose Image'}
-                  </label>
-                  {imageFile && (
-                    <button
-                      type="button"
-                      onClick={handleRemoveImage}
-                      className={styles.removeImageButton}
-                    >
-                      Remove Image
-                    </button>
-                  )}
-                </div>
-                
-                <div className={styles.imageContainer}>
-                  {imagePreview ? (
-                    <img 
-                      src={imagePreview} 
-                      alt="Banner preview" 
-                      className={styles.bannerPreview}
-                    />
-                  ) : bannerImageUrl ? (
-                    <img 
-                      src={bannerImageUrl} 
-                      alt="Event banner" 
-                      className={styles.bannerPreview}
-                    />
-                  ) : (
-                    <div className={styles.bannerPlaceholder}>
-                      <div className={styles.uploadText}>Upload banner image</div>
-                    </div>
-                  )}
-                </div>
-                
-                <ThemeSelector value={currentTheme} onChange={handleThemeChange} />
-              </div>
             </div>
           </div>
         )}

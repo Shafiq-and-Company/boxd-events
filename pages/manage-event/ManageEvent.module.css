@@ -8,6 +8,12 @@
   position: relative;
 }
 
+@media (max-width: 768px) {
+  .manageEvent {
+    padding: 24px 16px;
+  }
+}
+
 .manageEvent::before {
   content: '';
   position: absolute;
@@ -42,11 +48,29 @@
   padding: 0 24px;
 }
 
+@media (max-width: 768px) {
+  .formContainer {
+    padding: 0;
+  }
+
+  .twoColumnLayout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 0;
+  }
+}
+
 .tabSection {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto 24px auto;
   padding: 0 24px;
+}
+
+@media (max-width: 768px) {
+  .tabSection {
+    padding: 0;
+  }
 }
 
 /* Tab Navigation */
@@ -67,6 +91,13 @@
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
   position: relative;
+}
+
+@media (max-width: 768px) {
+  .tabButton {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
 }
 
 .tabButton:hover {
@@ -91,6 +122,13 @@
   padding: 24px;
 }
 
+@media (max-width: 768px) {
+  .formColumn {
+    max-width: 100%;
+    padding: 16px;
+  }
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -101,6 +139,12 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
 }
 
 .formGroup {
@@ -147,6 +191,13 @@
   font-size: 2.5rem;
   font-weight: 400;
   letter-spacing: -0.5px;
+}
+
+@media (max-width: 768px) {
+  .titleInput {
+    font-size: 1.75rem;
+    padding: 12px 16px;
+  }
 }
 
 .textarea {
@@ -217,6 +268,28 @@
   width: 1px;
   background: #ddd;
   flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .combinedLocationField {
+    flex-direction: column;
+  }
+
+  .locationDivider {
+    display: none;
+  }
+
+  .combinedLocationField .formGroup {
+    border-bottom: 1px solid #ddd;
+  }
+
+  .combinedLocationField .formGroup:last-child {
+    border-bottom: none;
+  }
+
+  .locationInput {
+    border-bottom: none;
+  }
 }
 
 /* Select Input */
@@ -314,6 +387,16 @@
   background: #fff;
   padding: 24px;
   border: 1px solid #e0e0e0;
+}
+
+@media (max-width: 768px) {
+  .bannerColumn {
+    position: static;
+    max-width: 100%;
+    padding: 16px;
+    order: -1;
+    margin: 0;
+  }
 }
 
 .bannerImage {
@@ -418,6 +501,16 @@
   background: #fafafa;
   padding: 16px;
   margin-bottom: 24px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .errorMessage {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 .authRequired,

@@ -6,10 +6,23 @@
   padding: 0 24px;
 }
 
+@media (max-width: 768px) {
+  .guestsTabContent {
+    padding: 0;
+  }
+}
+
 .guestsStats {
   display: flex;
   gap: 24px;
   margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .guestsStats {
+    flex-direction: column;
+    gap: 16px;
+  }
 }
 
 .guestStat {
@@ -108,6 +121,12 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .guestsList {
+    grid-template-columns: 1fr;
+  }
 }
 
 .guestItem {
