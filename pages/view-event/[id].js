@@ -178,7 +178,7 @@ export default function EventDetail() {
 
   const copyEventLink = async () => {
     try {
-      await navigator.clipboard.writeText(`${window.location.origin}/event/${id}`)
+      await navigator.clipboard.writeText(`${window.location.origin}/view-event/${id}`)
       setCopySuccess(true)
       setTimeout(() => setCopySuccess(false), 2000)
     } catch (err) {

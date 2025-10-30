@@ -168,7 +168,7 @@ export default function MyEvents({ onTabChange }) {
   const filteredEventsCount = Object.values(groupedEvents).reduce((sum, group) => sum + group.items.length, 0)
 
   const handleEventClick = (eventId) => {
-    router.push(`/event/${eventId}`)
+    router.push(`/view-event/${eventId}`)
   }
 
   const handleEditEvent = (eventId, e) => {

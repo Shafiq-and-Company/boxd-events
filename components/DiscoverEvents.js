@@ -86,7 +86,7 @@ export default function DiscoverEvents() {
   }
 
   const handleEventClick = (eventId) => {
-    window.location.href = `/event/${eventId}`
+    window.location.href = `/view-event/${eventId}`
   }
 
   const handleGameChange = (gameTitle) => {

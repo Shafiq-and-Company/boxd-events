@@ -128,7 +128,7 @@ export default function ManageTournament() {
 
   const handleBackToEvent = () => {
     if (tournament?.event_id) {
-      router.push(`/event/${tournament.event_id}`);
+      router.push(`/view-event/${tournament.event_id}`);
     }
   };
 

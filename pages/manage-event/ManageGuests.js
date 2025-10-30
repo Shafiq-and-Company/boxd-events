@@ -48,7 +48,7 @@ export default function ManageGuests() {
   }, [fetchAttendees])
 
   const handleShareLink = () => {
-    const eventUrl = `${window.location.origin}/event/${id}`
+    const eventUrl = `${window.location.origin}/view-event/${id}`
     navigator.clipboard.writeText(eventUrl).then(() => {
       alert('Event link copied to clipboard!')
     }).catch(() => {
