@@ -138,7 +138,7 @@ export default function TournamentSection({ eventId, eventTitle, eventDescriptio
                 disabled={tournamentLoading || !eventTitle}
                 title="Create tournament"
               >
-                {tournamentLoading ? 'Creating...' : 'Create Tournament'}
+                {tournamentLoading ? 'Creating...' : 'Create'}
               </button>
             )}
           </div>
