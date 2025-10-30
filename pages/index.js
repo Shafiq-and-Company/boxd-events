@@ -5,7 +5,7 @@ import NavBar from '../components/NavBar'
 import DiscoverEvents from './discover-events'
 import MyEvents from './my-events/MyEvents'
 import CreateEvent from './create-event/CreateEvent'
-import UserSettings from '../components/UserSettings'
+import UserSettings from './user-settings/UserSettings'
 
 export default function Home() {
   const router = useRouter()
