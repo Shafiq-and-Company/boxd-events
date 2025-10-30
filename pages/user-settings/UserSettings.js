@@ -16,6 +16,7 @@ export default function UserSettings() {
   const [googleAuthStatus, setGoogleAuthStatus] = useState(null)
   const [discordAuthStatus, setDiscordAuthStatus] = useState(null)
   const [unlinkLoading, setUnlinkLoading] = useState({ google: false, discord: false })
+  const [startGGLinked, setStartGGLinked] = useState(null)
   
   const [userProfile, setUserProfile] = useState({
     first_name: '',
@@ -36,6 +37,9 @@ export default function UserSettings() {
       fetchUserProfile()
       checkAuthStatus('google')
       checkAuthStatus('discord')
+      // start.gg link status from user metadata
+      const linked = Boolean(user?.user_metadata?.startgg?.access_token)
+      setStartGGLinked(linked)
     }
   }, [user, authLoading, router])
 
@@ -167,6 +171,30 @@ export default function UserSettings() {
     } catch (err) {
       console.error('Error linking Discord auth:', err)
       alert('Unable to link Discord account. Please try again or contact support.')
+    }
+  }
+
+  // Handle start.gg OAuth link flow
+  const handleStartGGLink = async () => {
+    try {
+      const clientId = process.env.NEXT_PUBLIC_STARTGG_CLIENT_ID
+      const scopes = process.env.NEXT_PUBLIC_STARTGG_SCOPES || 'user.identity user.email'
+      if (!clientId) {
+        alert('start.gg is not configured. Missing client id.')
+        return
+      }
+      const { data: sessionData } = await supabase.auth.getSession()
+      const accessToken = sessionData?.session?.access_token
+      if (!accessToken) {
+        alert('You must be signed in to link start.gg.')
+        return
+      }
+      const state = typeof window !== 'undefined' ? btoa(accessToken) : ''
+      const redirectUri = `${window.location.origin}/api/startgg/callback`
+      const authUrl = `https://start.gg/oauth/authorize?response_type=code&client_id=${encodeURIComponent(clientId)}&scope=${encodeURIComponent(scopes)}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}`
+      window.location.href = authUrl
+    } catch (err) {
+      alert('Unable to start start.gg link flow. Please try again.')
     }
   }
 
@@ -475,6 +503,47 @@ export default function UserSettings() {
             </div>
           </div>
 
+          <div className={styles.securityItem}>
+            <div className={styles.securityIcon}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M8 12h8M12 8v8" />
+              </svg>
+            </div>
+            <div className={styles.securityContent}>
+              <h4 className={styles.securityTitle}>start.gg Link</h4>
+              <p className={styles.securityDescription}>
+                {startGGLinked === true
+                  ? 'Your account is linked to start.gg.'
+                  : startGGLinked === false
+                  ? 'Link your start.gg account to connect your profile.'
+                  : 'Checking start.gg link status...'}
+              </p>
+            </div>
+            <div className={styles.securityActions}>
+              {startGGLinked === true && (
+                <button 
+                  type="button" 
+                  className={styles.discordLinkedButton}
+                  disabled
+                  title="start.gg linked"
+                >
+                  Linked
+                </button>
+              )}
+              {startGGLinked === false && (
+                <button 
+                  type="button" 
+                  className={styles.discordUnlinkedButton}
+                  onClick={handleStartGGLink}
+                  title="Click to link start.gg account"
+                >
+                  Link
+                </button>
+              )}
+            </div>
+          </div>
+          
           <div className={styles.securityItem}>
             <div className={styles.securityIcon}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
