@@ -109,7 +109,7 @@ export default function ThemeSelector({ value, onChange }) {
 
   return (
     <div className={styles.themeSelector}>
-      <div className={styles.themeLabel}>Choose Theme</div>
+      <div className={styles.themeLabel}>Give it a Hue</div>
       <div className={styles.themeOptions}>
         {THEME_OPTIONS.map((option) => (
           <button

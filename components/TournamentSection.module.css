@@ -1,0 +1,164 @@
+/* Tournament Section */
+.tournamentSectionTop {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 32px auto;
+  padding: 0 24px;
+}
+
+.tournamentCard {
+  width: 100%;
+  background: transparent !important;
+  border: 4px solid !important;
+  border-image: linear-gradient(90deg, 
+    #ff0000, 
+    #ff7f00, 
+    #ffff00, 
+    #00ff00, 
+    #0000ff, 
+    #4b0082, 
+    #9400d3
+  ) 1 !important;
+  outline: 4px dotted #000 !important;
+  outline-offset: 4px !important;
+  margin-bottom: 24px !important;
+  transition: all 0.2s ease !important;
+}
+
+.tournamentCard:hover {
+  border-image: linear-gradient(90deg, 
+    #ff0000, 
+    #ff7f00, 
+    #ffff00, 
+    #00ff00, 
+    #0000ff, 
+    #4b0082, 
+    #9400d3
+  ) 1 !important;
+  outline: 4px dotted #000 !important;
+}
+
+.tournamentCardContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+}
+
+.tournamentIcon {
+  width: 48px;
+  height: 48px;
+  background: #000 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 4px solid !important;
+  border-image: linear-gradient(90deg, 
+    #ff0000, 
+    #ff7f00, 
+    #ffff00, 
+    #00ff00, 
+    #0000ff, 
+    #4b0082, 
+    #9400d3
+  ) 1 !important;
+}
+
+.tournamentIcon svg {
+  color: #fff;
+  width: 24px;
+  height: 24px;
+}
+
+.tournamentCardText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tournamentCardTitle {
+  font-size: 1.1rem;
+  color: #000;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.tournamentCardDescription {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 400;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tournamentCardActions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.manageTournamentCardButton {
+  background: #000 !important;
+  color: #fff !important;
+  border: 4px solid !important;
+  border-image: linear-gradient(90deg, 
+    #ff0000, 
+    #ff7f00, 
+    #ffff00, 
+    #00ff00, 
+    #0000ff, 
+    #4b0082, 
+    #9400d3
+  ) 1 !important;
+  padding: 12px 20px !important;
+  border-radius: 4px !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+}
+
+.manageTournamentCardButton:hover {
+  background: #333 !important;
+  border-image: linear-gradient(90deg, 
+    #ff0000, 
+    #ff7f00, 
+    #ffff00, 
+    #00ff00, 
+    #0000ff, 
+    #4b0082, 
+    #9400d3
+  ) 1 !important;
+}
+
+.createTournamentCardButton {
+  background: #28a745;
+  color: #fff;
+  border: 1px solid #28a745;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.createTournamentCardButton:hover {
+  background: #218838;
+  border-color: #218838;
+}
+
+.createTournamentCardButton:disabled {
+  background: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+}
+

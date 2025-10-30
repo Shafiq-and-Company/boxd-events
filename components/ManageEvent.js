@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/AuthContext'
+import ThemeSelector from './ThemeSelector'
+import TournamentSection from './TournamentSection'
 import styles from './ManageEvent.module.css'
 
 export default function ManageEvent() {
@@ -16,7 +18,7 @@ export default function ManageEvent() {
     location: '',
     starts_at: '',
     ends_at: '',
-    game_title: '',
+    game_id: '',
     city: '',
     cost: '',
     state: '',
@@ -34,9 +36,10 @@ export default function ManageEvent() {
   const [loadingAttendees, setLoadingAttendees] = useState(false)
   const [currentTheme, setCurrentTheme] = useState(null)
   const [activeTab, setActiveTab] = useState('overview')
-  const [tournament, setTournament] = useState(null)
-  const [tournamentLoading, setTournamentLoading] = useState(false)
   const [gameBackgroundImage, setGameBackgroundImage] = useState(null)
+  const [games, setGames] = useState([])
+  const [loadingGames, setLoadingGames] = useState(false)
+  const [gameSelectionEnabled, setGameSelectionEnabled] = useState(false)
   const containerRef = useRef(null)
 
   // Helper functions
@@ -77,114 +80,31 @@ export default function ManageEvent() {
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+
+    if (name === 'game_id') {
+      const selectedGame = value ? games.find(game => String(game.id) === String(value)) : null
+      setGameBackgroundImage(selectedGame?.game_background_image_url || null)
+    }
   }
 
-  const handleThemeChange = async (e) => {
-    const { value } = e.target
+  const handleGameToggle = (e) => {
+    const enabled = e.target.checked
+    setGameSelectionEnabled(enabled)
+    
+    if (!enabled) {
+      setFormData(prev => ({ ...prev, game_id: '' }))
+      setGameBackgroundImage(null)
+    }
+  }
+
+  const handleThemeChange = async (themeObject) => {
+    setCurrentTheme(themeObject)
+    
     setFormData(prev => ({
       ...prev,
-      theme: value
+      theme: themeObject?.name || ''
     }))
 
-    // Create theme object based on selected theme
-    let themeObject = null
-    if (value === 'blue') {
-      themeObject = {
-        name: 'blue',
-        colors: {
-          background: '#f0f8ff',
-          primary: '#000000',
-          secondary: '#e6f3ff',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'red') {
-      themeObject = {
-        name: 'red',
-        colors: {
-          background: '#fff0f0',
-          primary: '#000000',
-          secondary: '#ffe6e6',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'green') {
-      themeObject = {
-        name: 'green',
-        colors: {
-          background: '#f0fff0',
-          primary: '#000000',
-          secondary: '#e6ffe6',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'yellow') {
-      themeObject = {
-        name: 'yellow',
-        colors: {
-          background: '#fffef0',
-          primary: '#000000',
-          secondary: '#fffce6',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'purple') {
-      themeObject = {
-        name: 'purple',
-        colors: {
-          background: '#f8f0ff',
-          primary: '#000000',
-          secondary: '#f0e6ff',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'orange') {
-      themeObject = {
-        name: 'orange',
-        colors: {
-          background: '#fff8f0',
-          primary: '#000000',
-          secondary: '#ffe6cc',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    } else if (value === 'pink') {
-      themeObject = {
-        name: 'pink',
-        colors: {
-          background: '#fff0f8',
-          primary: '#000000',
-          secondary: '#ffe6f3',
-          accent: '#333333',
-          text: '#000000',
-          textSecondary: '#666666',
-          border: '#000000'
-        }
-      }
-    }
-
-    // Update current theme state immediately
-    setCurrentTheme(themeObject)
-
-    // Save to Supabase
     try {
       const { error } = await supabase
         .from('events')
@@ -197,7 +117,6 @@ export default function ManageEvent() {
       setError('Failed to update theme')
     }
   }
-
 
   const handleImageChange = (e) => {
     const file = e.target.files[0]
@@ -246,7 +165,7 @@ export default function ManageEvent() {
         location: formData.location,
         starts_at: formData.starts_at ? new Date(formData.starts_at).toISOString() : null,
         ends_at: formData.ends_at ? new Date(formData.ends_at).toISOString() : null,
-        game_title: formData.game_title,
+        game_id: gameSelectionEnabled && formData.game_id ? formData.game_id : null,
         city: formData.city,
         state: formData.state,
         zip_code: formData.zip_code,
@@ -290,7 +209,7 @@ export default function ManageEvent() {
         .from('events')
         .select(`
           *,
-          games (game_background_image_url)
+          games (id, game_title, game_background_image_url)
         `)
         .eq('id', id)
         .eq('host_id', user.id)
@@ -299,11 +218,17 @@ export default function ManageEvent() {
       if (error) throw error
       if (!event) throw new Error('Event not found or you do not have permission to edit it')
 
-      // Set game background image if available
-      if (event.games && event.games.game_background_image_url) {
-        setGameBackgroundImage(event.games.game_background_image_url)
+      // Set game background image and game selection if available
+      if (event.game_id) {
+        setGameSelectionEnabled(true)
+        if (event.games && event.games.game_background_image_url) {
+          setGameBackgroundImage(event.games.game_background_image_url)
+        } else {
+          setGameBackgroundImage(null)
+        }
       } else {
         setGameBackgroundImage(null)
+        setGameSelectionEnabled(false)
       }
 
       // Extract theme name from theme object
@@ -324,7 +249,7 @@ export default function ManageEvent() {
         location: event.location || '',
         starts_at: formatDateForInput(event.starts_at),
         ends_at: formatDateForInput(event.ends_at),
-        game_title: event.game_title || '',
+        game_id: event.game_id || '',
         city: event.city || '',
         cost: event.cost || '',
         state: event.state || '',
@@ -377,26 +302,62 @@ export default function ManageEvent() {
 
   // Effects
   useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        setLoadingGames(true)
+        const { data, error } = await supabase
+          .from('games')
+          .select('id, game_title, game_background_image_url')
+          .order('game_title', { ascending: true })
+
+        if (error) {
+          console.error('Error fetching games:', error)
+          setError('Failed to load games')
+        } else {
+          setGames(data || [])
+        }
+      } catch (err) {
+        console.error('Error fetching games:', err)
+        setError('Failed to load games')
+      } finally {
+        setLoadingGames(false)
+      }
+    }
+
+    if (user) {
+      fetchGames()
+    }
+  }, [user])
+
+  useEffect(() => {
+    if (formData.game_id && games.length > 0) {
+      const selectedGame = games.find(game => String(game.id) === String(formData.game_id))
+      if (selectedGame?.game_background_image_url) {
+        setGameBackgroundImage(selectedGame.game_background_image_url)
+      }
+    }
+  }, [games, formData.game_id])
+
+  useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission()
     }
   }, [])
 
-  // Update CSS variable for theme overlay when theme or background changes
   useEffect(() => {
-    if (containerRef.current) {
-      if (gameBackgroundImage && currentTheme) {
-        const hex = currentTheme.colors.background
-        const r = parseInt(hex.slice(1, 3), 16)
-        const g = parseInt(hex.slice(3, 5), 16)
-        const b = parseInt(hex.slice(5, 7), 16)
-        const overlayColor = `rgba(${r}, ${g}, ${b}, 0.8)`
-        containerRef.current.style.setProperty('--theme-overlay-color', overlayColor)
-      } else if (gameBackgroundImage) {
-        containerRef.current.style.setProperty('--theme-overlay-color', 'rgba(255, 255, 255, 0.95)')
-      }
+    if (!containerRef.current) return
+
+    if (currentTheme) {
+      const hex = currentTheme.colors.background
+      const r = parseInt(hex.slice(1, 3), 16)
+      const g = parseInt(hex.slice(3, 5), 16)
+      const b = parseInt(hex.slice(5, 7), 16)
+      const overlayColor = `rgba(${r}, ${g}, ${b}, 0.8)`
+      containerRef.current.style.setProperty('--theme-overlay-color', overlayColor)
+    } else {
+      containerRef.current.style.setProperty('--theme-overlay-color', 'rgba(255, 255, 255, 0.95)')
     }
-  }, [gameBackgroundImage, currentTheme])
+  }, [currentTheme])
 
   useEffect(() => {
     if (id && user) fetchEventData()
@@ -406,87 +367,8 @@ export default function ManageEvent() {
   useEffect(() => {
     if (id) {
       fetchAttendees()
-      loadTournament()
     }
   }, [id])
-
-  // Load tournament data
-  const loadTournament = async () => {
-    try {
-      const { data: tournamentData, error } = await supabase
-        .from('tournaments')
-        .select('*')
-        .eq('event_id', id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        console.error('Error loading tournament:', error);
-        return;
-      }
-
-      setTournament(tournamentData || null);
-    } catch (error) {
-      console.error('Error loading tournament:', error);
-      setTournament(null);
-    }
-  }
-
-  // Create tournament
-  const createTournament = async () => {
-    if (!formData.title) {
-      setError('Event title is required to create a tournament');
-      return;
-    }
-
-    setTournamentLoading(true);
-    setError(null);
-
-    try {
-      const tournamentData = {
-        event_id: id,
-        name: formData.title,
-        description: formData.description || 'Tournament for ' + formData.title,
-        max_participants: 64,
-        min_participants: 2,
-        status: 'active', // Set to active so bracket is immediately generated
-        tournament_type: 'single_elimination',
-        rules: 'Standard tournament rules apply. Check with event host for specific details.',
-        bracket_data: {}
-      }
-
-      const { data: newTournament, error } = await supabase
-        .from('tournaments')
-        .insert([tournamentData])
-        .select()
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      // Import tournament manager to generate the bracket
-      const tournamentManager = (await import('../lib/tournamentManager')).default;
-      
-      // Generate the tournament bracket immediately (if enough participants)
-      const bracketResult = await tournamentManager.createTournament(newTournament.id, formData.title);
-      
-      if (bracketResult) {
-        console.log('Tournament bracket generated successfully');
-      } else {
-        console.log('Tournament created but waiting for more participants');
-      }
-
-      setTournament(newTournament);
-      
-      // Navigate to tournament management page
-      router.push(`/manage-tournament/${newTournament.id}`);
-    } catch (error) {
-      console.error('Error creating tournament:', error);
-      setError('Failed to create tournament: ' + error.message);
-    } finally {
-      setTournamentLoading(false);
-    }
-  }
 
   // Early returns
   if (!user) {
@@ -513,15 +395,11 @@ export default function ManageEvent() {
     )
   }
 
-  // Apply game background image with theme overlay
   const pageStyle = gameBackgroundImage ? {
     backgroundImage: `url(${gameBackgroundImage})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat'
-  } : currentTheme ? {
-    background: currentTheme.colors.background,
-    minHeight: '100vh'
   } : {}
 
   return (
@@ -531,56 +409,12 @@ export default function ManageEvent() {
         <div className={styles.errorMessage}>{error}</div>
       )}
 
-      {/* Tournament Section - Full Width at Top */}
-      <div className={styles.tournamentSectionTop}>
-        <div className={styles.tournamentCard}>
-          <div className={styles.tournamentCardContent}>
-            <div className={styles.tournamentIcon}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                <path d="M4 22h16"/>
-                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21l-1.5.5c-.5.17-1.03.17-1.53 0l-1.5-.5C4.47 17.98 4 17.55 4 17v-2.34"/>
-                <path d="M14 14.66V17c0 .55.47.98.97 1.21l1.5.5c.5.17 1.03.17 1.53 0l1.5-.5C19.53 17.98 20 17.55 20 17v-2.34"/>
-                <path d="M18 2H6l2 7h8l2-7Z"/>
-                <path d="M12 9v4"/>
-              </svg>
-            </div>
-            <div className={styles.tournamentCardText}>
-              <div className={styles.tournamentCardTitle}>Tournament Brackets</div>
-              <div className={styles.tournamentCardDescription}>Manage tournament structure, seed players, and track match results</div>
-            </div>
-            <div className={styles.tournamentCardActions}>
-              {tournament ? (
-                <button
-                  type="button"
-                  className={styles.manageTournamentCardButton}
-                  onClick={async () => {
-                    try {
-                      router.push(`/manage-tournament/${tournament.id}`);
-                    } catch (error) {
-                      console.error('Error navigating to tournament:', error);
-                    }
-                  }}
-                  title="Manage tournament"
-                >
-                  Manage →
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className={styles.createTournamentCardButton}
-                  onClick={createTournament}
-                  disabled={tournamentLoading || !formData.title}
-                  title="Create tournament"
-                >
-                  {tournamentLoading ? 'Creating...' : 'Create Tournament'}
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+      <TournamentSection 
+        eventId={id} 
+        eventTitle={formData.title}
+        eventDescription={formData.description}
+        onError={setError}
+      />
 
       {/* Tab Navigation */}
       <div className={styles.tabSection}>
@@ -609,136 +443,12 @@ export default function ManageEvent() {
       <div className={styles.formContainer}>
         {activeTab === 'overview' && (
           <div className={styles.twoColumnLayout}>
-            <div className={styles.bannerColumn}>
-            <div className={styles.bannerImage}>
-              <div className={styles.imageControls}>
-                <input
-                  type="file"
-                  id="bannerFile"
-                  name="bannerFile"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className={styles.fileInput}
-                />
-                <label htmlFor="bannerFile" className={styles.fileInputLabel}>
-                  {imageFile ? 'Change Image' : 'Choose Image'}
-                </label>
-                {imageFile && (
-                  <button
-                    type="button"
-                    onClick={handleRemoveImage}
-                    className={styles.removeImageButton}
-                  >
-                    Remove Image
-                  </button>
-                )}
-              </div>
-              
-              <div className={styles.imageContainer}>
-                {imagePreview ? (
-                  <img 
-                    src={imagePreview} 
-                    alt="Banner preview" 
-                    className={styles.bannerPreview}
-                  />
-                ) : bannerImageUrl ? (
-                  <img 
-                    src={bannerImageUrl} 
-                    alt="Event banner" 
-                    className={styles.bannerPreview}
-                  />
-                ) : (
-                  <div className={styles.bannerPlaceholder}>
-                    <div className={styles.uploadText}>Upload banner image</div>
-                  </div>
-                )}
-              </div>
-              
-              <div className={styles.themeSelector}>
-                <div className={styles.themeLabel}>Choose Theme</div>
-                <div className={styles.themeOptions}>
-                  <button
-                    className={`${styles.themeOption} ${formData.theme === '' ? styles.themeOptionActive : ''}`}
-                    onClick={() => handleThemeChange({ target: { value: '' } })}
-                    style={{ background: '#ffffff', border: '2px solid #000' }}
-                    title="Default"
-                  >
-                    <div className={styles.themeOptionName}>Default</div>
-                  </button>
-                  
-                  <button
-                    className={`${styles.themeOption} ${formData.theme === 'blue' ? styles.themeOptionActive : ''}`}
-                    onClick={() => handleThemeChange({ target: { value: 'blue' } })}
-                    style={{ background: '#f0f8ff', border: '2px solid #000' }}
-                    title="Blue"
-                  >
-                    <div className={styles.themeOptionName}>Blue</div>
-                  </button>
-                  
-                  <button
-                    className={`${styles.themeOption} ${formData.theme === 'red' ? styles.themeOptionActive : ''}`}
-                    onClick={() => handleThemeChange({ target: { value: 'red' } })}
-                    style={{ background: '#fff0f0', border: '2px solid #000' }}
-                    title="Red"
-                  >
-                    <div className={styles.themeOptionName}>Red</div>
-                  </button>
-                  
-                  <button
-                    className={`${styles.themeOption} ${formData.theme === 'green' ? styles.themeOptionActive : ''}`}
-                    onClick={() => handleThemeChange({ target: { value: 'green' } })}
-                    style={{ background: '#f0fff0', border: '2px solid #000' }}
-                    title="Green"
-                  >
-                    <div className={styles.themeOptionName}>Green</div>
-                  </button>
-                  
-                  <button
-                    className={`${styles.themeOption} ${formData.theme === 'yellow' ? styles.themeOptionActive : ''}`}
-                    onClick={() => handleThemeChange({ target: { value: 'yellow' } })}
-                    style={{ background: '#fffef0', border: '2px solid #000' }}
-                    title="Yellow"
-                  >
-                    <div className={styles.themeOptionName}>Yellow</div>
-                  </button>
-                  
-                  <button
-                    className={`${styles.themeOption} ${formData.theme === 'purple' ? styles.themeOptionActive : ''}`}
-                    onClick={() => handleThemeChange({ target: { value: 'purple' } })}
-                    style={{ background: '#f8f0ff', border: '2px solid #000' }}
-                    title="Purple"
-                  >
-                    <div className={styles.themeOptionName}>Purple</div>
-                  </button>
-                  
-                  <button
-                    className={`${styles.themeOption} ${formData.theme === 'orange' ? styles.themeOptionActive : ''}`}
-                    onClick={() => handleThemeChange({ target: { value: 'orange' } })}
-                    style={{ background: '#fff8f0', border: '2px solid #000' }}
-                    title="Orange"
-                  >
-                    <div className={styles.themeOptionName}>Orange</div>
-                  </button>
-                  
-                  <button
-                    className={`${styles.themeOption} ${formData.theme === 'pink' ? styles.themeOptionActive : ''}`}
-                    onClick={() => handleThemeChange({ target: { value: 'pink' } })}
-                    style={{ background: '#fff0f8', border: '2px solid #000' }}
-                    title="Pink"
-                  >
-                    <div className={styles.themeOptionName}>Pink</div>
-                  </button>
-                </div>
-              </div>
-            </div>
+            <div className={styles.formColumn}>
+              <form onSubmit={handleSubmit} className={styles.form}>
+                <h2 className={styles.sectionTitle}>Basic Information</h2>
 
-
-          </div>
-
-          <div className={styles.formColumn}>
-            <form onSubmit={handleSubmit} className={styles.form}>
-              <div className={styles.eventDetailsSection}>
                 <div className={styles.formGroup}>
+                  <label htmlFor="title" className={styles.fieldLabel}>Event Title</label>
                   <input
                     type="text"
                     id="title"
@@ -747,93 +457,144 @@ export default function ManageEvent() {
                     onChange={handleInputChange}
                     required
                     className={styles.titleInput}
-                    placeholder="Event Title"
+                    placeholder="Smash Tournament"
                   />
                 </div>
 
-                <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <input
-                      type="datetime-local"
-                      id="starts_at"
-                      name="starts_at"
-                      value={formData.starts_at}
-                      onChange={handleInputChange}
-                      required
-                      className={styles.input}
-                      placeholder="Start Date & Time"
-                    />
+                <div className={styles.dateTimeSection}>
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label htmlFor="starts_at" className={styles.fieldLabel}>Start Date & Time</label>
+                      <input
+                        type="datetime-local"
+                        id="starts_at"
+                        name="starts_at"
+                        value={formData.starts_at}
+                        onChange={handleInputChange}
+                        required
+                        className={styles.input}
+                        placeholder="Start Date & Time"
+                      />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label htmlFor="ends_at" className={styles.fieldLabel}>End Date & Time</label>
+                      <input
+                        type="datetime-local"
+                        id="ends_at"
+                        name="ends_at"
+                        value={formData.ends_at}
+                        onChange={handleInputChange}
+                        className={styles.input}
+                        placeholder="End Date & Time"
+                      />
+                    </div>
                   </div>
+                </div>
+
+                <div className={styles.descriptionSection}>
                   <div className={styles.formGroup}>
-                    <input
-                      type="datetime-local"
-                      id="ends_at"
-                      name="ends_at"
-                      value={formData.ends_at}
+                    <label htmlFor="description" className={styles.fieldLabel}>Description</label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={formData.description}
                       onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="End Date & Time"
+                      className={styles.textarea}
+                      placeholder="Super Smash Bros Ultimate tournament with bracket matches and prizes. All skill levels welcome!"
+                      rows="3"
                     />
                   </div>
                 </div>
 
-                <div className={styles.formRowFour}>
-                  <div className={styles.formGroup}>
-                    <input
-                      type="text"
-                      id="location"
-                      name="location"
-                      value={formData.location}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="Address"
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <input
-                      type="text"
-                      id="city"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="City"
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <input
-                      type="text"
-                      id="state"
-                      name="state"
-                      value={formData.state}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="State"
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <input
-                      type="text"
-                      id="zip_code"
-                      name="zip_code"
-                      value={formData.zip_code}
-                      onChange={handleInputChange}
-                      className={styles.input}
-                      placeholder="ZIP Code"
-                    />
+                <div className={styles.locationSection}>
+                  <label className={styles.fieldLabel}>Location</label>
+                  <div className={styles.combinedLocationField}>
+                    <div className={styles.formGroup}>
+                      <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        className={styles.locationInput}
+                        placeholder="Address"
+                      />
+                    </div>
+
+                    <div className={styles.locationDivider}></div>
+
+                    <div className={styles.formGroup}>
+                      <input
+                        type="text"
+                        id="zip_code"
+                        name="zip_code"
+                        value={formData.zip_code}
+                        onChange={handleInputChange}
+                        className={styles.locationInput}
+                        placeholder="Zip Code"
+                      />
+                    </div>
+
+                    <div className={styles.locationDivider}></div>
+
+                    <div className={styles.formGroup}>
+                      <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleInputChange}
+                        className={styles.locationInput}
+                        placeholder="City"
+                      />
+                    </div>
+
+                    <div className={styles.locationDivider}></div>
+
+                    <div className={styles.formGroup}>
+                      <input
+                        type="text"
+                        id="state"
+                        name="state"
+                        value={formData.state}
+                        onChange={handleInputChange}
+                        className={styles.locationInput}
+                        placeholder="State"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className={styles.formGroup}>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    className={styles.textarea}
-                    placeholder="Event Description"
-                    rows="3"
-                  />
+                <div className={styles.gameSection}>
+                  <label className={styles.fieldLabel}>Game</label>
+                  <div className={styles.gameToggleContainer}>
+                    <label htmlFor="game_toggle" className={styles.toggleLabel}>
+                      <input
+                        type="checkbox"
+                        id="game_toggle"
+                        checked={gameSelectionEnabled}
+                        onChange={handleGameToggle}
+                        className={styles.toggleSwitch}
+                      />
+                      <span className={styles.toggleSlider}></span>
+                    </label>
+                    <select
+                      id="game_id"
+                      name="game_id"
+                      value={formData.game_id}
+                      onChange={handleInputChange}
+                      className={styles.select}
+                      disabled={!gameSelectionEnabled || loadingGames}
+                    >
+                      <option value="">Select a game</option>
+                      {games.map(game => (
+                        <option key={game.id} value={game.id}>
+                          {game.game_title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <button 
@@ -843,10 +604,58 @@ export default function ManageEvent() {
                 >
                   {loading ? 'Updating Event...' : imageUploading ? 'Uploading Image...' : 'Update Event'}
                 </button>
+              </form>
+            </div>
+
+            <div className={styles.bannerColumn}>
+              <div className={styles.bannerImage}>
+                <div className={styles.imageControls}>
+                  <input
+                    type="file"
+                    id="bannerFile"
+                    name="bannerFile"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className={styles.fileInput}
+                  />
+                  <label htmlFor="bannerFile" className={styles.fileInputLabel}>
+                    {imageFile ? 'Change Image' : 'Choose Image'}
+                  </label>
+                  {imageFile && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className={styles.removeImageButton}
+                    >
+                      Remove Image
+                    </button>
+                  )}
+                </div>
+                
+                <div className={styles.imageContainer}>
+                  {imagePreview ? (
+                    <img 
+                      src={imagePreview} 
+                      alt="Banner preview" 
+                      className={styles.bannerPreview}
+                    />
+                  ) : bannerImageUrl ? (
+                    <img 
+                      src={bannerImageUrl} 
+                      alt="Event banner" 
+                      className={styles.bannerPreview}
+                    />
+                  ) : (
+                    <div className={styles.bannerPlaceholder}>
+                      <div className={styles.uploadText}>Upload banner image</div>
+                    </div>
+                  )}
+                </div>
+                
+                <ThemeSelector value={currentTheme} onChange={handleThemeChange} />
               </div>
-            </form>
+            </div>
           </div>
-        </div>
         )}
 
         {activeTab === 'guests' && (
