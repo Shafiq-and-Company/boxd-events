@@ -12,7 +12,7 @@
   height: 72px;
   background: white;
   border-bottom: none;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: inherit;
   transition: border-bottom 0.2s ease;
 }
 
@@ -105,7 +105,7 @@
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: inherit;
 }
 
 .date {
@@ -256,14 +256,14 @@
   color: #000000;
   font-size: 14px;
   font-weight: 600;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: inherit;
 }
 
 .profileEmail {
   font-size: 14px;
   font-weight: 400;
   color: #000000;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: inherit;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -274,7 +274,7 @@
   font-size: 12px;
   font-weight: 500;
   color: #000000;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: inherit;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;

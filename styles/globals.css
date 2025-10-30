@@ -12,9 +12,13 @@
   border-color: #000000 !important;
 }
 
-html { font-size: 16px; line-height: 1.5; }
+html { 
+  font-size: 16px; 
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 body { 
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica', 'Arial', sans-serif;
+  font-family: inherit;
   background: #ffffff; 
   color: #000000; min-height: 100vh; 
   padding-top: 60px; /* Account for fixed navbar */
