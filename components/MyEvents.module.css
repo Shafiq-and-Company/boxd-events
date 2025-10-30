@@ -33,7 +33,6 @@
   display: flex;
   gap: 0;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
   overflow: hidden;
 }
 
@@ -106,7 +105,7 @@
 
 .eventItem { position: relative; padding-left: 24px; margin-bottom: 16px; }
 
-.trackDot { position: absolute; left: 3px; top: 28px; width: 9px; height: 9px; background: #9a9a9a; border-radius: 50%; }
+.trackDot { position: absolute; left: 3px; top: 28px; width: 9px; height: 9px; background: #9a9a9a; }
 
 /* ===== EVENT CARDS ===== */
 .eventCard {
@@ -122,7 +121,6 @@
   grid-template-columns: 1fr 128px;
   gap: 16px;
   padding: 18px;
-  border-radius: 10px;
   border: 1px solid #ececec;
 }
 
@@ -136,7 +134,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
   overflow: hidden;
   margin-left: 0;
 }
@@ -185,10 +182,17 @@
   background: #000000;
   color: #ffffff;
   border: 1px solid #000000;
-  padding: 6px 10px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  text-align: center;
+}
+
+.managePill:hover {
+  background: #333333;
+  border-color: #333333;
 }
 
 /* removed legacy empty states */
@@ -200,7 +204,6 @@
   padding: 6px 10px;
   font-size: 0.75rem;
   font-weight: 600;
-  border-radius: 999px;
 }
 
 /* removed unused keyframes */
