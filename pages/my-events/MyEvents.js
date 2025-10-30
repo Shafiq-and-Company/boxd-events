@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
-import { useAuth } from '../lib/AuthContext'
-import { supabase } from '../lib/supabaseClient'
+import { useAuth } from '../../lib/AuthContext'
+import { supabase } from '../../lib/supabaseClient'
 import styles from './MyEvents.module.css'
 
 const VIEW_MODES = {
@@ -349,3 +349,4 @@ export default function MyEvents({ onTabChange }) {
     </div>
   )
 }
+

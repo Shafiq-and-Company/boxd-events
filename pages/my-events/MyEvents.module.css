@@ -107,6 +107,21 @@
 
 .trackDot { position: absolute; left: 3px; top: 28px; width: 9px; height: 9px; background: #9a9a9a; }
 
+/* Mobile: hide timeline visual elements */
+@media (max-width: 767px) {
+  .verticalTrack {
+    display: none;
+  }
+  
+  .trackDot {
+    display: none;
+  }
+  
+  .eventItem {
+    padding-left: 0;
+  }
+}
+
 /* ===== EVENT CARDS ===== */
 .eventCard {
   background: #ffffff;
@@ -318,6 +333,7 @@
   
   .header {
     margin-bottom: 20px;
+    justify-content: center;
   }
   
   .toggleButton {
@@ -326,13 +342,41 @@
   }
   
   .eventsList { grid-template-columns: 1fr; gap: 16px; width: 100%; }
-  .dateGroup { grid-template-columns: 110px 1fr; }
-  .eventCard { grid-template-columns: 1fr 104px; padding: 16px; gap: 12px; }
-  .eventThumb { width: 104px; height: 104px; }
   
-  .eventCard { height: auto; min-height: 120px; }
+  /* Timeline: single column layout */
+  .dateGroup { 
+    grid-template-columns: 1fr; 
+    gap: 12px;
+  }
   
-  /* removed legacy image sizing */
+  .dateColumn {
+    padding-top: 0;
+    margin-bottom: 4px;
+  }
+  
+  .eventsColumn {
+    position: static;
+  }
+  
+  /* Event cards: single column with thumbnail below */
+  .eventCard { 
+    grid-template-columns: 1fr; 
+    padding: 16px; 
+    gap: 12px;
+    height: auto; 
+    min-height: auto; 
+  }
+  
+  .eventThumb { 
+    width: 100%; 
+    height: 180px; 
+    margin-left: 0;
+    order: 2;
+  }
+  
+  .eventContent {
+    order: 1;
+  }
   
   .imagePlaceholder {
     font-size: 2rem;
@@ -343,9 +387,10 @@
     line-height: 1.3;
   }
   
-  /* removed legacy meta row */
-  
-  /* removed legacy calendar/location/pill sizes */
+  .managePill {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -359,6 +404,7 @@
   
   .header {
     margin-bottom: 16px;
+    justify-content: center;
   }
   
   .toggleButton {
@@ -367,13 +413,41 @@
   }
   
   .eventsList { grid-template-columns: 1fr; gap: 12px; width: 100%; }
-  .dateGroup { grid-template-columns: 96px 1fr; gap: 16px; }
-  .eventCard { grid-template-columns: 1fr 96px; padding: 12px; gap: 10px; }
-  .eventThumb { width: 96px; height: 96px; }
   
-  .eventCard { height: auto; min-height: 112px; }
+  /* Timeline: single column layout */
+  .dateGroup { 
+    grid-template-columns: 1fr; 
+    gap: 8px;
+  }
   
-  /* removed legacy image sizing */
+  .dateColumn {
+    padding-top: 0;
+    margin-bottom: 4px;
+  }
+  
+  .eventsColumn {
+    position: static;
+  }
+  
+  /* Event cards: single column with thumbnail below */
+  .eventCard { 
+    grid-template-columns: 1fr; 
+    padding: 12px; 
+    gap: 10px;
+    height: auto; 
+    min-height: auto; 
+  }
+  
+  .eventThumb { 
+    width: 100%; 
+    height: 160px; 
+    margin-left: 0;
+    order: 2;
+  }
+  
+  .eventContent {
+    order: 1;
+  }
   
   .imagePlaceholder {
     font-size: 1.8rem;
@@ -384,24 +458,76 @@
     line-height: 1.3;
   }
   
-  /* removed legacy meta row */
+  .managePill {
+    font-size: 0.7rem;
+    padding: 6px 10px;
+  }
   
-  /* removed legacy calendar/location/pill sizes */
+  .emptyState {
+    padding: 24px 16px;
+  }
+  
+  .emptyStateButtons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .discoverButton {
+    width: 100%;
+    min-width: auto;
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .eventsList { grid-template-columns: 1fr; gap: 18px; width: 100%; }
   
-  .eventCard { height: auto; min-height: 120px; padding: 16px; gap: 14px; grid-template-columns: 1fr 116px; }
-  /* removed legacy image sizing */
+  .dateGroup { 
+    grid-template-columns: 1fr; 
+    gap: 14px;
+  }
+  
+  .dateColumn {
+    padding-top: 0;
+    margin-bottom: 4px;
+  }
+  
+  .eventsColumn {
+    position: static;
+  }
+  
+  .verticalTrack {
+    display: none;
+  }
+  
+  .trackDot {
+    display: none;
+  }
+  
+  .eventItem {
+    padding-left: 0;
+  }
+  
+  .eventCard { 
+    height: auto; 
+    min-height: auto; 
+    padding: 16px; 
+    gap: 14px; 
+    grid-template-columns: 1fr; 
+  }
+  
+  .eventThumb { 
+    width: 100%; 
+    height: 200px; 
+    order: 2;
+  }
+  
+  .eventContent {
+    order: 1;
+  }
   
   .imagePlaceholder {
     font-size: 2.2rem;
   }
-  
-  /* removed legacy meta row */
-  
-  /* removed legacy calendar/location/pill sizes */
 }
 
 @media (min-width: 1024px) {
@@ -472,3 +598,4 @@
     color: #000000;
   }
 }
+

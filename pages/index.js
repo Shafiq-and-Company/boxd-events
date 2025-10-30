@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from '../lib/AuthContext'
 import NavBar from '../components/NavBar'
 import DiscoverEvents from '../components/DiscoverEvents'
-import MyEvents from '../components/MyEvents'
+import MyEvents from './my-events/MyEvents'
 import CreateEvent from './create-event/CreateEvent'
 import UserSettings from '../components/UserSettings'
 
