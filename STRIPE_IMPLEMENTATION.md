@@ -2,31 +2,70 @@
 
 ## Overview
 
-This guide describes how to implement Stripe payment processing for the boxd-events platform. The implementation uses **Stripe Connect** with **Express accounts**, allowing event hosts to collect registration fees while the platform takes a 6% application fee.
+This guide describes how to implement Stripe payment processing for **Locals**, the event platform. The implementation uses **Stripe Connect** with **Express accounts**, enabling **Organizers** (event hosts) to collect registration fees from **Attendees** while Locals takes a 6% platform fee on each registration.
 
-## Architecture
+## Platform Architecture
+
+### Key Terms
+- **Locals**: The platform (takes 6% fee on paid registrations)
+- **Organizers**: Users who create and host events (event creators)
+- **Attendees**: Users who register for events
+- **Registration Fee**: Amount set by organizer for event registration
+- **Platform Fee**: 6% of registration fee, automatically deducted by Locals
 
 ### Stripe Connect Model
 
-- **Platform Account**: The main Stripe account for boxd-events
-- **Connected Accounts**: Express Stripe accounts for event hosts
-- **Payment Flow**: Customers pay hosts directly; platform takes application fee
-- **Platform Fee**: 6% of each registration fee
+- **Platform Account**: Locals' main Stripe account
+- **Connected Accounts**: Express Stripe accounts for Organizers
+- **Payment Flow**: Attendees pay Organizers directly via Stripe; Locals takes 6% application fee
+- **Payment Split**: Registration fee - 6% platform fee = Organizer payout
 
-### User Flow
+## User Flows
 
-1. **Event Host Setup**
-   - Host creates an event and wants to add a registration fee
-   - If host doesn't have Stripe account: guided to create Express account
-   - If host has existing Stripe account: link existing account
-   - Once connected, host can set registration fee for events
+### Organizer Flow (Event Creation & Management)
 
-2. **Event Registration**
-   - User views event with registration fee
-   - User clicks "Register" and is redirected to Stripe Checkout
-   - Payment is processed via connected account
-   - Platform fee (6%) is automatically deducted
-   - User's RSVP status is updated to 'paid' via webhook
+1. **Create Event** (`pages/create-event/CreateEvent.js`)
+   - Organizer creates event with basic details (title, description, dates, location)
+   - Event can be created as **free** (no payment) or **paid** (requires Stripe)
+   - If paid: Organizer must link Stripe account before setting registration fee
+
+2. **Link Stripe Account** (`pages/manage-event/ManageRegistration.js`)
+   - Organizer navigates to event's "Registration" tab
+   - If Stripe account not linked:
+     - Click "Connect Stripe Account" button
+     - Redirected to Stripe Connect onboarding (create Express account or link existing)
+     - After onboarding, returned to registration settings
+   - Once linked: Organizer can set registration fee for event
+
+3. **Set Registration Fee**
+   - In Registration tab, Organizer enters registration fee amount
+   - Fee stored in `events.cost` (as numeric value in dollars)
+   - Event marked as `payment_required = true`
+   - Fee applies to all future registrations
+
+### Attendee Flow (Event Registration)
+
+1. **View Event** (`pages/view-event/[id].js`)
+   - Attendee views event details
+   - If event has registration fee: Fee displayed in Registration card
+   - Registration button shows "One-Click RSVP" (free) or amount + "Register" (paid)
+
+2. **Register for Free Event**
+   - Click "One-Click RSVP"
+   - RSVP created immediately with `payment_status = 'paid'`
+   - No payment processing required
+
+3. **Register for Paid Event**
+   - Click "Register" button with fee amount
+   - System creates Stripe Checkout session
+   - Attendee redirected to Stripe Checkout page
+   - Attendee enters payment information
+   - Payment processed via Organizer's connected Stripe account
+   - Locals automatically deducts 6% platform fee
+   - After successful payment:
+     - Webhook updates RSVP `payment_status = 'paid'`
+     - Attendee redirected back to event page
+     - Registration confirmed
 
 ## Database Schema Changes
 
@@ -52,32 +91,39 @@ COMMENT ON COLUMN users.stripe_onboarding_complete IS 'Whether Stripe account on
 
 ### 2. Update `events` table
 
+**Current State**: `cost` column is `text` type, stores "free" or numeric values as strings.
+
 ```sql
--- Change cost from text to numeric (store in cents)
+-- Change cost from text to numeric (store registration fee in dollars)
 ALTER TABLE events
-ALTER COLUMN cost TYPE NUMERIC(10,2);
+ALTER COLUMN cost TYPE NUMERIC(10,2) USING 
+  CASE 
+    WHEN cost = 'free' OR cost IS NULL THEN NULL
+    WHEN cost ~ '^[0-9]+\.?[0-9]*$' THEN cost::NUMERIC
+    ELSE NULL
+  END;
 
 -- Add currency field (default USD)
 ALTER TABLE events
-ADD COLUMN currency TEXT DEFAULT 'usd';
-
--- Add Stripe price ID (for recurring/reference)
-ALTER TABLE events
-ADD COLUMN stripe_price_id TEXT;
+ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'usd';
 
 -- Add payment enabled flag
 ALTER TABLE events
-ADD COLUMN payment_required BOOLEAN DEFAULT FALSE;
+ADD COLUMN IF NOT EXISTS payment_required BOOLEAN DEFAULT FALSE;
+
+-- Set payment_required based on existing cost values
+UPDATE events 
+SET payment_required = TRUE 
+WHERE cost IS NOT NULL AND cost > 0;
 
 -- Add index for payment queries
 CREATE INDEX IF NOT EXISTS idx_events_payment_required 
 ON events(payment_required) 
 WHERE payment_required = TRUE;
 
-COMMENT ON COLUMN events.cost IS 'Registration fee in dollars';
+COMMENT ON COLUMN events.cost IS 'Registration fee in dollars (NULL for free events)';
 COMMENT ON COLUMN events.currency IS 'Currency code (e.g., usd)';
-COMMENT ON COLUMN events.stripe_price_id IS 'Stripe Price ID for this event registration';
-COMMENT ON COLUMN events.payment_required IS 'Whether payment is required to register';
+COMMENT ON COLUMN events.payment_required IS 'Whether payment is required to register (TRUE if cost > 0)';
 ```
 
 ### 3. Add payment tracking fields to `rsvps` table
@@ -110,35 +156,35 @@ ON rsvps(stripe_payment_intent_id);
 CREATE INDEX IF NOT EXISTS idx_rsvps_stripe_checkout_session_id 
 ON rsvps(stripe_checkout_session_id);
 
-COMMENT ON COLUMN rsvps.stripe_payment_intent_id IS 'Stripe Payment Intent ID';
+COMMENT ON COLUMN rsvps.stripe_payment_intent_id IS 'Stripe Payment Intent ID for tracking payments';
 COMMENT ON COLUMN rsvps.stripe_checkout_session_id IS 'Stripe Checkout Session ID';
-COMMENT ON COLUMN rsvps.payment_amount IS 'Total payment amount in dollars';
-COMMENT ON COLUMN rsvps.platform_fee_amount IS 'Platform fee amount (6%) in dollars';
-COMMENT ON COLUMN rsvps.host_payout_amount IS 'Host payout amount after platform fee in dollars';
+COMMENT ON COLUMN rsvps.payment_amount IS 'Total payment amount paid by attendee (in dollars)';
+COMMENT ON COLUMN rsvps.platform_fee_amount IS 'Platform fee amount deducted by Locals (6% of registration fee in dollars)';
+COMMENT ON COLUMN rsvps.host_payout_amount IS 'Organizer payout amount after platform fee (in dollars)';
 ```
 
-### 4. Create `stripe_connect_sessions` table (optional, for tracking)
+**Note**: The `rsvps` table already has `payment_status` field with CHECK constraint allowing: 'pending', 'paid', 'failed', 'refunded'. This is used to track payment state throughout the registration flow.
+
+### 4. Update Supabase RLS Policies
+
+**Important**: Ensure service role can update RSVP payment fields via webhooks:
 
 ```sql
--- Track Stripe Connect onboarding sessions
-CREATE TABLE IF NOT EXISTS stripe_connect_sessions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  stripe_account_id TEXT,
-  onboarding_link_url TEXT,
-  status TEXT DEFAULT 'pending', -- pending, completed, expired
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  expires_at TIMESTAMPTZ,
-  completed_at TIMESTAMPTZ,
-  UNIQUE(user_id, stripe_account_id)
-);
-
-CREATE INDEX idx_stripe_connect_sessions_user_id 
-ON stripe_connect_sessions(user_id);
-
-CREATE INDEX idx_stripe_connect_sessions_stripe_account_id 
-ON stripe_connect_sessions(stripe_account_id);
+-- Verify service role policy exists for rsvps table
+-- Service role should already have access via existing policies
+-- If not, add policy to allow service role to update payment fields:
+CREATE POLICY IF NOT EXISTS "Service role can update payment status" ON rsvps
+  FOR UPDATE
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
 ```
+
+**Note**: The `rsvps` table already has RLS policies for:
+- Users can view their own RSVPs
+- Users can create/update/delete their own RSVPs  
+- Event hosts can view RSVPs for their events
+- Service role should have full access (verify this exists)
 
 ## Environment Variables
 
@@ -162,6 +208,7 @@ STRIPE_PLATFORM_FEE_PERCENT=0.06 # 6% platform fee
 
 ```javascript
 import Stripe from 'stripe';
+import { supabase } from '../../../lib/supabaseClient';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -239,6 +286,7 @@ export default async function handler(req, res) {
 
 ```javascript
 import Stripe from 'stripe';
+import { supabase } from '../../../lib/supabaseClient';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -304,6 +352,7 @@ export default async function handler(req, res) {
 
 ```javascript
 import Stripe from 'stripe';
+import { supabase } from '../../../lib/supabaseClient';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const PLATFORM_FEE_PERCENT = parseFloat(process.env.STRIPE_PLATFORM_FEE_PERCENT || '0.06');
@@ -448,6 +497,7 @@ export default async function handler(req, res) {
 ```javascript
 import Stripe from 'stripe';
 import { buffer } from 'micro';
+import { supabase } from '../../../lib/supabaseClient';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -576,25 +626,35 @@ export default async function handler(req, res) {
 }
 ```
 
-## Frontend Changes
+## Frontend Implementation
 
 ### 1. Update Create Event Form
 
 **File**: `pages/create-event/CreateEvent.js`
 
-Add fee input field:
+**Current State**: Form allows creating events but doesn't include payment/fee fields.
+
+**Changes Needed**:
 
 ```javascript
-// Add to formData state
+// Add to formData state (around line 21)
 const [formData, setFormData] = useState({
-  // ... existing fields
-  cost: '',
-  payment_required: false,
+  title: '',
+  description: '',
+  location: '',
+  starts_at: getTodayDateTime(),
+  ends_at: getTodayDateTime(),
+  city: '',
+  state: '',
+  zip_code: '',
+  game_id: '',
+  cost: '',           // NEW: Registration fee
+  payment_required: false  // NEW: Payment toggle
 })
 
-// Add fee input in form JSX
-<div className={styles.formGroup}>
-  <label className={styles.fieldLabel}>Registration Fee (Optional)</label>
+// Add fee input section after game selection (around line 388)
+<div className={styles.paymentSection}>
+  <label className={styles.fieldLabel}>Registration</label>
   <div className={styles.paymentRow}>
     <label className={styles.toggleLabel}>
       <input
@@ -607,9 +667,12 @@ const [formData, setFormData] = useState({
         }))}
         className={styles.toggleSwitch}
       />
-      <span>Require payment to register</span>
+      <span className={styles.toggleSlider}></span>
     </label>
-    {formData.payment_required && (
+    <span>Require payment to register</span>
+  </div>
+  {formData.payment_required && (
+    <div className={styles.formGroup}>
       <input
         type="number"
         name="cost"
@@ -620,16 +683,32 @@ const [formData, setFormData] = useState({
         step="0.01"
         className={styles.input}
       />
-    )}
-  </div>
+    </div>
+  )}
+  {formData.payment_required && (
+    <p className={styles.feeNote}>
+      Note: You'll need to connect your Stripe account in event settings to collect payments. Locals takes a 6% platform fee.
+    </p>
+  )}
 </div>
 
-// Update submit handler
+// Update submit handler (around line 171)
 const eventData = {
-  // ... existing fields
-  cost: formData.payment_required ? parseFloat(formData.cost) : null,
-  payment_required: formData.payment_required,
-  currency: 'usd',
+  title: formData.title,
+  description: formData.description,
+  location: formData.location,
+  starts_at: formData.starts_at ? new Date(formData.starts_at).toISOString() : null,
+  ends_at: formData.ends_at ? new Date(formData.ends_at).toISOString() : null,
+  city: formData.city,
+  state: formData.state,
+  zip_code: formData.zip_code,
+  host_id: user.id,
+  banner_image_url: bannerImageUrl,
+  game_id: gameSelectionEnabled && formData.game_id ? formData.game_id : null,
+  theme: currentTheme,
+  cost: formData.payment_required && formData.cost ? parseFloat(formData.cost) : null,  // NEW
+  payment_required: formData.payment_required,  // NEW
+  currency: 'usd'  // NEW
 }
 ```
 
@@ -637,83 +716,256 @@ const eventData = {
 
 **File**: `pages/manage-event/ManageRegistration.js`
 
-Add Stripe Connect account status check and linking:
+**Current State**: Component fetches and updates `events.cost` field. Needs Stripe Connect integration.
+
+**Changes Needed**:
 
 ```javascript
-import { useState, useEffect } from 'react';
-import { useAuth } from '../../lib/AuthContext';
-import { supabase } from '../../lib/supabaseClient';
+import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/router'
+import { supabase } from '../../lib/supabaseClient'
+import { useAuth } from '../../lib/AuthContext'
+import styles from './ManageRegistration.module.css'
 
 export default function ManageRegistration() {
-  const { user } = useAuth();
-  const [stripeConnected, setStripeConnected] = useState(false);
-  const [stripeOnboardingComplete, setStripeOnboardingComplete] = useState(false);
-  const [checkingStripeStatus, setCheckingStripeStatus] = useState(true);
+  const { user } = useAuth()
+  const router = useRouter()
+  const { id } = router.query
+  
+  const [cost, setCost] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [fetchLoading, setFetchLoading] = useState(true)
+  const [error, setError] = useState(null)
+  
+  // NEW: Stripe Connect state
+  const [stripeConnected, setStripeConnected] = useState(false)
+  const [stripeOnboardingComplete, setStripeOnboardingComplete] = useState(false)
+  const [checkingStripeStatus, setCheckingStripeStatus] = useState(false)
+  const [event, setEvent] = useState(null)
 
-  useEffect(() => {
-    checkStripeStatus();
-  }, [user]);
-
-  const checkStripeStatus = async () => {
-    if (!user) return;
+  // Update fetchCost to also get payment_required status
+  const fetchCost = useCallback(async () => {
+    if (!id || !user) return
     
     try {
-      const response = await fetch(`/api/stripe/connect/status?userId=${user.id}`);
-      const data = await response.json();
-      
-      setStripeConnected(data.connected);
-      setStripeOnboardingComplete(data.onboarding_complete);
-    } catch (error) {
-      console.error('Error checking Stripe status:', error);
-    } finally {
-      setCheckingStripeStatus(false);
-    }
-  };
+      setFetchLoading(true)
+      setError(null)
 
+      const { data: eventData, error } = await supabase
+        .from('events')
+        .select('cost, payment_required')
+        .eq('id', id)
+        .eq('host_id', user.id)
+        .single()
+
+      if (error) throw error
+      if (!eventData) throw new Error('Event not found or you do not have permission to edit it')
+
+      setEvent(eventData)
+      setCost(eventData.cost || '')
+      
+      // Check Stripe status if payment is required
+      if (eventData.payment_required) {
+        await checkStripeStatus()
+      }
+    } catch (err) {
+      console.error('Error fetching cost:', err)
+      setError(err.message)
+    } finally {
+      setFetchLoading(false)
+    }
+  }, [id, user])
+
+  // NEW: Check Stripe account status
+  const checkStripeStatus = async () => {
+    if (!user) return
+    
+    try {
+      setCheckingStripeStatus(true)
+      const response = await fetch(`/api/stripe/connect/status?userId=${user.id}`)
+      const data = await response.json()
+      
+      setStripeConnected(data.connected)
+      setStripeOnboardingComplete(data.onboarding_complete)
+    } catch (error) {
+      console.error('Error checking Stripe status:', error)
+    } finally {
+      setCheckingStripeStatus(false)
+    }
+  }
+
+  // NEW: Connect Stripe account
   const connectStripeAccount = async () => {
     try {
       const response = await fetch('/api/stripe/connect/create-account', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user.id }),
-      });
+      })
       
-      const data = await response.json();
+      const data = await response.json()
       
       if (data.url) {
-        window.location.href = data.url;
+        window.location.href = data.url
+      } else if (data.error) {
+        setError(data.error)
       }
     } catch (error) {
-      console.error('Error connecting Stripe:', error);
+      console.error('Error connecting Stripe:', error)
+      setError('Failed to connect Stripe account')
     }
-  };
+  }
 
-  // In JSX, show Stripe connection status
-  {!stripeOnboardingComplete && (
-    <div className={styles.stripeSection}>
-      <h3 className={styles.sectionTitle}>Payment Processing</h3>
-      <p>Connect your Stripe account to collect registration fees.</p>
-      <button onClick={connectStripeAccount} className={styles.connectButton}>
-        {stripeConnected ? 'Complete Stripe Setup' : 'Connect Stripe Account'}
-      </button>
-    </div>
-  )}
+  // Update handleUpdateCost to also set payment_required
+  const handleUpdateCost = async () => {
+    if (!user) {
+      setError('You must be logged in to edit an event')
+      return
+    }
 
-  {stripeOnboardingComplete && (
-    <div className={styles.costSection}>
-      {/* Existing cost input */}
+    const costValue = parseFloat(cost)
+    const paymentRequired = costValue > 0
+
+    // If setting payment, ensure Stripe is connected
+    if (paymentRequired && !stripeOnboardingComplete) {
+      setError('Please connect your Stripe account before setting a registration fee')
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .update({ 
+          cost: costValue || null,
+          payment_required: paymentRequired
+        })
+        .eq('id', id)
+        .eq('host_id', user.id)
+        .select()
+
+      if (error) throw error
+      if (!data || data.length === 0) {
+        setError('No rows were updated. You may not have permission to edit this event.')
+        return
+      }
+
+      setEvent(data[0])
+      // ... existing notification code ...
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // In JSX (around line 113), add Stripe section:
+  return (
+    <div className={styles.manageRegistration}>
+      {error && <div className={styles.errorMessage}>{error}</div>}
+
+      <div className={styles.registrationTabContent}>
+        {/* NEW: Stripe Connection Section */}
+        {event?.payment_required && !stripeOnboardingComplete && (
+          <div className={styles.stripeSection}>
+            <h3 className={styles.sectionTitle}>Payment Processing</h3>
+            <p>Connect your Stripe account to collect registration fees. Locals takes a 6% platform fee on each registration.</p>
+            <button 
+              onClick={connectStripeAccount} 
+              className={styles.connectButton}
+              disabled={checkingStripeStatus}
+            >
+              {checkingStripeStatus 
+                ? 'Checking...' 
+                : stripeConnected 
+                ? 'Complete Stripe Setup' 
+                : 'Connect Stripe Account'}
+            </button>
+          </div>
+        )}
+
+        {/* Existing Cost Section */}
+        <div className={styles.costSection}>
+          <h3 className={styles.sectionTitle}>Registration Fee</h3>
+          {!stripeOnboardingComplete && event?.payment_required && (
+            <p className={styles.warningText}>
+              Connect your Stripe account above before setting a registration fee.
+            </p>
+          )}
+          <div className={styles.costInputRow}>
+            <div className={styles.formGroup}>
+              <input
+                type="number"
+                id="cost"
+                name="cost"
+                value={cost}
+                onChange={handleCostChange}
+                className={styles.input}
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                disabled={event?.payment_required && !stripeOnboardingComplete}
+              />
+            </div>
+            <button 
+              type="button"
+              onClick={handleUpdateCost}
+              disabled={loading || (event?.payment_required && !stripeOnboardingComplete)}
+              className={styles.updateCostButton}
+            >
+              {loading ? 'Updating...' : 'Update'}
+            </button>
+          </div>
+          {cost > 0 && (
+            <p className={styles.feeInfo}>
+              Registration fee: ${parseFloat(cost).toFixed(2)} | 
+              Platform fee (6%): ${(parseFloat(cost) * 0.06).toFixed(2)} | 
+              You receive: ${(parseFloat(cost) * 0.94).toFixed(2)}
+            </p>
+          )}
+        </div>
+      </div>
     </div>
-  )}
+  )
 }
 ```
 
-### 3. Update Event Detail Page (Registration Flow)
+### 3. Update Event Detail Page (Attendee Registration Flow)
 
 **File**: `pages/view-event/[id].js`
 
-Update RSVP handler to redirect to Stripe Checkout if payment required:
+**Current State**: `handleRSVP()` creates RSVP immediately with `payment_status = 'paid'` for all events.
+
+**Changes Needed**:
 
 ```javascript
+// Update fetchEvent to include payment fields (around line 62)
+const fetchEvent = async () => {
+  try {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('events')
+      .select(`
+        *,
+        host_user:host_id (first_name, stripe_account_id, stripe_onboarding_complete),
+        games (id, game_title, game_background_image_url)
+      `)
+      .eq('id', id)
+      .single()
+
+    if (error) throw error
+    setEvent(data)
+    // ... existing theme and game background logic ...
+  } catch (err) {
+    setError(err.message)
+  } finally {
+    setLoading(false)
+  }
+}
+
+// Replace handleRSVP function (around line 189)
 const handleRSVP = async () => {
   if (!user) {
     router.push('/login')
@@ -723,7 +975,16 @@ const handleRSVP = async () => {
 
   // Check if payment is required
   if (event.payment_required && event.cost > 0) {
+    // Verify host has Stripe account connected
+    if (!event.host_user?.stripe_account_id || !event.host_user?.stripe_onboarding_complete) {
+      setError('Event organizer has not set up payment processing yet')
+      return
+    }
+
     try {
+      setIsProcessingRSVP(true)
+      setError(null)
+
       // Create checkout session
       const response = await fetch('/api/stripe/checkout/create-session', {
         method: 'POST',
@@ -732,63 +993,163 @@ const handleRSVP = async () => {
           eventId: event.id,
           userId: user.id,
         }),
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
+
+      if (data.error) {
+        setError(data.error)
+        return
+      }
 
       if (data.url) {
         // Redirect to Stripe Checkout
-        window.location.href = data.url;
+        window.location.href = data.url
       } else {
-        setError('Failed to create payment session');
+        setError('Failed to create payment session')
       }
     } catch (error) {
-      setError('Error processing payment');
+      console.error('Error creating checkout session:', error)
+      setError('Error processing payment. Please try again.')
+    } finally {
+      setIsProcessingRSVP(false)
     }
   } else {
-    // Free event - create RSVP directly
+    // Free event - create RSVP directly (existing logic)
     await createRSVP()
   }
 }
 
-// Add payment success/cancel handling
+// Add payment success/cancel handling (add new useEffect)
 useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('payment') === 'success') {
+  if (!router.isReady) return
+  
+  const params = new URLSearchParams(window.location.search)
+  const paymentStatus = params.get('payment')
+  
+  if (paymentStatus === 'success') {
     // Refresh event data to update registration status
-    fetchEvent();
-    checkRegistrationStatus();
+    fetchEvent()
+    checkRegistrationStatus()
+    // Clean up URL
+    router.replace(`/view-event/${id}`, undefined, { shallow: true })
+  } else if (paymentStatus === 'cancelled') {
+    setError('Payment was cancelled')
+    router.replace(`/view-event/${id}`, undefined, { shallow: true })
   }
-}, []);
+}, [router.isReady, id])
 ```
 
-### 4. Display Registration Fee on Event Page
-
-**File**: `pages/view-event/[id].js`
+Add fee display in RSVP card (around line 445, inside `.rsvpCard`):
 
 ```javascript
-// Add fee display in RSVP card
-{event.payment_required && event.cost > 0 && (
-  <div className={styles.registrationFee}>
-    <span className={styles.feeLabel}>Registration Fee:</span>
-    <span className={styles.feeAmount}>
-      ${parseFloat(event.cost).toFixed(2)}
-    </span>
+<div className={styles.rsvpCard}>
+  <div className={styles.rsvpHeader}>
+    <h3>Registration</h3>
+    {/* ... existing unregister button ... */}
   </div>
-)}
+  <div className={styles.rsvpContent}>
+    {/* NEW: Display registration fee */}
+    {event.payment_required && event.cost > 0 && (
+      <div className={styles.registrationFee}>
+        <span className={styles.feeLabel}>Registration Fee:</span>
+        <span className={styles.feeAmount}>
+          ${parseFloat(event.cost).toFixed(2)}
+        </span>
+        <span className={styles.feeNote}>(+ Stripe processing fees)</span>
+      </div>
+    )}
+    
+    <div className={styles.welcomeMessage}>
+      {/* ... existing welcome message ... */}
+    </div>
+    
+    {/* ... existing user info and button ... */}
+    
+    <div className={styles.buttonContainer}>
+      {!isAlreadyRegistered ? (
+        <button 
+          className={styles.rsvpButton}
+          onClick={handleRSVP}
+          disabled={isProcessingRSVP || checkingRegistration}
+        >
+          {isProcessingRSVP 
+            ? 'Processing...' 
+            : checkingRegistration 
+            ? 'Checking...' 
+            : event.payment_required && event.cost > 0
+            ? `Register - $${parseFloat(event.cost).toFixed(2)}`
+            : 'One-Click RSVP'}
+        </button>
+      ) : (
+        {/* ... existing registered state ... */}
+      )}
+    </div>
+  </div>
+</div>
 ```
 
-## Supabase RLS Policy Updates
+Add CSS (in `EventDetail.module.css`):
 
-### Update `rsvps` policies to allow Stripe webhook updates
+```css
+.registrationFee {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 12px;
+}
 
-The service role should already have access, but ensure webhooks can update payment status:
+.feeLabel {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
 
-```sql
--- Service role already has access via existing policy
--- Ensure webhook service can update payment fields
--- (Service role policies should cover this)
+.feeAmount {
+  font-size: 1.2rem;
+  color: #000;
+  font-weight: 600;
+}
+
+.feeNote {
+  font-size: 0.75rem;
+  color: #999;
+  margin-left: auto;
+}
 ```
+
+
+## Database Relationship Overview
+
+### Current Schema State
+
+**`users` table**:
+- Tracks user profile information
+- Will store `stripe_account_id` and `stripe_onboarding_complete` for Organizers
+
+**`events` table**:
+- Stores event information including `host_id` (organizer)
+- `cost` field currently TEXT, needs migration to NUMERIC
+- Will add `payment_required` boolean flag
+- Foreign key: `host_id` → `users.id`
+
+**`rsvps` table**:
+- Tracks attendee registrations
+- Composite primary key: (`user_id`, `event_id`)
+- `payment_status` field with CHECK constraint: 'pending', 'paid', 'failed', 'refunded'
+- Foreign keys: `user_id` → `users.id`, `event_id` → `events.id`
+- Will add Stripe payment tracking fields
+
+### Data Flow
+
+1. **Organizer creates event** → `events` record created with `host_id`
+2. **Organizer links Stripe** → `users.stripe_account_id` and `stripe_onboarding_complete` updated
+3. **Organizer sets fee** → `events.cost` and `payment_required` updated
+4. **Attendee registers** → `rsvps` record created with `payment_status = 'pending'`
+5. **Payment processed** → Stripe webhook updates `rsvps.payment_status = 'paid'`
 
 ## Stripe Dashboard Configuration
 
@@ -856,15 +1217,19 @@ Configure webhook endpoint in Stripe Dashboard:
 
 ## Platform Fee Calculation
 
-The 6% platform fee is calculated as follows:
+Locals takes 6% of each registration fee. The calculation is straightforward:
 
 ```javascript
-const registrationFee = 25.00; // $25 registration fee
-const platformFee = registrationFee * 0.06; // $1.50 (6%)
-const hostPayout = registrationFee - platformFee; // $23.50
+const registrationFee = 25.00;        // $25 registration fee set by Organizer
+const platformFee = registrationFee * 0.06;  // $1.50 (6% to Locals)
+const organizerPayout = registrationFee - platformFee;  // $23.50 (Organizer receives)
 ```
 
-Stripe handles the fee split automatically when using `application_fee_amount` in the payment intent.
+**Stripe Implementation**: The fee split is handled automatically by Stripe Connect when using `application_fee_amount` in the payment intent. Attendees pay the full registration fee, and the split happens automatically:
+- Locals receives: 6% application fee
+- Organizer receives: 94% (after platform fee)
+
+**Note**: Stripe charges its own processing fees (typically 2.9% + $0.30 per transaction) on top of the registration fee. These are deducted from the Organizer's payout, not from the platform fee.
 
 ## Support & Troubleshooting
 
@@ -882,4 +1247,34 @@ Add comprehensive logging to all API routes for debugging:
 - Checkout session creation
 - Webhook events received
 - Database updates
+
+## Summary
+
+This implementation provides a complete Stripe Connect payment flow for Locals:
+
+**For Organizers:**
+1. Create events (free or paid)
+2. Link Stripe Express account (one-time setup)
+3. Set registration fees for paid events
+4. Receive 94% of registration fees (after 6% platform fee)
+
+**For Attendees:**
+1. View events with registration fees clearly displayed
+2. Register for free events instantly
+3. Pay registration fee + Stripe processing fees for paid events
+4. Automatic confirmation after successful payment
+
+**For Locals (Platform):**
+1. Automatically collects 6% platform fee on each registration
+2. Handles payment processing via Stripe Connect
+3. Tracks all payments in database via webhooks
+4. Provides clear fee breakdown to Organizers
+
+**Key Implementation Points:**
+- Uses Stripe Connect Express accounts for Organizers
+- Application fee (6%) handled automatically by Stripe
+- Payment tracking via `rsvps` table with `payment_status` field
+- Webhook-based payment confirmation for reliable status updates
+- Clear separation between free and paid event flows
+- Proper error handling and user feedback throughout
 
