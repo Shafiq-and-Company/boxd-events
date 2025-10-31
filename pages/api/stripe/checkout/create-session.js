@@ -1,7 +1,16 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+// Validate Stripe key is set
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.error('STRIPE_SECRET_KEY is not set');
+}
+
+const stripe = process.env.STRIPE_SECRET_KEY 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2024-11-20.acacia',
+    })
+  : null;
 const PLATFORM_FEE_PERCENT = parseFloat(process.env.STRIPE_PLATFORM_FEE_PERCENT || '0.06');
 
 // Helper to get environment variables
@@ -43,6 +52,12 @@ const verifyUserAndCreateClient = async (req) => {
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Validate Stripe is initialized
+  if (!stripe) {
+    console.error('Stripe is not initialized - STRIPE_SECRET_KEY missing');
+    return res.status(500).json({ error: 'Payment processing is not configured' });
   }
 
   try {
@@ -111,17 +126,29 @@ export default async function handler(req, res) {
     }
 
     // Check if user already registered and paid
-    const { data: existingRsvp, error: rsvpError } = await supabase
+    // rsvps table has composite primary key (user_id, event_id) - no id column
+    const { data: existingRsvps, error: rsvpError } = await supabase
       .from('rsvps')
-      .select('id, payment_status')
+      .select('user_id, event_id, payment_status')
       .eq('user_id', userId)
       .eq('event_id', eventId)
-      .maybeSingle();
+      .limit(1);
 
-    if (rsvpError && rsvpError.code !== 'PGRST116') {
+    // If there's an error that's not just "no rows found", log it but continue
+    // RLS might prevent the query, but we should still allow the checkout to proceed
+    if (rsvpError) {
       console.error('Error checking existing RSVP:', rsvpError);
-      return res.status(500).json({ error: 'Failed to check registration status' });
+      // Only return error if it's a critical database error (not RLS/permission related)
+      // Most RLS errors will allow the query to return empty array
+      if (rsvpError.code && !['PGRST116', '42501'].includes(rsvpError.code)) {
+        return res.status(500).json({ 
+          error: 'Failed to check registration status',
+          details: rsvpError.message 
+        });
+      }
     }
+
+    const existingRsvp = existingRsvps && existingRsvps.length > 0 ? existingRsvps[0] : null;
 
     if (existingRsvp && existingRsvp.payment_status === 'paid') {
       return res.status(400).json({ error: 'User already registered and paid' });
@@ -156,41 +183,81 @@ export default async function handler(req, res) {
     // Get app URL from environment
     const appUrl = getEnv('NEXT_PUBLIC_SITE_URL');
 
-    // Create Checkout Session with Stripe Connect
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: event.currency || 'usd',
-            product_data: {
-              name: `Registration: ${event.title}`,
-              description: event.description || '',
-            },
-            unit_amount: amountInCents,
-          },
-          quantity: 1,
-        },
-      ],
-      mode: 'payment',
-      success_url: `${appUrl}/view-event/${eventId}?payment=success`,
-      cancel_url: `${appUrl}/view-event/${eventId}?payment=cancelled`,
-      customer_email: userData.email,
-      payment_intent_data: {
-        application_fee_amount: applicationFeeAmount,
-        on_behalf_of: hostStripeInfo.stripe_account_id,
-        transfer_data: {
-          destination: hostStripeInfo.stripe_account_id,
-        },
-      },
-      metadata: {
-        event_id: eventId,
-        user_id: userId,
-        registration_fee: registrationFee.toString(),
-        platform_fee: platformFee.toString(),
-        host_payout: hostPayout.toString(),
-      },
+    console.log('Creating Stripe Checkout session with:', {
+      eventId,
+      userId,
+      amountInCents,
+      applicationFeeAmount,
+      hostAccountId: hostStripeInfo.stripe_account_id,
+      appUrl,
     });
+
+    // Create Checkout Session with Stripe Connect
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: event.currency || 'usd',
+              product_data: {
+                name: `Registration: ${event.title}`,
+                description: event.description || '',
+              },
+              unit_amount: amountInCents,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: 'payment',
+        success_url: `${appUrl}/view-event/${eventId}?payment=success`,
+        cancel_url: `${appUrl}/view-event/${eventId}?payment=cancelled`,
+        customer_email: userData.email,
+        payment_intent_data: {
+          application_fee_amount: applicationFeeAmount,
+          on_behalf_of: hostStripeInfo.stripe_account_id,
+          transfer_data: {
+            destination: hostStripeInfo.stripe_account_id,
+          },
+          metadata: {
+            event_id: eventId,
+            user_id: userId,
+            registration_fee: registrationFee.toString(),
+            platform_fee: platformFee.toString(),
+            host_payout: hostPayout.toString(),
+          },
+        },
+        metadata: {
+          event_id: eventId,
+          user_id: userId,
+          registration_fee: registrationFee.toString(),
+          platform_fee: platformFee.toString(),
+          host_payout: hostPayout.toString(),
+        },
+      });
+
+      if (!session || !session.url) {
+        console.error('Stripe session created but no URL returned:', session);
+        return res.status(500).json({ 
+          error: 'Failed to create checkout session',
+          details: 'Stripe session created but no URL returned',
+        });
+      }
+    } catch (stripeError) {
+      console.error('Stripe API error:', stripeError);
+      console.error('Stripe error details:', {
+        type: stripeError.type,
+        code: stripeError.code,
+        message: stripeError.message,
+        raw: stripeError.raw,
+      });
+      return res.status(500).json({ 
+        error: 'Failed to create checkout session',
+        details: stripeError.message || 'Stripe API error',
+        stripeError: process.env.NODE_ENV === 'development' ? stripeError.type : undefined,
+      });
+    }
 
     // Create or update RSVP with pending status
     const rsvpData = {
@@ -205,23 +272,35 @@ export default async function handler(req, res) {
     };
 
     if (existingRsvp) {
+      // Update existing RSVP using composite key (user_id, event_id)
       const { error: updateError } = await supabase
         .from('rsvps')
         .update(rsvpData)
-        .eq('id', existingRsvp.id);
+        .eq('user_id', userId)
+        .eq('event_id', eventId);
 
       if (updateError) {
         console.error('Error updating RSVP:', updateError);
         // Continue even if update fails - the checkout session is created
       }
     } else {
-      const { error: insertError } = await supabase.from('rsvps').insert([rsvpData]);
+      const { error: insertError } = await supabase
+        .from('rsvps')
+        .insert([rsvpData]);
 
       if (insertError) {
         console.error('Error creating RSVP:', insertError);
         // Continue even if insert fails - the checkout session is created
+        // The webhook will handle creating/updating the RSVP when payment succeeds
       }
     }
+
+    console.log('Checkout session created successfully:', {
+      sessionId: session.id,
+      url: session.url,
+      eventId,
+      userId,
+    });
 
     return res.status(200).json({
       session_id: session.id,
@@ -229,7 +308,16 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Checkout session creation error:', error);
-    return res.status(500).json({ error: error.message || 'Internal server error' });
+    console.error('Error details:', {
+      message: error.message,
+      type: error.type,
+      code: error.code,
+      stack: error.stack,
+    });
+    return res.status(500).json({ 
+      error: error.message || 'Internal server error',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+    });
   }
 }
 

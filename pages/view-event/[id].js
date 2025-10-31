@@ -247,16 +247,27 @@ export default function EventDetail() {
 
         const data = await response.json()
 
+        console.log('Checkout session response:', { status: response.status, data })
+
+        if (!response.ok) {
+          console.error('Checkout session failed:', data)
+          setError(data.error || 'Failed to create payment session')
+          return
+        }
+
         if (data.error) {
+          console.error('Checkout session error:', data.error)
           setError(data.error)
           return
         }
 
         if (data.url) {
+          console.log('Redirecting to Stripe Checkout:', data.url)
           // Redirect to Stripe Checkout
           window.location.href = data.url
         } else {
-          setError('Failed to create payment session')
+          console.error('No checkout URL in response:', data)
+          setError('Failed to create payment session - no checkout URL received')
         }
       } catch (error) {
         console.error('Error creating checkout session:', error)
