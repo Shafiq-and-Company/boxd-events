@@ -20,6 +20,67 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stripeSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: #f8f8f8;
+  border: 1px solid #000;
+  margin-bottom: 24px;
+}
+
+.stripeDescription {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.connectButton {
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.connectButton:hover:not(:disabled) {
+  background: #333;
+  border-color: #333;
+}
+
+.connectButton:disabled {
+  background: #999;
+  border-color: #999;
+  cursor: not-allowed;
+}
+
+.warningText {
+  font-size: 0.875rem;
+  color: #d32f2f;
+  font-weight: 500;
+  margin: 0 0 12px 0;
+  padding: 8px 12px;
+  background: #ffebee;
+  border: 1px solid #ffcdd2;
+}
+
+.feeInfo {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 12px 0 0 0;
+  padding: 12px;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  line-height: 1.6;
 }
 
 .formGroup {

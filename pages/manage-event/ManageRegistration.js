@@ -13,6 +13,86 @@ export default function ManageRegistration() {
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
   const [error, setError] = useState(null)
+  
+  // Stripe Connect state
+  const [stripeConnected, setStripeConnected] = useState(false)
+  const [stripeOnboardingComplete, setStripeOnboardingComplete] = useState(false)
+  const [checkingStripeStatus, setCheckingStripeStatus] = useState(false)
+  const [event, setEvent] = useState(null)
+
+  // Check Stripe account status
+  const checkStripeStatus = async () => {
+    if (!user) return
+    
+    try {
+      setCheckingStripeStatus(true)
+      
+      // Get user's session token for authentication
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        console.error('No session found')
+        return
+      }
+
+      const response = await fetch(`/api/stripe/connect/status?userId=${user.id}`, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        setStripeConnected(data.connected)
+        setStripeOnboardingComplete(data.onboarding_complete)
+      } else {
+        console.error('Error checking Stripe status:', data.error)
+      }
+    } catch (error) {
+      console.error('Error checking Stripe status:', error)
+    } finally {
+      setCheckingStripeStatus(false)
+    }
+  }
+
+  // Connect Stripe account
+  const connectStripeAccount = async () => {
+    if (!user) return
+    
+    try {
+      setError(null)
+      
+      // Get user's session token for authentication
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setError('You must be logged in to connect Stripe')
+        return
+      }
+
+      const response = await fetch('/api/stripe/connect/create-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ 
+          userId: user.id,
+          eventId: id, // Include eventId for redirect URLs
+        }),
+      })
+      
+      const data = await response.json()
+      
+      if (data.url) {
+        window.location.href = data.url
+      } else if (data.error) {
+        setError(data.error)
+      }
+    } catch (error) {
+      console.error('Error connecting Stripe:', error)
+      setError('Failed to connect Stripe account')
+    }
+  }
 
   const fetchCost = useCallback(async () => {
     if (!id || !user) return
@@ -21,17 +101,23 @@ export default function ManageRegistration() {
       setFetchLoading(true)
       setError(null)
 
-      const { data: event, error } = await supabase
+      const { data: eventData, error } = await supabase
         .from('events')
-        .select('cost')
+        .select('cost, payment_required')
         .eq('id', id)
         .eq('host_id', user.id)
         .single()
 
       if (error) throw error
-      if (!event) throw new Error('Event not found or you do not have permission to edit it')
+      if (!eventData) throw new Error('Event not found or you do not have permission to edit it')
 
-      setCost(event.cost || '')
+      setEvent(eventData)
+      setCost(eventData.cost || '')
+      
+      // Check Stripe status if payment is required
+      if (eventData.payment_required) {
+        await checkStripeStatus()
+      }
     } catch (err) {
       console.error('Error fetching cost:', err)
       setError(err.message)
@@ -50,13 +136,25 @@ export default function ManageRegistration() {
       return
     }
 
+    const costValue = parseFloat(cost) || 0
+    const paymentRequired = costValue > 0
+
+    // If setting payment, ensure Stripe is connected
+    if (paymentRequired && !stripeOnboardingComplete) {
+      setError('Please connect your Stripe account before setting a registration fee')
+      return
+    }
+
     setLoading(true)
     setError(null)
 
     try {
       const { data, error } = await supabase
         .from('events')
-        .update({ cost: cost || 0 })
+        .update({ 
+          cost: costValue || null,
+          payment_required: paymentRequired
+        })
         .eq('id', id)
         .eq('host_id', user.id)
         .select()
@@ -71,9 +169,16 @@ export default function ManageRegistration() {
         return
       }
 
+      setEvent(data[0])
+      
+      // If payment was just enabled, check Stripe status
+      if (paymentRequired) {
+        await checkStripeStatus()
+      }
+
       if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Cost Updated', {
-          body: 'Event cost has been updated successfully!',
+        new Notification('Registration Fee Updated', {
+          body: 'Event registration fee has been updated successfully!',
           icon: '/favicon.ico'
         })
       }
@@ -93,6 +198,25 @@ export default function ManageRegistration() {
   useEffect(() => {
     fetchCost()
   }, [fetchCost])
+
+  // Handle Stripe redirect after onboarding
+  useEffect(() => {
+    if (!router.isReady) return
+    
+    const params = new URLSearchParams(window.location.search)
+    const stripeStatus = params.get('stripe')
+    
+    if (stripeStatus === 'success') {
+      // Refresh Stripe status after successful onboarding
+      checkStripeStatus()
+      // Clean up URL
+      router.replace(`/manage-event/${id}`, undefined, { shallow: true })
+    } else if (stripeStatus === 'refresh') {
+      // User was redirected back, check status again
+      checkStripeStatus()
+      router.replace(`/manage-event/${id}`, undefined, { shallow: true })
+    }
+  }, [router.isReady, id])
 
   if (!user) {
     return (
@@ -117,8 +241,35 @@ export default function ManageRegistration() {
       )}
 
       <div className={styles.registrationTabContent}>
+        {/* Stripe Connection Section */}
+        {event?.payment_required && !stripeOnboardingComplete && (
+          <div className={styles.stripeSection}>
+            <h3 className={styles.sectionTitle}>Payment Processing</h3>
+            <p className={styles.stripeDescription}>
+              Connect your Stripe account to collect registration fees. Locals takes a 6% platform fee on each registration.
+            </p>
+            <button 
+              onClick={connectStripeAccount} 
+              className={styles.connectButton}
+              disabled={checkingStripeStatus}
+            >
+              {checkingStripeStatus 
+                ? 'Checking...' 
+                : stripeConnected 
+                ? 'Complete Stripe Setup' 
+                : 'Connect Stripe Account'}
+            </button>
+          </div>
+        )}
+
+        {/* Registration Fee Section */}
         <div className={styles.costSection}>
-          <h3 className={styles.sectionTitle}>Event Cost</h3>
+          <h3 className={styles.sectionTitle}>Registration Fee</h3>
+          {!stripeOnboardingComplete && event?.payment_required && (
+            <p className={styles.warningText}>
+              Connect your Stripe account above before setting a registration fee.
+            </p>
+          )}
           <div className={styles.costInputRow}>
             <div className={styles.formGroup}>
               <input
@@ -128,20 +279,28 @@ export default function ManageRegistration() {
                 value={cost}
                 onChange={handleCostChange}
                 className={styles.input}
-                placeholder="Event cost (e.g., 25.00)"
+                placeholder="0.00"
                 min="0"
                 step="0.01"
+                disabled={event?.payment_required && !stripeOnboardingComplete}
               />
             </div>
             <button 
               type="button"
               onClick={handleUpdateCost}
-              disabled={loading}
+              disabled={loading || (event?.payment_required && !stripeOnboardingComplete)}
               className={styles.updateCostButton}
             >
               {loading ? 'Updating...' : 'Update'}
             </button>
           </div>
+          {cost > 0 && (
+            <p className={styles.feeInfo}>
+              Registration fee: ${parseFloat(cost).toFixed(2)} | 
+              Platform fee (6%): ${(parseFloat(cost) * 0.06).toFixed(2)} | 
+              You receive: ${(parseFloat(cost) * 0.94).toFixed(2)}
+            </p>
+          )}
         </div>
       </div>
     </div>
