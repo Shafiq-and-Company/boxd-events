@@ -18,6 +18,11 @@ export default function UserSettings() {
   const [unlinkLoading, setUnlinkLoading] = useState({ google: false, discord: false })
   const [startGGLinked, setStartGGLinked] = useState(null)
   
+  // Stripe Connect state
+  const [stripeConnected, setStripeConnected] = useState(false)
+  const [stripeOnboardingComplete, setStripeOnboardingComplete] = useState(false)
+  const [checkingStripeStatus, setCheckingStripeStatus] = useState(false)
+  
   const [userProfile, setUserProfile] = useState({
     first_name: '',
     last_name: '',
@@ -37,11 +42,32 @@ export default function UserSettings() {
       fetchUserProfile()
       checkAuthStatus('google')
       checkAuthStatus('discord')
+      checkStripeStatus()
       // start.gg link status from user metadata
       const linked = Boolean(user?.user_metadata?.startgg?.access_token)
       setStartGGLinked(linked)
     }
   }, [user, authLoading, router])
+
+  // Handle Stripe redirect after onboarding
+  useEffect(() => {
+    if (!router.isReady || !user) return
+    
+    const params = new URLSearchParams(window.location.search)
+    const stripeStatus = params.get('stripe')
+    
+    if (stripeStatus === 'success') {
+      // Refresh Stripe status after successful onboarding
+      checkStripeStatus()
+      // Clean up URL
+      router.replace('/user-settings', undefined, { shallow: true })
+    } else if (stripeStatus === 'refresh') {
+      // User was redirected back, check status again
+      checkStripeStatus()
+      router.replace('/user-settings', undefined, { shallow: true })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady, user])
 
   // Ensure user record exists in users table
   const ensureUserRecord = async () => {
@@ -195,6 +221,78 @@ export default function UserSettings() {
       window.location.href = authUrl
     } catch (err) {
       alert('Unable to start start.gg link flow. Please try again.')
+    }
+  }
+
+  // Check Stripe account status
+  const checkStripeStatus = async () => {
+    if (!user) return
+    
+    try {
+      setCheckingStripeStatus(true)
+      
+      // Get user's session token for authentication
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        console.error('No session found')
+        return
+      }
+
+      const response = await fetch(`/api/stripe/connect/status?userId=${user.id}`, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        setStripeConnected(data.connected)
+        setStripeOnboardingComplete(data.onboarding_complete)
+      } else {
+        console.error('Error checking Stripe status:', data.error)
+      }
+    } catch (error) {
+      console.error('Error checking Stripe status:', error)
+    } finally {
+      setCheckingStripeStatus(false)
+    }
+  }
+
+  // Connect Stripe account
+  const connectStripeAccount = async () => {
+    if (!user) return
+    
+    try {
+      // Get user's session token for authentication
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        alert('You must be logged in to connect Stripe')
+        return
+      }
+
+      const response = await fetch('/api/stripe/connect/create-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ 
+          userId: user.id,
+          // No eventId for user settings - redirect back to user-settings
+        }),
+      })
+      
+      const data = await response.json()
+      
+      if (data.url) {
+        window.location.href = data.url
+      } else if (data.error) {
+        alert(data.error)
+      }
+    } catch (error) {
+      console.error('Error connecting Stripe:', error)
+      alert('Failed to connect Stripe account')
     }
   }
 
@@ -539,6 +637,54 @@ export default function UserSettings() {
                   title="Click to link start.gg account"
                 >
                   Link
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.securityItem}>
+            <div className={styles.securityIcon}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+            <div className={styles.securityContent}>
+              <h4 className={styles.securityTitle}>Stripe Payment Processing</h4>
+              <p className={styles.securityDescription}>
+                {stripeOnboardingComplete === true
+                  ? 'Your Stripe account is connected and ready to collect payments for your events.'
+                  : stripeConnected === true && stripeOnboardingComplete === false
+                  ? 'Complete your Stripe account setup to start collecting payments.'
+                  : 'Connect your Stripe account to accept payments for paid events. Locals takes a 6% platform fee on each registration.'
+                }
+              </p>
+            </div>
+            <div className={styles.securityActions}>
+              {stripeOnboardingComplete === true && (
+                <button 
+                  type="button" 
+                  className={styles.discordLinkedButton}
+                  disabled
+                  title="Stripe account connected"
+                >
+                  Connected
+                </button>
+              )}
+              {(!stripeConnected || !stripeOnboardingComplete) && (
+                <button 
+                  type="button" 
+                  className={styles.discordUnlinkedButton}
+                  onClick={connectStripeAccount}
+                  disabled={checkingStripeStatus}
+                  title="Click to connect or complete Stripe account setup"
+                >
+                  {checkingStripeStatus
+                    ? 'Checking...'
+                    : stripeConnected
+                    ? 'Complete Setup'
+                    : 'Connect Stripe'}
                 </button>
               )}
             </div>
