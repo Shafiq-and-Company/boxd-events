@@ -59,6 +59,26 @@ export default function EventDetail() {
     containerRef.current.style.setProperty('--theme-overlay-color', overlayColor)
   }, [currentTheme])
 
+  // Handle payment success/cancel redirect
+  useEffect(() => {
+    if (!router.isReady || !id) return
+    
+    const params = new URLSearchParams(window.location.search)
+    const paymentStatus = params.get('payment')
+    
+    if (paymentStatus === 'success') {
+      // Refresh event data to update registration status
+      fetchEvent()
+      checkRegistrationStatus()
+      // Clean up URL
+      router.replace(`/view-event/${id}`, undefined, { shallow: true })
+    } else if (paymentStatus === 'cancelled') {
+      setError('Payment was cancelled')
+      router.replace(`/view-event/${id}`, undefined, { shallow: true })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady, id])
+
   const fetchEvent = async () => {
     try {
       setLoading(true)
@@ -66,7 +86,7 @@ export default function EventDetail() {
         .from('events')
         .select(`
           *,
-          host_user:host_id (first_name),
+          host_user:host_id (first_name, stripe_account_id, stripe_onboarding_complete),
           games (id, game_title, game_background_image_url)
         `)
         .eq('id', id)
@@ -192,7 +212,62 @@ export default function EventDetail() {
       return
     }
     if (isAlreadyRegistered) return
-    await createRSVP()
+
+    // Check if payment is required
+    if (event.payment_required && event.cost > 0) {
+      // Verify host has Stripe account connected
+      if (!event.host_user?.stripe_account_id || !event.host_user?.stripe_onboarding_complete) {
+        setError('Event organizer has not set up payment processing yet')
+        return
+      }
+
+      try {
+        setIsProcessingRSVP(true)
+        setError(null)
+
+        // Get user's session token for authentication
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) {
+          setError('You must be logged in to register')
+          return
+        }
+
+        // Create checkout session
+        const response = await fetch('/api/stripe/checkout/create-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            eventId: event.id,
+            userId: user.id,
+          }),
+        })
+
+        const data = await response.json()
+
+        if (data.error) {
+          setError(data.error)
+          return
+        }
+
+        if (data.url) {
+          // Redirect to Stripe Checkout
+          window.location.href = data.url
+        } else {
+          setError('Failed to create payment session')
+        }
+      } catch (error) {
+        console.error('Error creating checkout session:', error)
+        setError('Error processing payment. Please try again.')
+      } finally {
+        setIsProcessingRSVP(false)
+      }
+    } else {
+      // Free event - create RSVP directly
+      await createRSVP()
+    }
   }
 
   const createRSVP = async () => {
@@ -456,6 +531,17 @@ export default function EventDetail() {
                     )}
                   </div>
                   <div className={styles.rsvpContent}>
+                    {/* Display registration fee */}
+                    {event.payment_required && event.cost > 0 && (
+                      <div className={styles.registrationFee}>
+                        <span className={styles.feeLabel}>Registration Fee:</span>
+                        <span className={styles.feeAmount}>
+                          ${parseFloat(event.cost).toFixed(2)}
+                        </span>
+                        <span className={styles.feeNote}>(+ Stripe processing fees)</span>
+                      </div>
+                    )}
+                    
                     <div className={styles.welcomeMessage}>
                       {isAlreadyRegistered 
                         ? 'You\'re registered for this event!' 
@@ -499,6 +585,8 @@ export default function EventDetail() {
                             ? 'Processing...' 
                             : checkingRegistration 
                             ? 'Checking...' 
+                            : event.payment_required && event.cost > 0
+                            ? `Register - $${parseFloat(event.cost).toFixed(2)}`
                             : 'One-Click RSVP'}
                         </button>
                       ) : (

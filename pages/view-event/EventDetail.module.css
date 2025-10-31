@@ -264,6 +264,36 @@
   gap: 12px;
 }
 
+/* Registration Fee Display */
+.registrationFee {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.feeLabel {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.feeAmount {
+  font-size: 1.2rem;
+  color: #000;
+  font-weight: 600;
+}
+
+.feeNote {
+  font-size: 0.75rem;
+  color: #999;
+  margin-left: auto;
+}
+
 .welcomeMessage {
   font-size: 0.9rem;
   color: #000000;
