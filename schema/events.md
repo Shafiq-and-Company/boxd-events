@@ -15,12 +15,56 @@ The `events` table stores information about gaming events and tournaments.
 | `created_at` | timestamp with time zone | YES | now() | Record creation time |
 | `game_id` | bigint | YES | null | Foreign key to games table (id) |
 | `city` | text | YES | null | Event city |
-| `cost` | text | YES | null | Event cost (free or paid) |
+| `cost` | numeric(10,2) | YES | null | Registration fee in dollars (NULL for free events) |
+| `currency` | text | YES | 'usd' | Currency code for registration fee (default: usd) |
+| `payment_required` | boolean | YES | false | Whether payment is required to register for this event |
 | `state` | text | YES | null | Event state |
 | `host_id` | uuid | YES | null | Event host user ID (foreign key to users) |
 | `zip_code` | integer | YES | null | Event zip code |
 | `banner_image_url` | text | YES | null | URL to banner image stored in Supabase |
 | `theme` | jsonb | YES | null | Event theme configuration stored as JSON |
+
+## Stripe Payment Integration
+
+Events can require payment for registration. When `payment_required` is `true` and `cost` is set:
+- Event organizer must have a connected Stripe Express account (`users.stripe_account_id`)
+- Registration fee is stored in `cost` as a numeric value in dollars
+- Platform takes 6% fee automatically via Stripe Connect
+- Currency defaults to USD but can be changed via `currency` field
+
+### Payment Status
+- **Free Events**: `payment_required = false`, `cost = NULL`
+- **Paid Events**: `payment_required = true`, `cost > 0`, organizer must have Stripe account connected
+
+### Database Migration
+
+The `cost` column was migrated from `text` to `numeric(10,2)` to support Stripe payment processing:
+
+```sql
+-- Change cost from text to numeric (store registration fee in dollars)
+ALTER TABLE events
+ALTER COLUMN cost TYPE NUMERIC(10,2) USING 
+  CASE 
+    WHEN cost = 'free' OR cost IS NULL THEN NULL
+    WHEN cost ~ '^[0-9]+\.?[0-9]*$' THEN cost::NUMERIC
+    ELSE NULL
+  END;
+
+-- Add currency field (default USD)
+ALTER TABLE events
+ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'usd';
+
+-- Add payment enabled flag
+ALTER TABLE events
+ADD COLUMN IF NOT EXISTS payment_required BOOLEAN DEFAULT FALSE;
+
+-- Set payment_required based on existing cost values
+UPDATE events 
+SET payment_required = TRUE 
+WHERE cost IS NOT NULL AND cost > 0;
+```
+
+**Note**: After migration, free events have `cost = NULL` and `payment_required = false`, while paid events have numeric `cost` values and `payment_required = true`.
 
 ## Database Relationships
 
@@ -94,6 +138,15 @@ LEFT JOIN games g ON e.game_id = g.id;
 
 -- Query events for a specific game
 SELECT * FROM events WHERE game_id = 1;
+
+-- Query paid events with registration fees
+SELECT * FROM events WHERE payment_required = true AND cost > 0;
+
+-- Query events requiring Stripe account
+SELECT e.*, u.stripe_account_id, u.stripe_onboarding_complete
+FROM events e
+JOIN users u ON e.host_id = u.id
+WHERE e.payment_required = true;
 ```
 
 ## Row Level Security (RLS) Policies

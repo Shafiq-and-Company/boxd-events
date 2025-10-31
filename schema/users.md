@@ -16,6 +16,32 @@ The `users` table stores user profile information and authentication data.
 | `phone` | text | YES | null | User's phone number |
 | `zip_code` | text | YES | null | User's zip code |
 | `profile_pic` | text | YES | null | URL to user's profile picture (link to supabase bucket) |
+| `stripe_account_id` | text | YES | null | Stripe Connect Express account ID for payment processing |
+| `stripe_onboarding_complete` | boolean | YES | false | Whether Stripe account onboarding is complete |
+
+## Stripe Integration
+
+The `stripe_account_id` and `stripe_onboarding_complete` fields support Stripe Connect integration, allowing users (Organizers) to collect registration fees for their events.
+
+### Stripe Account Setup
+- **Organizers**: Users who create paid events must connect a Stripe Express account
+- **Onboarding**: Users complete Stripe onboarding flow to enable payment collection
+- **Account ID**: Stored in `stripe_account_id` after account creation
+- **Status**: `stripe_onboarding_complete` tracks whether account is fully configured
+
+### Database Migration
+
+The Stripe-related columns were added to support payment processing:
+
+```sql
+-- Add Stripe Connect account ID
+ALTER TABLE users 
+ADD COLUMN stripe_account_id TEXT;
+
+-- Add Stripe account onboarding status
+ALTER TABLE users
+ADD COLUMN stripe_onboarding_complete BOOLEAN DEFAULT FALSE;
+```
 
 ## Authentication Integration
 

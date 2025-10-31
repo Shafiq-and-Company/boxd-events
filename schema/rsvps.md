@@ -11,6 +11,11 @@ The `rsvps` table manages user event registrations and payment status.
 | `status` | text | NO | 'going'::text | RSVP status (going, maybe, not_going) - CHECK constraint enforced |
 | `created_at` | timestamp with time zone | YES | now() | Record creation time |
 | `payment_status` | text | YES | 'pending'::text | Payment status (pending, paid, failed, refunded) - CHECK constraint enforced |
+| `stripe_payment_intent_id` | text | YES | null | Stripe Payment Intent ID for tracking payments |
+| `stripe_checkout_session_id` | text | YES | null | Stripe Checkout Session ID for payment sessions |
+| `payment_amount` | numeric(10,2) | YES | null | Registration fee amount in dollars |
+| `platform_fee_amount` | numeric(10,2) | YES | null | Platform fee amount in dollars (6% of registration fee) |
+| `host_payout_amount` | numeric(10,2) | YES | null | Amount organizer receives after platform fee in dollars |
 | `updated_at` | timestamp with time zone | YES | now() | Record update time |
 
 ## Row Level Security (RLS) Policies
@@ -30,6 +35,34 @@ CHECK (status = ANY (ARRAY['going'::text, 'maybe'::text, 'not_going'::text]));
 ALTER TABLE rsvps ADD CONSTRAINT rsvps_payment_status_check 
 CHECK (payment_status = ANY (ARRAY['pending'::text, 'paid'::text, 'failed'::text, 'refunded'::text]));
 ```
+
+### Database Migration
+
+The Stripe payment tracking columns were added to support payment processing:
+
+```sql
+-- Add Stripe payment intent ID
+ALTER TABLE rsvps
+ADD COLUMN stripe_payment_intent_id TEXT;
+
+-- Add Stripe checkout session ID
+ALTER TABLE rsvps
+ADD COLUMN stripe_checkout_session_id TEXT;
+
+-- Add payment amount (in dollars)
+ALTER TABLE rsvps
+ADD COLUMN payment_amount NUMERIC(10,2);
+
+-- Add platform fee amount (in dollars)
+ALTER TABLE rsvps
+ADD COLUMN platform_fee_amount NUMERIC(10,2);
+
+-- Add host payout amount (in dollars)
+ALTER TABLE rsvps
+ADD COLUMN host_payout_amount NUMERIC(10,2);
+```
+
+**Note**: Payment amounts are stored in dollars (not cents) for consistency with the events table `cost` field. The platform fee is 6% of the registration fee, automatically calculated and stored.
 
 ### Primary Key
 - **Composite Primary Key**: (`user_id`, `event_id`) - ensures one RSVP per user per event
@@ -107,6 +140,18 @@ CREATE POLICY "Public can view RSVP counts" ON rsvps
 **Purpose**: Enables public event pages to show attendee counts
 **Note**: This policy should be used carefully - consider creating a view instead
 
+### Policy 9: Service Role Can Update Payment Status
+```sql
+-- Allow service role to update payment status (for webhook handlers)
+CREATE POLICY "Service role can update payment status" ON rsvps
+    FOR UPDATE
+    TO service_role
+    USING (true)
+    WITH CHECK (true);
+```
+**Purpose**: Enables Stripe webhook handlers to update payment status and payment tracking fields
+**Note**: This policy is critical for Stripe payment processing flow
+
 ## Implementation Notes
 
 ### Authentication Requirements
@@ -117,14 +162,21 @@ CREATE POLICY "Public can view RSVP counts" ON rsvps
 ### Security Considerations
 - **Data Isolation**: Users can only access their own RSVPs
 - **Event Host Access**: Event creators can view RSVPs for their events
-- **Payment Security**: Payment status updates handled via service role
+- **Payment Security**: Payment status updates handled via service role webhook handlers
+- **Payment Tracking**: Stripe payment IDs stored for transaction tracking and reconciliation
 
 ### Usage Patterns
 
 #### User RSVP Flow
 1. **Create RSVP**: User creates RSVP for themselves
-2. **Update Status**: User can change RSVP status (going → maybe → not_going)
-3. **Payment Processing**: Service role updates payment status via webhooks
+   - For free events: RSVP created immediately with `payment_status = 'paid'`
+   - For paid events: RSVP created with `payment_status = 'pending'`, Checkout session initiated
+2. **Payment Processing**: 
+   - Checkout session created with Stripe Connect
+   - Payment tracked via `stripe_checkout_session_id` and `stripe_payment_intent_id`
+   - Fee amounts calculated and stored (`payment_amount`, `platform_fee_amount`, `host_payout_amount`)
+   - Service role updates payment status via webhooks (`checkout.session.completed`, `payment_intent.succeeded`)
+3. **Update Status**: User can change RSVP status (going → maybe → not_going)
 4. **Cancel RSVP**: User can delete their RSVP
 
 #### Event Host Flow
