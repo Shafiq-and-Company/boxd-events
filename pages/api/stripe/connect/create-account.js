@@ -111,7 +111,7 @@ export default async function handler(req, res) {
     }
 
     // Get app URL from environment
-    const appUrl = getEnv('NEXT_PUBLIC_APP_URL');
+    const appUrl = getEnv('NEXT_PUBLIC_SITE_URL');
 
     // Build redirect URLs - use event-specific URL if provided, otherwise generic
     const basePath = eventId 

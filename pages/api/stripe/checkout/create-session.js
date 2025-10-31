@@ -154,7 +154,7 @@ export default async function handler(req, res) {
     }
 
     // Get app URL from environment
-    const appUrl = getEnv('NEXT_PUBLIC_APP_URL');
+    const appUrl = getEnv('NEXT_PUBLIC_SITE_URL');
 
     // Create Checkout Session with Stripe Connect
     const session = await stripe.checkout.sessions.create({

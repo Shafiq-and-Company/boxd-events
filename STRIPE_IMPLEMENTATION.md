@@ -195,7 +195,7 @@ STRIPE_WEBHOOK_SECRET=whsec_... # Webhook signing secret
 
 # Platform Configuration
 STRIPE_PLATFORM_FEE_PERCENT=0.06 # 6% platform fee
-NEXT_PUBLIC_APP_URL=http://localhost:3000 # or your production URL
+NEXT_PUBLIC_SITE_URL=http://localhost:3000 # or your production URL
 ```
 
 **Important**: The `SUPABASE_SECRET_KEY` is **only required for the webhook handler**. All other API endpoints use the authenticated user's session with the anon key, respecting RLS policies.
@@ -342,8 +342,8 @@ export default async function handler(req, res) {
     // Create account link for onboarding
     const accountLink = await stripe.accountLinks.create({
       account: accountId,
-      refresh_url: `${process.env.NEXT_PUBLIC_APP_URL}${basePath}?stripe=refresh`,
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL}${basePath}?stripe=success`,
+      refresh_url: `${process.env.NEXT_PUBLIC_SITE_URL}${basePath}?stripe=refresh`,
+      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}${basePath}?stripe=success`,
       type: userData.stripe_onboarding_complete ? 'account_update' : 'account_onboarding',
     });
 
@@ -642,8 +642,8 @@ export default async function handler(req, res) {
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/view-event/${eventId}?payment=success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/view-event/${eventId}?payment=cancelled`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/view-event/${eventId}?payment=success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/view-event/${eventId}?payment=cancelled`,
       customer_email: userData.email,
       payment_intent_data: {
         application_fee_amount: applicationFeeAmount,
