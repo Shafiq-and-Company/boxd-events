@@ -10,24 +10,33 @@ const getEnv = (key) => {
   return value;
 };
 
-// Helper to verify user authentication
-const verifyUser = async (req) => {
+// Helper to verify user authentication and create authenticated Supabase client
+const verifyUserAndCreateClient = async (req) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { user: null, error: 'Missing or invalid authorization header' };
+    return { user: null, supabase: null, error: 'Missing or invalid authorization header' };
   }
 
   const token = authHeader.split('Bearer ')[1];
   const supabaseUrl = getEnv('NEXT_PUBLIC_SUPABASE_URL');
-  const supabaseServiceKey = getEnv('SUPABASE_SERVICE_ROLE_KEY');
-  const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+  const supabaseAnonKey = getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  
+  // Create client with anon key and user's session
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
 
-  const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token);
+  // Verify the token by getting the user
+  const { data: userData, error: userErr } = await supabase.auth.getUser();
   if (userErr || !userData?.user?.id) {
-    return { user: null, error: 'Invalid or expired token' };
+    return { user: null, supabase: null, error: 'Invalid or expired token' };
   }
 
-  return { user: userData.user, error: null };
+  return { user: userData.user, supabase, error: null };
 };
 
 export default async function handler(req, res) {
@@ -36,9 +45,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Verify user authentication
-    const { user, error: authError } = await verifyUser(req);
-    if (authError || !user) {
+    // Verify user authentication and get authenticated Supabase client
+    const { user, supabase, error: authError } = await verifyUserAndCreateClient(req);
+    if (authError || !user || !supabase) {
       return res.status(401).json({ error: authError || 'Unauthorized' });
     }
 
@@ -48,11 +57,6 @@ export default async function handler(req, res) {
     if (userId !== user.id) {
       return res.status(403).json({ error: 'User ID does not match authenticated user' });
     }
-
-    // Get Supabase client with service role for database operations
-    const supabaseUrl = getEnv('NEXT_PUBLIC_SUPABASE_URL');
-    const supabaseServiceKey = getEnv('SUPABASE_SERVICE_ROLE_KEY');
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Fetch user data from database
     const { data: userData, error: userError } = await supabase

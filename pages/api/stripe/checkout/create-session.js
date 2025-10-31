@@ -11,24 +11,33 @@ const getEnv = (key) => {
   return value;
 };
 
-// Helper to verify user authentication
-const verifyUser = async (req) => {
+// Helper to verify user authentication and create authenticated Supabase client
+const verifyUserAndCreateClient = async (req) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { user: null, error: 'Missing or invalid authorization header' };
+    return { user: null, supabase: null, error: 'Missing or invalid authorization header' };
   }
 
   const token = authHeader.split('Bearer ')[1];
   const supabaseUrl = getEnv('NEXT_PUBLIC_SUPABASE_URL');
-  const supabaseServiceKey = getEnv('SUPABASE_SERVICE_ROLE_KEY');
-  const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+  const supabaseAnonKey = getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  
+  // Create client with anon key and user's session
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
 
-  const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token);
+  // Verify the token by getting the user
+  const { data: userData, error: userErr } = await supabase.auth.getUser();
   if (userErr || !userData?.user?.id) {
-    return { user: null, error: 'Invalid or expired token' };
+    return { user: null, supabase: null, error: 'Invalid or expired token' };
   }
 
-  return { user: userData.user, error: null };
+  return { user: userData.user, supabase, error: null };
 };
 
 export default async function handler(req, res) {
@@ -37,9 +46,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Verify user authentication
-    const { user, error: authError } = await verifyUser(req);
-    if (authError || !user) {
+    // Verify user authentication and get authenticated Supabase client
+    const { user, supabase, error: authError } = await verifyUserAndCreateClient(req);
+    if (authError || !user || !supabase) {
       return res.status(401).json({ error: authError || 'Unauthorized' });
     }
 
@@ -54,22 +63,10 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'User ID does not match authenticated user' });
     }
 
-    // Get Supabase client with service role for database operations
-    const supabaseUrl = getEnv('NEXT_PUBLIC_SUPABASE_URL');
-    const supabaseServiceKey = getEnv('SUPABASE_SERVICE_ROLE_KEY');
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    // Fetch event details with host's Stripe account info
+    // Fetch event details (public access via RLS)
     const { data: event, error: eventError } = await supabase
       .from('events')
-      .select(`
-        *,
-        host_user:host_id (
-          id,
-          stripe_account_id,
-          stripe_onboarding_complete
-        )
-      `)
+      .select('*')
       .eq('id', eventId)
       .single();
 
@@ -78,14 +75,35 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Event not found' });
     }
 
+    // Fetch host's Stripe account info using authenticated session
+    // RLS policy allows reading host Stripe status fields for event verification
+    let hostStripeInfo = null;
+    if (event.host_id) {
+      try {
+        const { data: hostData, error: hostError } = await supabase
+          .from('users')
+          .select('stripe_account_id, stripe_onboarding_complete')
+          .eq('id', event.host_id)
+          .single();
+        
+        if (hostError) {
+          console.error('Error fetching host Stripe info:', hostError);
+        } else {
+          hostStripeInfo = hostData || null;
+        }
+      } catch (err) {
+        console.error('Error fetching host Stripe info:', err);
+        // Continue without host info - will fail validation below
+      }
+    }
+
     // Check if payment is required
     if (!event.payment_required || !event.cost || event.cost <= 0) {
       return res.status(400).json({ error: 'Event does not require payment' });
     }
 
     // Check if host has Stripe account
-    const host = event.host_user;
-    if (!host || !host.stripe_account_id || !host.stripe_onboarding_complete) {
+    if (!hostStripeInfo || !hostStripeInfo.stripe_account_id || !hostStripeInfo.stripe_onboarding_complete) {
       return res.status(400).json({
         error: 'Event host has not set up payment processing',
         host_setup_required: true,
@@ -160,9 +178,9 @@ export default async function handler(req, res) {
       customer_email: userData.email,
       payment_intent_data: {
         application_fee_amount: applicationFeeAmount,
-        on_behalf_of: host.stripe_account_id,
+        on_behalf_of: hostStripeInfo.stripe_account_id,
         transfer_data: {
-          destination: host.stripe_account_id,
+          destination: hostStripeInfo.stripe_account_id,
         },
       },
       metadata: {

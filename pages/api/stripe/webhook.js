@@ -4,10 +4,11 @@ import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// Create Supabase client with service role for webhook operations
+// Create Supabase client with secret key for webhook operations
+// Uses Secret Key (sb_secret_...) for admin access
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
+const supabase = createClient(supabaseUrl, supabaseSecretKey);
 
 export const config = {
   api: {

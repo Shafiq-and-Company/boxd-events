@@ -137,9 +137,13 @@ ADD COLUMN host_payout_amount NUMERIC(10,2);
 
 ### 4. Update Supabase RLS Policies
 
-**Important**: Ensure service role can update RSVP payment fields via webhooks:
+**Important**: Add these RLS policies for Stripe payment processing:
+
+#### A. Secret Key Policy for Webhooks (REQUIRED)
 
 ```sql
+-- Allow Secret Key to update RSVP payment fields via webhooks
+-- This is required because webhooks don't have user sessions
 CREATE POLICY IF NOT EXISTS "Service role can update payment status" ON rsvps
   FOR UPDATE
   TO service_role
@@ -147,17 +151,43 @@ CREATE POLICY IF NOT EXISTS "Service role can update payment status" ON rsvps
   WITH CHECK (true);
 ```
 
+**Note**: This policy works with Secret Keys (`sb_secret_...`). Supabase treats Secret Keys with the same privileges as service_role for RLS policies, so this `TO service_role` policy applies to Secret Keys as well.
+
+#### B. Allow Reading Host Stripe Status (REQUIRED)
+
+```sql
+-- Allow authenticated users to read host Stripe status fields for event verification
+-- This enables checkout endpoint to verify host has Stripe account connected
+CREATE POLICY IF NOT EXISTS "Users can read host Stripe status" ON users
+  FOR SELECT
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM events 
+      WHERE events.host_id = users.id 
+      AND events.payment_required = true
+    )
+  );
+```
+
+This policy allows authenticated users (who are registering for events) to read `stripe_account_id` and `stripe_onboarding_complete` fields from users who are hosting paid events. This is necessary for the checkout endpoint to verify the host has payment processing set up.
+
 **Note**: The `rsvps` table already has RLS policies for:
 - Users can view their own RSVPs
 - Users can create/update/delete their own RSVPs  
 - Event hosts can view RSVPs for their events
-- Service role should have full access (verify this exists)
+- Service role can update payment status (added above)
 
 ## Environment Variables
 
 Add to your `.env.local` and Supabase environment:
 
 ```bash
+# Supabase (should already exist)
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SECRET_KEY=sb_secret_... # Secret Key - Only required for webhooks
+
 # Stripe Keys
 STRIPE_SECRET_KEY=sk_live_... # or sk_test_... for development
 STRIPE_PUBLISHABLE_KEY=pk_live_... # or pk_test_... for development
@@ -165,7 +195,37 @@ STRIPE_WEBHOOK_SECRET=whsec_... # Webhook signing secret
 
 # Platform Configuration
 STRIPE_PLATFORM_FEE_PERCENT=0.06 # 6% platform fee
+NEXT_PUBLIC_APP_URL=http://localhost:3000 # or your production URL
 ```
+
+**Important**: The `SUPABASE_SECRET_KEY` is **only required for the webhook handler**. All other API endpoints use the authenticated user's session with the anon key, respecting RLS policies.
+
+**Note**: The Secret Key (`sb_secret_...`) includes additional security checks, supports key rotation, and is the modern way to handle admin access in Supabase.
+
+### Why Secret Key is Needed for Webhooks
+
+Webhooks come from Stripe (external service) with no user authentication context. When a payment succeeds, Stripe sends a webhook that needs to update an RSVP's `payment_status` field. Since:
+
+1. **No user session**: Webhooks don't have a user authentication token
+2. **Cross-user updates**: The webhook needs to update RSVPs for any user (not just the current user)
+3. **RLS restrictions**: Regular RLS policies only allow users to update their own RSVPs
+
+We need the Secret Key to bypass RLS and update RSVPs via webhooks. This is the **only** place where a secret/admin key is used.
+
+### Where to Find Secret Key
+
+1. Go to your Supabase project dashboard
+2. Navigate to **Settings** → **API**
+3. Find the **Secret Key** (starts with `sb_secret_...`)
+4. Copy it and add it to your `.env.local` file as `SUPABASE_SECRET_KEY`
+
+**Secret Key Benefits:**
+- Includes additional security checks (e.g., blocks browser usage)
+- Supports key rotation and multiple keys
+- Modern admin key for Supabase
+- Bypasses RLS for server-side operations
+
+⚠️ **Security Warning**: Never commit the secret key to version control. It has admin privileges and should only be used in server-side code (webhook handler). All other endpoints use authenticated user sessions with RLS policies.
 
 ## API Routes
 
@@ -175,9 +235,38 @@ STRIPE_PLATFORM_FEE_PERCENT=0.06 # 6% platform fee
 
 ```javascript
 import Stripe from 'stripe';
-import { supabase } from '../../../lib/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// Helper to verify user authentication and create authenticated Supabase client
+const verifyUserAndCreateClient = async (req) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return { user: null, supabase: null, error: 'Missing or invalid authorization header' };
+  }
+
+  const token = authHeader.split('Bearer ')[1];
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  // Create client with anon key and user's session
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
+
+  // Verify the token by getting the user
+  const { data: userData, error: userErr } = await supabase.auth.getUser();
+  if (userErr || !userData?.user?.id) {
+    return { user: null, supabase: null, error: 'Invalid or expired token' };
+  }
+
+  return { user: userData.user, supabase, error: null };
+};
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -185,34 +274,51 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { userId } = req.body;
-
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID required' });
+    // Verify user authentication and get authenticated Supabase client
+    const { user, supabase, error: authError } = await verifyUserAndCreateClient(req);
+    if (authError || !user || !supabase) {
+      return res.status(401).json({ error: authError || 'Unauthorized' });
     }
 
-    // Check if user already has a connected account
-    const { data: user } = await supabase
+    const userId = req.body.userId || user.id;
+    const eventId = req.body.eventId; // Optional: for redirect URLs
+
+    // Verify the userId matches the authenticated user (security check)
+    if (userId !== user.id) {
+      return res.status(403).json({ error: 'User ID does not match authenticated user' });
+    }
+
+    // Check if user already has a connected account (uses authenticated session)
+    const { data: userData, error: userError } = await supabase
       .from('users')
-      .select('stripe_account_id, stripe_onboarding_complete')
+      .select('stripe_account_id, stripe_onboarding_complete, email')
       .eq('id', userId)
       .single();
 
-    if (user.stripe_account_id && user.stripe_onboarding_complete) {
+    if (userError) {
+      console.error('Error fetching user:', userError);
+      return res.status(500).json({ error: 'Failed to fetch user data' });
+    }
+
+    if (!userData) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (userData.stripe_account_id && userData.stripe_onboarding_complete) {
       return res.status(400).json({ 
         error: 'Stripe account already connected',
-        account_id: user.stripe_account_id
+        account_id: userData.stripe_account_id
       });
     }
 
     // Create Express account if not exists
-    let accountId = user.stripe_account_id;
+    let accountId = userData.stripe_account_id;
     
     if (!accountId) {
       const account = await stripe.accounts.create({
         type: 'express',
         country: 'US', // or get from user profile
-        email: user.email,
+        email: userData.email || user.email,
         capabilities: {
           card_payments: { requested: true },
           transfers: { requested: true },
@@ -221,19 +327,24 @@ export default async function handler(req, res) {
       
       accountId = account.id;
 
-      // Store account ID in database
-      await supabase
+      // Store account ID in database (uses authenticated session with RLS)
+      const { error: updateError } = await supabase
         .from('users')
         .update({ stripe_account_id: accountId })
         .eq('id', userId);
+
+      if (updateError) {
+        console.error('Error updating user with Stripe account ID:', updateError);
+        return res.status(500).json({ error: 'Failed to store Stripe account ID' });
+      }
     }
 
     // Create account link for onboarding
     const accountLink = await stripe.accountLinks.create({
       account: accountId,
-      refresh_url: `${process.env.NEXT_PUBLIC_APP_URL}/manage-event/settings?stripe=refresh`,
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL}/manage-event/settings?stripe=success`,
-      type: user.stripe_onboarding_complete ? 'account_update' : 'account_onboarding',
+      refresh_url: `${process.env.NEXT_PUBLIC_APP_URL}${basePath}?stripe=refresh`,
+      return_url: `${process.env.NEXT_PUBLIC_APP_URL}${basePath}?stripe=success`,
+      type: userData.stripe_onboarding_complete ? 'account_update' : 'account_onboarding',
     });
 
     return res.status(200).json({ 
@@ -253,9 +364,38 @@ export default async function handler(req, res) {
 
 ```javascript
 import Stripe from 'stripe';
-import { supabase } from '../../../lib/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// Helper to verify user authentication and create authenticated Supabase client
+const verifyUserAndCreateClient = async (req) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return { user: null, supabase: null, error: 'Missing or invalid authorization header' };
+  }
+
+  const token = authHeader.split('Bearer ')[1];
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  // Create client with anon key and user's session
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
+
+  // Verify the token by getting the user
+  const { data: userData, error: userErr } = await supabase.auth.getUser();
+  if (userErr || !userData?.user?.id) {
+    return { user: null, supabase: null, error: 'Invalid or expired token' };
+  }
+
+  return { user: userData.user, supabase, error: null };
+};
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -263,48 +403,70 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { userId } = req.query;
-
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID required' });
+    // Verify user authentication and get authenticated Supabase client
+    const { user, supabase, error: authError } = await verifyUserAndCreateClient(req);
+    if (authError || !user || !supabase) {
+      return res.status(401).json({ error: authError || 'Unauthorized' });
     }
 
-    const { data: user } = await supabase
+    const userId = req.query.userId || user.id;
+
+    // Verify the userId matches the authenticated user (security check)
+    if (userId !== user.id) {
+      return res.status(403).json({ error: 'User ID does not match authenticated user' });
+    }
+
+    // Fetch user data from database (uses authenticated session with RLS)
+    const { data: userData, error: userError } = await supabase
       .from('users')
       .select('stripe_account_id, stripe_onboarding_complete')
       .eq('id', userId)
       .single();
 
-    if (!user.stripe_account_id) {
+    if (userError) {
+      console.error('Error fetching user:', userError);
+      return res.status(500).json({ error: 'Failed to fetch user data' });
+    }
+
+    if (!userData || !userData.stripe_account_id) {
       return res.status(200).json({ 
         connected: false,
-        onboarding_complete: false
+        onboarding_complete: false,
+        account_id: null,
+        charges_enabled: false,
+        payouts_enabled: false,
+        details_submitted: false,
       });
     }
 
     // Check account status with Stripe
-    const account = await stripe.accounts.retrieve(user.stripe_account_id);
+    const account = await stripe.accounts.retrieve(userData.stripe_account_id);
 
     const isOnboardingComplete = 
       account.details_submitted && 
       account.charges_enabled && 
       account.payouts_enabled;
 
-    // Update database if status changed
-    if (isOnboardingComplete !== user.stripe_onboarding_complete) {
-      await supabase
+    // Update database if status changed (uses authenticated session with RLS)
+    if (isOnboardingComplete !== userData.stripe_onboarding_complete) {
+      const { error: updateError } = await supabase
         .from('users')
         .update({ stripe_onboarding_complete: isOnboardingComplete })
         .eq('id', userId);
+
+      if (updateError) {
+        console.error('Error updating user onboarding status:', updateError);
+      }
     }
 
     return res.status(200).json({
-      connected: !!user.stripe_account_id,
+      connected: !!userData.stripe_account_id,
       onboarding_complete: isOnboardingComplete,
-      account_id: user.stripe_account_id,
-      charges_enabled: account.charges_enabled,
-      payouts_enabled: account.payouts_enabled,
-      details_submitted: account.details_submitted
+      account_id: userData.stripe_account_id,
+      charges_enabled: account.charges_enabled || false,
+      payouts_enabled: account.payouts_enabled || false,
+      details_submitted: account.details_submitted || false,
+      requirements: account.requirements || null,
     });
   } catch (error) {
     console.error('Stripe status check error:', error);
@@ -319,10 +481,39 @@ export default async function handler(req, res) {
 
 ```javascript
 import Stripe from 'stripe';
-import { supabase } from '../../../lib/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const PLATFORM_FEE_PERCENT = parseFloat(process.env.STRIPE_PLATFORM_FEE_PERCENT || '0.06');
+
+// Helper to verify user authentication and create authenticated Supabase client
+const verifyUserAndCreateClient = async (req) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return { user: null, supabase: null, error: 'Missing or invalid authorization header' };
+  }
+
+  const token = authHeader.split('Bearer ')[1];
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  // Create client with anon key and user's session
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
+
+  // Verify the token by getting the user
+  const { data: userData, error: userErr } = await supabase.auth.getUser();
+  if (userErr || !userData?.user?.id) {
+    return { user: null, supabase: null, error: 'Invalid or expired token' };
+  }
+
+  return { user: userData.user, supabase, error: null };
+};
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -330,21 +521,54 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Verify user authentication and get authenticated Supabase client
+    const { user, supabase, error: authError } = await verifyUserAndCreateClient(req);
+    if (authError || !user || !supabase) {
+      return res.status(401).json({ error: authError || 'Unauthorized' });
+    }
+
     const { eventId, userId } = req.body;
 
     if (!eventId || !userId) {
       return res.status(400).json({ error: 'Event ID and User ID required' });
     }
 
-    // Fetch event details
+    // Verify the userId matches the authenticated user (security check)
+    if (userId !== user.id) {
+      return res.status(403).json({ error: 'User ID does not match authenticated user' });
+    }
+
+    // Fetch event details (public access via RLS)
     const { data: event, error: eventError } = await supabase
       .from('events')
-      .select('*, host_user:host_id (stripe_account_id, stripe_onboarding_complete)')
+      .select('*')
       .eq('id', eventId)
       .single();
 
     if (eventError || !event) {
+      console.error('Error fetching event:', eventError);
       return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Fetch host's Stripe account info using authenticated session
+    // RLS policy allows reading host Stripe status fields for event verification
+    let hostStripeInfo = null;
+    if (event.host_id) {
+      try {
+        const { data: hostData, error: hostError } = await supabase
+          .from('users')
+          .select('stripe_account_id, stripe_onboarding_complete')
+          .eq('id', event.host_id)
+          .single();
+        
+        if (hostError) {
+          console.error('Error fetching host Stripe info:', hostError);
+        } else {
+          hostStripeInfo = hostData || null;
+        }
+      } catch (err) {
+        console.error('Error fetching host Stripe info:', err);
+      }
     }
 
     // Check if payment is required
@@ -353,21 +577,25 @@ export default async function handler(req, res) {
     }
 
     // Check if host has Stripe account
-    const host = event.host_user;
-    if (!host.stripe_account_id || !host.stripe_onboarding_complete) {
-      return res.status(400).json({ 
+    if (!hostStripeInfo || !hostStripeInfo.stripe_account_id || !hostStripeInfo.stripe_onboarding_complete) {
+      return res.status(400).json({
         error: 'Event host has not set up payment processing',
-        host_setup_required: true
+        host_setup_required: true,
       });
     }
 
-    // Check if user already registered
-    const { data: existingRsvp } = await supabase
+    // Check if user already registered and paid (uses authenticated session with RLS)
+    const { data: existingRsvp, error: rsvpError } = await supabase
       .from('rsvps')
       .select('id, payment_status')
       .eq('user_id', userId)
       .eq('event_id', eventId)
       .maybeSingle();
+
+    if (rsvpError && rsvpError.code !== 'PGRST116') {
+      console.error('Error checking existing RSVP:', rsvpError);
+      return res.status(500).json({ error: 'Failed to check registration status' });
+    }
 
     if (existingRsvp && existingRsvp.payment_status === 'paid') {
       return res.status(400).json({ error: 'User already registered and paid' });
@@ -382,12 +610,22 @@ export default async function handler(req, res) {
     const amountInCents = Math.round(registrationFee * 100);
     const applicationFeeAmount = Math.round(platformFee * 100);
 
-    // Fetch user details for checkout
-    const { data: user } = await supabase
+    // Validate amounts
+    if (amountInCents < 50) {
+      return res.status(400).json({ error: 'Registration fee must be at least $0.50' });
+    }
+
+    // Fetch user details for checkout (uses authenticated session with RLS)
+    const { data: userData, error: userError } = await supabase
       .from('users')
       .select('email, first_name, last_name')
       .eq('id', userId)
       .single();
+
+    if (userError || !userData) {
+      console.error('Error fetching user:', userError);
+      return res.status(500).json({ error: 'Failed to fetch user data' });
+    }
 
     // Create Checkout Session
     const session = await stripe.checkout.sessions.create({
@@ -406,12 +644,12 @@ export default async function handler(req, res) {
       mode: 'payment',
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/view-event/${eventId}?payment=success`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/view-event/${eventId}?payment=cancelled`,
-      customer_email: user.email,
+      customer_email: userData.email,
       payment_intent_data: {
         application_fee_amount: applicationFeeAmount,
-        on_behalf_of: host.stripe_account_id,
+        on_behalf_of: hostStripeInfo.stripe_account_id,
         transfer_data: {
-          destination: host.stripe_account_id,
+          destination: hostStripeInfo.stripe_account_id,
         },
       },
       metadata: {
@@ -423,7 +661,7 @@ export default async function handler(req, res) {
       },
     });
 
-    // Create or update RSVP with pending status
+    // Create or update RSVP with pending status (uses authenticated session with RLS)
     const rsvpData = {
       user_id: userId,
       event_id: eventId,
@@ -436,14 +674,20 @@ export default async function handler(req, res) {
     };
 
     if (existingRsvp) {
-      await supabase
+      const { error: updateError } = await supabase
         .from('rsvps')
         .update(rsvpData)
         .eq('id', existingRsvp.id);
+
+      if (updateError) {
+        console.error('Error updating RSVP:', updateError);
+      }
     } else {
-      await supabase
-        .from('rsvps')
-        .insert([rsvpData]);
+      const { error: insertError } = await supabase.from('rsvps').insert([rsvpData]);
+
+      if (insertError) {
+        console.error('Error creating RSVP:', insertError);
+      }
     }
 
     return res.status(200).json({ 

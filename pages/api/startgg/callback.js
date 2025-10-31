@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     }
 
     const supabaseUrl = getEnv('NEXT_PUBLIC_SUPABASE_URL')
-    const serviceKey = getEnv('SUPABASE_SERVICE_ROLE_KEY')
+    const serviceKey = getEnv('SUPABASE_SECRET_KEY')
     const clientId = getEnv('STARTGG_CLIENT_ID')
     const clientSecret = getEnv('STARTGG_CLIENT_SECRET')
     const scopes = getEnv('STARTGG_SCOPES') // e.g. "user.identity user.email"
