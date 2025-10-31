@@ -27,7 +27,9 @@ export default function CreateEvent() {
     city: '',
     state: '',
     zip_code: '',
-    game_id: ''
+    game_id: '',
+    cost: '',
+    payment_required: false
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -180,7 +182,10 @@ export default function CreateEvent() {
         host_id: user.id,
         banner_image_url: bannerImageUrl,
         game_id: gameSelectionEnabled && formData.game_id ? formData.game_id : null,
-        theme: currentTheme
+        theme: currentTheme,
+        cost: formData.payment_required && formData.cost ? parseFloat(formData.cost) : null,
+        payment_required: formData.payment_required,
+        currency: 'usd'
       }
 
       const { data, error } = await supabase
@@ -385,6 +390,45 @@ export default function CreateEvent() {
               ))}
             </select>
           </div>
+        </div>
+
+        <div className={styles.paymentSection}>
+          <label className={styles.fieldLabel}>Registration</label>
+          <div className={styles.paymentRow}>
+            <label className={styles.toggleLabel}>
+              <input
+                type="checkbox"
+                checked={formData.payment_required}
+                onChange={(e) => setFormData(prev => ({
+                  ...prev,
+                  payment_required: e.target.checked,
+                  cost: e.target.checked ? prev.cost : ''
+                }))}
+                className={styles.toggleSwitch}
+              />
+              <span className={styles.toggleSlider}></span>
+            </label>
+            <span>Require payment to register</span>
+          </div>
+          {formData.payment_required && (
+            <div className={styles.formGroup}>
+              <input
+                type="number"
+                name="cost"
+                value={formData.cost}
+                onChange={handleInputChange}
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                className={styles.input}
+              />
+            </div>
+          )}
+          {formData.payment_required && (
+            <p className={styles.feeNote}>
+              Note: You'll need to connect your Stripe account in event settings to collect payments. Locals takes a 6% platform fee.
+            </p>
+          )}
         </div>
 
             <button 

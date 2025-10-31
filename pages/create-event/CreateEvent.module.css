@@ -326,10 +326,31 @@
 
 
 /* Form Sections */
-.dateTimeSection, .descriptionSection, .locationSection, .gameSection {
+.dateTimeSection, .descriptionSection, .locationSection, .gameSection, .paymentSection {
   display: flex;
   flex-direction: column;
   gap: 0;
+}
+
+/* Payment Section */
+.paymentRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.paymentRow span {
+  font-size: 0.875rem;
+  color: #000;
+}
+
+.feeNote {
+  font-size: 0.75rem;
+  color: #999;
+  margin: 8px 0 0 0;
+  padding: 0;
+  line-height: 1.4;
 }
 
 /* Submit Button */
