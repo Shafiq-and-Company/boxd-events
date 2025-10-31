@@ -113,12 +113,15 @@ export default async function handler(req, res) {
     // Get app URL from environment
     const appUrl = getEnv('NEXT_PUBLIC_SITE_URL');
 
-    // Build redirect URLs - use event-specific URL if provided, otherwise user-settings
-    const basePath = eventId 
-      ? `/manage-event/${eventId}` 
-      : '/user-settings';
-    const refreshUrl = `${appUrl}${basePath}?stripe=refresh`;
-    const returnUrl = `${appUrl}${basePath}?stripe=success`;
+    // Build redirect URLs - use event-specific URL if provided, otherwise home with settings tab
+    let refreshUrl, returnUrl;
+    if (eventId) {
+      refreshUrl = `${appUrl}/manage-event/${eventId}?stripe=refresh`;
+      returnUrl = `${appUrl}/manage-event/${eventId}?stripe=success`;
+    } else {
+      refreshUrl = `${appUrl}/?tab=settings&stripe=refresh`;
+      returnUrl = `${appUrl}/?tab=settings&stripe=success`;
+    }
 
     // Create account link for onboarding
     const accountLink = await stripe.accountLinks.create({

@@ -447,4 +447,234 @@
   } 
 }
 
+/* Stripe Section */
+.stripeSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  border: 1px solid #000;
+  background: #fff;
+  margin-bottom: 16px;
+}
+
+.stripeHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.stripeIcon {
+  width: 48px;
+  height: 48px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #000;
+}
+
+.stripeIcon svg {
+  color: #fff;
+  width: 24px;
+  height: 24px;
+}
+
+.stripeHeaderContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.stripeTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 8px 0;
+}
+
+.stripeSubtitle {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.stripeStatus {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+}
+
+.statusRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.statusRow:last-child {
+  border-bottom: none;
+}
+
+.statusLabel {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.statusValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.statusSuccess {
+  color: #16a34a;
+}
+
+.statusWarning {
+  color: #f59e0b;
+}
+
+.statusError {
+  color: #dc2626;
+}
+
+.requirementsSection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.requirementsTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 12px 0;
+}
+
+.requirementsList {
+  margin-bottom: 12px;
+}
+
+.requirementsLabel {
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: 500;
+  margin: 0 0 8px 0;
+}
+
+.requirementsItems {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.requirementItem {
+  font-size: 0.875rem;
+  color: #666;
+  padding: 4px 0;
+  padding-left: 16px;
+  position: relative;
+}
+
+.requirementItem:before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #000;
+}
+
+.requirementsComplete {
+  font-size: 0.875rem;
+  color: #16a34a;
+  font-weight: 500;
+  margin: 0;
+}
+
+.stripeActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.stripeSyncButton {
+  background: #f8f8f8;
+  color: #000;
+  border: 1px solid #000;
+  padding: 12px 24px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.stripeSyncButton:hover:not(:disabled) {
+  background: #000;
+  color: #fff;
+}
+
+.stripeSyncButton:disabled {
+  background: #d0d0d0;
+  border-color: #d0d0d0;
+  cursor: not-allowed;
+  color: #707070;
+}
+
+.stripeConnectButton {
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+  padding: 12px 24px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.stripeConnectButton:hover:not(:disabled) {
+  background: #333;
+  border-color: #333;
+}
+
+.stripeConnectButton:disabled {
+  background: #999;
+  border-color: #999;
+  cursor: not-allowed;
+}
+
+@media (max-width: 767px) {
+  .stripeSection {
+    padding: 16px;
+  }
+
+  .stripeHeader {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .stripeIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stripeIcon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .stripeActions {
+    flex-direction: column;
+  }
+
+  .stripeSyncButton,
+  .stripeConnectButton {
+    width: 100%;
+  }
+}
+
 

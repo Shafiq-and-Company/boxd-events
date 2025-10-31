@@ -22,6 +22,7 @@ export default function UserSettings() {
   const [stripeConnected, setStripeConnected] = useState(false)
   const [stripeOnboardingComplete, setStripeOnboardingComplete] = useState(false)
   const [checkingStripeStatus, setCheckingStripeStatus] = useState(false)
+  const [stripeAccountDetails, setStripeAccountDetails] = useState(null)
   
   const [userProfile, setUserProfile] = useState({
     first_name: '',
@@ -59,12 +60,12 @@ export default function UserSettings() {
     if (stripeStatus === 'success') {
       // Refresh Stripe status after successful onboarding
       checkStripeStatus()
-      // Clean up URL
-      router.replace('/user-settings', undefined, { shallow: true })
+      // Clean up URL - preserve tab parameter
+      router.replace('/?tab=settings', undefined, { shallow: true })
     } else if (stripeStatus === 'refresh') {
       // User was redirected back, check status again
       checkStripeStatus()
-      router.replace('/user-settings', undefined, { shallow: true })
+      router.replace('/?tab=settings', undefined, { shallow: true })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady, user])
@@ -249,11 +250,21 @@ export default function UserSettings() {
       if (response.ok) {
         setStripeConnected(data.connected)
         setStripeOnboardingComplete(data.onboarding_complete)
+        // Store detailed account information
+        setStripeAccountDetails({
+          account_id: data.account_id,
+          charges_enabled: data.charges_enabled,
+          payouts_enabled: data.payouts_enabled,
+          details_submitted: data.details_submitted,
+          requirements: data.requirements,
+        })
       } else {
         console.error('Error checking Stripe status:', data.error)
+        setStripeAccountDetails(null)
       }
     } catch (error) {
       console.error('Error checking Stripe status:', error)
+      setStripeAccountDetails(null)
     } finally {
       setCheckingStripeStatus(false)
     }
@@ -642,49 +653,114 @@ export default function UserSettings() {
             </div>
           </div>
 
-          <div className={styles.securityItem}>
-            <div className={styles.securityIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                <path d="M2 17l10 5 10-5"/>
-                <path d="M2 12l10 5 10-5"/>
-              </svg>
+          {/* Dedicated Stripe Payment Processing Section */}
+          <div className={styles.stripeSection}>
+            <div className={styles.stripeHeader}>
+              <div className={styles.stripeIcon}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                  <path d="M2 17l10 5 10-5"/>
+                  <path d="M2 12l10 5 10-5"/>
+                </svg>
+              </div>
+              <div className={styles.stripeHeaderContent}>
+                <h3 className={styles.stripeTitle}>Stripe Payment Processing</h3>
+                <p className={styles.stripeSubtitle}>
+                  Connect your Stripe account to accept payments for paid events. Locals takes a 6% platform fee on each registration.
+                </p>
+              </div>
             </div>
-            <div className={styles.securityContent}>
-              <h4 className={styles.securityTitle}>Stripe Payment Processing</h4>
-              <p className={styles.securityDescription}>
-                {stripeOnboardingComplete === true
-                  ? 'Your Stripe account is connected and ready to collect payments for your events.'
-                  : stripeConnected === true && stripeOnboardingComplete === false
-                  ? 'Complete your Stripe account setup to start collecting payments.'
-                  : 'Connect your Stripe account to accept payments for paid events. Locals takes a 6% platform fee on each registration.'
-                }
-              </p>
-            </div>
-            <div className={styles.securityActions}>
-              {stripeOnboardingComplete === true && (
-                <button 
-                  type="button" 
-                  className={styles.discordLinkedButton}
-                  disabled
-                  title="Stripe account connected"
-                >
-                  Connected
-                </button>
+
+            {/* Account Status */}
+            <div className={styles.stripeStatus}>
+              <div className={styles.statusRow}>
+                <span className={styles.statusLabel}>Account Status:</span>
+                <span className={`${styles.statusValue} ${stripeOnboardingComplete ? styles.statusSuccess : styles.statusWarning}`}>
+                  {checkingStripeStatus ? 'Checking...' : stripeOnboardingComplete ? 'Ready to Accept Payments' : stripeConnected ? 'Setup Incomplete' : 'Not Connected'}
+                </span>
+              </div>
+              
+              {stripeAccountDetails && (
+                <>
+                  <div className={styles.statusRow}>
+                    <span className={styles.statusLabel}>Account ID:</span>
+                    <span className={styles.statusValue}>{stripeAccountDetails.account_id || 'N/A'}</span>
+                  </div>
+                  
+                  <div className={styles.statusRow}>
+                    <span className={styles.statusLabel}>Charges Enabled:</span>
+                    <span className={`${styles.statusValue} ${stripeAccountDetails.charges_enabled ? styles.statusSuccess : styles.statusError}`}>
+                      {stripeAccountDetails.charges_enabled ? 'Yes' : 'No'}
+                    </span>
+                  </div>
+                  
+                  <div className={styles.statusRow}>
+                    <span className={styles.statusLabel}>Payouts Enabled:</span>
+                    <span className={`${styles.statusValue} ${stripeAccountDetails.payouts_enabled ? styles.statusSuccess : styles.statusError}`}>
+                      {stripeAccountDetails.payouts_enabled ? 'Yes' : 'No'}
+                    </span>
+                  </div>
+                  
+                  <div className={styles.statusRow}>
+                    <span className={styles.statusLabel}>Details Submitted:</span>
+                    <span className={`${styles.statusValue} ${stripeAccountDetails.details_submitted ? styles.statusSuccess : styles.statusError}`}>
+                      {stripeAccountDetails.details_submitted ? 'Yes' : 'No'}
+                    </span>
+                  </div>
+
+                  {/* Requirements Section */}
+                  {stripeAccountDetails.requirements && (
+                    <div className={styles.requirementsSection}>
+                      <h4 className={styles.requirementsTitle}>Onboarding Requirements:</h4>
+                      {stripeAccountDetails.requirements.currently_due && stripeAccountDetails.requirements.currently_due.length > 0 && (
+                        <div className={styles.requirementsList}>
+                          <p className={styles.requirementsLabel}>Currently Due:</p>
+                          <ul className={styles.requirementsItems}>
+                            {stripeAccountDetails.requirements.currently_due.map((req, idx) => (
+                              <li key={idx} className={styles.requirementItem}>{req}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {stripeAccountDetails.requirements.past_due && stripeAccountDetails.requirements.past_due.length > 0 && (
+                        <div className={styles.requirementsList}>
+                          <p className={styles.requirementsLabel}>Past Due:</p>
+                          <ul className={styles.requirementsItems}>
+                            {stripeAccountDetails.requirements.past_due.map((req, idx) => (
+                              <li key={idx} className={styles.requirementItem}>{req}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {(!stripeAccountDetails.requirements.currently_due || stripeAccountDetails.requirements.currently_due.length === 0) &&
+                       (!stripeAccountDetails.requirements.past_due || stripeAccountDetails.requirements.past_due.length === 0) && (
+                        <p className={styles.requirementsComplete}>All requirements completed!</p>
+                      )}
+                    </div>
+                  )}
+                </>
               )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className={styles.stripeActions}>
+              <button 
+                type="button" 
+                className={styles.stripeSyncButton}
+                onClick={checkStripeStatus}
+                disabled={checkingStripeStatus}
+              >
+                {checkingStripeStatus ? 'Syncing...' : 'Sync Status'}
+              </button>
+              
               {(!stripeConnected || !stripeOnboardingComplete) && (
                 <button 
                   type="button" 
-                  className={styles.discordUnlinkedButton}
+                  className={styles.stripeConnectButton}
                   onClick={connectStripeAccount}
                   disabled={checkingStripeStatus}
-                  title="Click to connect or complete Stripe account setup"
                 >
-                  {checkingStripeStatus
-                    ? 'Checking...'
-                    : stripeConnected
-                    ? 'Complete Setup'
-                    : 'Connect Stripe'}
+                  {stripeConnected ? 'Complete Setup' : 'Connect Stripe'}
                 </button>
               )}
             </div>

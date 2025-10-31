@@ -29,13 +29,14 @@ This guide describes how to implement Stripe payment processing for **Locals**, 
    - Event can be created as **free** (no payment) or **paid** (requires Stripe)
    - If paid: Organizer must link Stripe account before setting registration fee
 
-2. **Link Stripe Account** (`pages/manage-event/ManageRegistration.js`)
-   - Organizer navigates to event's "Registration" tab
-   - If Stripe account not linked:
-     - Click "Connect Stripe Account" button
+2. **Link Stripe Account** (`pages/user-settings/UserSettings.js`)
+   - Organizer navigates to User Settings page (`/?tab=settings`)
+   - In the "Stripe Payment Processing" section:
+     - Click "Connect Stripe" button (if not connected) or "Complete Setup" (if partially connected)
      - Redirected to Stripe Connect onboarding (create Express account or link existing)
-     - After onboarding, returned to registration settings
-   - Once linked: Organizer can set registration fee for event
+     - After onboarding, returned to user settings with updated status
+     - Detailed onboarding information is displayed including account status, requirements, and sync functionality
+   - Once linked: Organizer can set registration fee for events
 
 3. **Set Registration Fee**
    - In Registration tab, Organizer enters registration fee amount
@@ -339,11 +340,24 @@ export default async function handler(req, res) {
       }
     }
 
+    // Get app URL from environment
+    const appUrl = getEnv('NEXT_PUBLIC_SITE_URL');
+
+    // Build redirect URLs - use event-specific URL if provided, otherwise home with settings tab
+    let refreshUrl, returnUrl;
+    if (eventId) {
+      refreshUrl = `${appUrl}/manage-event/${eventId}?stripe=refresh`;
+      returnUrl = `${appUrl}/manage-event/${eventId}?stripe=success`;
+    } else {
+      refreshUrl = `${appUrl}/?tab=settings&stripe=refresh`;
+      returnUrl = `${appUrl}/?tab=settings&stripe=success`;
+    }
+
     // Create account link for onboarding
     const accountLink = await stripe.accountLinks.create({
       account: accountId,
-      refresh_url: `${process.env.NEXT_PUBLIC_SITE_URL}${basePath}?stripe=refresh`,
-      return_url: `${process.env.NEXT_PUBLIC_SITE_URL}${basePath}?stripe=success`,
+      refresh_url: refreshUrl,
+      return_url: returnUrl,
       type: userData.stripe_onboarding_complete ? 'account_update' : 'account_onboarding',
     });
 
@@ -578,7 +592,7 @@ export default async function handler(req, res) {
 
     // Check if host has Stripe account
     if (!hostStripeInfo || !hostStripeInfo.stripe_account_id || !hostStripeInfo.stripe_onboarding_complete) {
-      return res.status(400).json({
+      return res.status(400).json({ 
         error: 'Event host has not set up payment processing',
         host_setup_required: true,
       });
@@ -923,227 +937,110 @@ const eventData = {
 }
 ```
 
-### 2. Update Manage Registration Component
+### 2. Update User Settings Component (Stripe Setup)
 
-**File**: `pages/manage-event/ManageRegistration.js`
+**File**: `pages/user-settings/UserSettings.js`
 
-**Current State**: Component fetches and updates `events.cost` field. Needs Stripe Connect integration.
+**Current State**: Component handles user profile settings. Now includes dedicated Stripe Payment Processing section.
 
-**Changes Needed**:
+**Changes Made**:
+
+A dedicated Stripe section was added to the User Settings page that displays:
+
+- **Account Status**: Shows current Stripe connection status (Ready/Setup Incomplete/Not Connected)
+- **Account Details**: 
+  - Account ID
+  - Charges Enabled status
+  - Payouts Enabled status
+  - Details Submitted status
+- **Onboarding Requirements**: 
+  - Currently Due requirements list
+  - Past Due requirements list
+  - Success message when all requirements are complete
+- **Actions**:
+  - "Sync Status" button to manually refresh Stripe account status
+  - "Connect Stripe" or "Complete Setup" button depending on connection state
+
+**Key Implementation Details**:
 
 ```javascript
-import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/router'
-import { supabase } from '../../lib/supabaseClient'
-import { useAuth } from '../../lib/AuthContext'
-import styles from './ManageRegistration.module.css'
-
-export default function ManageRegistration() {
-  const { user } = useAuth()
-  const router = useRouter()
-  const { id } = router.query
-  
-  const [cost, setCost] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [fetchLoading, setFetchLoading] = useState(true)
-  const [error, setError] = useState(null)
-  
-  // NEW: Stripe Connect state
+// Stripe Connect state
   const [stripeConnected, setStripeConnected] = useState(false)
   const [stripeOnboardingComplete, setStripeOnboardingComplete] = useState(false)
   const [checkingStripeStatus, setCheckingStripeStatus] = useState(false)
-  const [event, setEvent] = useState(null)
+const [stripeAccountDetails, setStripeAccountDetails] = useState(null)
 
-  // Update fetchCost to also get payment_required status
-  const fetchCost = useCallback(async () => {
-    if (!id || !user) return
-    
-    try {
-      setFetchLoading(true)
-      setError(null)
-
-      const { data: eventData, error } = await supabase
-        .from('events')
-        .select('cost, payment_required')
-        .eq('id', id)
-        .eq('host_id', user.id)
-        .single()
-
-      if (error) throw error
-      if (!eventData) throw new Error('Event not found or you do not have permission to edit it')
-
-      setEvent(eventData)
-      setCost(eventData.cost || '')
-      
-      // Check Stripe status if payment is required
-      if (eventData.payment_required) {
-        await checkStripeStatus()
-      }
-    } catch (err) {
-      console.error('Error fetching cost:', err)
-      setError(err.message)
-    } finally {
-      setFetchLoading(false)
-    }
-  }, [id, user])
-
-  // NEW: Check Stripe account status
+// Check Stripe account status - fetches detailed information
   const checkStripeStatus = async () => {
-    if (!user) return
-    
-    try {
-      setCheckingStripeStatus(true)
-      const response = await fetch(`/api/stripe/connect/status?userId=${user.id}`)
-      const data = await response.json()
-      
-      setStripeConnected(data.connected)
-      setStripeOnboardingComplete(data.onboarding_complete)
-    } catch (error) {
-      console.error('Error checking Stripe status:', error)
-    } finally {
-      setCheckingStripeStatus(false)
-    }
-  }
+  // ... fetches from /api/stripe/connect/status
+  // Stores detailed account information including requirements
+  setStripeAccountDetails({
+    account_id: data.account_id,
+    charges_enabled: data.charges_enabled,
+    payouts_enabled: data.payouts_enabled,
+    details_submitted: data.details_submitted,
+    requirements: data.requirements,
+  })
+}
 
-  // NEW: Connect Stripe account
+// Connect Stripe account - redirects to onboarding
   const connectStripeAccount = async () => {
-    try {
-      const response = await fetch('/api/stripe/connect/create-account', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id }),
-      })
-      
-      const data = await response.json()
-      
-      if (data.url) {
-        window.location.href = data.url
-      } else if (data.error) {
-        setError(data.error)
-      }
-    } catch (error) {
-      console.error('Error connecting Stripe:', error)
-      setError('Failed to connect Stripe account')
-    }
-  }
+  // ... calls /api/stripe/connect/create-account
+  // Redirects to Stripe onboarding, returns to user settings
+}
+```
 
-  // Update handleUpdateCost to also set payment_required
-  const handleUpdateCost = async () => {
-    if (!user) {
-      setError('You must be logged in to edit an event')
-      return
-    }
+**User Experience**: 
+- Stripe setup is centralized in user settings
+- Detailed onboarding information is displayed to help users understand what's needed
+- Status can be synced manually at any time
+- Redirects back to user settings after Stripe onboarding completes
 
-    const costValue = parseFloat(cost)
-    const paymentRequired = costValue > 0
+### 3. Update Manage Registration Component
 
-    // If setting payment, ensure Stripe is connected
-    if (paymentRequired && !stripeOnboardingComplete) {
-      setError('Please connect your Stripe account before setting a registration fee')
-      return
-    }
+**File**: `pages/manage-event/ManageRegistration.js`
 
-    setLoading(true)
-    setError(null)
+**Current State**: Component fetches and updates `events.cost` field. Redirects users to user settings for Stripe setup.
 
-    try {
-      const { data, error } = await supabase
-        .from('events')
-        .update({ 
-          cost: costValue || null,
-          payment_required: paymentRequired
-        })
-        .eq('id', id)
-        .eq('host_id', user.id)
-        .select()
+**Changes Made**:
 
-      if (error) throw error
-      if (!data || data.length === 0) {
-        setError('No rows were updated. You may not have permission to edit this event.')
-        return
-      }
+The component now:
+- Checks Stripe connection status for validation
+- Redirects users to user settings (`/?tab=settings`) if Stripe setup is needed
+- No longer handles Stripe onboarding directly
+- Validates Stripe connection before allowing fee updates
 
-      setEvent(data[0])
-      // ... existing notification code ...
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // In JSX (around line 113), add Stripe section:
-  return (
-    <div className={styles.manageRegistration}>
-      {error && <div className={styles.errorMessage}>{error}</div>}
-
-      <div className={styles.registrationTabContent}>
-        {/* NEW: Stripe Connection Section */}
+```javascript
+// Stripe Connection Section - redirects to user settings
         {event?.payment_required && !stripeOnboardingComplete && (
           <div className={styles.stripeSection}>
             <h3 className={styles.sectionTitle}>Payment Processing</h3>
-            <p>Connect your Stripe account to collect registration fees. Locals takes a 6% platform fee on each registration.</p>
+    <p className={styles.stripeDescription}>
+      You need to connect your Stripe account to collect registration fees. 
+      Set up your Stripe account in your user settings.
+    </p>
             <button 
-              onClick={connectStripeAccount} 
+      onClick={() => router.push('/?tab=settings')} 
               className={styles.connectButton}
-              disabled={checkingStripeStatus}
-            >
-              {checkingStripeStatus 
-                ? 'Checking...' 
-                : stripeConnected 
-                ? 'Complete Stripe Setup' 
-                : 'Connect Stripe Account'}
+    >
+      Go to Stripe Setup
             </button>
           </div>
         )}
 
-        {/* Existing Cost Section */}
+// Registration Fee Section
         <div className={styles.costSection}>
           <h3 className={styles.sectionTitle}>Registration Fee</h3>
           {!stripeOnboardingComplete && event?.payment_required && (
             <p className={styles.warningText}>
-              Connect your Stripe account above before setting a registration fee.
+      Please complete your Stripe account setup in user settings before setting a registration fee.
             </p>
           )}
-          <div className={styles.costInputRow}>
-            <div className={styles.formGroup}>
-              <input
-                type="number"
-                id="cost"
-                name="cost"
-                value={cost}
-                onChange={handleCostChange}
-                className={styles.input}
-                placeholder="0.00"
-                min="0"
-                step="0.01"
-                disabled={event?.payment_required && !stripeOnboardingComplete}
-              />
+  {/* ... fee input ... */}
             </div>
-            <button 
-              type="button"
-              onClick={handleUpdateCost}
-              disabled={loading || (event?.payment_required && !stripeOnboardingComplete)}
-              className={styles.updateCostButton}
-            >
-              {loading ? 'Updating...' : 'Update'}
-            </button>
-          </div>
-          {cost > 0 && (
-            <p className={styles.feeInfo}>
-              Registration fee: ${parseFloat(cost).toFixed(2)} | 
-              Platform fee (6%): ${(parseFloat(cost) * 0.06).toFixed(2)} | 
-              You receive: ${(parseFloat(cost) * 0.94).toFixed(2)}
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
 ```
 
-### 3. Update Event Detail Page (Attendee Registration Flow)
+### 4. Update Event Detail Page (Attendee Registration Flow)
 
 **File**: `pages/view-event/[id].js`
 
@@ -1407,7 +1304,8 @@ Configure webhook endpoint in Stripe Dashboard:
 - [ ] Create Checkout Session API route
 - [ ] Create Webhook handler API route
 - [ ] Update CreateEvent component with fee input
-- [ ] Update ManageRegistration with Stripe Connect UI
+- [ ] Update UserSettings with dedicated Stripe setup section
+- [ ] Update ManageRegistration to redirect to user settings for Stripe setup
 - [ ] Update EventDetail page with payment flow
 - [ ] Configure Stripe webhooks in Dashboard
 - [ ] Test end-to-end payment flow

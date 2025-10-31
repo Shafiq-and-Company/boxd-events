@@ -18,10 +18,11 @@ export default function ManageRegistration() {
   const [stripeConnected, setStripeConnected] = useState(false)
   const [stripeOnboardingComplete, setStripeOnboardingComplete] = useState(false)
   const [checkingStripeStatus, setCheckingStripeStatus] = useState(false)
+  const [stripeAccountDetails, setStripeAccountDetails] = useState(null)
   const [event, setEvent] = useState(null)
 
   // Check Stripe account status
-  const checkStripeStatus = async () => {
+  const checkStripeStatus = useCallback(async () => {
     if (!user) return
     
     try {
@@ -45,54 +46,26 @@ export default function ManageRegistration() {
       if (response.ok) {
         setStripeConnected(data.connected)
         setStripeOnboardingComplete(data.onboarding_complete)
+        // Store detailed account information
+        setStripeAccountDetails({
+          account_id: data.account_id,
+          charges_enabled: data.charges_enabled,
+          payouts_enabled: data.payouts_enabled,
+          details_submitted: data.details_submitted,
+          requirements: data.requirements,
+        })
       } else {
         console.error('Error checking Stripe status:', data.error)
+        setStripeAccountDetails(null)
       }
     } catch (error) {
       console.error('Error checking Stripe status:', error)
+      setStripeAccountDetails(null)
     } finally {
       setCheckingStripeStatus(false)
     }
-  }
+  }, [user])
 
-  // Connect Stripe account
-  const connectStripeAccount = async () => {
-    if (!user) return
-    
-    try {
-      setError(null)
-      
-      // Get user's session token for authentication
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        setError('You must be logged in to connect Stripe')
-        return
-      }
-
-      const response = await fetch('/api/stripe/connect/create-account', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ 
-          userId: user.id,
-          eventId: id, // Include eventId for redirect URLs
-        }),
-      })
-      
-      const data = await response.json()
-      
-      if (data.url) {
-        window.location.href = data.url
-      } else if (data.error) {
-        setError(data.error)
-      }
-    } catch (error) {
-      console.error('Error connecting Stripe:', error)
-      setError('Failed to connect Stripe account')
-    }
-  }
 
   const fetchCost = useCallback(async () => {
     if (!id || !user) return
@@ -124,10 +97,17 @@ export default function ManageRegistration() {
     } finally {
       setFetchLoading(false)
     }
-  }, [id, user])
+  }, [id, user, checkStripeStatus])
 
   const handleCostChange = (e) => {
-    setCost(e.target.value)
+    const newCost = e.target.value
+    setCost(newCost)
+    
+    // Check Stripe status if user is entering a fee (cost > 0)
+    // This ensures status is checked before they try to save
+    if (parseFloat(newCost) > 0 && !event?.payment_required) {
+      checkStripeStatus()
+    }
   }
 
   const handleUpdateCost = async () => {
@@ -139,10 +119,27 @@ export default function ManageRegistration() {
     const costValue = parseFloat(cost) || 0
     const paymentRequired = costValue > 0
 
-    // If setting payment, ensure Stripe is connected
-    if (paymentRequired && !stripeOnboardingComplete) {
-      setError('Please connect your Stripe account before setting a registration fee')
-      return
+    // If setting payment, check Stripe status first
+    if (paymentRequired) {
+      // Verify Stripe status before allowing fee update
+      if (!stripeAccountDetails) {
+        // Fetch Stripe status if we don't have it yet
+        await checkStripeStatus()
+        // Wait a moment for state to update
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+      
+      // Check again after fetching status
+      if (!stripeOnboardingComplete) {
+        setError('Please complete your Stripe account setup in user settings before setting a registration fee. Click "Go to Stripe Setup" above.')
+        return
+      }
+      
+      // Validate that charges and payouts are enabled
+      if (stripeAccountDetails && (!stripeAccountDetails.charges_enabled || !stripeAccountDetails.payouts_enabled)) {
+        setError('Your Stripe account is not fully activated. Please complete all onboarding requirements in user settings.')
+        return
+      }
     }
 
     setLoading(true)
@@ -199,24 +196,6 @@ export default function ManageRegistration() {
     fetchCost()
   }, [fetchCost])
 
-  // Handle Stripe redirect after onboarding
-  useEffect(() => {
-    if (!router.isReady) return
-    
-    const params = new URLSearchParams(window.location.search)
-    const stripeStatus = params.get('stripe')
-    
-    if (stripeStatus === 'success') {
-      // Refresh Stripe status after successful onboarding
-      checkStripeStatus()
-      // Clean up URL
-      router.replace(`/manage-event/${id}`, undefined, { shallow: true })
-    } else if (stripeStatus === 'refresh') {
-      // User was redirected back, check status again
-      checkStripeStatus()
-      router.replace(`/manage-event/${id}`, undefined, { shallow: true })
-    }
-  }, [router.isReady, id])
 
   if (!user) {
     return (
@@ -246,28 +225,106 @@ export default function ManageRegistration() {
           <div className={styles.stripeSection}>
             <h3 className={styles.sectionTitle}>Payment Processing</h3>
             <p className={styles.stripeDescription}>
-              Connect your Stripe account to collect registration fees. Locals takes a 6% platform fee on each registration.
+              You need to connect your Stripe account to collect registration fees. Set up your Stripe account in your user settings.
             </p>
             <button 
-              onClick={connectStripeAccount} 
+              onClick={() => router.push('/?tab=settings')} 
               className={styles.connectButton}
-              disabled={checkingStripeStatus}
             >
-              {checkingStripeStatus 
-                ? 'Checking...' 
-                : stripeConnected 
-                ? 'Complete Stripe Setup' 
-                : 'Connect Stripe Account'}
+              Go to Stripe Setup
             </button>
+          </div>
+        )}
+
+        {/* Stripe Sync Details Section */}
+        {event?.payment_required && stripeAccountDetails && (
+          <div className={styles.stripeSyncDetails}>
+            <div className={styles.syncDetailsHeader}>
+              <h3 className={styles.sectionTitle}>Payment Account Status</h3>
+              <button 
+                type="button"
+                className={styles.syncButton}
+                onClick={checkStripeStatus}
+                disabled={checkingStripeStatus}
+              >
+                {checkingStripeStatus ? 'Syncing...' : 'Sync Status'}
+              </button>
+            </div>
+            
+            <div className={styles.syncStatusGrid}>
+              <div className={styles.statusItem}>
+                <span className={styles.statusLabel}>Account Status:</span>
+                <span className={`${styles.statusValue} ${stripeOnboardingComplete ? styles.statusSuccess : styles.statusWarning}`}>
+                  {stripeOnboardingComplete ? 'Ready' : 'Setup Incomplete'}
+                </span>
+              </div>
+              
+              <div className={styles.statusItem}>
+                <span className={styles.statusLabel}>Charges Enabled:</span>
+                <span className={`${styles.statusValue} ${stripeAccountDetails.charges_enabled ? styles.statusSuccess : styles.statusError}`}>
+                  {stripeAccountDetails.charges_enabled ? 'Yes' : 'No'}
+                </span>
+              </div>
+              
+              <div className={styles.statusItem}>
+                <span className={styles.statusLabel}>Payouts Enabled:</span>
+                <span className={`${styles.statusValue} ${stripeAccountDetails.payouts_enabled ? styles.statusSuccess : styles.statusError}`}>
+                  {stripeAccountDetails.payouts_enabled ? 'Yes' : 'No'}
+                </span>
+              </div>
+              
+              <div className={styles.statusItem}>
+                <span className={styles.statusLabel}>Details Submitted:</span>
+                <span className={`${styles.statusValue} ${stripeAccountDetails.details_submitted ? styles.statusSuccess : styles.statusError}`}>
+                  {stripeAccountDetails.details_submitted ? 'Yes' : 'No'}
+                </span>
+              </div>
+            </div>
+
+            {/* Requirements Section */}
+            {stripeAccountDetails.requirements && (
+              <div className={styles.requirementsSection}>
+                <h4 className={styles.requirementsTitle}>Onboarding Requirements:</h4>
+                {stripeAccountDetails.requirements.currently_due && stripeAccountDetails.requirements.currently_due.length > 0 && (
+                  <div className={styles.requirementsList}>
+                    <p className={styles.requirementsLabel}>Currently Due:</p>
+                    <ul className={styles.requirementsItems}>
+                      {stripeAccountDetails.requirements.currently_due.map((req, idx) => (
+                        <li key={idx} className={styles.requirementItem}>{req}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {stripeAccountDetails.requirements.past_due && stripeAccountDetails.requirements.past_due.length > 0 && (
+                  <div className={styles.requirementsList}>
+                    <p className={styles.requirementsLabel}>Past Due:</p>
+                    <ul className={styles.requirementsItems}>
+                      {stripeAccountDetails.requirements.past_due.map((req, idx) => (
+                        <li key={idx} className={styles.requirementItem}>{req}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {(!stripeAccountDetails.requirements.currently_due || stripeAccountDetails.requirements.currently_due.length === 0) &&
+                 (!stripeAccountDetails.requirements.past_due || stripeAccountDetails.requirements.past_due.length === 0) && (
+                  <p className={styles.requirementsComplete}>All requirements completed!</p>
+                )}
+              </div>
+            )}
           </div>
         )}
 
         {/* Registration Fee Section */}
         <div className={styles.costSection}>
           <h3 className={styles.sectionTitle}>Registration Fee</h3>
-          {!stripeOnboardingComplete && event?.payment_required && (
+          {cost > 0 && !stripeOnboardingComplete && (
             <p className={styles.warningText}>
-              Connect your Stripe account above before setting a registration fee.
+              Please complete your Stripe account setup in user settings before setting a registration fee.
+            </p>
+          )}
+          {cost > 0 && stripeAccountDetails && (!stripeAccountDetails.charges_enabled || !stripeAccountDetails.payouts_enabled) && (
+            <p className={styles.warningText}>
+              Your Stripe account is not fully activated. Please complete all onboarding requirements in user settings.
             </p>
           )}
           <div className={styles.costInputRow}>
@@ -282,13 +339,12 @@ export default function ManageRegistration() {
                 placeholder="0.00"
                 min="0"
                 step="0.01"
-                disabled={event?.payment_required && !stripeOnboardingComplete}
               />
             </div>
             <button 
               type="button"
               onClick={handleUpdateCost}
-              disabled={loading || (event?.payment_required && !stripeOnboardingComplete)}
+              disabled={loading || (cost > 0 && !stripeOnboardingComplete)}
               className={styles.updateCostButton}
             >
               {loading ? 'Updating...' : 'Update'}

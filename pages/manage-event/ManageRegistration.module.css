@@ -192,3 +192,160 @@
   margin-bottom: 24px;
 }
 
+/* Stripe Sync Details */
+.stripeSyncDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: #f8f8f8;
+  border: 1px solid #000;
+  margin-bottom: 24px;
+}
+
+.syncDetailsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.syncDetailsHeader .sectionTitle {
+  margin: 0;
+}
+
+.syncButton {
+  background: #f8f8f8;
+  color: #000;
+  border: 1px solid #000;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.syncButton:hover:not(:disabled) {
+  background: #000;
+  color: #fff;
+}
+
+.syncButton:disabled {
+  background: #d0d0d0;
+  border-color: #d0d0d0;
+  cursor: not-allowed;
+  color: #707070;
+}
+
+.syncStatusGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+}
+
+.statusItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.statusItem:last-child {
+  border-bottom: none;
+}
+
+.statusLabel {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.statusValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.statusSuccess {
+  color: #16a34a;
+}
+
+.statusWarning {
+  color: #f59e0b;
+}
+
+.statusError {
+  color: #dc2626;
+}
+
+.requirementsSection {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.requirementsTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 12px 0;
+}
+
+.requirementsList {
+  margin-bottom: 12px;
+}
+
+.requirementsLabel {
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: 500;
+  margin: 0 0 8px 0;
+}
+
+.requirementsItems {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.requirementItem {
+  font-size: 0.875rem;
+  color: #666;
+  padding: 4px 0;
+  padding-left: 16px;
+  position: relative;
+}
+
+.requirementItem:before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #000;
+}
+
+.requirementsComplete {
+  font-size: 0.875rem;
+  color: #16a34a;
+  font-weight: 500;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .syncDetailsHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .syncButton {
+    width: 100%;
+  }
+
+  .syncStatusGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
