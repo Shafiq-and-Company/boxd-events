@@ -22,6 +22,7 @@ export default function UserSettings() {
   const [stripeConnected, setStripeConnected] = useState(false)
   const [stripeOnboardingComplete, setStripeOnboardingComplete] = useState(false)
   const [checkingStripeStatus, setCheckingStripeStatus] = useState(false)
+  const [disconnectingStripe, setDisconnectingStripe] = useState(false)
   const [stripeAccountDetails, setStripeAccountDetails] = useState(null)
   
   const [userProfile, setUserProfile] = useState({
@@ -257,6 +258,14 @@ export default function UserSettings() {
           payouts_enabled: data.payouts_enabled,
           details_submitted: data.details_submitted,
           requirements: data.requirements,
+          type: data.type,
+          country: data.country,
+          email: data.email,
+          business_profile: data.business_profile,
+          default_currency: data.default_currency,
+          created: data.created,
+          capabilities: data.capabilities,
+          payouts_enabled_delayed: data.payouts_enabled_delayed,
         })
       } else {
         console.error('Error checking Stripe status:', data.error)
@@ -304,6 +313,54 @@ export default function UserSettings() {
     } catch (error) {
       console.error('Error connecting Stripe:', error)
       alert('Failed to connect Stripe account')
+    }
+  }
+
+  // Disconnect Stripe account
+  const disconnectStripeAccount = async () => {
+    if (!user) return
+    
+    // Confirm disconnection
+    const confirmed = window.confirm(
+      'Are you sure you want to disconnect your Stripe account? ' +
+      'You will not be able to collect payments for paid events until you reconnect.'
+    )
+    
+    if (!confirmed) return
+    
+    try {
+      setDisconnectingStripe(true)
+      
+      // Get user's session token for authentication
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        alert('You must be logged in to disconnect Stripe')
+        return
+      }
+
+      const response = await fetch(`/api/stripe/connect/disconnect?userId=${user.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok && data.success) {
+        // Reset Stripe state
+        setStripeConnected(false)
+        setStripeOnboardingComplete(false)
+        setStripeAccountDetails(null)
+        alert('Stripe account disconnected successfully')
+      } else {
+        alert(data.error || 'Failed to disconnect Stripe account')
+      }
+    } catch (error) {
+      console.error('Error disconnecting Stripe:', error)
+      alert('Failed to disconnect Stripe account')
+    } finally {
+      setDisconnectingStripe(false)
     }
   }
 
@@ -652,12 +709,60 @@ export default function UserSettings() {
               )}
             </div>
           </div>
+          
+          <div className={styles.securityItem}>
+            <div className={styles.securityIcon}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path fill="#5865F2" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21 .375-.444 .864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+              </svg>
+            </div>
+            <div className={styles.securityContent}>
+              <h4 className={styles.securityTitle}>Discord Authentication</h4>
+              <p className={styles.securityDescription}>
+                {discordAuthStatus === true 
+                  ? 'Your account is linked to Discord. You can sign in using your Discord account.'
+                  : discordAuthStatus === false 
+                  ? 'Your account is not linked to Discord. You can link it by signing in with Discord.'
+                  : 'Checking Discord authentication status...'
+                }
+              </p>
+            </div>
+            <div className={styles.securityActions}>
+              {discordAuthStatus === true && (
+                <button 
+                  type="button" 
+                  className={styles.discordLinkedButton}
+                  onClick={() => handleUnlink('discord')}
+                  disabled={discordAuthStatus === null || unlinkLoading.discord}
+                  title="Click to unlink Discord account"
+                >
+                  <span className={styles.buttonText}>
+                    {unlinkLoading.discord ? 'Unlinking...' : 'Linked'}
+                  </span>
+                  <span className={styles.buttonHoverText}>
+                    {unlinkLoading.discord ? 'Unlinking...' : 'Unlink'}
+                  </span>
+                </button>
+              )}
+              {discordAuthStatus === false && (
+                <button 
+                  type="button" 
+                  className={styles.discordUnlinkedButton}
+                  onClick={handleDiscordLink}
+                  disabled={discordAuthStatus === null}
+                  title="Click to link Discord account"
+                >
+                  Link
+                </button>
+              )}
+            </div>
+          </div>
 
           {/* Dedicated Stripe Payment Processing Section */}
           <div className={styles.stripeSection}>
             <div className={styles.stripeHeader}>
               <div className={styles.stripeIcon}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M12 2L2 7l10 5 10-5-10-5z"/>
                   <path d="M2 17l10 5 10-5"/>
                   <path d="M2 12l10 5 10-5"/>
@@ -708,6 +813,83 @@ export default function UserSettings() {
                     </span>
                   </div>
 
+                  {/* Additional Account Details */}
+                  {stripeAccountDetails.type && (
+                    <div className={styles.statusRow}>
+                      <span className={styles.statusLabel}>Account Type:</span>
+                      <span className={styles.statusValue}>
+                        {stripeAccountDetails.type.charAt(0).toUpperCase() + stripeAccountDetails.type.slice(1)}
+                      </span>
+                    </div>
+                  )}
+
+                  {stripeAccountDetails.country && (
+                    <div className={styles.statusRow}>
+                      <span className={styles.statusLabel}>Country:</span>
+                      <span className={styles.statusValue}>
+                        {stripeAccountDetails.country.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+
+                  {stripeAccountDetails.email && (
+                    <div className={styles.statusRow}>
+                      <span className={styles.statusLabel}>Account Email:</span>
+                      <span className={styles.statusValue}>{stripeAccountDetails.email}</span>
+                    </div>
+                  )}
+
+                  {stripeAccountDetails.business_profile?.name && (
+                    <div className={styles.statusRow}>
+                      <span className={styles.statusLabel}>Business Name:</span>
+                      <span className={styles.statusValue}>{stripeAccountDetails.business_profile.name}</span>
+                    </div>
+                  )}
+
+                  {stripeAccountDetails.default_currency && (
+                    <div className={styles.statusRow}>
+                      <span className={styles.statusLabel}>Default Currency:</span>
+                      <span className={styles.statusValue}>
+                        {stripeAccountDetails.default_currency.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+
+                  {stripeAccountDetails.payouts_enabled_delayed && (
+                    <div className={styles.statusRow}>
+                      <span className={styles.statusLabel}>Payouts Delayed:</span>
+                      <span className={`${styles.statusValue} ${styles.statusWarning}`}>
+                        Yes (Standard delay applies)
+                      </span>
+                    </div>
+                  )}
+
+                  {stripeAccountDetails.created && (
+                    <div className={styles.statusRow}>
+                      <span className={styles.statusLabel}>Account Created:</span>
+                      <span className={styles.statusValue}>
+                        {new Date(stripeAccountDetails.created * 1000).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </span>
+                    </div>
+                  )}
+
+                  {stripeAccountDetails.capabilities && (
+                    <div className={styles.statusRow}>
+                      <span className={styles.statusLabel}>Capabilities:</span>
+                      <span className={styles.statusValue}>
+                        {Object.entries(stripeAccountDetails.capabilities)
+                          .filter(([_, status]) => status === 'active')
+                          .map(([capability]) => capability.replace(/_/g, ' '))
+                          .map(cap => cap.charAt(0).toUpperCase() + cap.slice(1))
+                          .join(', ') || 'None'}
+                      </span>
+                    </div>
+                  )}
+
                   {/* Requirements Section */}
                   {stripeAccountDetails.requirements && (
                     <div className={styles.requirementsSection}>
@@ -748,67 +930,30 @@ export default function UserSettings() {
                 type="button" 
                 className={styles.stripeSyncButton}
                 onClick={checkStripeStatus}
-                disabled={checkingStripeStatus}
+                disabled={checkingStripeStatus || disconnectingStripe}
               >
                 {checkingStripeStatus ? 'Syncing...' : 'Sync Status'}
               </button>
+              
+              {stripeConnected && (
+                <button 
+                  type="button" 
+                  className={styles.stripeDisconnectButton}
+                  onClick={disconnectStripeAccount}
+                  disabled={disconnectingStripe || checkingStripeStatus}
+                >
+                  {disconnectingStripe ? 'Disconnecting...' : 'Disconnect'}
+                </button>
+              )}
               
               {(!stripeConnected || !stripeOnboardingComplete) && (
                 <button 
                   type="button" 
                   className={styles.stripeConnectButton}
                   onClick={connectStripeAccount}
-                  disabled={checkingStripeStatus}
+                  disabled={checkingStripeStatus || disconnectingStripe}
                 >
                   {stripeConnected ? 'Complete Setup' : 'Connect Stripe'}
-                </button>
-              )}
-            </div>
-          </div>
-          
-          <div className={styles.securityItem}>
-            <div className={styles.securityIcon}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path fill="#5865F2" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21 .375-.444 .864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-              </svg>
-            </div>
-            <div className={styles.securityContent}>
-              <h4 className={styles.securityTitle}>Discord Authentication</h4>
-              <p className={styles.securityDescription}>
-                {discordAuthStatus === true 
-                  ? 'Your account is linked to Discord. You can sign in using your Discord account.'
-                  : discordAuthStatus === false 
-                  ? 'Your account is not linked to Discord. You can link it by signing in with Discord.'
-                  : 'Checking Discord authentication status...'
-                }
-              </p>
-            </div>
-            <div className={styles.securityActions}>
-              {discordAuthStatus === true && (
-                <button 
-                  type="button" 
-                  className={styles.discordLinkedButton}
-                  onClick={() => handleUnlink('discord')}
-                  disabled={discordAuthStatus === null || unlinkLoading.discord}
-                  title="Click to unlink Discord account"
-                >
-                  <span className={styles.buttonText}>
-                    {unlinkLoading.discord ? 'Unlinking...' : 'Linked'}
-                  </span>
-                  <span className={styles.buttonHoverText}>
-                    {unlinkLoading.discord ? 'Unlinking...' : 'Unlink'}
-                  </span>
-                </button>
-              )}
-              {discordAuthStatus === false && (
-                <button 
-                  type="button" 
-                  className={styles.discordUnlinkedButton}
-                  onClick={handleDiscordLink}
-                  disabled={discordAuthStatus === null}
-                  title="Click to link Discord account"
-                >
-                  Link
                 </button>
               )}
             </div>

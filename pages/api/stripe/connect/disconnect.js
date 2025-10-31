@@ -40,7 +40,7 @@ const verifyUserAndCreateClient = async (req) => {
 };
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
+  if (req.method !== 'DELETE') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
@@ -58,10 +58,10 @@ export default async function handler(req, res) {
       return res.status(403).json({ error: 'User ID does not match authenticated user' });
     }
 
-    // Fetch user data from database
+    // Fetch user data to get Stripe account ID
     const { data: userData, error: userError } = await supabase
       .from('users')
-      .select('stripe_account_id, stripe_onboarding_complete')
+      .select('stripe_account_id')
       .eq('id', userId)
       .single();
 
@@ -74,80 +74,38 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // If no Stripe account ID, return not connected
+    // If no Stripe account connected, return success
     if (!userData.stripe_account_id) {
       return res.status(200).json({
-        connected: false,
-        onboarding_complete: false,
-        account_id: null,
-        charges_enabled: false,
-        payouts_enabled: false,
-        details_submitted: false,
+        success: true,
+        message: 'No Stripe account connected',
       });
     }
 
-    // Check account status with Stripe
-    let account;
-    try {
-      account = await stripe.accounts.retrieve(userData.stripe_account_id);
-    } catch (stripeError) {
-      console.error('Error retrieving Stripe account:', stripeError);
-      // If account doesn't exist in Stripe, return not connected
-      if (stripeError.code === 'resource_missing') {
-        return res.status(200).json({
-          connected: false,
-          onboarding_complete: false,
-          account_id: null,
-          charges_enabled: false,
-          payouts_enabled: false,
-          details_submitted: false,
-          error: 'Stripe account not found',
-        });
-      }
-      throw stripeError;
+    // Clear Stripe account connection from database
+    // Note: We don't delete the Stripe account itself, just the connection
+    // This allows the user to reconnect later if needed
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({
+        stripe_account_id: null,
+        stripe_onboarding_complete: false,
+      })
+      .eq('id', userId);
+
+    if (updateError) {
+      console.error('Error disconnecting Stripe account:', updateError);
+      return res.status(500).json({ error: 'Failed to disconnect Stripe account' });
     }
 
-    // Determine onboarding completion status
-    const isOnboardingComplete =
-      account.details_submitted &&
-      account.charges_enabled &&
-      account.payouts_enabled;
-
-    // Update database if status changed
-    if (isOnboardingComplete !== userData.stripe_onboarding_complete) {
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({ stripe_onboarding_complete: isOnboardingComplete })
-        .eq('id', userId);
-
-      if (updateError) {
-        console.error('Error updating user onboarding status:', updateError);
-        // Don't fail the request, just log the error
-      } else {
-        console.log(`Updated onboarding status for user ${userId}: ${isOnboardingComplete}`);
-      }
-    }
+    console.log(`Stripe account disconnected for user ${userId}`);
 
     return res.status(200).json({
-      connected: !!userData.stripe_account_id,
-      onboarding_complete: isOnboardingComplete,
-      account_id: userData.stripe_account_id,
-      charges_enabled: account.charges_enabled || false,
-      payouts_enabled: account.payouts_enabled || false,
-      details_submitted: account.details_submitted || false,
-      requirements: account.requirements || null,
-      // Additional account details
-      type: account.type || null,
-      country: account.country || null,
-      email: account.email || null,
-      business_profile: account.business_profile || null,
-      default_currency: account.default_currency || null,
-      created: account.created || null,
-      capabilities: account.capabilities || null,
-      payouts_enabled_delayed: account.payouts_enabled_delayed || false,
+      success: true,
+      message: 'Stripe account disconnected successfully',
     });
   } catch (error) {
-    console.error('Stripe status check error:', error);
+    console.error('Stripe disconnect error:', error);
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }
 }

@@ -451,11 +451,11 @@
 .stripeSection {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 24px;
+  gap: 16px;
+  padding: 16px;
   border: 1px solid #000;
-  background: #fff;
-  margin-bottom: 16px;
+  background: transparent;
+  margin-bottom: 0;
 }
 
 .stripeHeader {
@@ -465,20 +465,21 @@
 }
 
 .stripeIcon {
-  width: 48px;
-  height: 48px;
-  background: #000;
+  width: 40px;
+  height: 40px;
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   border: 1px solid #000;
+  color: #707070;
+  padding: 12px;
 }
 
 .stripeIcon svg {
-  color: #fff;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .stripeHeaderContent {
@@ -487,17 +488,16 @@
 }
 
 .stripeTitle {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #000;
-  margin: 0 0 8px 0;
+  margin: 0 0 2px 0;
 }
 
 .stripeSubtitle {
   font-size: 0.875rem;
-  color: #666;
+  color: #707070;
   margin: 0;
-  line-height: 1.5;
 }
 
 .stripeStatus {
@@ -514,11 +514,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.statusRow:last-child {
-  border-bottom: none;
 }
 
 .statusLabel {
@@ -547,7 +542,6 @@
 .requirementsSection {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #e0e0e0;
 }
 
 .requirementsTitle {
@@ -647,6 +641,28 @@
   cursor: not-allowed;
 }
 
+.stripeDisconnectButton {
+  background: #dc2626;
+  color: #fff;
+  border: 1px solid #dc2626;
+  padding: 12px 24px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.stripeDisconnectButton:hover:not(:disabled) {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.stripeDisconnectButton:disabled {
+  background: #999;
+  border-color: #999;
+  cursor: not-allowed;
+}
+
 @media (max-width: 767px) {
   .stripeSection {
     padding: 16px;
@@ -672,7 +688,8 @@
   }
 
   .stripeSyncButton,
-  .stripeConnectButton {
+  .stripeConnectButton,
+  .stripeDisconnectButton {
     width: 100%;
   }
 }
