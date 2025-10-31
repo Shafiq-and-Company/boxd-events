@@ -79,14 +79,6 @@ ADD COLUMN stripe_account_id TEXT;
 -- Add Stripe account onboarding status
 ALTER TABLE users
 ADD COLUMN stripe_onboarding_complete BOOLEAN DEFAULT FALSE;
-
--- Add index for Stripe account lookups
-CREATE INDEX IF NOT EXISTS idx_users_stripe_account_id 
-ON users(stripe_account_id);
-
--- Add comment for documentation
-COMMENT ON COLUMN users.stripe_account_id IS 'Stripe Connect Express account ID';
-COMMENT ON COLUMN users.stripe_onboarding_complete IS 'Whether Stripe account onboarding is complete';
 ```
 
 ### 2. Update `events` table
@@ -115,15 +107,6 @@ ADD COLUMN IF NOT EXISTS payment_required BOOLEAN DEFAULT FALSE;
 UPDATE events 
 SET payment_required = TRUE 
 WHERE cost IS NOT NULL AND cost > 0;
-
--- Add index for payment queries
-CREATE INDEX IF NOT EXISTS idx_events_payment_required 
-ON events(payment_required) 
-WHERE payment_required = TRUE;
-
-COMMENT ON COLUMN events.cost IS 'Registration fee in dollars (NULL for free events)';
-COMMENT ON COLUMN events.currency IS 'Currency code (e.g., usd)';
-COMMENT ON COLUMN events.payment_required IS 'Whether payment is required to register (TRUE if cost > 0)';
 ```
 
 ### 3. Add payment tracking fields to `rsvps` table
@@ -148,19 +131,6 @@ ADD COLUMN platform_fee_amount NUMERIC(10,2);
 -- Add host payout amount (in cents)
 ALTER TABLE rsvps
 ADD COLUMN host_payout_amount NUMERIC(10,2);
-
--- Add index for payment lookups
-CREATE INDEX IF NOT EXISTS idx_rsvps_stripe_payment_intent_id 
-ON rsvps(stripe_payment_intent_id);
-
-CREATE INDEX IF NOT EXISTS idx_rsvps_stripe_checkout_session_id 
-ON rsvps(stripe_checkout_session_id);
-
-COMMENT ON COLUMN rsvps.stripe_payment_intent_id IS 'Stripe Payment Intent ID for tracking payments';
-COMMENT ON COLUMN rsvps.stripe_checkout_session_id IS 'Stripe Checkout Session ID';
-COMMENT ON COLUMN rsvps.payment_amount IS 'Total payment amount paid by attendee (in dollars)';
-COMMENT ON COLUMN rsvps.platform_fee_amount IS 'Platform fee amount deducted by Locals (6% of registration fee in dollars)';
-COMMENT ON COLUMN rsvps.host_payout_amount IS 'Organizer payout amount after platform fee (in dollars)';
 ```
 
 **Note**: The `rsvps` table already has `payment_status` field with CHECK constraint allowing: 'pending', 'paid', 'failed', 'refunded'. This is used to track payment state throughout the registration flow.
@@ -170,9 +140,6 @@ COMMENT ON COLUMN rsvps.host_payout_amount IS 'Organizer payout amount after pla
 **Important**: Ensure service role can update RSVP payment fields via webhooks:
 
 ```sql
--- Verify service role policy exists for rsvps table
--- Service role should already have access via existing policies
--- If not, add policy to allow service role to update payment fields:
 CREATE POLICY IF NOT EXISTS "Service role can update payment status" ON rsvps
   FOR UPDATE
   TO service_role
