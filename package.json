@@ -14,9 +14,11 @@
     "brackets-manager": "^1.7.1",
     "brackets-memory-db": "^1.0.5",
     "critters": "^0.0.23",
+    "micro": "^10.0.1",
     "next": "^15.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "stripe": "^19.2.0"
   },
   "devDependencies": {
     "@types/react": "19.2.2",
